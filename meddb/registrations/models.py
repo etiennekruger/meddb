@@ -100,7 +100,7 @@ class Medicine(SourcedModel):
         return u'%s %s' % (self.actives, self.dosageform)
 
 class Ingredient(models.Model):
-    product = models.ForeignKey(Medicine)
+    medicine = models.ForeignKey(Medicine)
     inn = models.ForeignKey(INN)
     strength = models.CharField(max_length=16)
     
@@ -122,7 +122,7 @@ class Product(SourcedModel):
         if medicine:
             d['medicine'] = self.medicine.as_dict(minimal=True, products=False)
         if not minimal:
-            d['registrations'] = [r.as_dict(minimal=True) for r in self.registration_set.all()]
+            d['registrations'] = [r.as_dict(minimal=True, medicine=False) for r in self.registration_set.all()]
         return d
     
     def __unicode__(self):
@@ -201,8 +201,8 @@ class Supplier(SourcedModel):
     fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True)
     email = models.EmailField(verbose_name='Email Address', blank=True, null=True)
     altemail = models.EmailField(verbose_name='Alternative Email Address', blank=True, null=True)
-    prequalify = models.BooleanField(verbose_name='NMPA Pre-qualified')
-    authorized = models.BooleanField(verbose_name='Manufacturer Authorisation')
+    prequalify = models.BooleanField(verbose_name='NMPA Pre-qualified', default=False)
+    authorized = models.BooleanField(verbose_name='Manufacturer Authorisation', default=False)
     
     def is_manufacturer(self):
         if not self.manufacturer:
@@ -212,7 +212,6 @@ class Supplier(SourcedModel):
     def as_dict(self, minimal=False, manufacturer=True):
         d = { 'id': self.id,
               'name': self.name,
-              'country': self.country.as_dict(),
               'website': self.website,
               'contact': self.contact,
               'phone': self.phone,
@@ -220,11 +219,11 @@ class Supplier(SourcedModel):
               'email': self.email,
               'prequalify': self.prequalify,
               'authorized': self.authorized }
+        if self.country:
+              d['country'] = self.country.as_dict()
         if manufacturer:
-            if self.is_manufacturer:
+            if self.manufacturer:
                 d['manufacturer'] = self.manufacturer.as_dict(minimal=True)
-            else:
-                d['manufacturer'] = None
         if not minimal:
             d.update({ 'address': self.address,
                        'altphone': self.altphone,
@@ -250,43 +249,52 @@ class Pack(models.Model):
         return u'%s' % (self.name)
 
 class PackSize(models.Model):
-    pack = models.ForeignKey(Pack)
+    pack = models.ForeignKey(Pack, blank=True, null=True)
     registration = models.ForeignKey('Registration')
     quantity = models.IntegerField()
     
     def as_dict(self, minimal=False):
-        return { 'id': self.pack.id,
-                 'name': self.pack.name,
-                 'quantity': self.quantity }
+        d = { 'quantity': self.quantity }
+        if self.pack:
+            d['id'] = self.pack.id
+            d['name'] = self.pack.name
+        return d
     
     def __unicode__(self):
-        return u'%s (%s)' % (self.pack.name, self.quantity)
+        if self.pack:
+            return u'%s (%s)' % (self.pack.name, self.quantity)
+        return u'unknown (%s)' % (self.quantity)
 
 class Registration(SourcedModel):
     country = models.ForeignKey(Country)
     number = models.CharField(max_length=32)
     product = models.ForeignKey(Product)
     packs = models.ManyToManyField(Pack, through='PackSize')
-    manufacturer = models.ForeignKey(Site, verbose_name='Manufacturer Site')
+    manufacturer = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     status = models.BooleanField(default=True)
     application = models.DateField(verbose_name='Application Date', blank=True, null=True)
     registered = models.DateField(verbose_name='Registration Date', blank=True, null=True)
     expiry = models.DateField(verbose_name='Registration Expiry Date', blank=True, null=True)
     
-    def as_dict(self, minimal=False):
+    def as_dict(self, minimal=False, medicine=True):
         d = { 'id': self.id,
               'number': self.number,
               'country': self.country.as_dict(),
               'packs': [p.as_dict() for p in self.packsize_set.all()],
-              'status': self.status,
-              'application': self.application.isoformat(),
-              'registered': self.registered.isoformat(),
-              'expiry': self.expiry.isoformat() }
-        d['product'] = self.product.as_dict(minimal=True)
+              'status': self.status }
+        d['product'] = self.product.as_dict(minimal=True, medicine=medicine)
+        if self.application:
+            d['application'] = self.application.isoformat()
+        if self.registered:
+            d['registered'] = self.registered.isoformat()
+        if self.expiry:
+            d['expiry'] = self.expiry.isoformat()
         if not minimal:
-            d['site'] = self.manufacturer.as_dict(minimal=True)
-            d['supplier'] = self.supplier.as_dict(minimal=True)
+            if self.manufacturer:
+                d['site'] = self.manufacturer.as_dict(minimal=True)
+            if self.supplier:
+                d['supplier'] = self.supplier.as_dict(minimal=True)
         return d
     
     def __unicode__(self):
@@ -299,7 +307,7 @@ class Registration(SourcedModel):
 class Procurement(SourcedModel):
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
-    pack = models.ForeignKey(PackSize)
+    pack = models.ForeignKey(PackSize, blank=True, null=True)
     site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
@@ -311,7 +319,6 @@ class Procurement(SourcedModel):
     
     def as_dict(self, site=True, supplier=True, product=True, minimal=False):
         d = { 'id': self.id,
-              'pack': self.pack.as_dict(),
               'incoterm': self.incoterm.as_dict(),
               'price': self.price,
               'volume': self.volume,
@@ -319,17 +326,21 @@ class Procurement(SourcedModel):
               'method': self.method,
               'validity': self.validity,
               'country': self.country.as_dict() }
+        if self.pack:
+              d['pack'] = self.pack.as_dict()
         if not minimal:
-            if site:
+            if site and self.site:
                 d['site'] = self.site.as_dict(minimal=True)
-            if supplier:
+            if supplier and self.supplier:
                 d['supplier'] = self.supplier.as_dict(minimal=True)
         if product:
             d['product'] = self.product.as_dict(minimal=minimal)
         return d
     
     def __unicode__(self):
-        return u'%d x %s' % (self.volume, self.product.name)
+        if self.volume:
+            return u'%d x %s' % (self.volume, self.product.name)
+        return u'unknown quantity x %s' % (self.product.name)
 
 # Contextual information.
 #
