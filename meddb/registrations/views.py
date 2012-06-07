@@ -4,6 +4,10 @@ from django.views.generic import View
 
 import models
 
+# Setup memcache for nginx.
+import memcache
+mc=memcache.Client(['192.168.122.1:11211'])
+
 # View base classes.
 #
 # These base classes simplify the implementation of the JSON represenation views
@@ -35,7 +39,11 @@ class JSONView(JSONResponseMixin, View):
     def get(self, request, *args, **kwargs):
         "Serialize the JSON data into an HTTP response."
         context = self.get_json_data(*args, **kwargs)
-        return self.render_to_response(context)
+        response = self.render_to_response(context)
+        #print request.path
+        #print response.content
+        #mc.set(request.path.encode('ascii', 'ignore'), response.content, 60*60*24*2)
+        return response
 
 class JSONRepresentation(JSONView):
     def get_json_data(self, *args, **kwargs):
@@ -44,7 +52,7 @@ class JSONRepresentation(JSONView):
 
 class JSONList(JSONView):
     def get_json_data(self, *args, **kwargs):
-        return [i.as_dict(minimal=True) for i in self.model.objects.all()]
+        return [i.as_dict(minimal=True) for i in self.model.objects.select_related().all()]
 
 # JSON Representation of the individual models.
 #

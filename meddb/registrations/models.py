@@ -324,8 +324,9 @@ class Procurement(SourcedModel):
               'volume': self.volume,
               'period': self.period,
               'method': self.method,
-              'validity': self.validity,
               'country': self.country.as_dict() }
+        if self.validity:
+            d['validity'] = self.validity.isoformat()
         if self.pack:
               d['pack'] = self.pack.as_dict()
         if not minimal:

@@ -4,11 +4,12 @@ import sys
 import xlrd
 import json
 from datetime import datetime
+from django.db import transaction
 
 from registrations import models
 from django.db.models import Count
 
-DEBUG = True
+DEBUG = False
 USD_ZAR = 8.42113
 
 class ValidationError(ValueError):
@@ -177,7 +178,7 @@ def add_medicine(m):
         if m.has_key('date'):
             procurement.validity = m['date']
         procurement.incoterm = incoterm()
-        if m.has_key('price'):
+        if m.has_key('unitprice'):
             procurement.price = m['unitprice']
         else:
             procurement.price = 0
@@ -237,7 +238,8 @@ if __name__=='__main__':
     except ValidationError, e:
         print('Validation failed:\n%s' % (e))
     else:
-        data = convert(filename)
+        with transaction.commit_on_success():
+            data = convert(filename)
         #print(json.dumps(data, indent=2))
         print('Operation completed succesfully.')
         
