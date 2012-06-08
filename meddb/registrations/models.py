@@ -88,10 +88,12 @@ class Medicine(SourcedModel):
     def actives(self):
         return ', '.join([str(i) for i in self.ingredient_set.all()])
     
-    def as_dict(self, products=True, minimal=False):
+    def as_dict(self, products=True, minimal=False, procurements=True):
         d = { 'id': self.id,
               'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
               'dosageform': self.dosageform.as_dict() }
+        if procurements:
+            d['procurements'] = [p.as_dict(minimal=True, medicine=False) for p in Procurement.objects.filter(product__medicine=self)]
         if products:
             d['products'] = [p.as_dict(medicine=False, minimal=minimal) for p in self.product_set.all()]
         return d
@@ -111,18 +113,23 @@ class Ingredient(models.Model):
         
     def __unicode__(self):
         return u'%s %s' % (self.inn, self.strength)
+    
+    class Meta:
+        ordering = ('inn__name',)
 
 class Product(SourcedModel):
     name = models.CharField(max_length=64)
     medicine = models.ForeignKey(Medicine)
     
-    def as_dict(self, medicine=True, minimal=False):
+    def as_dict(self, medicine=True, minimal=False, registrations=True):
         d = { 'id': self.id,
               'name': self.name }
         if medicine:
-            d['medicine'] = self.medicine.as_dict(minimal=True, products=False)
+            d['medicine'] = self.medicine.as_dict(minimal=True, products=False, procurements=False)
+        if registrations:
+            d['registrations'] = [r.as_dict(medicine=False, product=False) for r in self.registration_set.all()]
         if not minimal:
-            d['registrations'] = [r.as_dict(minimal=True, medicine=False) for r in self.registration_set.all()]
+            d['procurements'] = [r.as_dict(minimal=True, medicine=False) for r in self.procurement_set.all()]
         return d
     
     def __unicode__(self):
@@ -179,7 +186,7 @@ class Site(SourcedModel):
                        'altphone': self.altphone,
                        'altemail': self.altemail })
             d['registrations'] = [r.as_dict(minimal=True) for r in Registration.objects.all()]
-            d['procurements'] = [p.as_dict(minimal=True) for p in Procurement.objects.all()]
+            d['procurements'] = [p.as_dict(minimal=True, site=False) for p in Procurement.objects.all()]
             d['manufacturer'] = self.manufacturer.as_dict(minimal=True)
         return d
     
@@ -229,7 +236,7 @@ class Supplier(SourcedModel):
                        'altphone': self.altphone,
                        'altemail': self.altemail })
             d['registrations'] = [r.as_dict(minimal=True) for r in self.registration_set.all()]
-            d['procurements'] = [p.as_dict(minimal=True) for p in self.procurement_set.all()]
+            #d['procurements'] = [p.as_dict(minimal=True, supplier=False) for p in self.procurement_set.all()]
         return d
     
     def __unicode__(self):
@@ -277,13 +284,14 @@ class Registration(SourcedModel):
     registered = models.DateField(verbose_name='Registration Date', blank=True, null=True)
     expiry = models.DateField(verbose_name='Registration Expiry Date', blank=True, null=True)
     
-    def as_dict(self, minimal=False, medicine=True):
+    def as_dict(self, minimal=False, medicine=True, product=True):
         d = { 'id': self.id,
               'number': self.number,
               'country': self.country.as_dict(),
               'packs': [p.as_dict() for p in self.packsize_set.all()],
               'status': self.status }
-        d['product'] = self.product.as_dict(minimal=True, medicine=medicine)
+        if product:
+            d['product'] = self.product.as_dict(minimal=True, medicine=medicine, registrations=False)
         if self.application:
             d['application'] = self.application.isoformat()
         if self.registered:
@@ -317,7 +325,7 @@ class Procurement(SourcedModel):
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
     validity = models.DateField(max_length=32, verbose_name='Validity Period', help_text='This describes the date that the procurement price is valid at.', blank=True, null=True)
     
-    def as_dict(self, site=True, supplier=True, product=True, minimal=False):
+    def as_dict(self, site=True, supplier=True, product=True, medicine=True, minimal=False):
         d = { 'id': self.id,
               'incoterm': self.incoterm.as_dict(),
               'price': self.price,
@@ -332,10 +340,10 @@ class Procurement(SourcedModel):
         if not minimal:
             if site and self.site:
                 d['site'] = self.site.as_dict(minimal=True)
-            if supplier and self.supplier:
-                d['supplier'] = self.supplier.as_dict(minimal=True)
+        if supplier and self.supplier:
+            d['supplier'] = self.supplier.as_dict(minimal=True)
         if product:
-            d['product'] = self.product.as_dict(minimal=minimal)
+            d['product'] = self.product.as_dict(minimal=minimal, medicine=medicine)
         return d
     
     def __unicode__(self):

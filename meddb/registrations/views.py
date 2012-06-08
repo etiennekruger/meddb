@@ -47,12 +47,12 @@ class JSONView(JSONResponseMixin, View):
 
 class JSONRepresentation(JSONView):
     def get_json_data(self, *args, **kwargs):
-        self.instance = self.model.objects.get(pk=kwargs['object_id'])
+        self.instance = self.model.objects.select_related().get(pk=kwargs['object_id'])
         return self.instance.as_dict()
 
 class JSONList(JSONView):
     def get_json_data(self, *args, **kwargs):
-        return [i.as_dict(minimal=True) for i in self.model.objects.select_related().all()]
+        return [i.as_dict(minimal=True) for i in self.model.objects.select_related().all()[:100]]
 
 # JSON Representation of the individual models.
 #

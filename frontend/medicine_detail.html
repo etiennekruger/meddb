@@ -1,72 +1,34 @@
-<div class="row">
-  <div class="span6">
-    <h2 id="meddb_heading">Medicine: </h2>
+<h3 id="meddb_medicine_heading">&nbsp;</h3>
+<ul class="nav nav-tabs" id="meddb-tabs-medicine">
+  <li class="active"><a href="#tab:procurement" onclick="meddb.tabber.onclick(this); return false;">Procurement Prices</a></li>
+  <li><a href="#tab:product" onclick="meddb.tabber.onclick(this); return false;">Related Products</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane active" id="procurement">
+    <table class="table table-bordered" id="meddb_medicine_procurement">
+      <thead>
+	<tr>
+	  <th>Country</th>
+	  <th>Price (USD)</th>
+	  <th>Date</th>
+	</tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
   </div>
-  <div class="span6">
-    <p>Welcome to the prices app. Please browse around.</p>
-  </div>
-</div>
-<div class="row">
-  <div class="span12">
-    <ul class="nav nav-tabs">
-      <li class="active">
-	<a href="#medicine">Medicines</a>
-      </li>
-      <li>
-	<a href="#product">Products</a>
-      </li>
-      <li>
-	<a href="#supplier">Suppliers</a>
-      </li>
-    </ul>
-    <ul class="nav nav-tabs" id="meddb-tabs-medicine">
-      <li class="active">
-	<a href="" data-pane="detail">Procurement Prices</a>
-      </li>
-      <li>
-	<a href="" data-pane="procurement">Procurement Prices</a>
-      </li>
-      <li>
-	<a href="" data-pane="product">Related Products</a>
-      </li>
-    </ul>
-    <div class="tab-content">
-      <div class="tab-pane active" id="medicine">
-	<table class="table table-bordered" id="meddb_medicine_detail">
-	  <thead>
-	    <tr>
-	      <th>Country</th>
-	      <th>Price</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  </tbody>
-	</table>
-      </div>
-      <div class="tab-pane" id="procurement">
-	<table class="table table-bordered" id="meddb_medicine_procurement">
-	  <thead>
-	    <tr>
-	      <th>Country</th>
-	      <th>Price</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  </tbody>
-	</table>
-      </div>
-      <div class="tab-pane" id="product">
-	<table class="table table-bordered" id="meddb_medicine_product">
-	  <thead>
-	    <tr>
-	      <th>Country</th>
-	      <th>Price</th>
-	    </tr>
-	  </thead>
-	  <tbody>
-	  </tbody>
-	</table>
-      </div>
-    </div>
+  <div class="tab-pane" id="product">
+    <table class="table table-bordered" id="meddb_medicine_product">
+      <thead>
+	<tr>
+	  <th>Product</th>
+	  <th>Supplier</th>
+	  <th>Manufacturer</th>
+	  <th>Registered Country</th>
+	</tr>
+      </thead>
+      <tbody>
+      </tbody>
+    </table>
   </div>
 </div>
