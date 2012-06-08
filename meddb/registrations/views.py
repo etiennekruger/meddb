@@ -40,9 +40,8 @@ class JSONView(JSONResponseMixin, View):
         "Serialize the JSON data into an HTTP response."
         context = self.get_json_data(*args, **kwargs)
         response = self.render_to_response(context)
-        #print request.path
-        #print response.content
-        #mc.set(request.path.encode('ascii', 'ignore'), response.content, 60*60*24*2)
+        key = request.path.encode('ascii','ignore')
+        mc.set(key, response.content, 60*60*24*2)
         return response
 
 class JSONRepresentation(JSONView):
@@ -52,7 +51,7 @@ class JSONRepresentation(JSONView):
 
 class JSONList(JSONView):
     def get_json_data(self, *args, **kwargs):
-        return [i.as_dict(minimal=True) for i in self.model.objects.select_related().all()[:100]]
+        return [i.as_dict(minimal=True) for i in self.model.objects.select_related().all()]
 
 # JSON Representation of the individual models.
 #
