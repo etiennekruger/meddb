@@ -111,7 +111,7 @@ HorizontalBarGraph.prototype = {
         }
 
         if (this.line.constant !== undefined){
-            var line_x_offset = this.line.constant / this.bar.max * this.bar.end;
+            var line_x_offset = this.bar.start + (this.line.constant / this.bar.max * this.bar.width);
             this.vis.selectAll('line').data([this.line.constant])
                 .enter().append('line')
                 .attr('x1', line_x_offset)
