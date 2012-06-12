@@ -443,19 +443,20 @@ meddb.history.add = function(hash, text) {
 	hash: hash,
 	text: text
     });
-    var crumbs = d3.select('ul#meddb_breadcrumb')
+    d3.select('ul#meddb_breadcrumb')
 	.selectAll('li')
-	.data(meddb.history.list.slice(-6), function(d) { if (d) { return d.hash; } });
-    var li = crumbs.enter()
-	.append('li')
+	.remove();
+    var li = d3.select('ul#meddb_breadcrumb')
+	.selectAll('li')
+	.data(meddb.history.list.slice(-6))
+	.enter()
+	.append('li');
     li.append('a')
 	.attr('href', function(d) { return d.hash; })
 	.text(function(d) { return d.text; });
     li.append('span')
 	.classed('divider', true)
 	.text(' / ');
-    crumbs.exit()
-	.remove();
 }
 
 
