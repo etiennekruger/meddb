@@ -2,7 +2,6 @@
    meddb to prevent namespace pollution. */
 
 meddb = {};
-meddb.history = [];
 
 /* Functions to aid in the loading of templates and template caching. */
 
@@ -81,6 +80,7 @@ meddb.medicine.list = function() {
 	    //rows.sort(medicine_sort);
 	});
     });
+    meddb.history.add(location.hash, 'All Medicine');
 }
 
 meddb.medicine.detail = function(id) {
@@ -161,6 +161,7 @@ meddb.medicine.detail = function(id) {
 		.text(function(d) { return d.text; })
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { if (d.hash) {location.hash = d.hash;} });
+	    meddb.history.add(location.hash, object_name());
 	});
     });
 }
@@ -237,6 +238,7 @@ meddb.product.detail = function(id) {
 		.text(function(d) { return d.text; })
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { location.hash = d.hash; });
+	    meddb.history.add(location.hash, data.name);
 	});
     });
 }
@@ -252,13 +254,21 @@ meddb.supplier.detail = function(id) {
 	    /* Helper functions to process data. */
 	    var registration = function(d) {
 		var row = [];
-		row.push(d.product.name);
-		row.push(d.country.name);
+		row.push({
+		    text: d.product.name,
+		    hash: '#product:'+d.product.id
+		});
+		row.push({
+		    text: d.country.name
+		});
 		var formulation = [];
 		d.product.medicine.ingredients.forEach(function(item) {
 		    formulation.push(item.inn+' '+item.strength);
 		});
-		row.push(formulation.join(' + '));
+		row.push({
+		    text: formulation.join(' + '),
+		    hash: '#medicine:'+d.product.medicine.id
+		});
 		return row;
 	    }
 	    /* Populate supplier heading section. */
@@ -270,14 +280,15 @@ meddb.supplier.detail = function(id) {
 		.selectAll('tr')
 		.data(data.registrations)
 		.enter()
-		.append('tr')
-		.style('cursor', 'pointer')
-		.on('click', function(d) { location.hash = 'product:'+d.product.id; });
+		.append('tr');
 	    rows.selectAll('td')
 		.data(registration)
 		.enter()
 		.append('td')
-		.text(function(d) { return d; });
+		.text(function(d) { return d.text; })
+		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
+		.on('click', function(d) { location.hash = d.hash; });
+	    meddb.history.add(location.hash, data.name);
 	});
     });
 }
@@ -323,8 +334,8 @@ meddb.tabber.change = function(tab) {
    list. */
 meddb.router = function() {
     var hash = location.hash;
-    var last = meddb.history[meddb.history.length-1];
-    if (hash == last) {
+    var last = meddb.history.list[meddb.history.list.length-1];
+    if ((last) && (hash == last.hash)) {
 	return;
     }
     //console.log('Routing to '+hash);
@@ -338,7 +349,7 @@ meddb.router = function() {
 	//    location.replace(last);
 	//}
     } else {
-	meddb.history.push(hash);
+	var text = '';
 	if (hash == '#medicine') {
 	    meddb.medicine.list();
 	} else if (hash.substring(0,10) == '#medicine:') {
@@ -363,21 +374,35 @@ meddb.router = function() {
 		.classed('active', true);
 	}
     }
+}
+
+/* Update history and breadcrumbs. */
+meddb.history = {};
+meddb.history.list = [];
+meddb.history.add = function(hash, text) {
+    var last = meddb.history.list[meddb.history.list.length-1];
+    if ((last) && (hash == last.hash)) {
+	return;
+    }
+    meddb.history.list.push({
+	hash: hash,
+	text: text
+    });
     var crumbs = d3.select('ul#meddb_breadcrumb')
 	.selectAll('li')
-	.data(meddb.history.slice(-6), function(d) { return d; });
-    crumbs.enter()
+	.data(meddb.history.list.slice(-6), function(d) { if (d) { return d.hash; } });
+    var li = crumbs.enter()
 	.append('li')
-	.append('a')
-	.attr('href', function(d) { return d; })
-	.text(function(d) { return d; })
-	.append('span')
+    li.append('a')
+	.attr('href', function(d) { return d.hash; })
+	.text(function(d) { return d.text; });
+    li.append('span')
 	.classed('divider', true)
 	.text(' / ');
     crumbs.exit()
 	.remove();
-    
 }
+
 
 /* Initialization function. Preloads base template and
    redirects control to the navigation router. */
