@@ -213,6 +213,7 @@ meddb.medicine.detail = function(id) {
 		},
 		data : graph_data
 	    }
+	    d3.select('#meddb_medicine_prices').html('');
 	    var graph = new HorizontalBarGraph(prices_graph);
 	    /* Add history option. */
 	    meddb.history.add(location.hash, object_name());
