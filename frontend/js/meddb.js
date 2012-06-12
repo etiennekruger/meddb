@@ -161,6 +161,60 @@ meddb.medicine.detail = function(id) {
 		.text(function(d) { return d.text; })
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { if (d.hash) {location.hash = d.hash;} });
+	    /* Add the medicine prices graph. */
+	    var prices_data = function() {
+		var countries = ['DRC', 'Lesotho', 'Malawi', 'Mozambique',
+				 'South Africa', 'Tanzania', 'Zambia', 'Zimbabwe'];
+		var prices = {};
+		countries.forEach(function(country) {
+		    prices[country] = [];
+		});
+		data.procurements.forEach(function(item) {
+		    prices[item.country.name].push(item.price);
+		});
+		graph_data = [];
+		countries.forEach(function(country) {
+		    var d = { 'key': country }
+		    if (prices[country].length > 0) {
+			d.value = d3.sum(prices[country]) / prices[country].length;
+		    } else {
+			d.value = 0;
+		    }
+		    graph_data.push(d);
+		});
+		return graph_data;
+	    }
+	    var prices_average = function(d) {
+		var sum = 0, count = 0;
+		d.forEach(function(i) {
+		    if (i.value > 0) {
+			sum += i.value;
+			count++;
+		    }
+		});
+		return sum/count;
+	    }
+	    var graph_data = prices_data();
+	    var graph_average = prices_average(graph_data);
+	    var prices_graph = {
+		width: 940,
+		height: 270,
+		node: '#meddb_medicine_prices',
+		bar : {
+		    'height': 25,
+		    'margin': 10,
+		    'max': graph_average*2,
+		    'background': '#dfe7e5'
+		},
+		colors: ['#08c', '#08c', '#08c', '#08c',
+			 '#08c', '#08c', '#08c', '#08c'],
+		line : {
+		    'constant': d3.round(graph_average,4)
+		},
+		data : graph_data
+	    }
+	    var graph = new HorizontalBarGraph(prices_graph);
+	    /* Add history option. */
 	    meddb.history.add(location.hash, object_name());
 	});
     });
