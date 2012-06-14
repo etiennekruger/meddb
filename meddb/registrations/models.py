@@ -108,7 +108,7 @@ class Ingredient(models.Model):
     
     def as_dict(self, minimal=False):
         return { 'id': self.inn.id,
-                 'inn': self.inn.name,
+                 'inn': self.inn.name.title(),
                  'strength': self.strength }
         
     def __unicode__(self):
