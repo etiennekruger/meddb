@@ -180,7 +180,7 @@ meddb.medicine.detail = function(id) {
 		graph_data = [];
 		countries.forEach(function(country) {
 		    var d = { 'key': country }
-		    if (prices[country].length > 0) {
+		    if ((prices[country]) && (prices[country].length > 0)) {
 			d.value = d3.sum(prices[country]) / prices[country].length;
 		    } else {
 			d.value = 0;
@@ -203,7 +203,7 @@ meddb.medicine.detail = function(id) {
 	    var graph_average = prices_average(graph_data);
 	    var prices_graph = {
 		width: 940,
-		height: 270,
+		height: 95,
 		node: '#meddb_medicine_prices',
 		bar : {
 		    'height': 25,
