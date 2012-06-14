@@ -1,10 +1,8 @@
 /* All functions for the Medicine Registration Database will live in the
    meddb to prevent namespace pollution. */
-
 meddb = {};
 
 /* Functions to aid in the loading of templates and template caching. */
-
 meddb.template = {};
 meddb.template.cache = {};
 
@@ -28,7 +26,6 @@ meddb.template.load = function(url, callback, selector) {
 }
 
 /* Functions for loading and populating medicine data. */
-
 meddb.medicine = {};
 
 meddb.medicine.list = function() {
@@ -42,10 +39,11 @@ meddb.medicine.list = function() {
 	});
 	row.push(formulation.join(' + '));
 	row.push(strength.join(' + '));
-	row.push(d.dosageform);
-	if (d.procurements) {
-	    row.push(d3.round(d.procurements[0].price,4));
-	}
+	row.push(d.dosageform.name);
+	row.push(d3.round(d.avgprice,4));
+	//if (d.procurements) {
+	//    row.push(d3.round(d.procurements[0].price,4));
+	//}
 	return row;
     }
     var medicine_sort = function(a, b) {
@@ -63,6 +61,7 @@ meddb.medicine.list = function() {
     }
     meddb.template.load('medicine_list.html', function() {
 	d3.json('/json/medicine/', function(data) {
+	    console.log(data.length);
 	    var rows = d3.select('#meddb_container')
 		.select('#meddb_medicine_list')
 		.select('tbody')
@@ -127,10 +126,12 @@ meddb.medicine.detail = function(id) {
 			suppliers.push(item.supplier.name);
 		    }
 		});
-		row.push({
-		    text: suppliers.join(', '),
-		    hash: 'supplier:'+d.registrations[0].supplier.id
-		});
+		if (d.registrations.length > 0) {
+		    row.push({
+			text: suppliers.join(', '),
+			hash: 'supplier:'+d.registrations[0].supplier.id
+		    });
+		}
 		var manufacturers = [];
 		d.registrations.forEach(function(item) {
 		    if (item.manufacturer) {
@@ -163,13 +164,17 @@ meddb.medicine.detail = function(id) {
 		.on('click', function(d) { if (d.hash) {location.hash = d.hash;} });
 	    /* Add the medicine prices graph. */
 	    var prices_data = function() {
-		var countries = ['DRC', 'Lesotho', 'Malawi', 'Mozambique',
-				 'South Africa', 'Tanzania', 'Zambia', 'Zimbabwe'];
+		//var countries = ['DRC', 'Lesotho', 'Malawi', 'Mozambique',
+		//		 'South Africa', 'Tanzania', 'Zambia', 'Zimbabwe'];
+		var countries = ['Kenya', 'Uganda', 'Tanzania'];
 		var prices = {};
-		countries.forEach(function(country) {
-		    prices[country] = [];
-		});
+		//countries.forEach(function(country) {
+		//    prices[country] = [];
+		//});
 		data.procurements.forEach(function(item) {
+		    if (typeof(prices[item.country.name]) == 'undefined') {
+			prices[item.country.name] = [];
+		    }
 		    prices[item.country.name].push(item.price);
 		});
 		graph_data = [];
@@ -222,7 +227,6 @@ meddb.medicine.detail = function(id) {
 }
 
 /* Product specific code. */
-
 meddb.product = {};
 
 meddb.product.detail = function(id) {
@@ -299,7 +303,6 @@ meddb.product.detail = function(id) {
 }
 
 /* Supplier specific code. */
-
 meddb.supplier = {};
 
 meddb.supplier.detail = function(id) {
@@ -352,6 +355,7 @@ meddb.supplier.detail = function(id) {
    and this breaks our history, so we use a custom tabber. */
 /* TODO: This does not quite work yet and needs to be fixed. */
 meddb.tabber = {};
+
 meddb.tabber.init = function() {
     var change = function() {
 	meddb.tabber.change(this.href.split('#tab:')[1]);
@@ -360,11 +364,13 @@ meddb.tabber.init = function() {
     d3.selectAll('a[href^="#tab:"]')
 	.on('click', change);
 }
+
 meddb.tabber.onclick = function(item) {
     meddb.tabber.change(item.href.split('#tab:')[1]);
     item.parentNode.className += ' active';
     return false;
 }
+
 meddb.tabber.change = function(tab) {
     d3.select('div#meddb_inner_container')
 	.select('div.tab-content')
@@ -434,6 +440,7 @@ meddb.router = function() {
 /* Update history and breadcrumbs. */
 meddb.history = {};
 meddb.history.list = [];
+
 meddb.history.add = function(hash, text) {
     var last = meddb.history.list[meddb.history.list.length-1];
     if ((last) && (hash == last.hash)) {
@@ -448,7 +455,7 @@ meddb.history.add = function(hash, text) {
 	.remove();
     var li = d3.select('ul#meddb_breadcrumb')
 	.selectAll('li')
-	.data(meddb.history.list.slice(-6))
+	.data(meddb.history.list.slice(-5))
 	.enter()
 	.append('li');
     li.append('a')

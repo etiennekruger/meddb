@@ -2,6 +2,11 @@ from django.db import models
 from django.core.urlresolvers import reverse
 import datetime
 
+def avg(list):
+    if len(list) == 0:
+        return float(0)
+    return sum(list) / len(list)
+
 # Abstract base models.
 #
 # These are base models for other complex models to derive off.
@@ -89,6 +94,14 @@ class Medicine(SourcedModel):
         return ', '.join([str(i) for i in self.ingredient_set.all()])
     
     def as_dict(self, products=True, minimal=False, procurements=True):
+        if minimal:
+            return {
+                'id': self.id,
+                'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
+                'dosageform': { 'id': self.dosageform.id,
+                                'name': self.dosageform.name },
+                'avgprice': avg([p.price for p in Procurement.objects.filter(product__medicine=self)]),
+                'products': [{ 'id': p.id, 'name': p.name } for p in self.product_set.all()] }
         d = { 'id': self.id,
               'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
               'dosageform': self.dosageform.as_dict() }
@@ -319,7 +332,7 @@ class Procurement(SourcedModel):
     site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
-    price = models.FloatField(verbose_name='Price per Pack (USD)')
+    price = models.FloatField(verbose_name='Price per Unit (USD)')
     volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', blank=True, null=True)
     period = models.IntegerField(max_length=16, verbose_name='Procurement Period', help_text='Time frame in months during which the contract will be implemented.', blank=True, null=True)
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
