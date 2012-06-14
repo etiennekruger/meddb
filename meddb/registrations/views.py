@@ -50,8 +50,10 @@ class JSONRepresentation(JSONView):
         return self.instance.as_dict()
 
 class JSONList(JSONView):
+    queryset = None
     def get_json_data(self, *args, **kwargs):
-        return [i.as_dict(minimal=True) for i in self.model.objects.select_related().all()]
+        queryset = self.queryset or self.model.objects.all()
+        return [i.as_dict(minimal=True) for i in queryset.select_related()]
 
 # JSON Representation of the individual models.
 #
@@ -68,6 +70,13 @@ class INNView(JSONRepresentation):
 
 class INNListView(JSONList):
     model = models.INN
+    
+    @property
+    def queryset(self):
+        search = self.request.GET.get('search', None)
+        if not search:
+            return None
+        return self.model.objects.filter(name__contains=search)
 
 class ProductView(JSONRepresentation):
     model = models.Product
@@ -80,6 +89,14 @@ class MedicineView(JSONRepresentation):
 
 class MedicineListView(JSONList):
     model = models.Medicine
+    
+    @property
+    def queryset(self):
+        search = self.request.GET.get('search', None)
+        if not search:
+            print self.model.objects.all().count()
+            return self.model.objects.all()
+        return self.model.objects.filter(ingredient__inn__name__contains=search)
 
 class ManufacturerView(JSONRepresentation):
     model = models.Manufacturer

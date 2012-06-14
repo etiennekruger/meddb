@@ -1,8 +1,5 @@
-/* All functions for the Medicine Registration Database will live in the
-   meddb to prevent namespace pollution. */
-meddb = {};
-
-/* Functions to aid in the loading of templates and template caching. */
+(function() {
+meddb = {}
 meddb.template = {};
 meddb.template.cache = {};
 
@@ -24,10 +21,112 @@ meddb.template.load = function(url, callback, selector) {
 	callback();
     });
 }
+meddb.router = function() {
+    var hash = location.hash;
+    var last = meddb.history.list[meddb.history.list.length-1];
+    if ((last) && (hash == last.hash)) {
+	return;
+    }
+    //console.log('Routing to '+hash);
+    if ((hash == '') || (hash == '#')) {
+	location.hash = 'medicine';
+    } else if (hash.substring(0,5) == '#tab:') {
+	/* Handle switching of tabs. */
+	var tab = hash.substring(5);
+	meddb.tabber.change(tab);
+	//if (last) {
+	//    location.replace(last);
+	//}
+    } else {
+	var text = '';
+	if (hash == '#medicine') {
+	    meddb.medicine.list();
+	} else if (hash.substring(0,10) == '#medicine:') {
+	    var id = parseInt(hash.substring(10));
+	    meddb.medicine.detail(id);
+	} else if (hash.substring(0,9) == '#product:') {
+	    var id = parseInt(hash.substring(9));
+	    meddb.product.detail(id);
+	} else if (hash.substring(0,10) == '#supplier:') {
+	    var id = parseInt(hash.substring(10));
+	    meddb.supplier.detail(id);
+	} else if (hash.substring(0,5) == '#tab:') {
+	    /* Handle switching of tabs. */
+	    var tab = hash.substring(5);
+	    d3.select('div#meddb_inner_container')
+		.select('div.tab-content')
+		.selectAll('div.tab-pane')
+		.classed('active', false);
+	    d3.select('div#meddb_inner_container')
+		.select('div.tab-content')
+		.select('div.tab-pane#'+tab)
+		.classed('active', true);
+	}
+    }
+}
+meddb.history = {};
+meddb.history.list = [];
 
-/* Functions for loading and populating medicine data. */
+meddb.history.add = function(hash, text) {
+    var last = meddb.history.list[meddb.history.list.length-1];
+    if ((last) && (hash == last.hash)) {
+	return;
+    }
+    meddb.history.list.push({
+	hash: hash,
+	text: text
+    });
+    d3.select('ul#meddb_breadcrumb')
+	.selectAll('li')
+	.remove();
+    var li = d3.select('ul#meddb_breadcrumb')
+	.selectAll('li')
+	.data(meddb.history.list.slice(-5))
+	.enter()
+	.append('li');
+    li.append('a')
+	.attr('href', function(d) { return d.hash; })
+	.text(function(d) { return d.text; });
+    li.append('span')
+	.classed('divider', true)
+	.text(' / ');
+}
+meddb.tabber = {};
+
+meddb.tabber.init = function() {
+    var change = function() {
+	meddb.tabber.change(this.href.split('#tab:')[1]);
+	return false;
+    }
+    d3.selectAll('a[href^="#tab:"]')
+	.on('click', change);
+}
+
+meddb.tabber.onclick = function(item) {
+    meddb.tabber.change(item.href.split('#tab:')[1]);
+    item.parentNode.className += ' active';
+    return false;
+}
+
+meddb.tabber.change = function(tab) {
+    d3.select('div#meddb_inner_container')
+	.select('div.tab-content')
+	.selectAll('div.tab-pane')
+	.classed('active', false);
+    d3.select('div#meddb_inner_container')
+	.select('div.tab-content')
+	.select('div.tab-pane#'+tab)
+	.classed('active', true);
+    d3.select('div#meddb_inner_container')
+	.select('ul.nav.nav-tabs')
+	.selectAll('li')
+	.classed('active', false);
+    d3.select('div#meddb_inner_container')
+	.select('ul.nav.nav-tabs')
+	.select('li>a[href="#tab:'+tab+'"]')
+	.classed('active', true);
+}
 meddb.medicine = {};
-
 meddb.medicine.list = function() {
     var row_data = function(d) {
 	var row = [];
@@ -61,7 +160,6 @@ meddb.medicine.list = function() {
     }
     meddb.template.load('medicine_list.html', function() {
 	d3.json('/json/medicine/', function(data) {
-	    console.log(data.length);
 	    var rows = d3.select('#meddb_container')
 		.select('#meddb_medicine_list')
 		.select('tbody')
@@ -81,7 +179,6 @@ meddb.medicine.list = function() {
     });
     meddb.history.add(location.hash, 'All Medicine');
 }
-
 meddb.medicine.detail = function(id) {
     meddb.template.load('medicine_detail.html', function() {
 	//meddb.tabber.init();
@@ -119,31 +216,29 @@ meddb.medicine.detail = function(id) {
 	    /* Populate products table. */
 	    var product_data = function(d) {
 		var row = [];
-		row.push({ text: d.name, hash: 'product:'+d.id });
-		var suppliers = [];
-		d.registrations.forEach(function(item) {
-		    if (item.supplier) {
-			suppliers.push(item.supplier.name);
-		    }
+		row.push({
+		    text: d.product.name,
+		    hash: 'product:'+d.product.id
 		});
-		if (d.registrations.length > 0) {
+		if (d.supplier) {
 		    row.push({
-			text: suppliers.join(', '),
-			hash: 'supplier:'+d.registrations[0].supplier.id
+			text: d.supplier.name,
+			hash: 'supplier:'+d.supplier.id
 		    });
+		} else {
+		    row.push({ text: '' });
 		}
-		var manufacturers = [];
-		d.registrations.forEach(function(item) {
-		    if (item.manufacturer) {
-			manufacturers.push(item.manufacturer.name);
-		    }
+		if (d.manufacturer) {
+		    row.push({
+			text: d.manufacturer.name,
+			hash: 'manufacturer:'+d.manufacturer.id
+		    });
+		} else {
+		    row.push({ text: '' });
+		}
+		row.push({
+		    text: d.country.name,
 		});
-		row.push({ text: manufacturers.join(', ') });
-		var countries = [];
-		d.registrations.forEach(function(item) {
-		    countries.push(item.country.name);
-		});
-		row.push({ text: countries.join(', ') });
 		return row;
 	    }
 	    d3.select('#meddb_medicine_heading')
@@ -152,7 +247,7 @@ meddb.medicine.detail = function(id) {
 		.select('#meddb_medicine_product')
 		.select('tbody')
 		.selectAll('tr')
-		.data(data.products)
+		.data(data.procurements)
 		.enter()
 		.append('tr');
 	    rows.selectAll('td')
@@ -225,10 +320,7 @@ meddb.medicine.detail = function(id) {
 	});
     });
 }
-
-/* Product specific code. */
 meddb.product = {};
-
 meddb.product.detail = function(id) {
     meddb.template.load('product_detail.html', function() {
 	//meddb.tabber.init();
@@ -246,11 +338,10 @@ meddb.product.detail = function(id) {
 		d.push(strength.join(' + '));
 		return d;
 	    }
-	    var registration = function(d) {
+	    var procurement = function(d) {
 		var row = [];
 		row.push({
-		    text: d.country.name,
-		    hash: null
+		    text: d.country.name
 		});
 		if (d.supplier) {
 		    row.push({
@@ -258,10 +349,7 @@ meddb.product.detail = function(id) {
 			hash: 'supplier:'+d.supplier.id
 		    })
 		} else {
-		    row.push({
-			text: 'Unknown',
-			hash: null
-		    })
+		    row.push({ text: '' });
 		}
 		if (d.manufacturer) {
 		    row.push({
@@ -269,10 +357,7 @@ meddb.product.detail = function(id) {
 			hash: 'manufacturer:'+d.manufacturer.id
 		    })
 		} else {
-		    row.push({
-			text: 'Unknown',
-			hash: null
-		    })
+		    row.push({ text: '' });
 		}
 		return row;
 	    }
@@ -287,11 +372,11 @@ meddb.product.detail = function(id) {
 	    var rows = d3.select('table#meddb_product_registration')
 		.select('tbody')
 		.selectAll('tr')
-		.data(data.registrations)
+		.data(data.procurements)
 		.enter()
 		.append('tr');
 	    rows.selectAll('td')
-		.data(registration)
+		.data(procurement)
 		.enter()
 		.append('td')
 		.text(function(d) { return d.text; })
@@ -301,31 +386,28 @@ meddb.product.detail = function(id) {
 	});
     });
 }
-
-/* Supplier specific code. */
 meddb.supplier = {};
-
 meddb.supplier.detail = function(id) {
     meddb.template.load('supplier_detail.html', function() {
 	//meddb.tabber.init();
 	d3.json('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
-	    var registration = function(d) {
+	    var procurement = function(d) {
 		var row = [];
 		row.push({
 		    text: d.product.name,
-		    hash: '#product:'+d.product.id
+		    hash: 'product:'+d.product.id
 		});
 		row.push({
-		    text: d.country.name
+		    text: d.country.name,
 		});
-		var formulation = [];
-		d.product.medicine.ingredients.forEach(function(item) {
-		    formulation.push(item.inn+' '+item.strength);
+		var ingredients = [];
+		d.product.medicine.ingredients.forEach(function(i) {
+		    ingredients.push(i.inn+' '+i.strength);
 		});
 		row.push({
-		    text: formulation.join(' + '),
-		    hash: '#medicine:'+d.product.medicine.id
+		    text: ingredients.join(', '),
+		    hash: 'medicine:'+d.product.medicine.id
 		});
 		return row;
 	    }
@@ -336,11 +418,11 @@ meddb.supplier.detail = function(id) {
 	    var rows = d3.select('table#meddb_supplier_registration')
 		.select('tbody')
 		.selectAll('tr')
-		.data(data.registrations)
+		.data(data.procurements)
 		.enter()
 		.append('tr');
 	    rows.selectAll('td')
-		.data(registration)
+		.data(procurement)
 		.enter()
 		.append('td')
 		.text(function(d) { return d.text; })
@@ -350,129 +432,7 @@ meddb.supplier.detail = function(id) {
 	});
     });
 }
-
-/* Tab changer. Bootstrap uses location.hash to change tabs
-   and this breaks our history, so we use a custom tabber. */
-/* TODO: This does not quite work yet and needs to be fixed. */
-meddb.tabber = {};
-
-meddb.tabber.init = function() {
-    var change = function() {
-	meddb.tabber.change(this.href.split('#tab:')[1]);
-	return false;
-    }
-    d3.selectAll('a[href^="#tab:"]')
-	.on('click', change);
-}
-
-meddb.tabber.onclick = function(item) {
-    meddb.tabber.change(item.href.split('#tab:')[1]);
-    item.parentNode.className += ' active';
-    return false;
-}
-
-meddb.tabber.change = function(tab) {
-    d3.select('div#meddb_inner_container')
-	.select('div.tab-content')
-	.selectAll('div.tab-pane')
-	.classed('active', false);
-    d3.select('div#meddb_inner_container')
-	.select('div.tab-content')
-	.select('div.tab-pane#'+tab)
-	.classed('active', true);
-    d3.select('div#meddb_inner_container')
-	.select('ul.nav.nav-tabs')
-	.selectAll('li')
-	.classed('active', false);
-    d3.select('div#meddb_inner_container')
-	.select('ul.nav.nav-tabs')
-	.select('li>a[href="#tab:'+tab+'"]')
-	.classed('active', true);
-}
-
-/* Navigation router. Loads the appropriate content based
-   on the current hash. Additionally populates the history
-   list. */
-meddb.router = function() {
-    var hash = location.hash;
-    var last = meddb.history.list[meddb.history.list.length-1];
-    if ((last) && (hash == last.hash)) {
-	return;
-    }
-    //console.log('Routing to '+hash);
-    if ((hash == '') || (hash == '#')) {
-	location.hash = 'medicine';
-    } else if (hash.substring(0,5) == '#tab:') {
-	/* Handle switching of tabs. */
-	var tab = hash.substring(5);
-	meddb.tabber.change(tab);
-	//if (last) {
-	//    location.replace(last);
-	//}
-    } else {
-	var text = '';
-	if (hash == '#medicine') {
-	    meddb.medicine.list();
-	} else if (hash.substring(0,10) == '#medicine:') {
-	    var id = parseInt(hash.substring(10));
-	    meddb.medicine.detail(id);
-	} else if (hash.substring(0,9) == '#product:') {
-	    var id = parseInt(hash.substring(9));
-	    meddb.product.detail(id);
-	} else if (hash.substring(0,10) == '#supplier:') {
-	    var id = parseInt(hash.substring(10));
-	    meddb.supplier.detail(id);
-	} else if (hash.substring(0,5) == '#tab:') {
-	    /* Handle switching of tabs. */
-	    var tab = hash.substring(5);
-	    d3.select('div#meddb_inner_container')
-		.select('div.tab-content')
-		.selectAll('div.tab-pane')
-		.classed('active', false);
-	    d3.select('div#meddb_inner_container')
-		.select('div.tab-content')
-		.select('div.tab-pane#'+tab)
-		.classed('active', true);
-	}
-    }
-}
-
-/* Update history and breadcrumbs. */
-meddb.history = {};
-meddb.history.list = [];
-
-meddb.history.add = function(hash, text) {
-    var last = meddb.history.list[meddb.history.list.length-1];
-    if ((last) && (hash == last.hash)) {
-	return;
-    }
-    meddb.history.list.push({
-	hash: hash,
-	text: text
-    });
-    d3.select('ul#meddb_breadcrumb')
-	.selectAll('li')
-	.remove();
-    var li = d3.select('ul#meddb_breadcrumb')
-	.selectAll('li')
-	.data(meddb.history.list.slice(-5))
-	.enter()
-	.append('li');
-    li.append('a')
-	.attr('href', function(d) { return d.hash; })
-	.text(function(d) { return d.text; });
-    li.append('span')
-	.classed('divider', true)
-	.text(' / ');
-}
-
-
-/* Initialization function. Preloads base template and
-   redirects control to the navigation router. */
-meddb.init = function() {
-    meddb.template.load('base.html', function() {
-	meddb.router();
-    }, '#meddb_container');
-    window.onhashchange = meddb.router;
-};
-meddb.init();
+meddb.template.load('base.html', function() {
+    meddb.router();
+}, '#meddb_container');
+window.onhashchange = meddb.router;})();

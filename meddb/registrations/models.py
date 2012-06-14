@@ -249,6 +249,28 @@ class Supplier(SourcedModel):
                        'altphone': self.altphone,
                        'altemail': self.altemail })
             d['registrations'] = [r.as_dict(minimal=True) for r in self.registration_set.all()]
+            d['procurements'] = [{
+                    'id': p.id,
+                    'product': {
+                        'id': p.product.id,
+                        'name': p.product.name,
+                        'medicine': {
+                            'id': p.product.medicine.id,
+                            'dosageform': {
+                                'id': p.product.medicine.dosageform.id,
+                                'name': p.product.medicine.dosageform.name
+                                },
+                            'ingredients': [{
+                                    'inn': i.inn.name.title(),
+                                    'strength': i.strength
+                                    } for i in p.product.medicine.ingredient_set.all()]
+                            }
+                        },
+                    'country': {
+                        'id': p.country.id,
+                        'name': p.country.name
+                        }
+                    } for p in self.procurement_set.all()]
             #d['procurements'] = [p.as_dict(minimal=True, supplier=False) for p in self.procurement_set.all()]
         return d
     
