@@ -85,7 +85,7 @@ class INNListView(JSONList):
         search = self.request.GET.get('search', None)
         if not search:
             return None
-        return self.model.objects.filter(name__contains=search)
+        return self.model.objects.filter(name__icontains=search)
 
 class ProductView(JSONRepresentation):
     model = models.Product
@@ -104,8 +104,8 @@ class MedicineListView(JSONList):
         search = self.request.GET.get('search', None)
         if not search:
             return self.model.objects.all()
-        query = Q(ingredient__inn__name__contains=search)
-        query |= Q(product__name__contains=search)
+        query = Q(ingredient__inn__name__icontains=search)
+        query |= Q(product__name__icontains=search)
         return self.model.objects.filter(query)
 
 class ManufacturerView(JSONRepresentation):
