@@ -1,6 +1,7 @@
 import django.utils.simplejson as json
 from django import http
 from django.views.generic import View
+from django.db.models import Q
 
 import models
 
@@ -57,7 +58,10 @@ class JSONRepresentation(JSONView):
 class JSONList(JSONView):
     queryset = None
     def get_json_data(self, *args, **kwargs):
-        queryset = self.queryset or self.model.objects.all()
+        if self.queryset == None:
+            queryset = self.model.objects.all()
+        else:
+            queryset = self.queryset
         return [i.as_dict(minimal=True) for i in queryset.select_related()]
 
 # JSON Representation of the individual models.
@@ -99,9 +103,10 @@ class MedicineListView(JSONList):
     def queryset(self):
         search = self.request.GET.get('search', None)
         if not search:
-            print self.model.objects.all().count()
             return self.model.objects.all()
-        return self.model.objects.filter(ingredient__inn__name__contains=search)
+        query = Q(ingredient__inn__name__contains=search)
+        query |= Q(product__name__contains=search)
+        return self.model.objects.filter(query)
 
 class ManufacturerView(JSONRepresentation):
     model = models.Manufacturer
@@ -132,5 +137,3 @@ class ProcurementView(JSONRepresentation):
 
 class ProcurementListView(JSONList):
     model = models.Procurement
-
-

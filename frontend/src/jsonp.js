@@ -1,5 +1,9 @@
 var standard_loader = function(url, callback) {
-    console.log('standard loader not implemented yet');
+    if (url.slice(-5) == '.html') {
+	d3.html(url, callback);
+    } else {
+	d3.json(url, callback);
+    }
 }
 
 var jsonp_loader = function(url, callback) {

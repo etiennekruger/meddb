@@ -1,11 +1,15 @@
 (function() {
 meddb = {}
 var settings = {
-    'base_url': 'http://meddb.medicinesinfohub.net',//'http://localhost:8000/static/frontend', //'http://meddb.medicinesinfohub.net',
+    'base_url': 'http://meddb.medicinesinfohub.net',
     'loader': 'jsonp'
 }
 var standard_loader = function(url, callback) {
-    console.log('standard loader not implemented yet');
+    if (url.slice(-5) == '.html') {
+	d3.html(url, callback);
+    } else {
+	d3.json(url, callback);
+    }
 }
 
 var jsonp_loader = function(url, callback) {
