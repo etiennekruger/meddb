@@ -20,6 +20,11 @@ class JSONResponseMixin(object):
 
     def get_json_response(self, content, **httpresponse_kwargs):
         "Construct an `HttpResponse` object."
+        jsonp = self.request.GET.get('jsonp', False)
+        if jsonp:
+            return http.HttpResponse(jsonp+'('+content+');',
+                                     content_type='text/javascript',
+                                     **httpresponse_kwargs)            
         return http.HttpResponse(content,
                                  content_type='application/json',
                                  **httpresponse_kwargs)
@@ -40,7 +45,7 @@ class JSONView(JSONResponseMixin, View):
         "Serialize the JSON data into an HTTP response."
         context = self.get_json_data(*args, **kwargs)
         response = self.render_to_response(context)
-        key = request.path.encode('ascii','ignore')
+        key = request.get_full_path().encode('ascii','ignore')
         mc.set(key, response.content, 60*60*24*2)
         return response
 
