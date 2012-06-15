@@ -1,4 +1,4 @@
 var settings = {
-    'base_url': 'http://localhost:8000/static/frontend', //'http://meddb.medicinesinfohub.net',
+    'base_url': 'http://meddb.medicinesinfohub.net',
     'loader': 'jsonp'
 }

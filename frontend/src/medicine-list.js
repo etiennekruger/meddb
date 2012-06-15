@@ -16,7 +16,7 @@ meddb.medicine.list = function() {
     }
     meddb.template.hide();
     load('/medicine_list.html', function(fragment) {
-	d3.json('/json/medicine/', function(data) {
+	load('/json/medicine/', function(data) {
 	    var rows = d3.select(fragment)
 		.select('#meddb_medicine_list')
 		.select('tbody')

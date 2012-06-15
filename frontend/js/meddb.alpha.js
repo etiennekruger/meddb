@@ -1,7 +1,7 @@
 (function() {
 meddb = {}
 var settings = {
-    'base_url': 'http://localhost:8000/static/frontend', //'http://meddb.medicinesinfohub.net',
+    'base_url': 'http://meddb.medicinesinfohub.net',//'http://localhost:8000/static/frontend', //'http://meddb.medicinesinfohub.net',
     'loader': 'jsonp'
 }
 var standard_loader = function(url, callback) {
@@ -27,15 +27,16 @@ var jsonp_loader = function(url, callback) {
 	}
     }
     /* Now add the script tag to the head. */
-    var tag = d3.select('head')
+    d3.select('html')
 	.select('script#meddb_jsonp')
-	.data(request);
-    tag.enter()
+	.remove();
+    d3.select('html')
+	.select('script#meddb_jsonp')
+	.data(request)
+	.enter()
 	.append('script')
 	.attr('id', 'meddb_jsonp')
 	.attr('src', function(d) { return d; });
-    tag.exit()
-	.remove();
 }
 
 var load = function(url, callback) {
@@ -247,7 +248,7 @@ meddb.medicine.list = function() {
     }
     meddb.template.hide();
     load('/medicine_list.html', function(fragment) {
-	d3.json('/json/medicine/', function(data) {
+	load('/json/medicine/', function(data) {
 	    var rows = d3.select(fragment)
 		.select('#meddb_medicine_list')
 		.select('tbody')
@@ -270,7 +271,7 @@ meddb.medicine.list = function() {
 meddb.medicine.detail = function(id) {
     meddb.template.hide();
     load('/medicine_detail.html', function(fragment) {
-	d3.json('/json/medicine/'+id+'/', function(data) {
+	load('/json/medicine/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var object_name = function() {
 		var formulation = [];
@@ -410,7 +411,7 @@ meddb.product = {};
 meddb.product.detail = function(id) {
     meddb.template.hide();
     load('/product_detail.html', function(fragment) {
-	d3.json('/json/product/'+id+'/', function(data) {
+	load('/json/product/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var detail = function() {
 		var d = [];
@@ -480,7 +481,7 @@ meddb.supplier = {};
 meddb.supplier.detail = function(id) {
     meddb.template.hide();
     load('/supplier_detail.html', function(fragment) {
-	d3.json('/json/supplier/'+id+'/', function(data) {
+	load('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var procurement = function(d) {
 		var row = [];

@@ -1,7 +1,7 @@
 meddb.medicine.detail = function(id) {
     meddb.template.hide();
     load('/medicine_detail.html', function(fragment) {
-	d3.json('/json/medicine/'+id+'/', function(data) {
+	load('/json/medicine/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var object_name = function() {
 		var formulation = [];

@@ -21,15 +21,16 @@ var jsonp_loader = function(url, callback) {
 	}
     }
     /* Now add the script tag to the head. */
-    var tag = d3.select('head')
+    d3.select('html')
 	.select('script#meddb_jsonp')
-	.data(request);
-    tag.enter()
+	.remove();
+    d3.select('html')
+	.select('script#meddb_jsonp')
+	.data(request)
+	.enter()
 	.append('script')
 	.attr('id', 'meddb_jsonp')
 	.attr('src', function(d) { return d; });
-    tag.exit()
-	.remove();
 }
 
 var load = function(url, callback) {
