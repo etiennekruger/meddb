@@ -1,4 +1,4 @@
-meddb.callback("<div class="meddb_inner_page">
+meddb.callback('<div class="meddb_inner_page">
   <table class="table table-bordered" id="meddb_medicine_list">
     <thead>
       <tr>
@@ -12,4 +12,4 @@ meddb.callback("<div class="meddb_inner_page">
     <tbody>
     </tbody>
   </table>
-</div>");
+</div>');
