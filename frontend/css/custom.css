@@ -27,7 +27,7 @@ div#meddb_inner_container > img#meddb_loading {
 }
 
 input#meddb_medicine_search {
-    width: 100%;
+    width: 930px;
 }
 
 div#meddb_inner_container > div.meddb_inner_page {
