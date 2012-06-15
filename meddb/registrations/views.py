@@ -6,7 +6,7 @@ import models
 
 # Setup memcache for nginx.
 import memcache
-mc=memcache.Client(['192.168.122.1:11211'])
+mc=memcache.Client(['192.168.122.1:11211'], server_max_value_length=1024*1024*4)
 
 # View base classes.
 #
