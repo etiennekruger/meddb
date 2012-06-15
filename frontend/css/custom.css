@@ -18,6 +18,14 @@ div#meddb_inner_container {
     position: relative;
 }
 
+div#meddb_inner_container > img#meddb_loading {
+    position: absolute;
+    top: 40px;
+    left: 400px;
+    z-index: -1;
+    opacity: 0;
+}
+
 div#meddb_inner_container > div.meddb_inner_page {
     position: absolute;
     width: 100%;

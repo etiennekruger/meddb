@@ -25,6 +25,9 @@ class MedicineAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'medicine')
 
+class MSHPriceAdmin(admin.ModelAdmin):
+    list_display = ('medicine', 'price')
+
 class SupplierAdmin(admin.ModelAdmin):
     list_display = ('name', 'country', 'contact_person', 'website', 'is_manufacturer')
     list_filter = ('country',)
@@ -62,6 +65,7 @@ admin.site.register(models.DosageForm, DosageFormAdmin)
 admin.site.register(models.INN, INNAdmin)
 admin.site.register(models.Medicine, MedicineAdmin)
 admin.site.register(models.Product, ProductAdmin)
+admin.site.register(models.MSHPrice, MSHPriceAdmin)
 admin.site.register(models.Manufacturer, ManufacturerAdmin)
 admin.site.register(models.Site)
 admin.site.register(models.Supplier, SupplierAdmin)

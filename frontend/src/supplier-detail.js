@@ -1,5 +1,6 @@
 meddb.supplier.detail = function(id) {
-    meddb.template.load('supplier_detail.html', function() {
+    meddb.template.hide();
+    meddb.template.load('supplier_detail.html', function(fragment) {
 	//meddb.tabber.init();
 	d3.json('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
@@ -23,10 +24,12 @@ meddb.supplier.detail = function(id) {
 		return row;
 	    }
 	    /* Populate supplier heading section. */
-	    d3.select('#meddb_supplier_heading')
+	    d3.select(fragment)
+		.select('#meddb_supplier_heading')
 		.text(data.name);
 	    /* Populate the product registrations table. */
-	    var rows = d3.select('table#meddb_supplier_registration')
+	    var rows = d3.select(fragment)
+		.select('table#meddb_supplier_registration')
 		.select('tbody')
 		.selectAll('tr')
 		.data(data.procurements)
@@ -40,6 +43,7 @@ meddb.supplier.detail = function(id) {
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { location.hash = d.hash; });
 	    meddb.history.add(location.hash, data.name);
+	    meddb.template.show(fragment);
 	});
     });
 }

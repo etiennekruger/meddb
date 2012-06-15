@@ -93,6 +93,13 @@ class Medicine(SourcedModel):
     def actives(self):
         return ', '.join([str(i) for i in self.ingredient_set.all()])
     
+    @property
+    def msh(self):
+        try:
+            return self.mshprice.price
+        except:
+            return None
+    
     def as_dict(self, products=True, minimal=False, procurements=True):
         if minimal:
             return {
@@ -101,10 +108,16 @@ class Medicine(SourcedModel):
                 'dosageform': { 'id': self.dosageform.id,
                                 'name': self.dosageform.name },
                 'avgprice': avg([p.price for p in Procurement.objects.filter(product__medicine=self)]),
-                'products': [{ 'id': p.id, 'name': p.name } for p in self.product_set.all()] }
+                'mshprice': self.msh,
+                'products': [{
+                        'id': p.id,
+                        'name': p.name
+                        } for p in self.product_set.all()]
+                }
         d = { 'id': self.id,
               'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
-              'dosageform': self.dosageform.as_dict() }
+              'dosageform': self.dosageform.as_dict(),
+              'mshprice': self.msh }
         if procurements:
             d['procurements'] = [p.as_dict(minimal=True, medicine=False) for p in Procurement.objects.filter(product__medicine=self)]
         if products:
@@ -147,6 +160,18 @@ class Product(SourcedModel):
     
     def __unicode__(self):
         return u'%s (%s)' % (self.name, str(self.medicine))
+
+# Pricing information.
+#
+# These models will probably be altered at some stage to include alternative
+# defined prices per medicine. For now it is a simple MSH price.
+
+class MSHPrice(models.Model):
+    medicine = models.OneToOneField(Medicine)
+    price = models.FloatField(help_text='The MSH price for the medicine.')
+    
+    def __unicode__(self):
+        return u'%s @ %.4f' % (self.medicine, self.price)
 
 # Manufacturer information.
 #

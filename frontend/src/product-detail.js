@@ -1,5 +1,6 @@
 meddb.product.detail = function(id) {
-    meddb.template.load('product_detail.html', function() {
+    meddb.template.hide();
+    meddb.template.load('product_detail.html', function(fragment) {
 	//meddb.tabber.init();
 	d3.json('/json/product/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
@@ -39,14 +40,17 @@ meddb.product.detail = function(id) {
 		return row;
 	    }
 	    /* Populate product detail section. */
-	    d3.select('#meddb_product_heading')
+	    d3.select(fragment)
+		.select('#meddb_product_heading')
 		.text(data.name);
-	    d3.select('table#meddb_product_detail')
+	    d3.select(fragment)
+		.select('table#meddb_product_detail')
 		.selectAll('td')
 		.data(detail)
 		.text(function(d) { return d; });
 	    /* Populate the product registrations table. */
-	    var rows = d3.select('table#meddb_product_registration')
+	    var rows = d3.select(fragment)
+		.select('table#meddb_product_registration')
 		.select('tbody')
 		.selectAll('tr')
 		.data(data.procurements)
@@ -60,6 +64,7 @@ meddb.product.detail = function(id) {
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { location.hash = d.hash; });
 	    meddb.history.add(location.hash, data.name);
+	    meddb.template.show(fragment);
 	});
     });
 }

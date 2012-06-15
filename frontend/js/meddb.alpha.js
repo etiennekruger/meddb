@@ -3,23 +3,78 @@ meddb = {}
 meddb.template = {};
 meddb.template.cache = {};
 
-meddb.template.load = function(url, callback, selector) {
-    selector = selector || '#meddb_inner_container';
-    var inject = function(data) {
-	d3.select(selector)[0][0]
-	    .innerHTML = '';
-	d3.select(selector)[0][0]
-	    .appendChild(data);
-    }
-    if (meddb.template.cache[url]) {
-	inject(meddb.template.cache[url]);
-	callback();
-    }
-    d3.html(url, function(data) {
-	meddb.template.cache[url] = data;
-	inject(data);
-	callback();
+meddb.template.load = function(url, callback) {
+    //if (meddb.template.cache[url]) {
+    //    var fragment = meddb.template.cache[url];
+    //    callback(fragment.cloneNode(true));
+    //}
+    d3.html(url, function(fragment) {
+	//meddb.template.cache[url] = fragment;
+	callback(fragment.cloneNode(true));
     });
+}
+
+meddb.template.inject = function(fragment, selector) {
+    selector = selector || '#meddb_inner_container';
+    var node = d3.select(selector)[0][0];
+    node.innerHTML = '';
+    node.appendChild(fragment);
+}
+
+meddb.template.hide = function() {
+    d3.select('#meddb_page')
+	.attr('id', 'meddb_page_outgoing')
+	.transition()
+	.style('opacity', '0')
+	.style('left', '-950px')
+	.remove();
+    d3.select('img#meddb_loading')
+	.transition()
+	.duration(100)
+	.style('opacity', 1);
+}
+
+meddb.template.show = function(fragment) {
+    var selector = '#meddb_inner_container';
+    d3.select(fragment)
+	.select('.meddb_inner_page')
+	.attr('id', 'meddb_page_incoming')
+	.style('opacity', '0')
+	.style('left', '950px');
+    var node = d3.select(selector)[0][0];
+    node.appendChild(fragment);
+    d3.select('#meddb_page_incoming')
+	.transition()
+	.style('opacity', '1')
+	.style('left', '0px')
+	.attr('id', 'meddb_page');
+    d3.select('img#meddb_loading')
+	.transition()
+	.duration(100)
+	.style('opacity', 0);
+}
+
+meddb.template.fx = function(fragment) {
+    var selector = '#meddb_inner_container';
+    d3.select(fragment)
+	.select('.meddb_inner_page')
+	.attr('id', 'meddb_page_incoming')
+	.style('opacity', '0')
+	.style('left', '950px');
+    var node = d3.select(selector)[0][0];
+    //node.innerHTML = '';
+    node.appendChild(fragment);
+    d3.select('#meddb_page')
+	.attr('id', 'meddb_page_outgoing')
+	.transition()
+	.style('opacity', '0')
+	.style('left', '-950px')
+	.remove();
+    d3.select('#meddb_page_incoming')
+	.transition()
+	.style('opacity', '1')
+	.style('left', '0px')
+	.attr('id', 'meddb_page');
 }
 meddb.router = function() {
     var hash = location.hash;
@@ -140,27 +195,13 @@ meddb.medicine.list = function() {
 	row.push(strength.join(' + '));
 	row.push(d.dosageform.name);
 	row.push(d3.round(d.avgprice,4));
-	//if (d.procurements) {
-	//    row.push(d3.round(d.procurements[0].price,4));
-	//}
+	row.push(d3.round(d.mshprice,4) || '');
 	return row;
     }
-    var medicine_sort = function(a, b) {
-	if ((a) && (b)) {
-	    if (a.ingredients[0].inn < b.ingredients[0].inn) {
-		return -1;
-	    } else if (a.ingredients[0].inn > b.ingredients[0].inn) {
-		return 1;
-	    } else {
-		return 0;
-	    }
-	} else {
-	    return 0;
-	}
-    }
-    meddb.template.load('medicine_list.html', function() {
+    meddb.template.hide();
+    meddb.template.load('medicine_list.html', function(fragment) {
 	d3.json('/json/medicine/', function(data) {
-	    var rows = d3.select('#meddb_container')
+	    var rows = d3.select(fragment)
 		.select('#meddb_medicine_list')
 		.select('tbody')
 		.selectAll('tr')
@@ -174,13 +215,14 @@ meddb.medicine.list = function() {
 		.enter()
 		.append('td')
 		.text(function(d) { return d; });
-	    //rows.sort(medicine_sort);
+	    meddb.history.add(location.hash, 'All Medicine');
+	    meddb.template.show(fragment);
 	});
     });
-    meddb.history.add(location.hash, 'All Medicine');
 }
 meddb.medicine.detail = function(id) {
-    meddb.template.load('medicine_detail.html', function() {
+    meddb.template.hide();
+    meddb.template.load('medicine_detail.html', function(fragment) {
 	//meddb.tabber.init();
 	d3.json('/json/medicine/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
@@ -199,9 +241,10 @@ meddb.medicine.detail = function(id) {
 		row.push(d.validity);
 		return row;
 	    }
-	    d3.select('#meddb_medicine_heading')
+	    d3.select(fragment)
+		.select('#meddb_medicine_heading')
 		.text(object_name());
-	    var rows = d3.select('#meddb_container')
+	    var rows = d3.select(fragment)
 		.select('#meddb_medicine_procurement')
 		.select('tbody')
 		.selectAll('tr')
@@ -241,9 +284,7 @@ meddb.medicine.detail = function(id) {
 		});
 		return row;
 	    }
-	    d3.select('#meddb_medicine_heading')
-		.text(object_name());
-	    var rows = d3.select('#meddb_container')
+	    var rows = d3.select(fragment)
 		.select('#meddb_medicine_product')
 		.select('tbody')
 		.selectAll('tr')
@@ -299,7 +340,7 @@ meddb.medicine.detail = function(id) {
 	    var prices_graph = {
 		width: 940,
 		height: 95,
-		node: '#meddb_medicine_prices',
+		node: d3.select(fragment).select('#meddb_medicine_prices')[0][0],
 		bar : {
 		    'height': 25,
 		    'margin': 10,
@@ -308,21 +349,27 @@ meddb.medicine.detail = function(id) {
 		},
 		colors: ['#08c', '#08c', '#08c', '#08c',
 			 '#08c', '#08c', '#08c', '#08c'],
-		line : {
-		    'constant': d3.round(graph_average,4)
-		},
+		//line : {
+		//    'constant': d3.round(graph_average,4)
+		//},
 		data : graph_data
 	    }
-	    d3.select('#meddb_medicine_prices').html('');
+	    if (data.mshprice) {
+		prices_graph.line = { 'constant': d3.round(data.mshprice,4) };
+	    }
+	    d3.select(fragment)
+		.select('#meddb_medicine_prices').html('');
 	    var graph = new HorizontalBarGraph(prices_graph);
 	    /* Add history option. */
 	    meddb.history.add(location.hash, object_name());
+	    meddb.template.show(fragment);
 	});
     });
 }
 meddb.product = {};
 meddb.product.detail = function(id) {
-    meddb.template.load('product_detail.html', function() {
+    meddb.template.hide();
+    meddb.template.load('product_detail.html', function(fragment) {
 	//meddb.tabber.init();
 	d3.json('/json/product/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
@@ -362,14 +409,17 @@ meddb.product.detail = function(id) {
 		return row;
 	    }
 	    /* Populate product detail section. */
-	    d3.select('#meddb_product_heading')
+	    d3.select(fragment)
+		.select('#meddb_product_heading')
 		.text(data.name);
-	    d3.select('table#meddb_product_detail')
+	    d3.select(fragment)
+		.select('table#meddb_product_detail')
 		.selectAll('td')
 		.data(detail)
 		.text(function(d) { return d; });
 	    /* Populate the product registrations table. */
-	    var rows = d3.select('table#meddb_product_registration')
+	    var rows = d3.select(fragment)
+		.select('table#meddb_product_registration')
 		.select('tbody')
 		.selectAll('tr')
 		.data(data.procurements)
@@ -383,12 +433,14 @@ meddb.product.detail = function(id) {
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { location.hash = d.hash; });
 	    meddb.history.add(location.hash, data.name);
+	    meddb.template.show(fragment);
 	});
     });
 }
 meddb.supplier = {};
 meddb.supplier.detail = function(id) {
-    meddb.template.load('supplier_detail.html', function() {
+    meddb.template.hide();
+    meddb.template.load('supplier_detail.html', function(fragment) {
 	//meddb.tabber.init();
 	d3.json('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
@@ -412,10 +464,12 @@ meddb.supplier.detail = function(id) {
 		return row;
 	    }
 	    /* Populate supplier heading section. */
-	    d3.select('#meddb_supplier_heading')
+	    d3.select(fragment)
+		.select('#meddb_supplier_heading')
 		.text(data.name);
 	    /* Populate the product registrations table. */
-	    var rows = d3.select('table#meddb_supplier_registration')
+	    var rows = d3.select(fragment)
+		.select('table#meddb_supplier_registration')
 		.select('tbody')
 		.selectAll('tr')
 		.data(data.procurements)
@@ -429,10 +483,12 @@ meddb.supplier.detail = function(id) {
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { location.hash = d.hash; });
 	    meddb.history.add(location.hash, data.name);
+	    meddb.template.show(fragment);
 	});
     });
 }
-meddb.template.load('base.html', function() {
+meddb.template.load('base.html', function(fragment) {
+    meddb.template.inject(fragment, '#meddb_container');
     meddb.router();
-}, '#meddb_container');
+});
 window.onhashchange = meddb.router;})();

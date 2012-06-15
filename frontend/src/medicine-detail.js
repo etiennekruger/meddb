@@ -1,5 +1,6 @@
 meddb.medicine.detail = function(id) {
-    meddb.template.load('medicine_detail.html', function() {
+    meddb.template.hide();
+    meddb.template.load('medicine_detail.html', function(fragment) {
 	//meddb.tabber.init();
 	d3.json('/json/medicine/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
@@ -18,9 +19,10 @@ meddb.medicine.detail = function(id) {
 		row.push(d.validity);
 		return row;
 	    }
-	    d3.select('#meddb_medicine_heading')
+	    d3.select(fragment)
+		.select('#meddb_medicine_heading')
 		.text(object_name());
-	    var rows = d3.select('#meddb_container')
+	    var rows = d3.select(fragment)
 		.select('#meddb_medicine_procurement')
 		.select('tbody')
 		.selectAll('tr')
@@ -60,9 +62,7 @@ meddb.medicine.detail = function(id) {
 		});
 		return row;
 	    }
-	    d3.select('#meddb_medicine_heading')
-		.text(object_name());
-	    var rows = d3.select('#meddb_container')
+	    var rows = d3.select(fragment)
 		.select('#meddb_medicine_product')
 		.select('tbody')
 		.selectAll('tr')
@@ -118,7 +118,7 @@ meddb.medicine.detail = function(id) {
 	    var prices_graph = {
 		width: 940,
 		height: 95,
-		node: '#meddb_medicine_prices',
+		node: d3.select(fragment).select('#meddb_medicine_prices')[0][0],
 		bar : {
 		    'height': 25,
 		    'margin': 10,
@@ -127,15 +127,20 @@ meddb.medicine.detail = function(id) {
 		},
 		colors: ['#08c', '#08c', '#08c', '#08c',
 			 '#08c', '#08c', '#08c', '#08c'],
-		line : {
-		    'constant': d3.round(graph_average,4)
-		},
+		//line : {
+		//    'constant': d3.round(graph_average,4)
+		//},
 		data : graph_data
 	    }
-	    d3.select('#meddb_medicine_prices').html('');
+	    if (data.mshprice) {
+		prices_graph.line = { 'constant': d3.round(data.mshprice,4) };
+	    }
+	    d3.select(fragment)
+		.select('#meddb_medicine_prices').html('');
 	    var graph = new HorizontalBarGraph(prices_graph);
 	    /* Add history option. */
 	    meddb.history.add(location.hash, object_name());
+	    meddb.template.show(fragment);
 	});
     });
 }

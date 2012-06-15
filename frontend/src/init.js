@@ -1,4 +1,5 @@
-meddb.template.load('base.html', function() {
+meddb.template.load('base.html', function(fragment) {
+    meddb.template.inject(fragment, '#meddb_container');
     meddb.router();
-}, '#meddb_container');
+});
 window.onhashchange = meddb.router;
