@@ -26,6 +26,10 @@ div#meddb_inner_container > img#meddb_loading {
     opacity: 0;
 }
 
+input#meddb_medicine_search {
+    width: 100%;
+}
+
 div#meddb_inner_container > div.meddb_inner_page {
     position: absolute;
     width: 100%;
