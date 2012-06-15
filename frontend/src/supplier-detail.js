@@ -1,7 +1,6 @@
 meddb.supplier.detail = function(id) {
     meddb.template.hide();
-    meddb.template.load('supplier_detail.html', function(fragment) {
-	//meddb.tabber.init();
+    load('/supplier_detail.html', function(fragment) {
 	d3.json('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var procurement = function(d) {

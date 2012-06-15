@@ -41,8 +41,3 @@ var load = function(url, callback) {
     }
 }
 
-setTimeout(function() {
-    /* And some tests... */
-    console.log(load('/json/medicine/1/'));
-    console.log(load('/medicine_list.html'));
-}, 3000);

@@ -1,7 +1,7 @@
 (function() {
 meddb = {}
 var settings = {
-    'base_url': 'http://meddb.medicinesinfohub.net',
+    'base_url': 'http://localhost:8000/static/frontend', //'http://meddb.medicinesinfohub.net',
     'loader': 'jsonp'
 }
 var standard_loader = function(url, callback) {
@@ -47,11 +47,6 @@ var load = function(url, callback) {
     }
 }
 
-setTimeout(function() {
-    /* And some tests... */
-    console.log(load('/json/medicine/1/'));
-    console.log(load('/medicine_list.html'));
-}, 3000);
 meddb.template = {};
 meddb.template.cache = {};
 
@@ -274,8 +269,7 @@ meddb.medicine.list = function() {
 }
 meddb.medicine.detail = function(id) {
     meddb.template.hide();
-    meddb.template.load('medicine_detail.html', function(fragment) {
-	//meddb.tabber.init();
+    load('/medicine_detail.html', function(fragment) {
 	d3.json('/json/medicine/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var object_name = function() {
@@ -356,9 +350,6 @@ meddb.medicine.detail = function(id) {
 		//		 'South Africa', 'Tanzania', 'Zambia', 'Zimbabwe'];
 		var countries = ['Kenya', 'Uganda', 'Tanzania'];
 		var prices = {};
-		//countries.forEach(function(country) {
-		//    prices[country] = [];
-		//});
 		data.procurements.forEach(function(item) {
 		    if (typeof(prices[item.country.name]) == 'undefined') {
 			prices[item.country.name] = [];
@@ -401,9 +392,6 @@ meddb.medicine.detail = function(id) {
 		},
 		colors: ['#08c', '#08c', '#08c', '#08c',
 			 '#08c', '#08c', '#08c', '#08c'],
-		//line : {
-		//    'constant': d3.round(graph_average,4)
-		//},
 		data : graph_data
 	    }
 	    if (data.mshprice) {
@@ -421,8 +409,7 @@ meddb.medicine.detail = function(id) {
 meddb.product = {};
 meddb.product.detail = function(id) {
     meddb.template.hide();
-    meddb.template.load('product_detail.html', function(fragment) {
-	//meddb.tabber.init();
+    load('/product_detail.html', function(fragment) {
 	d3.json('/json/product/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var detail = function() {
@@ -492,8 +479,7 @@ meddb.product.detail = function(id) {
 meddb.supplier = {};
 meddb.supplier.detail = function(id) {
     meddb.template.hide();
-    meddb.template.load('supplier_detail.html', function(fragment) {
-	//meddb.tabber.init();
+    load('/supplier_detail.html', function(fragment) {
 	d3.json('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var procurement = function(d) {

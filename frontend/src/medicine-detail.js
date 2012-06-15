@@ -1,7 +1,6 @@
 meddb.medicine.detail = function(id) {
     meddb.template.hide();
-    meddb.template.load('medicine_detail.html', function(fragment) {
-	//meddb.tabber.init();
+    load('/medicine_detail.html', function(fragment) {
 	d3.json('/json/medicine/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var object_name = function() {
@@ -82,9 +81,6 @@ meddb.medicine.detail = function(id) {
 		//		 'South Africa', 'Tanzania', 'Zambia', 'Zimbabwe'];
 		var countries = ['Kenya', 'Uganda', 'Tanzania'];
 		var prices = {};
-		//countries.forEach(function(country) {
-		//    prices[country] = [];
-		//});
 		data.procurements.forEach(function(item) {
 		    if (typeof(prices[item.country.name]) == 'undefined') {
 			prices[item.country.name] = [];
@@ -127,9 +123,6 @@ meddb.medicine.detail = function(id) {
 		},
 		colors: ['#08c', '#08c', '#08c', '#08c',
 			 '#08c', '#08c', '#08c', '#08c'],
-		//line : {
-		//    'constant': d3.round(graph_average,4)
-		//},
 		data : graph_data
 	    }
 	    if (data.mshprice) {

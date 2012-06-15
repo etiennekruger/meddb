@@ -1,7 +1,6 @@
 meddb.product.detail = function(id) {
     meddb.template.hide();
-    meddb.template.load('product_detail.html', function(fragment) {
-	//meddb.tabber.init();
+    load('/product_detail.html', function(fragment) {
 	d3.json('/json/product/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var detail = function() {
