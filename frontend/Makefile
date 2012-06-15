@@ -10,6 +10,8 @@ all: \
 js/meddb.alpha.js: \
 	src/start.js \
 	src/main.js \
+	src/settings.js \
+	src/jsonp.js \
 	src/template.js \
 	src/router.js \
 	src/history.js \
