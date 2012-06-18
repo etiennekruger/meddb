@@ -401,18 +401,21 @@ meddb.medicine.detail = function(id) {
 		});
 		return graph_data;
 	    }
-	    var prices_average = function(d) {
-		var sum = 0, count = 0;
+	    var prices_max = function(d) {
+		var sum = 0, count = 0, max = 0;
 		d.forEach(function(i) {
 		    if (i.value > 0) {
 			sum += i.value;
+			if (i.value > max) {
+			    max = i.value;
+			}
 			count++;
 		    }
 		});
-		return sum/count;
+		return d3.max([sum*2/count, data.mshprice, max]);
 	    }
 	    var graph_data = prices_data();
-	    var graph_average = prices_average(graph_data);
+	    var graph_max = prices_max(graph_data);
 	    var prices_graph = {
 		width: 940,
 		height: 95,
@@ -420,7 +423,7 @@ meddb.medicine.detail = function(id) {
 		bar : {
 		    'height': 25,
 		    'margin': 10,
-		    'max': graph_average*2,
+		    'max': graph_max,
 		    'background': '#dfe7e5'
 		},
 		colors: ['#08c', '#08c', '#08c', '#08c',
