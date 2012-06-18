@@ -110,7 +110,7 @@ meddb.medicine.detail = function(id) {
 			count++;
 		    }
 		});
-		return d3.max([sum*2/count, data.mshprice, max]);
+		return d3.max([sum*2/count, data.mshprice*1.1, max*1.1]);
 	    }
 	    var graph_data = prices_data();
 	    var graph_max = prices_max(graph_data);
