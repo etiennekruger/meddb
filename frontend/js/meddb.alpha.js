@@ -554,11 +554,13 @@ meddb.supplier.detail = function(id) {
 		row.push(data.address || 'None');
 		return row;
 	    }
-	    d3.select('table#meddb_supplier_details')
+	    d3.select(fragment)
+		.select('table#meddb_supplier_details')
 		.selectAll('td')
 		.data(details())
-		.text(function(d) { return d.text; });
-	    d3.select('table#meddb_supplier_details')
+		.text(function(d) { return d; });
+	    d3.select(fragment)
+		.select('table#meddb_supplier_details')
 		.select('td')
 	        .data([data.website])
 		.style('cursor', 'pointer')
