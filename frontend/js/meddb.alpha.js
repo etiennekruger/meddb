@@ -544,14 +544,14 @@ meddb.supplier.detail = function(id) {
 	    /* Populate the supplier detail page. */
 	    var details = function() {
 		var row = [];
-		row.push(data.website);
-		row.push(data.contact);
-		row.push(data.email);
-		row.push(data.altemail);
-		row.push(data.phone);
-		row.push(data.altphone);
-		row.push(data.fax);
-		row.push(data.address);
+		row.push(data.website || 'None');
+		row.push(data.contact || 'None');
+		row.push(data.email || 'None');
+		row.push(data.altemail || 'None');
+		row.push(data.phone || 'None');
+		row.push(data.altphone || 'None');
+		row.push(data.fax || 'None');
+		row.push(data.address || 'None');
 		return row;
 	    }
 	    d3.select('table#meddb_supplier_details')
