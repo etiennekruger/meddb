@@ -26,6 +26,28 @@ meddb.supplier.detail = function(id) {
 	    d3.select(fragment)
 		.select('#meddb_supplier_heading')
 		.text(data.name);
+	    /* Populate the supplier detail page. */
+	    var details = function() {
+		var row = [];
+		row.push(data.website);
+		row.push(data.contact);
+		row.push(data.email);
+		row.push(data.altemail);
+		row.push(data.phone);
+		row.push(data.altphone);
+		row.push(data.fax);
+		row.push(data.address);
+		return row;
+	    }
+	    d3.select('table#meddb_supplier_details')
+		.selectAll('td')
+		.data(details())
+		.text(function(d) { return d.text; });
+	    d3.select('table#meddb_supplier_details')
+		.select('td')
+	        .data([data.website])
+		.style('cursor', 'pointer')
+		.on('click', function(d) { if (d) { location = d; } });
 	    /* Populate the product registrations table. */
 	    var rows = d3.select(fragment)
 		.select('table#meddb_supplier_registration')
