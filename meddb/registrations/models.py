@@ -78,7 +78,7 @@ class INN(models.Model):
     
     class Meta:
         verbose_name = 'INN'
-        verbose_name_plural = 'INN\'s'
+        verbose_name_plural = 'INNs'
 
 # Generic product models.
 #
