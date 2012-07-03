@@ -10,7 +10,7 @@ var jsonp_loader = function(url, callback) {
     /* Setup callback for either the HTML or JSON case. */
     var request;
     if (url.slice(-5) == '.html') {
-	request = [settings.base_url+url.slice(0,-5)+'.jsonp'];
+	request = [settings.static_base_url+url.slice(0,-5)+'.jsonp'];
 	meddb.callback = function(data) {
 	    var fragment = document.createDocumentFragment();
 	    var element = document.createElement('div');
@@ -19,7 +19,7 @@ var jsonp_loader = function(url, callback) {
 	    callback(fragment);
 	}
     } else {
-	request = [settings.base_url+url+'?jsonp=meddb.callback'];
+	request = [settings.data_base_url+url+'?jsonp=meddb.callback'];
 	meddb.callback = function(data) {
 	    callback(data);
 	}
