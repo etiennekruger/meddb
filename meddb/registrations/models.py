@@ -85,9 +85,10 @@ class INN(models.Model):
 # These models will represent a generic product including all it's active ingredients,
 # their strength and the dosage form of the product.
 
-class Medicine(SourcedModel):
+class Medicine(models.Model):
     ingredients = models.ManyToManyField(INN, through='Ingredient')
     dosageform = models.ForeignKey(DosageForm)
+    name = models.CharField(max_length=50, null=True)
     
     @property
     def actives(self):
