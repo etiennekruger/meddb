@@ -31,7 +31,7 @@ class SourcedModel(models.Model):
 
 class Country(models.Model):
     name = models.CharField(max_length=16)
-    code = models.CharField(max_length=2)
+    code = models.CharField(max_length=3)
     
     def as_dict(self, minimal=False):
         return { 'id': self.id,
@@ -290,7 +290,7 @@ class Supplier(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=64, blank=True)
     medicine = models.ForeignKey(Medicine)
-    manufacturer = models.ForeignKey(Manufacturer)
+    manufacturer = models.ForeignKey(Manufacturer, null=True)
     # TODO Need to add manufacturer to as_dict
     
     def as_dict(self, medicine=True, minimal=False, registrations=True):
