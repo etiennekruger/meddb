@@ -162,7 +162,7 @@ class MSHPrice(models.Model):
 #
 # These models represent the manufacturers and their manufacturing sites.
 
-class Manufacturer(SourcedModel):
+class Manufacturer(models.Model):
     name = models.CharField(max_length=64, verbose_name='Manufacturer Name')
     country = models.ForeignKey(Country, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
@@ -180,7 +180,7 @@ class Manufacturer(SourcedModel):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.country.code.upper())
 
-class Site(SourcedModel):
+class Site(models.Model):
     manufacturer = models.ForeignKey(Manufacturer)
     name = models.CharField(max_length=64, verbose_name='Site Name')
     address = models.TextField(blank=True, null=True)
@@ -219,7 +219,7 @@ class Site(SourcedModel):
     class Meta:
         verbose_name = 'Manufacturing Site'
 
-class Supplier(SourcedModel):
+class Supplier(models.Model):
     name = models.CharField(max_length=64)
     address = models.TextField(blank=True, null=True)
     country = models.ForeignKey(Country, blank=True, null=True)
@@ -287,7 +287,7 @@ class Supplier(SourcedModel):
     def __unicode__(self):
         return u'%s' % (self.name)
 
-class Product(SourcedModel):
+class Product(models.Model):
     name = models.CharField(max_length=64, blank=True)
     medicine = models.ForeignKey(Medicine)
     manufacturer = models.ForeignKey(Manufacturer)
