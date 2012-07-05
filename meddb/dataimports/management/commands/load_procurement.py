@@ -72,18 +72,27 @@ class Command(BaseCommand):
                 
             m = rmodels.Manufacturer()
 
-            m.name = match["Manufacturer"]
-            if match["Manufacturer Country"]:
-                country, _ = rmodels.Country.objects.get_or_create(name=match["Manufacturer Country"])
-            else:
-                country = None
-            m.country = country
+            if "Manufacturer" in match:
+                m.name = match["Manufacturer"]
+                if match["Manufacturer Country"]:
+                    country, _ = rmodels.Country.objects.get_or_create(name=match["Manufacturer Country"])
+                else:
+                    country = None
+                m.country = country
 
-            if "Manufacturer Website" in match:
-                m.website = match["Manufacturer Country"]
-            
-            manufacturer = match_or_create_manufacturer(m)
-            supplier = match_or_create_supplier(match["Supplier"] or m)
+                if "Manufacturer Website" in match:
+                    m.website = match["Manufacturer Country"]
+                
+                manufacturer = match_or_create_manufacturer(m)
+            else:
+                manufacturer = None
+
+            if "Supplier" in match and match["Supplier"]:
+                supplier = match_or_create_supplier(match["Supplier"])
+            elif manufacturer:
+                supplier = match_or_create_supplier(m)
+            else:
+                supplier = None
             product_name = match["Product"] if "Product" in match else match["Description"]
             product = match_or_create_product(medicine, manufacturer, product_name)
             incoterm, _ = rmodels.Incoterm.objects.get_or_create(name=match["Incoterm"] if ("Incoterm" in match and match["Incoterm"]) else "Unknown")
