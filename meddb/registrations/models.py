@@ -178,7 +178,7 @@ class Manufacturer(models.Model):
         return d
     
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, self.country.code.upper())
+        return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
 
 class Site(models.Model):
     manufacturer = models.ForeignKey(Manufacturer)
