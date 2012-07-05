@@ -123,6 +123,7 @@ INSTALLED_APPS = (
 
     'south',
     'registrations',
+    'dataimports',
 )
 
 # A sample logging configuration. The only tangible logging
