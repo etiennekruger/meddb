@@ -126,6 +126,8 @@ class Medicine(models.Model):
         return d
     
     def __unicode__(self):
+        if self.name:
+            return self.name
         return u'%s %s' % (self.actives, self.dosageform)
 
 class Ingredient(models.Model):
@@ -143,24 +145,6 @@ class Ingredient(models.Model):
     
     class Meta:
         ordering = ('inn__name',)
-
-class Product(SourcedModel):
-    name = models.CharField(max_length=64)
-    medicine = models.ForeignKey(Medicine)
-    
-    def as_dict(self, medicine=True, minimal=False, registrations=True):
-        d = { 'id': self.id,
-              'name': self.name }
-        if medicine:
-            d['medicine'] = self.medicine.as_dict(minimal=True, products=False, procurements=False)
-        if registrations:
-            d['registrations'] = [r.as_dict(medicine=False, product=False) for r in self.registration_set.all()]
-        if not minimal:
-            d['procurements'] = [r.as_dict(minimal=True, medicine=False) for r in self.procurement_set.all()]
-        return d
-    
-    def __unicode__(self):
-        return u'%s (%s)' % (self.name, str(self.medicine))
 
 # Pricing information.
 #
@@ -302,6 +286,28 @@ class Supplier(SourcedModel):
     
     def __unicode__(self):
         return u'%s' % (self.name)
+
+class Product(SourcedModel):
+    name = models.CharField(max_length=64, blank=True)
+    medicine = models.ForeignKey(Medicine)
+    manufacturer = models.ForeignKey(Manufacturer)
+    # TODO Need to add manufacturer to as_dict
+    
+    def as_dict(self, medicine=True, minimal=False, registrations=True):
+        d = { 'id': self.id,
+              'name': self.name }
+        if medicine:
+            d['medicine'] = self.medicine.as_dict(minimal=True, products=False, procurements=False)
+        if registrations:
+            d['registrations'] = [r.as_dict(medicine=False, product=False) for r in self.registration_set.all()]
+        if not minimal:
+            d['procurements'] = [r.as_dict(minimal=True, medicine=False) for r in self.procurement_set.all()]
+        return d
+    
+    def __unicode__(self):
+        return u'%s (%s)' % (self.name, str(self.medicine))
+
+
 
 # Registration information.
 #
