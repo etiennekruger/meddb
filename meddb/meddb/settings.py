@@ -91,6 +91,7 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'memcached.middleware.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -154,3 +155,5 @@ LOGGING = {
         },
     }
 }
+
+CACHE_MEMCACHE_SERVERS = ['master:11211']
