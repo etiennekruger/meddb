@@ -35,6 +35,6 @@ class UpdateCacheMiddleware(object):
 
     def cache_response(self, request, response):
         """Cache this response for the web server to grab next time."""
-        cache_key = request.META.get('X-Memcached-Key', None)
+        cache_key = request.META.get('HTTP_X_MEMCACHED_KEY', None)
         if cache_key:
-            nginx_cache.set(cache_key, response._get_content(), cache_timeout)
+            nginx_cache.set(cache_key, response._get_content(), self.cache_timeout)
