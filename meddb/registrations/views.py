@@ -5,10 +5,6 @@ from django.db.models import Q
 
 import models
 
-# Setup memcache for nginx.
-import memcache
-mc=memcache.Client(['192.168.122.1:11211'], server_max_value_length=1024*1024*4)
-
 # View base classes.
 #
 # These base classes simplify the implementation of the JSON represenation views
@@ -46,8 +42,6 @@ class JSONView(JSONResponseMixin, View):
         "Serialize the JSON data into an HTTP response."
         context = self.get_json_data(*args, **kwargs)
         response = self.render_to_response(context)
-        key = request.get_full_path().encode('ascii','ignore')
-        mc.set(key, response.content, 60*60*24*2)
         return response
 
 class JSONRepresentation(JSONView):
