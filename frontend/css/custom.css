@@ -35,3 +35,7 @@ div#meddb_inner_container > div.meddb_inner_page {
     width: 100%;
 }
 
+table#meddb_supplier_details th:first-child {
+    width: 200px;
+}
+
