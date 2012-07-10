@@ -77,9 +77,7 @@ meddb.medicine.detail = function(id) {
 		.on('click', function(d) { if (d.hash) {location.hash = d.hash;} });
 	    /* Add the medicine prices graph. */
 	    var prices_data = function() {
-		//var countries = ['DRC', 'Lesotho', 'Malawi', 'Mozambique',
-		//		 'South Africa', 'Tanzania', 'Zambia', 'Zimbabwe'];
-		var countries = ['Kenya', 'Uganda', 'Tanzania'];
+		var countries = data.procurements.map(function(el) { return el.country.name; });
 		var prices = {};
 		data.procurements.forEach(function(item) {
 		    if (typeof(prices[item.country.name]) == 'undefined') {
