@@ -15,6 +15,7 @@ meddb.medicine.detail = function(id) {
 		var row = [];
 		row.push(d.country.name);
 		row.push(d3.round(d.price,4));
+		row.push(d.incoterm || '(Not Available)');
 		row.push(d.validity || '(Not Available)');
 		return row;
 	    }
