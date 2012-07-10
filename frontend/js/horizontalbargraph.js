@@ -96,6 +96,19 @@ HorizontalBarGraph.prototype = {
             .attr('class', function(d, i) { return 'hb-rect hg-group-' + i; })
             .text(function(d, i) { return d.key; });
 
+
+        rects.enter().append('text')
+            .attr('x', this.bar.start)
+            .attr('dx', '0.2em')
+            .attr('text-anchor', 'start')
+            .attr('y', function(d, i){ return (y(i + 1) + y(i + 2)) / 2; })
+            .attr('dy', '0.2em')
+            .attr('height', this.bar.height)
+            .attr('text-align', 'right')
+            .attr('fill', this.bar.background)
+            .attr('class', function(d, i) { return 'hb-rect hg-group-' + i; })
+            .text(function(d, i) { return '$' + d3.round(d.value, 4); });
+
         if (this.line.percent !== undefined){
             this.line.constant = this.line.percent * this.bar.max;
             this.line.text = this.line.percent * 100 + '%';
@@ -116,7 +129,7 @@ HorizontalBarGraph.prototype = {
                 .enter().append('line')
                 .attr('x1', line_x_offset)
                 .attr('x2', line_x_offset)
-                .attr('y1', this.bar.height / 1.1)
+                .attr('y1', this.bar.height)
                 .attr('y2', this.h)
                 .attr('stroke-dasharray', '4')
                 .attr('stroke-width', '3')

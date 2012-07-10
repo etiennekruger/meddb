@@ -9,21 +9,26 @@
     <script src="js/d3.v2.js"></script>
     <script src="js/jquery-1.7.2.js"></script>
     <script src="js/horizontalbargraph.js"></script>
+    <style>
+      #banner h1 {
+        line-height: 60px;
+      }
+      #banner img {
+        height: 60px;
+        vertical-align: bottom;
+        float: right;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="row" id="banner">
 	<div class="span12">
-	  <img src="img/logo.jpg"/>
-	  <h1>Medicine Prices Database</h1>
+	  <h1>Medicine Prices Database<img src="img/logo.jpg"/></h1>
 	</div>
       </div>
-      <div class="row">
-	<div class="span12">
-	  <p>Terms of use and description of the application should go here.</p>
-	  <p>Click through to the <a href="meddb.html">application</a>.</p>
-	</div>
-      </div>
+      <div id="meddb_container"></div>
+      <script src="js/meddb.alpha.js"></script>
     </div>
   </body>
 </html>
