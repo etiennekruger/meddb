@@ -24,11 +24,11 @@ var jsonp_loader = function(url, callback) {
 	    callback(data);
 	}
     }
-    /* Now add the script tag to the head. */
-    d3.select('html')
+    /* Now add the script tag to the body. */
+    d3.select('html body')
 	.select('script#meddb_jsonp')
 	.remove();
-    d3.select('html')
+    d3.select('html body')
 	.select('script#meddb_jsonp')
 	.data(request)
 	.enter()

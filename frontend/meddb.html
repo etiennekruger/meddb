@@ -18,17 +18,44 @@
         vertical-align: bottom;
         float: right;
       }
+      #help {
+        border: 1px solid #888;
+        margin-top: 25px;
+        margin-bottom: 25px;
+        background-color: #CED7DC;
+      }
+      #help img {
+        height:100px;
+      }
+      #footer {
+        color: #888;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <div class="row" id="banner">
 	<div class="span12">
-	  <h1>Medicine Prices Database<img src="img/logo.jpg"/></h1>
+	  <h1>Medicine Prices Database<img src="img/banner.jpg"/></h1>
 	</div>
       </div>
       <div id="meddb_container"></div>
       <script src="js/meddb.alpha.js"></script>
+      <div class="row" id="help">
+	<div class="span2">
+	  <img src="img/help.png"/>
+	</div>
+	<div class="span9">
+	  <p><strong>How can we help you?</strong></p>
+	  <p>For assistance with the Medicine Prices Database, please <a href="https://medicines.zendesk.com/anonymous_requests/new">click here</a>.</p>
+	  <p>For any other queries, please <a href="https://medicines.zendesk.com/anonymous_requests/new">click here</a>.</p>
+	</div>
+      </div>
+      <div class="row" id="footer">
+	<div class="span12">
+	  <p>The Medicine Prices Database, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics (&quot;SARPAM&quot;), by Re-Action Consulting (PTY) Ltd.</p>
+	</div>
+      </div>
     </div>
   </body>
 </html>

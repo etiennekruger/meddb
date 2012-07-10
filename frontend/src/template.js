@@ -2,13 +2,8 @@ meddb.template = {};
 meddb.template.cache = {};
 
 meddb.template.load = function(url, callback) {
-    //if (meddb.template.cache[url]) {
-    //    var fragment = meddb.template.cache[url];
-    //    callback(fragment.cloneNode(true));
-    //}
     d3.html(url, function(fragment) {
-	//meddb.template.cache[url] = fragment;
-	callback(fragment.cloneNode(true));
+	callback(fragment);
     });
 }
 
@@ -41,6 +36,7 @@ meddb.template.show = function(fragment) {
 	.style('left', '950px');
     var node = d3.select(selector)[0][0];
     node.appendChild(fragment);
+    var height = d3.select('#meddb_page_incoming')[0][0].clientHeight;
     d3.select('#meddb_page_incoming')
 	.transition()
 	.style('opacity', '1')
@@ -50,6 +46,10 @@ meddb.template.show = function(fragment) {
 	.transition()
 	.duration(100)
 	.style('opacity', 0);
+    d3.select('#meddb_inner_container')
+	.transition()
+	.style('height', height+'px');
+    console.log('height:'+height);
 }
 
 meddb.template.fx = function(fragment) {

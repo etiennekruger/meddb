@@ -1,5 +1,5 @@
 var settings = {
-    'static_base_url': 'http://meddb.medicinesinfohub.net',
-    'data_base_url': 'http://meddb.medicinesinfohub.net',
+    'static_base_url': '',
+    'data_base_url': '',
     'loader': 'jsonp'
 }
