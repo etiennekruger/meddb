@@ -100,7 +100,7 @@ class MedicineListView(JSONList):
             return self.model.objects.all()
         query = Q(ingredient__inn__name__icontains=search)
         query |= Q(product__name__icontains=search)
-        return self.model.objects.filter(query)
+        return self.model.objects.filter(query).distinct()
 
 class ManufacturerView(JSONRepresentation):
     model = models.Manufacturer
