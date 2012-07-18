@@ -324,7 +324,6 @@ class Pack(models.Model):
 
 class PackSize(models.Model):
     pack = models.ForeignKey(Pack, blank=True, null=True)
-    registration = models.ForeignKey('Registration')
     quantity = models.IntegerField()
     
     def as_dict(self, minimal=False):
@@ -343,7 +342,6 @@ class Registration(SourcedModel):
     country = models.ForeignKey(Country)
     number = models.CharField(max_length=32)
     product = models.ForeignKey(Product)
-    packs = models.ManyToManyField(Pack, through='PackSize')
     manufacturer = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     status = models.BooleanField(default=True)
@@ -379,14 +377,24 @@ class Registration(SourcedModel):
 #
 # Models for the procurement information.
 
+class Currency(models.Model):
+    code = models.CharField(max_length=3, verbose_name='Currency Code', help_text='Enter the ISO 4217 currency code for the currency. This is a 3 letter code in all capitals eg. USD, ZAR etc.')
+    
+    def __unicode__(self):
+        return self.code
+    
+    class Meta:
+        verbose_name_plural = 'Currencies'
+
 class Procurement(SourcedModel):
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
-    pack = models.ForeignKey(PackSize, blank=True, null=True)
+    pack = models.ForeignKey(PackSize, verbose_name='Pack Size', help_text='Indicate the type of pack as well as the number of units for this medicine procurement.', null=True)
     site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
-    price = models.FloatField(verbose_name='Price per Unit (USD)')
+    price = models.FloatField(verbose_name='Price per Unit', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below.')
+    currency = models.ForeignKey(Currency, help_text='This is the currency of the procurement price. This field is required to convert units to USD for comparison.')
     volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', blank=True, null=True)
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
     start_date = models.DateField(max_length=32, verbose_name='Period Start', help_text='This is the first day that the procurement price is valid for (may be left blank).', blank=True, null=True)
@@ -396,15 +404,17 @@ class Procurement(SourcedModel):
         d = { 'id': self.id,
               'incoterm': self.incoterm.as_dict(),
               'price': self.price,
+              'currency': self.currency.code,
               'volume': self.volume,
               'method': self.method,
               'country': self.country.as_dict() }
+        if self.pack:
+            d['pack'] = self.pack.as_dict()
+            d['price_per_unit'] = self.price/(self.pack.quantity or 1)
         if self.start_date:
             d['start_date'] = self.start_date.isoformat()
         if self.end_date:
             d['end_date'] = self.end_date.isoformat()
-        if self.pack:
-              d['pack'] = self.pack.as_dict()
         if not minimal:
             if site and self.site:
                 d['site'] = self.site.as_dict(minimal=True)

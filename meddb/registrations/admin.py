@@ -50,7 +50,6 @@ class PackInline(admin.TabularInline):
 
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'manufacturer')
-    inlines = (PackInline,)
 
 class ProcurementAdmin(admin.ModelAdmin):
     pass
@@ -70,6 +69,8 @@ admin.site.register(models.Manufacturer, ManufacturerAdmin)
 admin.site.register(models.Site)
 admin.site.register(models.Supplier, SupplierAdmin)
 admin.site.register(models.Pack)
+admin.site.register(models.PackSize)
+admin.site.register(models.Currency)
 admin.site.register(models.Registration, RegistrationAdmin)
 admin.site.register(models.Procurement, ProcurementAdmin)
 admin.site.register(models.Context, ContextAdmin)
