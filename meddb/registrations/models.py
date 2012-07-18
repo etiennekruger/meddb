@@ -388,20 +388,21 @@ class Procurement(SourcedModel):
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
     price = models.FloatField(verbose_name='Price per Unit (USD)')
     volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', blank=True, null=True)
-    period = models.IntegerField(max_length=16, verbose_name='Procurement Period', help_text='Time frame in months during which the contract will be implemented.', blank=True, null=True)
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
-    validity = models.DateField(max_length=32, verbose_name='Validity Period', help_text='This describes the date that the procurement price is valid at.', blank=True, null=True)
+    start_date = models.DateField(max_length=32, verbose_name='Period Start', help_text='This is the first day that the procurement price is valid for (may be left blank).', blank=True, null=True)
+    end_date = models.DateField(max_length=32, verbose_name='Period End', help_text='This is the last day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     
     def as_dict(self, site=True, supplier=True, product=True, medicine=True, minimal=False):
         d = { 'id': self.id,
               'incoterm': self.incoterm.as_dict(),
               'price': self.price,
               'volume': self.volume,
-              'period': self.period,
               'method': self.method,
               'country': self.country.as_dict() }
-        if self.validity:
-            d['validity'] = self.validity.isoformat()
+        if self.start_date:
+            d['start_date'] = self.start_date.isoformat()
+        if self.end_date:
+            d['end_date'] = self.end_date.isoformat()
         if self.pack:
               d['pack'] = self.pack.as_dict()
         if not minimal:
