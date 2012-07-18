@@ -14,6 +14,7 @@ def avg(list):
 class Source(models.Model):
     name = models.CharField(max_length=64)
     date = models.DateTimeField(default=datetime.datetime.now)
+    url = models.URLField(blank=True, null=True, verbose_name='Source Document URL', help_text='Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional resource.')
     
     def __unicode__(self):
         return u'%s @ %s' % (self.name, self.date)
@@ -415,6 +416,8 @@ class Procurement(SourcedModel):
             d['start_date'] = self.start_date.isoformat()
         if self.end_date:
             d['end_date'] = self.end_date.isoformat()
+        if self.source.url:
+            d['source'] = self.source.url
         if not minimal:
             if site and self.site:
                 d['site'] = self.site.as_dict(minimal=True)

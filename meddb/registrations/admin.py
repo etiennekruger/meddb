@@ -2,8 +2,8 @@ from django.contrib import admin
 import models
 
 class SourceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'date')
-    fields = ('name', 'date')
+    list_display = ('name', 'date', 'url')
+    fields = ('name', 'date', 'url')
 
 class IncotermAdmin(admin.ModelAdmin):
     list_display = ('name', 'description')
