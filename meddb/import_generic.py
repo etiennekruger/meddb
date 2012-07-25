@@ -40,7 +40,8 @@ def phone(value):
     return number
     
 def update_supplier(values):
-    suppliers = models.Supplier.objects.filter(name=values['name'])
+    country, _ = models.Country.objects.get_or_create(name=values['country'])
+    suppliers = models.Supplier.objects.filter(name=values['name'], country=country)
     if suppliers.count() == 0:
         supplier = models.Supplier()
         print 'CREATE: %s' % values['name']
@@ -48,11 +49,10 @@ def update_supplier(values):
         supplier = suppliers[0]
         print 'UPDATE: %s' % values['name']
     else:
-        print 'ERROR: Multiple suppliers match name. Not updated. (%s)' % values['name']
+        print 'ERROR: Multiple suppliers match name and country. Not updated. (%s, %s)' % (values['name'], values['country')
         return
     supplier.name = values['name']
     supplier.address = values['address']
-    country, _ = models.Country.objects.get_or_create(name=values['country'])
     supplier.country = country
     supplier.website = values['website']
     supplier.contact = values['contact']
