@@ -232,7 +232,6 @@ class Supplier(models.Model):
     fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True)
     email = models.EmailField(verbose_name='Email Address', blank=True, null=True)
     altemail = models.EmailField(verbose_name='Alternative Email Address', blank=True, null=True)
-    prequalify = models.BooleanField(verbose_name='NMPA Pre-qualified', default=False)
     authorized = models.BooleanField(verbose_name='Manufacturer Authorisation', default=False)
     
     def is_manufacturer(self):
@@ -394,7 +393,7 @@ class Procurement(SourcedModel):
     site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
-    price = models.FloatField(verbose_name='Price per Unit', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below.')
+    price = models.FloatField(verbose_name='Price per Unit', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the pack size indicated.')
     currency = models.ForeignKey(Currency, help_text='This is the currency of the procurement price. This field is required to convert units to USD for comparison.')
     volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', blank=True, null=True)
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
