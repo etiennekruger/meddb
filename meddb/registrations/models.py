@@ -291,6 +291,7 @@ class Product(models.Model):
     name = models.CharField(max_length=64, blank=True)
     medicine = models.ForeignKey(Medicine)
     manufacturer = models.ForeignKey(Manufacturer, null=True)
+    site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     # TODO Need to add manufacturer to as_dict
     
     def as_dict(self, medicine=True, minimal=False, registrations=True):
@@ -390,7 +391,6 @@ class Procurement(SourcedModel):
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
     pack = models.ForeignKey(PackSize, verbose_name='Pack Size', help_text='Indicate the type of pack as well as the number of units for this medicine procurement.', null=True)
-    site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
     price = models.FloatField(verbose_name='Price per Unit', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the pack size indicated.')
