@@ -193,7 +193,6 @@ class Site(models.Model):
     fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True)
     email = models.EmailField(verbose_name='Email Address', blank=True, null=True)
     altemail = models.EmailField(verbose_name='Alternative Email Address')
-    prequalify = models.BooleanField(verbose_name='NMPA Pre-qualified')
     
     def as_dict(self, minimal=False):
         d = { 'id': self.id,
@@ -203,8 +202,7 @@ class Site(models.Model):
               'contact': self.contact,
               'phone': self.phone,
               'fax': self.fax,
-              'email': self.email,
-              'prequalify': self.prequalify }
+              'email': self.email }
         if not minimal:
             d.update({ 'address': self.address,
                        'altphone': self.altphone,
@@ -247,7 +245,6 @@ class Supplier(models.Model):
               'phone': self.phone,
               'fax': self.fax,
               'email': self.email,
-              'prequalify': self.prequalify,
               'authorized': self.authorized }
         if self.country:
               d['country'] = self.country.as_dict()
@@ -428,8 +425,8 @@ class Procurement(SourcedModel):
     
     def __unicode__(self):
         if self.volume:
-            return u'%d x %s' % (self.volume, self.product.name)
-        return u'unknown quantity x %s' % (self.product.name)
+            return u'%d x %s' % (self.volume, self.product.__unicode__())
+        return u'unknown quantity x %s' % (self.product.__unicode__())
 
 # Contextual information.
 #

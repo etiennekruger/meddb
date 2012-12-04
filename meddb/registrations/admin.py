@@ -52,6 +52,7 @@ class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'manufacturer')
 
 class ProcurementAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__', 'product', 'country')
     pass
 
 class ContextAdmin(admin.ModelAdmin):
