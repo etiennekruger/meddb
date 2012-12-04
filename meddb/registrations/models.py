@@ -306,7 +306,7 @@ class Product(models.Model):
         return d
     
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, str(self.medicine))
+        return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
 
 
@@ -428,8 +428,8 @@ class Procurement(SourcedModel):
     
     def __unicode__(self):
         if self.volume:
-            return u'%d x %s' % (self.volume, self.product.name)
-        return u'unknown quantity x %s' % (self.product.name)
+            return u'%d x %s' % (self.volume, self.product)
+        return u'unknown quantity x %s' % (self.product)
 
 # Contextual information.
 #
