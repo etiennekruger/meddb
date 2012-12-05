@@ -140,7 +140,7 @@ class Medicine(models.Model):
     
     def __unicode__(self):
         if self.name:
-            return self.name
+            return u'%s %s' % (self.name, self.dosageform)
         return u'%s %s' % (self.actives, self.dosageform)
 
 class Ingredient(models.Model):
