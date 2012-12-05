@@ -304,7 +304,7 @@ class Product(models.Model):
         return d
     
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, str(self.medicine))
+        return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
 
 
