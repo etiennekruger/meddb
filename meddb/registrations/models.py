@@ -105,7 +105,7 @@ class Medicine(models.Model):
     
     def as_dict(self, products=True, minimal=False, procurements=True):
         if minimal:
-            return {
+            d = {
                 'id': self.id,
                 'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
                 'dosageform': { 'id': self.dosageform.id,
@@ -117,10 +117,15 @@ class Medicine(models.Model):
                         'name': p.name
                         } for p in self.product_set.all()]
                 }
+            if self.name:
+                d['name'] = self.name
+            return d
         d = { 'id': self.id,
               'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
               'dosageform': self.dosageform.as_dict(),
               'mshprice': self.msh }
+        if self.name:
+            d['name'] = self.name
         if procurements:
             d['procurements'] = [p.as_dict(minimal=True, medicine=False) for p in Procurement.objects.filter(product__medicine=self)]
         if products:
