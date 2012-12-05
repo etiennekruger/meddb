@@ -14,9 +14,29 @@ meddb.medicine.detail = function(id) {
 	    var procurement_data = function(d) {
 		var row = [];
 		row.push(d.country.name);
+		var ppu = d3.round(d.price_per_unit,4);
+		if (typeof ppu == 'number') {
+		    row.push(ppu);
+		} else {
+		    row.push('(Not Available)');
+		}
 		row.push(d3.round(d.price,4));
 		row.push(d.incoterm || '(Not Available)');
-		row.push(d.validity || '(Not Available)');
+		if (d.pack) {
+		    row.push(d.pack.quantity+' '+d.pack.name);
+		} else {
+		    row.push('(Not Available)');
+		}
+		row.push(d.volume || '(Not Available)');
+		if (d.start_date && d.end_date) {
+		    row.push(d.start_date+' to '+d.end_date);
+		} else if (d.start_date) {
+		    row.push('From '+d.start_date);
+		} else if (d.end_date) {
+		    row.push('Until '+d.end_date);
+		} else {
+		    row.push('(Not Available)');
+		}
 		return row;
 	    }
 	    d3.select(fragment)
@@ -37,7 +57,6 @@ meddb.medicine.detail = function(id) {
 	    /* Populate products table. */
 	    var product_data = function(d) {
 		var row = [];
-		console.log(d);
 		row.push({
 		    text: d.product.name,
 		    hash: 'product:'+d.product.id
@@ -67,8 +86,8 @@ meddb.medicine.detail = function(id) {
 		.select('#meddb_medicine_product')
 		.select('tbody')
 		.selectAll('tr')
-		.data(data.procurements)
-		.enter()
+		.data(data.procurements);
+	    rows.enter()
 		.append('tr');
 	    rows.selectAll('td')
 		.data(product_data)
@@ -77,26 +96,71 @@ meddb.medicine.detail = function(id) {
 		.text(function(d) { return d.text; })
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { if (d.hash) {location.hash = d.hash;} });
+	    /* Make the table sortable. */
+	    /*
+	    function sort_asc(a, b) {
+		if (isNumber(a) && isNumber(b)) {
+		    return a - b;
+		} else if (isString(a) && isString(b) {
+		    a.localeCompare(b);
+		} else {
+		    return 0;
+		}
+	    }
+	    function sort_desc(a, b) {
+		if (isNumber(a) && isNumber(b)) {
+		    return b - a;
+		} else if (isString(a) && isString(b) {
+		    b.localeCompare(a);
+		} else {
+		    return 0;
+		}
+	    }
+	    var headers = d3.select('#meddb_medicine_product')
+		.select('thead')
+		.selectAll('th')
+		.on('click', function(d, i) {
+		    console.log(d);
+		    if (!d) { d = -1; };
+		    if (!d) {
+			d = 1;
+			rows.sort(sort_asc);
+		    } else {
+			d = -1;
+			rows.sort(sort_desc);
+		    }
+		});
+	    */
 	    /* Add the medicine prices graph. */
 	    var prices_data = function() {
-		var countries = data.procurements.map(function(el) { return el.country.name; });
 		var prices = {};
 		data.procurements.forEach(function(item) {
 		    if (typeof(prices[item.country.name]) == 'undefined') {
 			prices[item.country.name] = [];
 		    }
-		    prices[item.country.name].push(item.price);
+		    prices[item.country.name].push({ 'price' : item.price,
+						     'packsize' : item.pack.quantity,
+						     'volume' : item.volume });
 		});
 		graph_data = [];
-		countries.forEach(function(country) {
+		for (country in prices) {
 		    var d = { 'key': country }
+		    var p = prices[country];
 		    if ((prices[country]) && (prices[country].length > 0)) {
-			d.value = d3.sum(prices[country]) / prices[country].length;
+			var sum = 0;
+			var tot = 0;
+			for (index in p) {
+			    var price = p[index];
+			    sum += price.price*price.volume;
+			    tot += price.volume*price.packsize;
+			}
+			d.value = sum/tot;
+			//d.value = d3.sum(p.per_unit) / prices[country].length;
 		    } else {
 			d.value = 0;
 		    }
 		    graph_data.push(d);
-		});
+		}
 		return graph_data;
 	    }
 	    var prices_max = function(d) {

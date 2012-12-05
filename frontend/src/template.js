@@ -49,7 +49,6 @@ meddb.template.show = function(fragment) {
     d3.select('#meddb_inner_container')
 	.transition()
 	.style('height', height+'px');
-    console.log('height:'+height);
 }
 
 meddb.template.fx = function(fragment) {

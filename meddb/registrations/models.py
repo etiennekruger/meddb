@@ -110,7 +110,7 @@ class Medicine(models.Model):
                 'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
                 'dosageform': { 'id': self.dosageform.id,
                                 'name': self.dosageform.name },
-                'avgprice': avg([p.price_usd for p in Procurement.objects.filter(product__medicine=self)]),
+                'avgprice': self.avgprice(),
                 'mshprice': self.msh,
                 'products': [{
                         'id': p.id,
@@ -126,6 +126,15 @@ class Medicine(models.Model):
         if products:
             d['products'] = [p.as_dict(medicine=False, minimal=minimal) for p in self.product_set.all()]
         return d
+    
+    def avgprice(self):
+        sum = 0
+        tot = 0
+        procurements =  Procurement.objects.filter(product__medicine=self)
+        for p in procurements:
+            sum += p.price_usd * p.volume
+            tot += p.pack.quantity * p.volume
+        return sum/tot
     
     def __unicode__(self):
         if self.name:
@@ -393,7 +402,7 @@ class Procurement(SourcedModel):
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
     price = models.FloatField(verbose_name='Price per Unit', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the pack size indicated above (eg. the price of one blister pack with 24 capsules in EUR).')
     currency = models.ForeignKey(Currency, help_text='This is the currency of the procurement price. This field is required to convert units to USD for comparison.')
-    volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', blank=True, null=True)
+    volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', default=1)
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
     start_date = models.DateField(max_length=32, verbose_name='Period Start', help_text='This is the first day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     end_date = models.DateField(max_length=32, verbose_name='Period End', help_text='This is the last day that the procurement price is valid for (may be left blank).', blank=True, null=True)
