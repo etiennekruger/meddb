@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+import currency.models
 import datetime
 
 def avg(list):
@@ -390,7 +391,7 @@ class Procurement(SourcedModel):
     pack = models.ForeignKey(PackSize, verbose_name='Pack Size', help_text='Indicate the type of pack as well as the number of units for this medicine procurement.', null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
-    price = models.FloatField(verbose_name='Price per Unit', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the pack size indicated.')
+    price = models.FloatField(verbose_name='Price per Unit', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the pack size indicated above (eg. the price of one blister pack with 24 capsules in EUR).')
     currency = models.ForeignKey(Currency, help_text='This is the currency of the procurement price. This field is required to convert units to USD for comparison.')
     volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', blank=True, null=True)
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
@@ -422,6 +423,13 @@ class Procurement(SourcedModel):
         if product:
             d['product'] = self.product.as_dict(minimal=minimal, medicine=medicine)
         return d
+    
+    def price_usd(self):
+        c = currency.models.Currency.objects.get(code=self.currency.code)
+        if c.code == 'USD':
+            return self.price
+        e = currency.models.ExchangeRate.objects.get(currency=c, date=self.start_date)
+        return self.price*e.rate
     
     def __unicode__(self):
         if self.volume:
