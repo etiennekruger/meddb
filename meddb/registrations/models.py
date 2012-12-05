@@ -110,7 +110,7 @@ class Medicine(models.Model):
                 'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
                 'dosageform': { 'id': self.dosageform.id,
                                 'name': self.dosageform.name },
-                'avgprice': avg([p.price for p in Procurement.objects.filter(product__medicine=self)]),
+                'avgprice': avg([p.price_usd for p in Procurement.objects.filter(product__medicine=self)]),
                 'mshprice': self.msh,
                 'products': [{
                         'id': p.id,
@@ -401,14 +401,14 @@ class Procurement(SourcedModel):
     def as_dict(self, site=True, supplier=True, product=True, medicine=True, minimal=False):
         d = { 'id': self.id,
               'incoterm': self.incoterm.as_dict(),
-              'price': self.price,
+              'price': self.price_usd,
               'currency': self.currency.code,
               'volume': self.volume,
               'method': self.method,
               'country': self.country.as_dict() }
         if self.pack:
             d['pack'] = self.pack.as_dict()
-            d['price_per_unit'] = self.price/(self.pack.quantity or 1)
+            d['price_per_unit'] = self.price_usd/(self.pack.quantity or 1)
         if self.start_date:
             d['start_date'] = self.start_date.isoformat()
         if self.end_date:
@@ -424,6 +424,7 @@ class Procurement(SourcedModel):
             d['product'] = self.product.as_dict(minimal=minimal, medicine=medicine)
         return d
     
+    @property
     def price_usd(self):
         c = currency.models.Currency.objects.get(code=self.currency.code)
         if c.code == 'USD':
