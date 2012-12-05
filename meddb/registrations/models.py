@@ -430,7 +430,7 @@ class Procurement(SourcedModel):
         if c.code == 'USD':
             return self.price
         e = currency.models.ExchangeRate.objects.get(currency=c, date=self.start_date)
-        return self.price*e.rate
+        return self.price/e.rate
     
     def __unicode__(self):
         if self.volume:
