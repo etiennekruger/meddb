@@ -118,14 +118,14 @@ class Medicine(models.Model):
                         } for p in self.product_set.all()]
                 }
             if self.name:
-                d['name'] = self.name
+                d['name'] = self.name.title()
             return d
         d = { 'id': self.id,
               'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
               'dosageform': self.dosageform.as_dict(),
               'mshprice': self.msh }
         if self.name:
-            d['name'] = self.name
+            d['name'] = self.name.title()
         if procurements:
             d['procurements'] = [p.as_dict(minimal=True, medicine=False) for p in Procurement.objects.filter(product__medicine=self)]
         if products:
