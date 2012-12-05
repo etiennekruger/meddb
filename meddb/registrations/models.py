@@ -118,14 +118,14 @@ class Medicine(models.Model):
                         } for p in self.product_set.all()]
                 }
             if self.name:
-                d['name'] = self.name.title()
+                d['name'] = self.name.capitalize()
             return d
         d = { 'id': self.id,
               'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
               'dosageform': self.dosageform.as_dict(),
               'mshprice': self.msh }
         if self.name:
-            d['name'] = self.name.title()
+            d['name'] = self.name.capitalize()
         if procurements:
             d['procurements'] = [p.as_dict(minimal=True, medicine=False) for p in Procurement.objects.filter(product__medicine=self)]
         if products:
@@ -155,7 +155,7 @@ class Ingredient(models.Model):
     
     def as_dict(self, minimal=False):
         return { 'id': self.inn.id,
-                 'inn': self.inn.name.title(),
+                 'inn': self.inn.name.capitalize(),
                  'strength': self.strength }
         
     def __unicode__(self):
