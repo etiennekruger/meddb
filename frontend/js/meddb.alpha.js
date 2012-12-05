@@ -447,14 +447,24 @@ meddb.medicine.detail = function(id) {
 		    if (typeof(prices[item.country.name]) == 'undefined') {
 			prices[item.country.name] = [];
 		    }
-		    prices[item.country.name].push(item.price_per_unit);
+		    prices[item.country.name].push({ 'price' : item.price,
+						     'packsize' : item.pack.quantity,
+						     'volume' : item.volume });
 		});
 		graph_data = [];
-		console.log(prices);
 		for (country in prices) {
 		    var d = { 'key': country }
+		    var p = prices[country];
 		    if ((prices[country]) && (prices[country].length > 0)) {
-			d.value = d3.sum(prices[country]) / prices[country].length;
+			var sum = 0;
+			var tot = 0;
+			for (index in p) {
+			    var price = p[index];
+			    sum += price.price*price.volume;
+			    tot += price.volume*price.packsize;
+			}
+			d.value = sum/tot;
+			//d.value = d3.sum(p.per_unit) / prices[country].length;
 		    } else {
 			d.value = 0;
 		    }
