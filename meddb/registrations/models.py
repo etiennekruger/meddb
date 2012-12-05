@@ -90,7 +90,7 @@ class INN(models.Model):
 class Medicine(models.Model):
     ingredients = models.ManyToManyField(INN, through='Ingredient')
     dosageform = models.ForeignKey(DosageForm)
-    name = models.CharField(max_length=50, null=True)
+    name = models.CharField(max_length=50, null=True, blank=True)
     
     @property
     def actives(self):
