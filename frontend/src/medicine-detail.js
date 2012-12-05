@@ -14,7 +14,7 @@ meddb.medicine.detail = function(id) {
 	    var procurement_data = function(d) {
 		var row = [];
 		row.push(d.country.name);
-		var ppu = d3.round(d.price_per_unit,8);
+		var ppu = d3.round(d.price_per_unit,4);
 		if (typeof ppu == 'number') {
 		    row.push(ppu);
 		} else {
