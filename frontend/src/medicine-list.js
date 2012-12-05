@@ -7,7 +7,7 @@ var medicine_list = function(data, node) {
 	    formulation.push(item.inn);
 	    strength.push(item.strength);
 	});
-	row.push(formulation.join(' + '));
+	row.push(d.name || formulation.join(' + '));
 	row.push(strength.join(' + '));
 	row.push(d.dosageform.name);
 	row.push(d3.round(d.avgprice,4));
