@@ -134,7 +134,9 @@ class Medicine(models.Model):
         for p in procurements:
             sum += p.price_usd * p.volume
             tot += p.pack.quantity * p.volume
-        return sum/tot
+        if tot > 0:
+            return sum/tot
+        return None
     
     def __unicode__(self):
         if self.name:
