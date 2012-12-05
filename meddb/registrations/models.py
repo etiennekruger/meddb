@@ -134,7 +134,9 @@ class Medicine(models.Model):
         for p in procurements:
             sum += p.price_usd * p.volume
             tot += p.pack.quantity * p.volume
-        return sum/tot
+        if tot > 0:
+            return sum/tot
+        return None
     
     def __unicode__(self):
         if self.name:
@@ -439,7 +441,7 @@ class Procurement(SourcedModel):
         if c.code == 'USD':
             return self.price
         e = currency.models.ExchangeRate.objects.get(currency=c, date=self.start_date)
-        return self.price*e.rate
+        return self.price/e.rate
     
     def __unicode__(self):
         if self.volume:
