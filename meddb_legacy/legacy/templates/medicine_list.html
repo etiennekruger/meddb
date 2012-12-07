@@ -1,0 +1,29 @@
+{% extends "basel.html" %}
+{% block content %}
+    <table class="table table-bordered">
+      <thead>
+	<tr>
+	  <th>Formulation</th>
+	  <th>Strength</th>
+	  <th>Dosage Form</th>
+	  <th>Avg. Price</th>
+	  <th>MSH Price</th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for medicine in data %}
+	<tr>
+	  <td>
+	    <a href="{% url medicine _id=medicine.id %}">
+	      {{ medicine.formulation }}
+	    </a>
+	  </td>
+	  <td>{{ medicine.strength }}</td>
+	  <td>{{ medicine.dosageform.name }}</td>
+	  <td>{{ medicine.avgprice|floatformat:"4" }}</td>
+	  <td>{{ medicine.mshprice|floatformat:"4" }}</td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+{% endblock %}
