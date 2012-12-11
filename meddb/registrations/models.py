@@ -339,7 +339,7 @@ class Pack(models.Model):
 
 class PackSize(models.Model):
     pack = models.ForeignKey(Pack, blank=True, null=True)
-    quantity = models.IntegerField()
+    quantity = models.FloatField()
     
     def as_dict(self, minimal=False):
         d = { 'quantity': self.quantity }
