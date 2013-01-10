@@ -1,0 +1,41 @@
+.nav-tabs > .active > a {
+    color: #555555;
+    cursor: default;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+
+.nav-tabs > .active > a:hover {
+    color: #555555;
+    cursor: pointer;
+    background-color: #eee;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+
+div#meddb_inner_container {
+    position: relative;
+}
+
+div#meddb_inner_container > img#meddb_loading {
+    position: absolute;
+    top: 40px;
+    left: 400px;
+    z-index: -1;
+    opacity: 0;
+}
+
+input#meddb_medicine_search {
+    width: 930px;
+}
+
+div#meddb_inner_container > div.meddb_inner_page {
+    position: absolute;
+    width: 100%;
+}
+
+table#meddb_supplier_details th:first-child {
+    width: 200px;
+}
+

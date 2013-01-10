@@ -257,13 +257,32 @@ var medicine_list = function(data, node) {
 	row.push(d3.round(d.mshprice,4) || '');
 	return row;
     }
+    var row_sort = function(a, b) {
+	var a_formulation = [];
+	var b_formulation = [];
+	a.ingredients.forEach(function(item) {
+	    a_formulation.push(item.inn);
+	});
+	b.ingredients.forEach(function(item) {
+	    b_formulation.push(item.inn);
+	});
+	a_sort = a.name || a_formulation.join(' + ');
+	b_sort = b.name || b_formulation.join(' + ');
+	if (a_sort > b_sort) {
+	    return 1;
+	} else if (b_sort > a_sort) {
+	    return -1;
+	} else {
+	    return 0;
+	}
+    }
     var tbody = d3.select(node)
 	.select('#meddb_medicine_list')
 	.select('tbody');
     tbody.selectAll('tr')
 	.remove();
     var rows = tbody.selectAll('tr')
-	.data(data)
+	.data(data.sort(row_sort))
 	.enter()
 	.append('tr')
 	.style('cursor', 'pointer')

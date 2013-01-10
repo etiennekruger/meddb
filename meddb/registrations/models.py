@@ -433,9 +433,6 @@ class Procurement(SourcedModel):
             d['end_date'] = self.end_date.isoformat()
         if self.source.url:
             d['source'] = self.source.url
-        if not minimal:
-            if site and self.site:
-                d['site'] = self.site.as_dict(minimal=True)
         if supplier and self.supplier:
             d['supplier'] = self.supplier.as_dict(minimal=True)
         if product:

@@ -1,0 +1,44 @@
+{% extends "basel.html" %}
+{% block content %}
+    <h3>{{ data.formulation }} {{ data.strength }}</h3>
+    <a href="{% url medicine_list %}">Back to medicine list...</a>
+    <table class="table table-bordered">
+      <caption>Procurement Prices</caption>
+      <thead>
+	<tr>
+	  <th>Country</th>
+	  <th>Price per Base Unit (USD)</th>
+	  <th>Incoterm</th>
+	  <th>Pack Size</th>
+	  <th>Volume (Packs)</th>
+	  <th>Procurement Period</th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for p in data.procurements %}
+	<tr>
+	  <td>{{ p.country.name }}</td>
+	  <td>{{ p.price_per_unit|floatformat:"4" }}</td>
+	  <td>{{ p.incoterm }}</td>
+	  <td>{{ p.pack.quantity }} {{ p.pack.name }}</td>
+	  <td>{{ p.volume }}</td>
+	  <td>
+	    {% if p.start_date %}
+	    {% if p.end_date %}
+	    {{ p.start_date }} - {{ p.end_date }}
+	    {% else %}
+	    From {{ p.start_date }}
+	    {% endif %}
+	    {% else %}
+	    {% if p.end_date %}
+	    Until {{ p.end_date }}
+	    {% else %}
+	    (Unknown)
+	    {% endif %}
+	    {% endif %}
+	  </td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+{% endblock %}
