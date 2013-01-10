@@ -209,7 +209,7 @@ class Site(models.Model):
     altphone = models.CharField(max_length=16, verbose_name='Alternative Phone Number', blank=True, null=True)
     fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True)
     email = models.EmailField(verbose_name='Email Address', blank=True, null=True)
-    altemail = models.EmailField(verbose_name='Alternative Email Address')
+    altemail = models.EmailField(verbose_name='Alternative Email Address', blank=True, null=True)
     
     def as_dict(self, minimal=False):
         d = { 'id': self.id,
@@ -320,6 +320,8 @@ class Product(models.Model):
         return d
     
     def __unicode__(self):
+        if self.name:
+            return u'%s - %s (%s)' % (self.name, self.manufacturer, str(self.medicine))
         return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
 
@@ -339,7 +341,7 @@ class Pack(models.Model):
 
 class PackSize(models.Model):
     pack = models.ForeignKey(Pack, blank=True, null=True)
-    quantity = models.IntegerField()
+    quantity = models.FloatField()
     
     def as_dict(self, minimal=False):
         d = { 'quantity': self.quantity }

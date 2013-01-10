@@ -53,7 +53,7 @@ class RegistrationAdmin(admin.ModelAdmin):
 
 class ProcurementAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'country')
-    pass
+    list_filter = ('country',)
 
 class ContextAdmin(admin.ModelAdmin):
     pass
@@ -75,3 +75,4 @@ admin.site.register(models.Currency)
 admin.site.register(models.Registration, RegistrationAdmin)
 admin.site.register(models.Procurement, ProcurementAdmin)
 admin.site.register(models.Context, ContextAdmin)
+admin.site.register(models.Ingredient)
