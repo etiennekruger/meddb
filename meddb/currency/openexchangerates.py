@@ -24,7 +24,9 @@ class OpenExchangeRates(object):
         cached = self._cache.get(url, None)
         if cached:
             return cached['data']
-        response = urllib2.urlopen('%s/%s?app_id=%s' % (API_BASE_URL, url, self.app_id))
+        url = '%s/%s?app_id=%s' % (API_BASE_URL, url, self.app_id)
+        print url
+        response = urllib2.urlopen(url)
         data = json.load(response)
         self._cache[url] = { 'data': data,
                              'time': datetime.now() }

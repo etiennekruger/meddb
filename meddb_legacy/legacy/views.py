@@ -25,6 +25,7 @@ def medicine_list(request):
         medicine['formulation'] = formulation
         strength = ' + '.join([i['strength'] for i in medicine['ingredients']])
         medicine['strength'] = strength
+    data.sort(key=lambda x: x['formulation'])
     return direct_to_template(request, 'medicine_list.html', extra_context={ 'data': data })
 
 def medicine(request, _id):
