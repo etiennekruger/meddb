@@ -60,7 +60,11 @@ class ExchangeRateManager(models.Manager):
             obj = super(ExchangeRateManager, self).get(*args, **kwargs)
             return obj
         except ExchangeRate.DoesNotExist:
-            return self._create_exchangerate(**kwargs)
+            try:
+                return self._create_exchangerate(**kwargs)
+            except ExchangeRate.DoesNotExist:
+                kwargs['date'] = None
+                return self._create_exchangerate(**kwargs)
 
 class ExchangeRate(models.Model):
     currency = models.ForeignKey(Currency)
