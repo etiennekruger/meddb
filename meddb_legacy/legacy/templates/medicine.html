@@ -6,12 +6,36 @@
       <caption>Procurement Prices</caption>
       <thead>
 	<tr>
-	  <th>Country</th>
-	  <th>Price per Base Unit (USD)</th>
-	  <th>Incoterm</th>
-	  <th>Pack Size</th>
-	  <th>Volume (Packs)</th>
-	  <th>Procurement Period</th>
+	  <th>
+	    <a href="?sort=country{% if sort == "country" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Country{% if sort == "country" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=price_per_unit{% if sort == "price_per_unit" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Price per Base Unit (USD){% if sort == "price_per_unit" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=incoterm{% if sort == "incoterm" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Incoterm{% if sort == "incoterm" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=pack_size{% if sort == "pack_size" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Pack Size{% if sort == "pack_size" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=volume{% if sort == "volume" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Volume (Packs){% if sort == "volume" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=start_date{% if sort == "start_date" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Procurement Period{% if sort == "start_date" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
 	</tr>
       </thead>
       <tbody>

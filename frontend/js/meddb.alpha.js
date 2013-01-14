@@ -113,6 +113,34 @@ meddb.template.show = function(fragment) {
 	.style('height', height+'px');
 }
 
+meddb.template.replace = function(fragment) {
+    var selector = '#meddb_inner_container';
+    d3.select('#meddb_page')
+	.attr('id', 'meddb_page_outgoing')
+	.transition()
+	.style('opacity', '0')
+	.remove();
+    d3.select(fragment)
+	.select('.meddb_inner_page')
+	.attr('id', 'meddb_page_incoming')
+	.style('opacity', '0')
+	.style('left', '0px');
+    var node = d3.select(selector)[0][0];
+    node.appendChild(fragment);
+    var height = d3.select('#meddb_page_incoming')[0][0].clientHeight;
+    d3.select('#meddb_page_incoming')
+	.transition()
+	.style('opacity', '1')
+	.attr('id', 'meddb_page');
+    d3.select('img#meddb_loading')
+	.transition()
+	.duration(100)
+	.style('opacity', 0);
+    d3.select('#meddb_inner_container')
+	.transition()
+	.style('height', height+'px');
+}
+
 meddb.template.fx = function(fragment) {
     var selector = '#meddb_inner_container';
     d3.select(fragment)
@@ -326,8 +354,12 @@ meddb.medicine.filter = function(filter) {
     });
     medicine_list(filtered, d3.select('div.meddb_inner_page')[0][0])
 }
-meddb.medicine.detail = function(id) {
-    meddb.template.hide();
+meddb.medicine.detail = function(id, sort, reverse, replace) {
+    if (replace != true) {
+	meddb.template.hide();
+    }
+    if (sort == undefined) { sort = 'country'; }
+    if (reverse == undefined) { reverse = false; }
     load('/medicine_detail.html', function(fragment) {
 	load('/json/medicine/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
@@ -367,6 +399,80 @@ meddb.medicine.detail = function(id) {
 		}
 		return row;
 	    }
+	    /* Sorting code. */
+	    var sorter = function(a, b) {
+		var a_sort = '';
+		var b_sort = '';
+		if (sort == 'country') {
+		    a_sort = a.country.name;
+		    b_sort = b.country.name;
+		} else if (sort == 'price_per_unit') {
+		    a_sort = a.price_per_unit;
+		    b_sort = b.price_per_unit;		    
+		} else if (sort == 'price') {
+		    a_sort = a.price;
+		    b_sort = b.price;		    
+		} else if (sort == 'incoterm') {
+		    a_sort = a.incoterm;
+		    b_sort = b.incoterm;		    
+		} else if (sort == 'pack_size') {
+		    a_sort = a.pack.quantity;
+		    b_sort = b.pack.quantity;		    
+		} else if (sort == 'volume') {
+		    a_sort = a.volume;
+		    b_sort = b.volume;		    
+		} else if (sort == 'start_date') {
+		    a_sort = a.start_date;
+		    b_sort = b.start_date;		    
+		}
+		if (reverse) {
+		    if (a_sort > b_sort) {
+			return -1;
+		    } else if (b_sort > a_sort) {
+			return 1;
+		    } else {
+			return 0;
+		    }
+		    
+		} else {
+		    if (a_sort > b_sort) {
+			return 1;
+		    } else if (b_sort > a_sort) {
+			return -1;
+		    } else {
+			return 0;
+		    }
+		}
+	    }
+	    var sort_actions = [
+		{'sort': 'country', 'reverse': false},
+		{'sort': 'price_per_unit', 'reverse': false},
+		{'sort': 'price', 'reverse': false},
+		{'sort': 'incoterm', 'reverse': false},
+		{'sort': 'pack_size', 'reverse': false},
+		{'sort': 'volume', 'reverse': false},
+		{'sort': 'start_date', 'reverse': false}
+	    ];
+	    for (i in sort_actions) {
+		sort_actions[i].append = '';
+		if (sort_actions[i].sort == sort) {
+		    sort_actions[i].reverse = !reverse;
+		    if (reverse) {
+			sort_actions[i].append = '&#9660;';
+		    } else {
+			sort_actions[i].append = '&#9650;';
+		    }
+		}
+	    }
+	    d3.select(fragment)
+		.select('#meddb_medicine_procurement')
+		.select('thead')
+		.selectAll('th')
+		.data(sort_actions)
+		.attr('cursor', 'pointer')
+		.html(function(d, i) { return d3.select(this).html() + d.append })
+		.on('click', function(d, i) { meddb.medicine.detail(id, d.sort, d.reverse, true); });
+	    /* Sorting done. */
 	    d3.select(fragment)
 		.select('#meddb_medicine_heading')
 		.text(object_name());
@@ -374,7 +480,7 @@ meddb.medicine.detail = function(id) {
 		.select('#meddb_medicine_procurement')
 		.select('tbody')
 		.selectAll('tr')
-		.data(data.procurements)
+		.data(data.procurements.sort(sorter))
 		.enter()
 		.append('tr');
 	    rows.selectAll('td')
@@ -424,41 +530,6 @@ meddb.medicine.detail = function(id) {
 		.text(function(d) { return d.text; })
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
 		.on('click', function(d) { if (d.hash) {location.hash = d.hash;} });
-	    /* Make the table sortable. */
-	    /*
-	    function sort_asc(a, b) {
-		if (isNumber(a) && isNumber(b)) {
-		    return a - b;
-		} else if (isString(a) && isString(b) {
-		    a.localeCompare(b);
-		} else {
-		    return 0;
-		}
-	    }
-	    function sort_desc(a, b) {
-		if (isNumber(a) && isNumber(b)) {
-		    return b - a;
-		} else if (isString(a) && isString(b) {
-		    b.localeCompare(a);
-		} else {
-		    return 0;
-		}
-	    }
-	    var headers = d3.select('#meddb_medicine_product')
-		.select('thead')
-		.selectAll('th')
-		.on('click', function(d, i) {
-		    console.log(d);
-		    if (!d) { d = -1; };
-		    if (!d) {
-			d = 1;
-			rows.sort(sort_asc);
-		    } else {
-			d = -1;
-			rows.sort(sort_desc);
-		    }
-		});
-	    */
 	    /* Add the medicine prices graph. */
 	    var prices_data = function() {
 		var prices = {};
@@ -527,9 +598,13 @@ meddb.medicine.detail = function(id) {
 	    d3.select(fragment)
 		.select('#meddb_medicine_prices').html('');
 	    var graph = new HorizontalBarGraph(prices_graph);
-	    /* Add history option. */
-	    meddb.history.add(location.hash, object_name());
-	    meddb.template.show(fragment);
+	    if (replace == true) {
+		meddb.template.replace(fragment);
+	    } else {
+		/* Add history option. */
+		meddb.history.add(location.hash, object_name());
+		meddb.template.show(fragment);
+	    }
 	});
     });
 }

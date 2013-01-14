@@ -35,4 +35,20 @@ def medicine(request, _id):
     data['formulation'] = formulation
     strength = ' + '.join([i['strength'] for i in data['ingredients']])
     data['strength'] = strength
-    return direct_to_template(request, 'medicine.html', extra_context={ 'data': data })
+    sort_key = {
+        'country': lambda x: x['country']['name'],
+        'price_per_unit': lambda x: x['price_per_unit'],
+        'incoterm': lambda x: x['incoterm'],
+        'pack_size': lambda x: x['pack']['quantity'],
+        'volume': lambda x: x['volume'],
+        'start_date': lambda x: x['start_date'],
+        }[request.GET.get('sort', 'country')]
+    data['procurements'].sort(key=sort_key)
+    if request.GET.get('reverse', 'false') == 'true':
+        data['procurements'].reverse()
+    extra_context = {
+        'data': data,
+        'sort': request.GET.get('sort', 'country'),
+        'reverse': request.GET.get('reverse', 'false') == 'true'
+        }
+    return direct_to_template(request, 'medicine.html', extra_context=extra_context)
