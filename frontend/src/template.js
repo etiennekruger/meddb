@@ -51,6 +51,34 @@ meddb.template.show = function(fragment) {
 	.style('height', height+'px');
 }
 
+meddb.template.replace = function(fragment) {
+    var selector = '#meddb_inner_container';
+    d3.select('#meddb_page')
+	.attr('id', 'meddb_page_outgoing')
+	.transition()
+	.style('opacity', '0')
+	.remove();
+    d3.select(fragment)
+	.select('.meddb_inner_page')
+	.attr('id', 'meddb_page_incoming')
+	.style('opacity', '0')
+	.style('left', '0px');
+    var node = d3.select(selector)[0][0];
+    node.appendChild(fragment);
+    var height = d3.select('#meddb_page_incoming')[0][0].clientHeight;
+    d3.select('#meddb_page_incoming')
+	.transition()
+	.style('opacity', '1')
+	.attr('id', 'meddb_page');
+    d3.select('img#meddb_loading')
+	.transition()
+	.duration(100)
+	.style('opacity', 0);
+    d3.select('#meddb_inner_container')
+	.transition()
+	.style('height', height+'px');
+}
+
 meddb.template.fx = function(fragment) {
     var selector = '#meddb_inner_container';
     d3.select(fragment)
