@@ -22,8 +22,10 @@ class Command(BaseCommand):
             "supplier",
             "incoterm",
             "price",
+            "currency",
             "volume",
             "correct (please mark with Y for yes and N for no",
+            "comments",
         ]
         writer = csv.writer(sys.stdout)
         writer.writerow(headers)
@@ -32,17 +34,25 @@ class Command(BaseCommand):
 
     def getprocurements(self, country):
         for procurement in rmodels.Procurement.objects.filter(country__name=country):
-            yield [
-                procurement.start_date,
-                procurement.end_date,
-                procurement.product.medicine,
-                procurement.product.name,
-                procurement.product.manufacturer,
-                procurement.product.site,
-                procurement.pack.pack,
-                procurement.pack.quantity,
-                procurement.supplier,
-                procurement.incoterm,
-                procurement.price,
-                procurement.volume,
-            ]
+            def none_as_blank(procurement, el):
+                try:
+                    return str(eval(el, globals(), locals()))
+                except AttributeError:
+                    return ""
+        
+            if procurement.start_date.year >= 2011:
+                yield [
+                    none_as_blank(procurement, "procurement.start_date"),
+                    none_as_blank(procurement, "procurement.end_date"),
+                    none_as_blank(procurement, "procurement.product.medicine"),
+                    none_as_blank(procurement, "procurement.product.name"),
+                    none_as_blank(procurement, "procurement.product.manufacturer"),
+                    none_as_blank(procurement, "procurement.product.site.address"),
+                    none_as_blank(procurement, "procurement.pack.pack"),
+                    none_as_blank(procurement, "procurement.pack.quantity"),
+                    none_as_blank(procurement, "procurement.supplier"),
+                    none_as_blank(procurement, "procurement.incoterm"),
+                    none_as_blank(procurement, "procurement.price"),
+                    none_as_blank(procurement, "procurement.currency.code"),
+                    none_as_blank(procurement, "procurement.volume"),
+                ]
