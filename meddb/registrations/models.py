@@ -371,7 +371,7 @@ class Container(models.Model):
         return d
     
     def __unicode__(self):
-        return u'%f %s %s' % (self.quantity, self.unit, self.type)
+        return u'%.f %s %s' % (self.quantity, self.unit, self.type)
     
 
 class Registration(SourcedModel):
