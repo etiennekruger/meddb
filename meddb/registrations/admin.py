@@ -45,9 +45,6 @@ class ManufacturerAdmin(admin.ModelAdmin):
     list_filter = ('country',)
     inlines = (SupplierInline,)
 
-class PackInline(admin.TabularInline):
-    model = models.PackSize
-
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'manufacturer')
 
@@ -71,6 +68,7 @@ admin.site.register(models.Site)
 admin.site.register(models.Supplier, SupplierAdmin)
 admin.site.register(models.Pack)
 admin.site.register(models.PackSize)
+admin.site.register(models.Container)
 admin.site.register(models.Currency)
 admin.site.register(models.Registration, RegistrationAdmin)
 admin.site.register(models.Procurement, ProcurementAdmin)
