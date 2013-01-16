@@ -330,6 +330,8 @@ class Product(models.Model):
 #
 # These models will represent actual registrations of products.
 
+
+# START This is to be removed once the new models have been populated.
 class Pack(models.Model):
     name = models.CharField(max_length=32)
     
@@ -354,6 +356,23 @@ class PackSize(models.Model):
         if self.pack:
             return u'%s (%s)' % (self.pack.name, self.quantity)
         return u'unknown (%s)' % (self.quantity)
+# END
+
+class Container(models.Model):
+    type = models.CharField(max_length=32, verbose_name='Container Type', help_text='This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.')
+    unit = models.CharField(max_length=32, verbose_name='Basic Unit', help_text='This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).')
+    quantity = models.FloatField(verbose_name='Container size in basic units', help_text='The total container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).')
+    
+    def as_dict(self, minimal=False):
+        d = { 'quantity': self.quantity }
+        if self.pack:
+            d['id'] = self.pack.id
+            d['name'] = self.pack.name
+        return d
+    
+    def __unicode__(self):
+        return u'%f %s %s' % (self.quantity, self.unit, self.type)
+    
 
 class Registration(SourcedModel):
     country = models.ForeignKey(Country)
@@ -407,6 +426,8 @@ class Procurement(SourcedModel):
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
     pack = models.ForeignKey(PackSize, verbose_name='Pack Size', help_text='Indicate the type of pack as well as the number of units for this medicine procurement.', null=True)
+    container = models.ForeignKey(Container, verbose_name='Container', help_text='Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.')
+    packsize = models.IntegerField(verbose_name='Containers in packaging', help_text='Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
     price = models.FloatField(verbose_name='Price per Pack', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the pack size indicated above (eg. the price of one blister pack with 24 capsules in EUR).')
