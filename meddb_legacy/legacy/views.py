@@ -39,7 +39,7 @@ def medicine(request, _id):
         'country': lambda x: x['country']['name'],
         'price_per_unit': lambda x: x['price_per_unit'],
         'incoterm': lambda x: x['incoterm'],
-        'pack_size': lambda x: x['pack']['quantity'],
+        'pack_size': lambda x: x['container']['quantity'],
         'volume': lambda x: x['volume'],
         'start_date': lambda x: x['start_date'],
         }[request.GET.get('sort', 'country')]

@@ -27,7 +27,7 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		row.push(d3.round(d.price,4));
 		row.push(d.incoterm || '(Not Available)');
 		if (d.pack) {
-		    row.push(d.pack.quantity+' '+d.pack.name);
+		    row.push(d.container.quantity+' '+d.container.unit+' ('+d.container.type+')');
 		} else {
 		    row.push('(Not Available)');
 		}
@@ -60,8 +60,8 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		    a_sort = a.incoterm;
 		    b_sort = b.incoterm;		    
 		} else if (sort == 'pack_size') {
-		    a_sort = a.pack.quantity;
-		    b_sort = b.pack.quantity;		    
+		    a_sort = a.container.quantity;
+		    b_sort = b.container.quantity;		    
 		} else if (sort == 'volume') {
 		    a_sort = a.volume;
 		    b_sort = b.volume;		    

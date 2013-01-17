@@ -44,7 +44,7 @@
 	  <td>{{ p.country.name }}</td>
 	  <td>{{ p.price_per_unit|floatformat:"4" }}</td>
 	  <td>{{ p.incoterm }}</td>
-	  <td>{{ p.pack.quantity }} {{ p.pack.name }}</td>
+	  <td>{{ p.container.quantity }} {{ p.container.unit }} ({{ p.container.type }})</td>
 	  <td>{{ p.volume }}</td>
 	  <td>
 	    {% if p.start_date %}
