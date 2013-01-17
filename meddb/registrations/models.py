@@ -364,10 +364,9 @@ class Container(models.Model):
     quantity = models.FloatField(verbose_name='Container size in basic units', help_text='The total container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).')
     
     def as_dict(self, minimal=False):
-        d = { 'quantity': self.quantity }
-        if self.pack:
-            d['id'] = self.pack.id
-            d['name'] = self.pack.name
+        d = { 'type': self.type,
+              'unit': self.unit,
+              'quantity': self.quantity }
         return d
     
     def __unicode__(self):
