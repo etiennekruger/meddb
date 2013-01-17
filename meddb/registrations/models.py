@@ -443,10 +443,13 @@ class Procurement(SourcedModel):
               'currency': self.currency.code,
               'volume': self.volume,
               'method': self.method,
-              'country': self.country.as_dict() }
+              'country': self.country.as_dict(),
+              'container': self.container.as_dict() }
         if self.pack:
             d['pack'] = self.pack.as_dict()
-            d['price_per_unit'] = self.price_usd/(self.pack.quantity or 1)
+            d['price_per_unit'] = self.price_usd/self.container.quantity
+        if self.packsize:
+            d['packsize'] = self.packsize
         if self.start_date:
             d['start_date'] = self.start_date.isoformat()
         if self.end_date:
