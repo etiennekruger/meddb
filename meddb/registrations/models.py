@@ -360,7 +360,7 @@ class PackSize(models.Model):
 
 class Container(models.Model):
     type = models.CharField(max_length=32, verbose_name='Container Type', help_text='This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.')
-    unit = models.CharField(max_length=32, verbose_name='Basic Unit', help_text='This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).')
+    unit = models.CharField(max_length=32, verbose_name='Basic Unit', help_text='This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).', blank=True)
     quantity = models.FloatField(verbose_name='Container size in basic units', help_text='The total container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).')
     
     def as_dict(self, minimal=False):
