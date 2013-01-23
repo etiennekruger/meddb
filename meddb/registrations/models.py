@@ -138,7 +138,7 @@ class Medicine(models.Model):
         procurements =  Procurement.objects.filter(product__medicine=self)
         for p in procurements:
             sum += p.price_usd * p.volume
-            tot += p.pack.quantity * p.volume
+            tot += p.container.quantity * p.volume
         if tot > 0:
             return sum/tot
         return None
@@ -388,7 +388,6 @@ class Registration(SourcedModel):
         d = { 'id': self.id,
               'number': self.number,
               'country': self.country.as_dict(),
-              'packs': [p.as_dict() for p in self.packsize_set.all()],
               'status': self.status }
         if product:
             d['product'] = self.product.as_dict(minimal=True, medicine=medicine, registrations=False)
