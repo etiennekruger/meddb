@@ -360,7 +360,7 @@ class PackSize(models.Model):
 
 class Container(models.Model):
     type = models.CharField(max_length=32, verbose_name='Container Type', help_text='This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.')
-    unit = models.CharField(max_length=32, verbose_name='Basic Unit', help_text='This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).')
+    unit = models.CharField(max_length=32, verbose_name='Basic Unit', help_text='This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).', blank=True)
     quantity = models.FloatField(verbose_name='Container size in basic units', help_text='The total container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).')
     
     def as_dict(self, minimal=False):
@@ -429,9 +429,9 @@ class Procurement(SourcedModel):
     packsize = models.IntegerField(verbose_name='Containers in packaging', help_text='Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
     incoterm = models.ForeignKey(Incoterm, help_text='The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.')
-    price = models.FloatField(verbose_name='Price per Pack', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the pack size indicated above (eg. the price of one blister pack with 24 capsules in EUR).')
+    price = models.FloatField(verbose_name='Price per container', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).')
     currency = models.ForeignKey(Currency, help_text='This is the currency of the procurement price. This field is required to convert units to USD for comparison.')
-    volume = models.IntegerField(help_text='The number of packs contracted at the specified unit price.', default=1)
+    volume = models.IntegerField(help_text='The number of containers contracted at the specified unit price.', default=1)
     method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
     start_date = models.DateField(max_length=32, verbose_name='Period Start', help_text='This is the first day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     end_date = models.DateField(max_length=32, verbose_name='Period End', help_text='This is the last day that the procurement price is valid for (may be left blank).', blank=True, null=True)
