@@ -26,11 +26,7 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		}
 		row.push(d3.round(d.price,4));
 		row.push(d.incoterm || '(Not Available)');
-		if (d.pack) {
-		    row.push(d.container.quantity+' '+d.container.unit+' ('+d.container.type+')');
-		} else {
-		    row.push('(Not Available)');
-		}
+		row.push(d.container.quantity+' '+d.container.unit+' ('+d.container.type+')');
 		row.push(d.volume || '(Not Available)');
 		if (d.start_date && d.end_date) {
 		    row.push(d.start_date+' to '+d.end_date);
@@ -182,7 +178,7 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 			prices[item.country.name] = [];
 		    }
 		    prices[item.country.name].push({ 'price' : item.price,
-						     'packsize' : item.pack.quantity,
+						     'packsize' : item.container.quantity,
 						     'volume' : item.volume });
 		});
 		graph_data = [];
