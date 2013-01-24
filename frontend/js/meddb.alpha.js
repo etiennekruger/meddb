@@ -499,10 +499,10 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		} else {
 		    row.push({ text: '(Not Available)' });
 		}
-		if ((d.manufacturer) && (d.manufacturer.name != '')) {
+		if ((d.product.manufacturer) && (d.product.manufacturer.name != '')) {
 		    row.push({
-			text: d.manufacturer.name,
-			hash: 'manufacturer:'+d.manufacturer.id
+			text: d.product.manufacturer.name,
+			hash: 'manufacturer:'+d.product.manufacturer.id
 		    });
 		} else {
 		    row.push({ text: '(Not Available)' });
