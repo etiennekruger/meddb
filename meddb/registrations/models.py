@@ -459,7 +459,7 @@ class Procurement(SourcedModel):
         #    d['pack'] = self.pack.as_dict()
         if self.container.quantity:
             d['price_per_unit'] = self.price_usd / self.container.quantity
-        if product:
+        if self.product:
             d['product'] = { 'id': self.product.id,
                              'name': self.product.name }
         if self.start_date:
