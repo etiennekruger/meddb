@@ -426,7 +426,7 @@ class Currency(models.Model):
 class Procurement(SourcedModel):
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
-    pack = models.ForeignKey(PackSize, verbose_name='Pack Size', help_text='Indicate the type of pack as well as the number of units for this medicine procurement.', null=True)
+    #pack = models.ForeignKey(PackSize, verbose_name='Pack Size', help_text='Indicate the type of pack as well as the number of units for this medicine procurement.', null=True, editable=False)
     container = models.ForeignKey(Container, verbose_name='Container', help_text='Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.')
     packsize = models.IntegerField(verbose_name='Containers in packaging', help_text='Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
@@ -438,30 +438,37 @@ class Procurement(SourcedModel):
     start_date = models.DateField(max_length=32, verbose_name='Period Start', help_text='This is the first day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     end_date = models.DateField(max_length=32, verbose_name='Period End', help_text='This is the last day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     
-    def as_dict(self, site=True, supplier=True, product=True, medicine=True, minimal=False):
+    def as_dict(self):
         d = { 'id': self.id,
-              'incoterm': self.incoterm.as_dict(),
-              'price': self.price_usd,
+              'incoterm': { 'id': self.incoterm.id,
+                            'code': self.incoterm.name },
+              'price': self.price,
               'currency': self.currency.code,
+              'price_usd': self.price_usd,
               'volume': self.volume,
               'method': self.method,
-              'country': self.country.as_dict(),
-              'container': self.container.as_dict() }
-        if self.pack:
-            d['pack'] = self.pack.as_dict()
-            d['price_per_unit'] = self.price_usd/self.container.quantity
-        if self.packsize:
-            d['packsize'] = self.packsize
+              'country': { 'id': self.country.id,
+                           'code':, self.country.code,
+                           'name': self.country.name },
+              'container': { 'id': self.container.id,
+                             'type': self.container.type,
+                             'unit': self.container.unit,
+                             'quantity': self.container.quantity }
+              'packsize': self.packsize }
+        #if self.pack:
+        #    d['pack'] = self.pack.as_dict()
+        if self.container.quantity:
+            d['price_per_unit'] = self.price_usd / self.container.quantity
+        if product:
+            d['product'] = { 'id': self.product.id,
+                             'name': self.product.name }
         if self.start_date:
             d['start_date'] = self.start_date.isoformat()
         if self.end_date:
             d['end_date'] = self.end_date.isoformat()
-        if self.source.url:
-            d['source'] = self.source.url
-        if supplier and self.supplier:
-            d['supplier'] = self.supplier.as_dict(minimal=True)
-        if product:
-            d['product'] = self.product.as_dict(minimal=minimal, medicine=medicine)
+        if self.supplier:
+            d['supplier'] = { 'id': self.supplier.id,
+                              'name': self.supplier.name }
         return d
     
     @property
