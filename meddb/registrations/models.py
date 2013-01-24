@@ -453,7 +453,7 @@ class Procurement(SourcedModel):
               'container': { 'id': self.container.id,
                              'type': self.container.type,
                              'unit': self.container.unit,
-                             'quantity': self.container.quantity }
+                             'quantity': self.container.quantity },
               'packsize': self.packsize }
         #if self.pack:
         #    d['pack'] = self.pack.as_dict()
