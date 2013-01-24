@@ -10,7 +10,8 @@ class FilteredSelectSingle(forms.Select):
     A Select with a JavaScript filter interface.
     """
     class Media:
-        js = (settings.STATIC_URL + "admin/js/fkfilter.js",)
+        js = ("admin/js/fkfilter.js",)
+        css = { 'all': ("admin/css/filteredselect.css",) }
 
     def __init__(self, verbose_name, attrs=None, choices=()):
         self.verbose_name = verbose_name
