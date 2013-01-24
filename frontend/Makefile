@@ -21,6 +21,8 @@ js/meddb.alpha.js: \
 	src/medicine-detail.js \
 	src/product.js \
 	src/product-detail.js \
+	src/procurement.js \
+	src/procurement-detail.js \
 	src/supplier.js \
 	src/supplier-detail.js \
 	src/init.js \

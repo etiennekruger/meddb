@@ -17,25 +17,26 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 	    /* Populate procurements table. */
 	    var procurement_data = function(d) {
 		var row = [];
-		row.push(d.country.name);
+		var hash = 'procurement:'+d.id;
+		row.push({ text: d.country.name, hash: hash });
 		var ppu = d3.round(d.price_per_unit,4);
 		if (typeof ppu == 'number') {
-		    row.push(ppu);
+		    row.push({ text: ppu, hash: hash });
 		} else {
-		    row.push('(Not Available)');
+		    row.push({ text: '(Not Available)', hash: hash });
 		}
-		row.push(d3.round(d.price,4));
-		row.push(d.incoterm || '(Not Available)');
-		row.push(d.container.quantity+' '+d.container.unit+' ('+d.container.type+')');
-		row.push(d.volume || '(Not Available)');
+		row.push({ text: d3.round(d.price_usd,4), hash: hash });
+		row.push({ text: (d.incoterm.name || '(Not Available)'), hash: hash });
+		row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
+		row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
 		if (d.start_date && d.end_date) {
-		    row.push(d.start_date+' to '+d.end_date);
+		    row.push({ text: d.start_date+' to '+d.end_date, hash: hash });
 		} else if (d.start_date) {
-		    row.push('From '+d.start_date);
+		    row.push({ text: 'From '+d.start_date, hash: hash });
 		} else if (d.end_date) {
-		    row.push('Until '+d.end_date);
+		    row.push({ text: 'Until '+d.end_date, hash: hash });
 		} else {
-		    row.push('(Not Available)');
+		    row.push({ text: '(Not Available)', hash: hash });
 		}
 		return row;
 	    }
@@ -50,8 +51,8 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		    a_sort = a.price_per_unit;
 		    b_sort = b.price_per_unit;		    
 		} else if (sort == 'price') {
-		    a_sort = a.price;
-		    b_sort = b.price;		    
+		    a_sort = a.price_usd;
+		    b_sort = b.price_usd;		    
 		} else if (sort == 'incoterm') {
 		    a_sort = a.incoterm;
 		    b_sort = b.incoterm;		    
@@ -127,7 +128,9 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		.data(procurement_data)
 		.enter()
 		.append('td')
-		.text(function(d) { return d; });
+		.style('cursor', 'pointer')
+	        .on('click', function(d, i) { location.hash = d.hash; })
+		.text(function(d) { return d.text; });
 	    /* Populate products table. */
 	    var product_data = function(d) {
 		var row = [];
@@ -177,7 +180,7 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		    if (typeof(prices[item.country.name]) == 'undefined') {
 			prices[item.country.name] = [];
 		    }
-		    prices[item.country.name].push({ 'price' : item.price,
+		    prices[item.country.name].push({ 'price' : item.price_usd,
 						     'packsize' : item.container.quantity,
 						     'volume' : item.volume });
 		});
