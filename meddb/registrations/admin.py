@@ -54,7 +54,8 @@ class MedicineAdmin(admin.ModelAdmin):
     inlines = (IngredientInline,)
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'medicine')
+    list_display = ('name', 'medicine', 'manufacturer')
+    list_filter = ('manufacturer', 'medicine')
 
 class MSHPriceAdmin(admin.ModelAdmin):
     list_display = ('medicine', 'price')

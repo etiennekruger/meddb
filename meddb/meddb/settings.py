@@ -1,3 +1,7 @@
+import os
+
+PROJECT_ROOT = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..')
+
 # Django settings for meddb project.
 
 DEBUG = True
@@ -12,7 +16,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'meddb2012',
+        'NAME': 'meddb2013',
         'USER': 'meddb',
         'PASSWORD': 'sarpam2010',
         'HOST': 'mysql',
@@ -48,18 +52,18 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, "media")
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -99,6 +103,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'profiler.ProfileMiddleware',
 )
 
 ROOT_URLCONF = 'meddb.urls'
