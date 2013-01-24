@@ -14,6 +14,11 @@ meddb.product.detail = function(id) {
 		d.push(formulation.join(' + '));
 		d.push(strength.join(' + '));
 		d.push(data.medicine.dosageform.name || '(Not Available)');
+		if ((data.manufacturer) && (data.manufacturer.name != '')) {
+		    d.push(data.manufacturer.name);
+		} else {
+		    d.push('(Not Available)');
+		}
 		return d;
 	    }
 	    var procurement = function(d) {
@@ -25,14 +30,6 @@ meddb.product.detail = function(id) {
 		    row.push({
 			text: d.supplier.name,
 			hash: 'supplier:'+d.supplier.id
-		    })
-		} else {
-		    row.push({ text: '(Not Available)' });
-		}
-		if ((d.manufacturer) && (d.manufacturer.name != '')) {
-		    row.push({
-			text: d.manufacturer.name,
-			hash: 'manufacturer:'+d.manufacturer.id
 		    })
 		} else {
 		    row.push({ text: '(Not Available)' });

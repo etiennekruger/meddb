@@ -1,6 +1,37 @@
+from django import forms
+from django.conf import settings
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 import models
 
+# Widget from django tree features/select-filter. Some adjustments made.
+class FilteredSelectSingle(forms.Select):
+    """
+    A Select with a JavaScript filter interface.
+    """
+    class Media:
+        js = ("admin/js/fkfilter.js",)
+        css = { 'all': ("admin/css/filteredselect.css",) }
+
+    def __init__(self, verbose_name, attrs=None, choices=()):
+        self.verbose_name = verbose_name
+        super(FilteredSelectSingle, self).__init__(attrs, choices)
+
+    def render(self, name, value, attrs={}, choices=()):
+        attrs['class'] = 'selectfilter'
+        output = [super(FilteredSelectSingle, self).render(
+            name, value, attrs, choices)]
+        output.append((
+            '<script type="text/javascript">'
+            'django.jQuery(document).ready(function(){'
+            'django.jQuery("#id_%s").fk_filter("%s")'
+            '});'
+            '</script>'
+        ) % (name, self.verbose_name.replace('"', '\\"'),));
+        return mark_safe(u''.join(output))
+
+
+#admin models
 class SourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'date', 'url')
     fields = ('name', 'date', 'url')
@@ -49,7 +80,13 @@ class ManufacturerAdmin(admin.ModelAdmin):
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'manufacturer')
 
+class ProcurementAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProcurementAdminForm, self).__init__(*args, **kwargs)
+        self.fields['product'].widget.widget = FilteredSelectSingle(verbose_name='products')
+
 class ProcurementAdmin(admin.ModelAdmin):
+    form = ProcurementAdminForm
     list_display = ('__unicode__', 'product', 'country')
     list_filter = ('country',)
 
