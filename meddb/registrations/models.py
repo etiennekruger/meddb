@@ -313,7 +313,7 @@ class Product(models.Model):
               'name': self.name }
         if self.manufacturer:
             d['manufacturer'] = { 'id': self.manufacturer.id,
-                                  'name': selfmanufacturer.name }
+                                  'name': self.manufacturer.name }
         if medicine:
             d['medicine'] = self.medicine.as_dict(minimal=True, products=False, procurements=False)
         if registrations:
