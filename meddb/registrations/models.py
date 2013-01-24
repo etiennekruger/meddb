@@ -319,7 +319,7 @@ class Product(models.Model):
         if registrations:
             d['registrations'] = [r.as_dict(medicine=False, product=False) for r in self.registration_set.all()]
         if not minimal:
-            d['procurements'] = [r.as_dict(minimal=True, medicine=False) for r in self.procurement_set.all()]
+            d['procurements'] = [r.as_dict() for r in self.procurement_set.all()]
         return d
     
     def __unicode__(self):
