@@ -225,7 +225,7 @@ class Site(models.Model):
                        'altphone': self.altphone,
                        'altemail': self.altemail })
             d['registrations'] = [r.as_dict(minimal=True) for r in Registration.objects.all()]
-            d['procurements'] = [p.as_dict(minimal=True, site=False) for p in Procurement.objects.all()]
+            d['procurements'] = [p.as_dict() for p in Procurement.objects.all()]
             d['manufacturer'] = self.manufacturer.as_dict(minimal=True)
         return d
     
