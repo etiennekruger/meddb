@@ -54,7 +54,7 @@
                 // Iterate through the excluded list for matches
                 size = stash.length;
                 for (i = 0; i < size; i++) {
-                    if (stash[i].text.indexOf(pattern) !== -1) {
+                    if (stash[i].text.toLowerCase().indexOf(pattern.toLowerCase()) !== -1) {
                         select.append(stash.splice(i--, 1));
                         matched++;
                         size--;
@@ -65,7 +65,7 @@
                 options = select.children();
                 size = options.length - matched;
                 for(i = 0; i < size; i++) {
-                    if (options[i].text.indexOf(pattern) === -1) {
+                    if (options[i].text.toLowerCase().indexOf(pattern.toLowerCase()) === -1) {
                         option = $(options[i]).detach();
                         stash.push(option[0]);
                     }
