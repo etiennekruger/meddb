@@ -448,7 +448,7 @@ class Procurement(SourcedModel):
               'volume': self.volume,
               'method': self.method,
               'country': { 'id': self.country.id,
-                           'code':, self.country.code,
+                           'code': self.country.code,
                            'name': self.country.name },
               'container': { 'id': self.container.id,
                              'type': self.container.type,
