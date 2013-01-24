@@ -127,7 +127,7 @@ class Medicine(models.Model):
         if self.name:
             d['name'] = self.name.capitalize()
         if procurements:
-            d['procurements'] = [p.as_dict(minimal=True, medicine=False) for p in Procurement.objects.filter(product__medicine=self)]
+            d['procurements'] = [p.as_dict() for p in Procurement.objects.filter(product__medicine=self)]
         if products:
             d['products'] = [p.as_dict(medicine=False, minimal=minimal) for p in self.product_set.all()]
         return d
@@ -441,7 +441,7 @@ class Procurement(SourcedModel):
     def as_dict(self):
         d = { 'id': self.id,
               'incoterm': { 'id': self.incoterm.id,
-                            'code': self.incoterm.name },
+                            'name': self.incoterm.name },
               'price': self.price,
               'currency': { 'id': self.currency.id,
                             'code': self.currency.code },
