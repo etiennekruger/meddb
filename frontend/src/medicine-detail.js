@@ -26,6 +26,11 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		    row.push({ text: '(Not Available)', hash: hash });
 		}
 		row.push({ text: d3.round(d.price_usd,4), hash: hash });
+		if (typeof ppu == 'number') {
+		    row.push({ text: d3.round((ppu / data.mshprice),4), hash: hash });
+		} else {
+		    row.push({ text: '(Not Available)', hash: hash });
+		}
 		row.push({ text: (d.incoterm.name || '(Not Available)'), hash: hash });
 		row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
 		row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
@@ -53,6 +58,9 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		} else if (sort == 'price') {
 		    a_sort = a.price_usd;
 		    b_sort = b.price_usd;		    
+		} else if (sort == 'msh_ratio') {
+		    a_sort = a.price_per_unit;
+		    b_sort = b.price_per_unit;		    
 		} else if (sort == 'incoterm') {
 		    a_sort = a.incoterm;
 		    b_sort = b.incoterm;		    
@@ -89,6 +97,7 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		{'sort': 'country', 'reverse': false},
 		{'sort': 'price_per_unit', 'reverse': false},
 		{'sort': 'price', 'reverse': false},
+		{'sort': 'msh_ratio', 'reverse': false},
 		{'sort': 'incoterm', 'reverse': false},
 		{'sort': 'pack_size', 'reverse': false},
 		{'sort': 'volume', 'reverse': false},
