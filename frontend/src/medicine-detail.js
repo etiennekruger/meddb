@@ -1,3 +1,7 @@
+render_pack = function(procurement) {
+    return procurement.container.quantity + ' '+ procurement.container.unit + ' (' + procurement.container.type +')';
+
+}
 meddb.medicine.detail = function(id, sort, reverse, replace) {
     if (replace != true) {
 	meddb.template.hide();
@@ -32,7 +36,11 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		    row.push({ text: '(Not Available)', hash: hash });
 		}
 		row.push({ text: (d.incoterm.name || '(Not Available)'), hash: hash });
-		row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
+		//row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
+		row.push({
+            text: render_pack(d),
+            hash: hash 
+        });
 		row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
 		if (d.start_date && d.end_date) {
 		    row.push({ text: d.start_date+' to '+d.end_date, hash: hash });
@@ -186,10 +194,11 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 	    var prices_data = function() {
 		var prices = {};
 		data.procurements.forEach(function(item) {
-		    if (typeof(prices[item.country.name]) == 'undefined') {
-			prices[item.country.name] = [];
+            label = item.country.name + ' - ' + render_pack(item);
+		    if (typeof(prices[label]) == 'undefined') {
+			prices[label] = [];
 		    }
-		    prices[item.country.name].push({ 'price' : item.price_usd,
+		    prices[label].push({ 'price' : item.price_usd,
 						     'packsize' : item.container.quantity,
 						     'volume' : item.volume });
 		});
