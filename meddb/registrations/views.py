@@ -1,3 +1,5 @@
+from collections import defaultdict
+import dateutil.parser
 import django.utils.simplejson as json
 from django import http
 from django.views.generic import View
@@ -90,6 +92,46 @@ class ProductListView(JSONList):
 class MedicineView(JSONRepresentation):
     model = models.Medicine
 
+    def remove_old_procurements(self, procurements):
+        """
+        Only show procurements for the latest year for each country
+        """
+        years = defaultdict(list)
+        latest_year = {}
+        new_procurements = []
+
+        def key(procurement):
+            return "%s%s" % (
+                procurement["country"]["code"],
+                procurement["container"]["id"]
+            )
+
+        for procurement in procurements:
+            s_start_date = procurement["start_date"]
+            start_date = dateutil.parser.parse(s_start_date)
+            years[key(procurement)].append(start_date.year)
+
+        for country, years in years.items():
+            latest_year[country] = sorted(years, reverse=True)[0]
+
+        for procurement in procurements:
+            s_start_date = procurement["start_date"]
+            start_date = dateutil.parser.parse(s_start_date)
+            if start_date.year == latest_year[key(procurement)]:
+                new_procurements.append(procurement)
+
+        return new_procurements
+
+
+    def get_json_data(self, *args, **kwargs):
+        data = super(MedicineView, self).get_json_data(*args, **kwargs)
+        procurements = data["procurements"]
+
+        new_procurements = self.remove_old_procurements(procurements)
+        data["procurements"] = new_procurements
+            
+        return data
+
 class MedicineListView(JSONList):
     model = models.Medicine
     
@@ -99,6 +141,7 @@ class MedicineListView(JSONList):
         if not search:
             return self.model.objects.all()
         query = Q(ingredient__inn__name__icontains=search)
+        date["procurements"] = []
         query |= Q(product__name__icontains=search)
         return self.model.objects.filter(query).distinct()
 
