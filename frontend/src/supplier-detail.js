@@ -4,11 +4,20 @@ meddb.supplier.detail = function(id) {
 	load('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var procurement = function(d) {
+        var product = d.product;
+
 		var row = [];
 		row.push({
 		    text: d.product.name,
 		    hash: 'product:'+d.product.id
 		});
+        row.push({
+            text: product["pack-size"]["quantity"] + ' ' + 
+                  product["pack-size"]["unit"] + ' ' + 
+                  product["pack-size"]["type"],
+            hash: 'product:'+ d.product.id
+        });
+
 		row.push({
 		    text: d.country.name,
 		});

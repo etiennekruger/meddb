@@ -288,7 +288,8 @@ class Supplier(models.Model):
                                     'inn': i.inn.name.title(),
                                     'strength': i.strength
                                     } for i in p.product.medicine.ingredient_set.all()]
-                            }
+                            },
+                            'pack-size' : p.container.as_dict(minimal=True),
                         },
                     'country': {
                         'id': p.country.id,
