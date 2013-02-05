@@ -646,7 +646,7 @@ meddb.product.detail = function(id) {
 		d.push(strength.join(' + '));
 		d.push(data.medicine.dosageform.name || '(Not Available)');
 		if ((data.manufacturer) && (data.manufacturer.name != '')) {
-		    d.push(data.manufacturer.name + ' ' + data.manufacturer.country);
+		    d.push(data.manufacturer.name + ' - ' + data.manufacturer.country);
 		} else {
 		    d.push('(Not Available)');
 		}
