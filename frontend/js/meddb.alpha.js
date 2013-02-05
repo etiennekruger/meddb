@@ -718,6 +718,11 @@ meddb.procurement.detail = function(id) {
 		} else {
 		    d.push({ text: '(Not Available)' });
 		}
+		if ((data.manufacturer) && (data.manufacturer.name)) {
+		    d.push({ text: data.manufacturer.name, hash: 'manufacturer:'+data.manufacturer.id });
+		} else {
+		    d.push({ text: '(Not Available)' });
+		}
 		d.push({ text: data.country.name || '(Not Available)' });
 		d.push({ text: data.method || '(Not Available)' });
 		if ((data.start_date) && (data.end_date)) {
