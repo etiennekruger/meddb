@@ -711,7 +711,7 @@ meddb.procurement.detail = function(id) {
 		}
 		d.push({ text: data.container.quantity+' '+data.container.unit+' '+data.container.type });
 		d.push({ text: data.volume+' (in packs of '+(data.packsize || 'unknown size')+')' });
-		d.push({ text: d3.round(data.price, 2)+' '+data.currency.code });
+		d.push({ text: d3.round(data.price_usd, 2) + ' USD'});
 		d.push({ text: data.incoterm.name || '(Not Available)' });
 		if ((data.supplier) && (data.supplier.name)) {
 		    d.push({ text: data.supplier.name, hash: 'supplier:'+data.supplier.id });
