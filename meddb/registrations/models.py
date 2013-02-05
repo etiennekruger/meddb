@@ -474,6 +474,12 @@ class Procurement(SourcedModel):
         if self.supplier:
             d['supplier'] = { 'id': self.supplier.id,
                               'name': self.supplier.name }
+        if self.product and self.product.manufacturer:
+            d['manufacturer'] = {
+                'id': self.product.manufacturer.id,
+                'name': self.product.manufacturer.name,
+                'country': self.product.manufacturer.country.name,
+            }
         return d
     
     @property

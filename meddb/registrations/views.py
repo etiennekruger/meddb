@@ -172,20 +172,6 @@ class RegistrationListView(JSONList):
 class ProcurementView(JSONRepresentation):
     model = models.Procurement
 
-    def get_json_data(self, *args, **kwargs):
-        data = super(ProcurementView, self).get_json_data(*args, **kwargs)
-        procurement = data
-        product = models.Product.objects.get(id=procurement["product"]["id"])
-        manufacturer = product.manufacturer
-
-        if manufacturer:
-            data["manufacturer"] = {
-                "id" : manufacturer.id,
-                "name" : "%s - %s" % (manufacturer.name, manufacturer.country.name),
-            }
-
-        return data
-
 class ProcurementListView(JSONList):
     model = models.Procurement
 

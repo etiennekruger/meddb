@@ -20,7 +20,10 @@ meddb.procurement.detail = function(id) {
 		    d.push({ text: '(Not Available)' });
 		}
 		if ((data.manufacturer) && (data.manufacturer.name)) {
-		    d.push({ text: data.manufacturer.name, hash: 'manufacturer:'+data.manufacturer.id });
+		    d.push({
+                text: data.manufacturer.name + ' - ' + data.manufacturer.country.name,
+                hash: 'manufacturer:' + data.manufacturer.id
+            });
 		} else {
 		    d.push({ text: '(Not Available)' });
 		}
