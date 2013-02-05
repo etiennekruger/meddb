@@ -478,8 +478,9 @@ class Procurement(SourcedModel):
             d['manufacturer'] = {
                 'id': self.product.manufacturer.id,
                 'name': self.product.manufacturer.name,
-                'country': self.product.manufacturer.country.name,
             }
+            if self.product.manufacturer.country:
+                d["manufacturer"]["country"] = self.product.manufacturer.country.name,
         return d
     
     @property

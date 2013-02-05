@@ -720,7 +720,7 @@ meddb.procurement.detail = function(id) {
 		}
 		if ((data.manufacturer) && (data.manufacturer.name)) {
 		    d.push({
-                text: data.manufacturer.name + ' - ' + data.manufacturer.country.name,
+                text: data.manufacturer.name + ' - ' + data.manufacturer.country,
                 hash: 'manufacturer:' + data.manufacturer.id
             });
 		} else {
