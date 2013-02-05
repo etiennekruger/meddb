@@ -779,14 +779,14 @@ meddb.supplier.detail = function(id) {
 	    /* Populate the supplier detail page. */
 	    var details = function() {
 		var row = [];
-		row.push(data.website || 'None');
-		row.push(data.contact || 'None');
-		row.push(data.email || 'None');
-		row.push(data.altemail || 'None');
-		row.push(data.phone || 'None');
-		row.push(data.altphone || 'None');
-		row.push(data.fax || 'None');
-		row.push(data.address || 'None');
+		row.push(data.website || '(Not Available)');
+		row.push(data.contact || '(Not Available)');
+		row.push(data.email || '(Not Available)');
+		row.push(data.altemail || '(Not Available)');
+		row.push(data.phone || '(Not Available)');
+		row.push(data.altphone || '(Not Available)');
+		row.push(data.fax || '(Not Available)');
+		row.push(data.address || '(Not Available)');
 		return row;
 	    }
 	    d3.select(fragment)
