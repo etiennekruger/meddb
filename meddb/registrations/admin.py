@@ -53,9 +53,15 @@ class MedicineAdmin(admin.ModelAdmin):
     list_filter = ('dosageform',)
     inlines = (IngredientInline,)
 
+class ProductAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ProductAdminForm, self).__init__(*args, **kwargs)
+        self.fields['manufacturer'].widget.widget = FilteredSelectSingle(verbose_name='manufacturers')
+
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'medicine', 'manufacturer')
     list_filter = ('manufacturer', 'medicine')
+    form = ProductAdminForm
 
 class MSHPriceAdmin(admin.ModelAdmin):
     list_display = ('medicine', 'price')
