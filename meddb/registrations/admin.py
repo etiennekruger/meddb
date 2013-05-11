@@ -57,6 +57,7 @@ class ProductAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProductAdminForm, self).__init__(*args, **kwargs)
         self.fields['manufacturer'].widget.widget = FilteredSelectSingle(verbose_name='manufacturers')
+        self.fields['site'].widget.widget = FilteredSelectSingle(verbose_name='manufacturing sites')
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'medicine', 'manufacturer')
@@ -90,6 +91,8 @@ class ProcurementAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProcurementAdminForm, self).__init__(*args, **kwargs)
         self.fields['product'].widget.widget = FilteredSelectSingle(verbose_name='products')
+        self.fields['supplier'].widget.widget = FilteredSelectSingle(verbose_name='suppliers')
+        self.fields['container'].widget.widget = FilteredSelectSingle(verbose_name='container')
 
 class ProcurementAdmin(admin.ModelAdmin):
     form = ProcurementAdminForm
@@ -98,6 +101,15 @@ class ProcurementAdmin(admin.ModelAdmin):
 
 class ContextAdmin(admin.ModelAdmin):
     pass
+
+class SiteAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(SiteAdminForm, self).__init__(*args, **kwargs)
+        self.fields['manufacturer'].widget.widget = FilteredSelectSingle(verbose_name='manufacturers')
+
+class SiteAdmin(admin.ModelAdmin):
+    form = SiteAdminForm
+
 
 admin.site.register(models.Country)
 admin.site.register(models.Source, SourceAdmin)
@@ -108,7 +120,7 @@ admin.site.register(models.Medicine, MedicineAdmin)
 admin.site.register(models.Product, ProductAdmin)
 admin.site.register(models.MSHPrice, MSHPriceAdmin)
 admin.site.register(models.Manufacturer, ManufacturerAdmin)
-admin.site.register(models.Site)
+admin.site.register(models.Site, SiteAdmin)
 admin.site.register(models.Supplier, SupplierAdmin)
 admin.site.register(models.Pack)
 admin.site.register(models.PackSize)
