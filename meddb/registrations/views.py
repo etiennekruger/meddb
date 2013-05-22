@@ -117,7 +117,7 @@ class MedicineView(JSONRepresentation):
         for procurement in procurements:
             s_start_date = procurement["start_date"]
             start_date = dateutil.parser.parse(s_start_date)
-            if start_date.year == latest_year[key(procurement)]:
+            if start_date.year == latest_year[key(procurement)] and start_date.year >= 2011:
                 new_procurements.append(procurement)
 
         return new_procurements
