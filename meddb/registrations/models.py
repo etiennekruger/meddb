@@ -177,10 +177,6 @@ class MSHPrice(models.Model):
     def __unicode__(self):
         return u'%s @ %.4f' % (self.medicine, self.price)
 
-# Manufacturer information.
-#
-# These models represent the manufacturers and their manufacturing sites.
-
 class Manufacturer(models.Model):
     name = models.CharField(max_length=64, verbose_name='Manufacturer Name')
     country = models.ForeignKey(Country, blank=True, null=True)

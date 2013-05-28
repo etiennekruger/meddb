@@ -74,15 +74,9 @@ class SupplierAdmin(admin.ModelAdmin):
     def contact_person(self, obj):
         return u'%s (%s)' % (obj.phone, obj.contact)
 
-class SupplierInline(admin.StackedInline):
-    model = models.Supplier
-    max_num = 1
-    extra = 1
-
 class ManufacturerAdmin(admin.ModelAdmin):
     list_display = ('name', 'country', 'website')
     list_filter = ('country',)
-    inlines = (SupplierInline,)
 
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'manufacturer')
