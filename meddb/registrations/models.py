@@ -204,27 +204,14 @@ class Site(models.Model):
     name = models.CharField(max_length=64, verbose_name='Site Name')
     address = models.TextField(blank=True, null=True)
     country = models.ForeignKey(Country, blank=True, null=True)
-    #website = models.URLField(blank=True, null=True)
-    #contact = models.CharField(max_length=64, verbose_name='Contact Person', blank=True, null=True)
-    #phone = models.CharField(max_length=16, verbose_name='Phone Number', blank=True, null=True)
-    #altphone = models.CharField(max_length=16, verbose_name='Alternative Phone Number', blank=True, null=True)
-    #fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True)
-    #email = models.EmailField(verbose_name='Email Address', blank=True, null=True)
-    #altemail = models.EmailField(verbose_name='Alternative Email Address')
     
     def as_dict(self, minimal=False):
-        d = { 'id': self.id,
-              'name': self.name,
-              'country': self.country.as_dict(),
-              'website': self.website,
-              'contact': self.contact,
-              'phone': self.phone,
-              'fax': self.fax,
-              'email': self.email }
+        d = {
+            'id': self.id,
+            'name': self.name,
+            'country': self.country.as_dict(),
+        }
         if not minimal:
-            d.update({ 'address': self.address,
-                       'altphone': self.altphone,
-                       'altemail': self.altemail })
             d['registrations'] = [r.as_dict(minimal=True) for r in Registration.objects.all()]
             d['procurements'] = [p.as_dict() for p in Procurement.objects.all()]
             d['manufacturer'] = self.manufacturer.as_dict(minimal=True)
