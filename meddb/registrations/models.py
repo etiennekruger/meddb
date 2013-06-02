@@ -301,6 +301,7 @@ class Product(models.Model):
                 'id': self.manufacturer.id,
                 'name': self.manufacturer.name,
                 'country': self.manufacturer.country.name,
+                'site': self.site.name,
             }
         if medicine:
             d['medicine'] = self.medicine.as_dict(minimal=True, products=False, procurements=False)
