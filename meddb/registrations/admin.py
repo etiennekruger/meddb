@@ -60,7 +60,8 @@ class ProductAdminForm(forms.ModelForm):
         self.fields['site'].widget.widget = FilteredSelectSingle(verbose_name='manufacturing sites')
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'medicine', 'manufacturer')
+    search_fields = ('name', 'medicine', 'manufacturer')
+    list_display = ('id', 'name', 'medicine', 'manufacturer')
     list_filter = ('manufacturer', 'medicine')
     form = ProductAdminForm
 
