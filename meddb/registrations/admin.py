@@ -60,7 +60,8 @@ class ProductAdminForm(forms.ModelForm):
         self.fields['site'].widget.widget = FilteredSelectSingle(verbose_name='manufacturing sites')
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'medicine', 'manufacturer')
+    search_fields = ('name', 'medicine', 'manufacturer')
+    list_display = ('id', 'name', 'medicine', 'manufacturer')
     list_filter = ('manufacturer', 'medicine')
     form = ProductAdminForm
 
@@ -74,15 +75,9 @@ class SupplierAdmin(admin.ModelAdmin):
     def contact_person(self, obj):
         return u'%s (%s)' % (obj.phone, obj.contact)
 
-class SupplierInline(admin.StackedInline):
-    model = models.Supplier
-    max_num = 1
-    extra = 1
-
 class ManufacturerAdmin(admin.ModelAdmin):
     list_display = ('name', 'country', 'website')
     list_filter = ('country',)
-    inlines = (SupplierInline,)
 
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'manufacturer')
@@ -122,8 +117,6 @@ admin.site.register(models.MSHPrice, MSHPriceAdmin)
 admin.site.register(models.Manufacturer, ManufacturerAdmin)
 admin.site.register(models.Site, SiteAdmin)
 admin.site.register(models.Supplier, SupplierAdmin)
-admin.site.register(models.Pack)
-admin.site.register(models.PackSize)
 admin.site.register(models.Container)
 admin.site.register(models.Currency)
 admin.site.register(models.Registration, RegistrationAdmin)

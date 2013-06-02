@@ -18,7 +18,8 @@ class Source(models.Model):
     url = models.URLField(blank=True, null=True, verbose_name='Source Document URL', help_text='Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional resource.')
     
     def __unicode__(self):
-        return u'%s @ %s' % (self.name, self.date)
+        s = u'%s @ %s' % (self.name, self.date)
+        return s
 
 class SourcedModel(models.Model):
     source = models.ForeignKey(Source)
@@ -176,10 +177,6 @@ class MSHPrice(models.Model):
     def __unicode__(self):
         return u'%s @ %.4f' % (self.medicine, self.price)
 
-# Manufacturer information.
-#
-# These models represent the manufacturers and their manufacturing sites.
-
 class Manufacturer(models.Model):
     name = models.CharField(max_length=64, verbose_name='Manufacturer Name')
     country = models.ForeignKey(Country, blank=True, null=True)
@@ -203,27 +200,14 @@ class Site(models.Model):
     name = models.CharField(max_length=64, verbose_name='Site Name')
     address = models.TextField(blank=True, null=True)
     country = models.ForeignKey(Country, blank=True, null=True)
-    website = models.URLField(blank=True, null=True)
-    contact = models.CharField(max_length=64, verbose_name='Contact Person', blank=True, null=True)
-    phone = models.CharField(max_length=16, verbose_name='Phone Number', blank=True, null=True)
-    altphone = models.CharField(max_length=16, verbose_name='Alternative Phone Number', blank=True, null=True)
-    fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True)
-    email = models.EmailField(verbose_name='Email Address', blank=True, null=True)
-    altemail = models.EmailField(verbose_name='Alternative Email Address', blank=True, null=True)
     
     def as_dict(self, minimal=False):
-        d = { 'id': self.id,
-              'name': self.name,
-              'country': self.country.as_dict(),
-              'website': self.website,
-              'contact': self.contact,
-              'phone': self.phone,
-              'fax': self.fax,
-              'email': self.email }
+        d = {
+            'id': self.id,
+            'name': self.name,
+            'country': self.country.as_dict(),
+        }
         if not minimal:
-            d.update({ 'address': self.address,
-                       'altphone': self.altphone,
-                       'altemail': self.altemail })
             d['registrations'] = [r.as_dict(minimal=True) for r in Registration.objects.all()]
             d['procurements'] = [p.as_dict() for p in Procurement.objects.all()]
             d['manufacturer'] = self.manufacturer.as_dict(minimal=True)
@@ -317,6 +301,7 @@ class Product(models.Model):
                 'id': self.manufacturer.id,
                 'name': self.manufacturer.name,
                 'country': self.manufacturer.country.name,
+                'site': self.site.name,
             }
         if medicine:
             d['medicine'] = self.medicine.as_dict(minimal=True, products=False, procurements=False)
@@ -332,38 +317,6 @@ class Product(models.Model):
         return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
 
-
-# Registration information.
-#
-# These models will represent actual registrations of products.
-
-
-# START This is to be removed once the new models have been populated.
-class Pack(models.Model):
-    name = models.CharField(max_length=32)
-    
-    def as_dict(self, minimal=False):
-        return self.name
-    
-    def __unicode__(self):
-        return u'%s' % (self.name)
-
-class PackSize(models.Model):
-    pack = models.ForeignKey(Pack, blank=True, null=True)
-    quantity = models.FloatField()
-    
-    def as_dict(self, minimal=False):
-        d = { 'quantity': self.quantity }
-        if self.pack:
-            d['id'] = self.pack.id
-            d['name'] = self.pack.name
-        return d
-    
-    def __unicode__(self):
-        if self.pack:
-            return u'%s (%s)' % (self.pack.name, self.quantity)
-        return u'unknown (%s)' % (self.quantity)
-# END
 
 class Container(models.Model):
     type = models.CharField(max_length=32, verbose_name='Container Type', help_text='This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.')
@@ -430,7 +383,6 @@ class Currency(models.Model):
 class Procurement(SourcedModel):
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
-    #pack = models.ForeignKey(PackSize, verbose_name='Pack Size', help_text='Indicate the type of pack as well as the number of units for this medicine procurement.', null=True, editable=False)
     container = models.ForeignKey(Container, verbose_name='Container', help_text='Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.')
     packsize = models.IntegerField(verbose_name='Containers in packaging', help_text='Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.', blank=True, null=True)
     supplier = models.ForeignKey(Supplier, blank=True, null=True)
