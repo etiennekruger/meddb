@@ -79,8 +79,16 @@ class ManufacturerAdmin(admin.ModelAdmin):
     list_display = ('name', 'country', 'website')
     list_filter = ('country',)
 
+class RegistrationAdminForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(RegistrationAdminForm, self).__init__(*args, **kwargs)
+        self.fields['product'].widget.widget = FilteredSelectSingle(verbose_name='products')
+        self.fields['manufacturer'].widget.widget = FilteredSelectSingle(verbose_name='manufacturing sites')
+        self.fields['supplier'].widget.widget = FilteredSelectSingle(verbose_name='suppliers')
+
 class RegistrationAdmin(admin.ModelAdmin):
     list_display = ('__unicode__', 'product', 'manufacturer')
+    form = RegistrationAdminForm
 
 class ProcurementAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -106,6 +114,9 @@ class SiteAdmin(admin.ModelAdmin):
     form = SiteAdminForm
     list_filter = ('country',)
 
+class CountryMappingCodeAdmin(admin.ModelAdmin):
+    list_filter = ('country',)
+    list_display = ('country', 'code')
 
 admin.site.register(models.Country)
 admin.site.register(models.Source, SourceAdmin)
@@ -124,3 +135,4 @@ admin.site.register(models.Registration, RegistrationAdmin)
 admin.site.register(models.Procurement, ProcurementAdmin)
 admin.site.register(models.Context, ContextAdmin)
 admin.site.register(models.Ingredient)
+admin.site.register(models.CountryMappingCode, CountryMappingCodeAdmin)
