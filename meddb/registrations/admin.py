@@ -104,6 +104,7 @@ class SiteAdminForm(forms.ModelForm):
 
 class SiteAdmin(admin.ModelAdmin):
     form = SiteAdminForm
+    list_filter = ('country',)
 
 
 admin.site.register(models.Country)
