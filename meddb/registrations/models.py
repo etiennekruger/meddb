@@ -414,8 +414,8 @@ class Procurement(SourcedModel):
               'packsize': self.packsize }
         #if self.pack:
         #    d['pack'] = self.pack.as_dict()
-        if self.container.quantity:
-            d['price_per_unit'] = self.price_usd / self.container.quantity
+        if self.price_per_unit:
+            d['price_per_unit'] = self.price_per_unit
         if self.product:
             d['product'] = { 'id': self.product.id,
                              'name': self.product.name }
@@ -442,6 +442,12 @@ class Procurement(SourcedModel):
             return self.price
         e = currency.models.ExchangeRate.objects.get(currency=c, date=self.start_date)
         return self.price/e.rate
+
+    @property
+    def price_per_unit(self):
+        if self.container.quantity:
+            return self.price_usd / self.container.quantity
+        return None
     
     def __unicode__(self):
         if self.volume:
