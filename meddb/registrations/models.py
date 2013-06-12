@@ -483,3 +483,11 @@ class Context(SourcedModel):
     
     def __unicode__(self):
         return u'%d x %s' % (self.volume, self.product.name)
+
+class CountryMappingCode(models.Model):
+    country = models.ForeignKey(Country)
+    product = models.ForeignKey(Product)
+    code = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        return "%s - %s" % (self.country, self.code)
