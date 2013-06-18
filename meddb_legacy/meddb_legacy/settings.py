@@ -1,7 +1,9 @@
 # Django settings for meddb_legacy project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -138,17 +140,38 @@ LOGGING = {
             '()': 'django.utils.log.RequireDebugFalse'
         }
     },
+    'formatters' : {
+        'verbose': {
+            'format': '%(name)s %(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'all_log' : {
+            'level' : 'INFO',
+            'class' : 'logging.handlers.RotatingFileHandler',
+            'filename' : os.path.join(PROJECT_ROOT, 'all.log'),
+            'maxBytes' : 50000,
+            'backupCount' : 2,
+            'formatter' : 'verbose'
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
+            'propagate': True,
+        },
+        'legacy' : {
+            'handlers' : ['all_log'],
+            'level' : 'INFO',
             'propagate': True,
         },
     }
