@@ -1,4 +1,5 @@
 import urllib2
+import logging
 try:
     import simplejson as json
 except ImportError:
@@ -7,12 +8,16 @@ except ImportError:
 from django.conf import settings
 from django.views.generic.simple import direct_to_template
 
+logger = logging.getLogger(__name__)
+
 BASE_URL = getattr(settings, 'MEDDB_DATA_URL', '')
 
 def _grab(url):
+    logger.info("Grabbing data: %s" % url)
     request = urllib2.Request(url)
     response = urllib2.urlopen(request)
     if response.getcode() != 200:
+        logger.error("Error data: %s" % response.getcode())
         return None
     object = json.load(response)
     return object
