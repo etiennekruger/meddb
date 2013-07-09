@@ -402,7 +402,7 @@ class Procurement(SourcedModel):
               'currency': { 'id': self.currency.id,
                             'code': self.currency.code },
               'price_usd': self.price_usd,
-              'volume': self.volume,
+              'volume': self.volume * (self.packsize or 1),
               'method': self.method,
               'country': { 'id': self.country.id,
                            'code': self.country.code,
