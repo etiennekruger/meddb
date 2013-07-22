@@ -1,0 +1,68 @@
+{% extends "basel.html" %}
+{% block content %}
+    <h3>{{ data.formulation }} {{ data.strength }}</h3>
+    <a href="{% url medicine_list %}">Back to medicine list...</a>
+    <table class="table table-bordered">
+      <caption>Procurement Prices</caption>
+      <thead>
+	<tr>
+	  <th>
+	    <a href="?sort=country{% if sort == "country" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Country{% if sort == "country" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=price_per_unit{% if sort == "price_per_unit" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Price per Base Unit (USD){% if sort == "price_per_unit" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=incoterm{% if sort == "incoterm" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Incoterm{% if sort == "incoterm" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=pack_size{% if sort == "pack_size" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Pack Size{% if sort == "pack_size" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=volume{% if sort == "volume" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Volume (Packs){% if sort == "volume" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	  <th>
+	    <a href="?sort=start_date{% if sort == "start_date" %}&reverse={% if not reverse %}true{% else %}false{% endif %}{% endif %}">
+	      Procurement Period{% if sort == "start_date" %}{% if not reverse %}&#9650;{% else %}&#9660;{% endif %}{% endif %}
+	    </a>
+	  </th>
+	</tr>
+      </thead>
+      <tbody>
+	{% for p in data.procurements %}
+	<tr>
+	  <td>{{ p.country.name }}</td>
+	  <td>{{ p.price_per_unit|floatformat:"4" }}</td>
+	  <td>{{ p.incoterm.name }}</td>
+	  <td>{{ p.container.quantity }} {{ p.container.unit }} ({{ p.container.type }})</td>
+	  <td>{{ p.volume }}</td>
+	  <td>
+	    {% if p.start_date %}
+	    {% if p.end_date %}
+	    {{ p.start_date }} - {{ p.end_date }}
+	    {% else %}
+	    From {{ p.start_date }}
+	    {% endif %}
+	    {% else %}
+	    {% if p.end_date %}
+	    Until {{ p.end_date }}
+	    {% else %}
+	    (Unknown)
+	    {% endif %}
+	    {% endif %}
+	  </td>
+	</tr>
+	{% endfor %}
+      </tbody>
+    </table>
+{% endblock %}
