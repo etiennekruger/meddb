@@ -2,7 +2,9 @@ from django.http import HttpResponse
 from registrations import models as reg_models
 from datetime import datetime
 from collections import defaultdict, OrderedDict
+from django import http
 import csv
+import json
 
 sadc_countries = "ANG BWA COD LES MAW MUS MOZ NAM SEY ZAF SWZ TZA ZMB ZWE".split()
 
@@ -103,3 +105,27 @@ def reference_report(request):
     fp.close()
     return HttpResponse("Hello Word")
 	
+
+def countries_per_medicine(request):
+    countries = [
+        "Angola", "Botswana", "DRC", "Lesotho", "Malawi", "Mauritius",
+        "Mozambique", "Namibia", "Seychelles", "South Africa", "Swaziland",
+        "Tanzania", "Zambia", "Zimbabwe"
+    ]
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment; filename=countries_per_medicine.csv"
+    writer = csv.writer(response)
+
+    writer.writerow(["Medicine"] + countries)
+    for med in sorted(reg_models.Medicine.objects.all(), key=lambda x: unicode(x)):
+        med_name = unicode(med)
+        count = [med_name]
+        for country in countries:
+            products = reg_models.Product.objects.filter(
+                procurement__country__name=country, medicine=med
+            )
+            count.append(products.count())
+        writer.writerow(count)
+    return response
+   
+    
