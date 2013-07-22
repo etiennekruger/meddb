@@ -1,3 +1,7 @@
+render_pack = function(procurement) {
+    return procurement.container.quantity + ' '+ procurement.container.unit + ' (' + procurement.container.type +')';
+
+}
 meddb.medicine.detail = function(id, sort, reverse, replace) {
     if (replace != true) {
 	meddb.template.hide();
@@ -17,25 +21,35 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 	    /* Populate procurements table. */
 	    var procurement_data = function(d) {
 		var row = [];
-		row.push(d.country.name);
+		var hash = 'procurement:'+d.id;
+		row.push({ text: d.country.name, hash: hash });
 		var ppu = d3.round(d.price_per_unit,4);
 		if (typeof ppu == 'number') {
-		    row.push(ppu);
+		    row.push({ text: ppu, hash: hash });
 		} else {
-		    row.push('(Not Available)');
+		    row.push({ text: '(Not Available)', hash: hash });
 		}
-		row.push(d3.round(d.price,4));
-		row.push(d.incoterm || '(Not Available)');
-		row.push(d.container.quantity+' '+d.container.unit+' ('+d.container.type+')');
-		row.push(d.volume || '(Not Available)');
-		if (d.start_date && d.end_date) {
-		    row.push(d.start_date+' to '+d.end_date);
-		} else if (d.start_date) {
-		    row.push('From '+d.start_date);
-		} else if (d.end_date) {
-		    row.push('Until '+d.end_date);
+		row.push({ text: d3.round(d.price_usd,4), hash: hash });
+		if (typeof ppu == 'number') {
+		    row.push({ text: d3.round((ppu / data.mshprice),4), hash: hash });
 		} else {
-		    row.push('(Not Available)');
+		    row.push({ text: '(Not Available)', hash: hash });
+		}
+		row.push({ text: (d.incoterm.name || '(Not Available)'), hash: hash });
+		//row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
+		row.push({
+            text: render_pack(d),
+            hash: hash 
+        });
+		row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
+		if (d.start_date && d.end_date) {
+		    row.push({ text: d.start_date+' to '+d.end_date, hash: hash });
+		} else if (d.start_date) {
+		    row.push({ text: 'From '+d.start_date, hash: hash });
+		} else if (d.end_date) {
+		    row.push({ text: 'Until '+d.end_date, hash: hash });
+		} else {
+		    row.push({ text: '(Not Available)', hash: hash });
 		}
 		return row;
 	    }
@@ -50,8 +64,11 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		    a_sort = a.price_per_unit;
 		    b_sort = b.price_per_unit;		    
 		} else if (sort == 'price') {
-		    a_sort = a.price;
-		    b_sort = b.price;		    
+		    a_sort = a.price_usd;
+		    b_sort = b.price_usd;		    
+		} else if (sort == 'msh_ratio') {
+		    a_sort = a.price_per_unit;
+		    b_sort = b.price_per_unit;		    
 		} else if (sort == 'incoterm') {
 		    a_sort = a.incoterm;
 		    b_sort = b.incoterm;		    
@@ -88,6 +105,7 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		{'sort': 'country', 'reverse': false},
 		{'sort': 'price_per_unit', 'reverse': false},
 		{'sort': 'price', 'reverse': false},
+		{'sort': 'msh_ratio', 'reverse': false},
 		{'sort': 'incoterm', 'reverse': false},
 		{'sort': 'pack_size', 'reverse': false},
 		{'sort': 'volume', 'reverse': false},
@@ -127,7 +145,9 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		.data(procurement_data)
 		.enter()
 		.append('td')
-		.text(function(d) { return d; });
+		.style('cursor', 'pointer')
+	        .on('click', function(d, i) { location.hash = d.hash; })
+		.text(function(d) { return d.text; });
 	    /* Populate products table. */
 	    var product_data = function(d) {
 		var row = [];
@@ -174,10 +194,11 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 	    var prices_data = function() {
 		var prices = {};
 		data.procurements.forEach(function(item) {
-		    if (typeof(prices[item.country.name]) == 'undefined') {
-			prices[item.country.name] = [];
+            label = item.country.name + ' - ' + render_pack(item);
+		    if (typeof(prices[label]) == 'undefined') {
+			prices[label] = [];
 		    }
-		    prices[item.country.name].push({ 'price' : item.price,
+		    prices[label].push({ 'price' : item.price_usd,
 						     'packsize' : item.container.quantity,
 						     'volume' : item.volume });
 		});

@@ -192,6 +192,9 @@ meddb.router = function() {
 	} else if (hash.substring(0,10) == '#supplier:') {
 	    var id = parseInt(hash.substring(10));
 	    meddb.supplier.detail(id);
+	} else if (hash.substring(0,13) == '#procurement:') {
+	    var id = parseInt(hash.substring(13));
+	    meddb.procurement.detail(id);
 	} else if (hash.substring(0,5) == '#tab:') {
 	    /* Handle switching of tabs. */
 	    var tab = hash.substring(5);
@@ -354,6 +357,10 @@ meddb.medicine.filter = function(filter) {
     });
     medicine_list(filtered, d3.select('div.meddb_inner_page')[0][0])
 }
+render_pack = function(procurement) {
+    return procurement.container.quantity + ' '+ procurement.container.unit + ' (' + procurement.container.type +')';
+
+}
 meddb.medicine.detail = function(id, sort, reverse, replace) {
     if (replace != true) {
 	meddb.template.hide();
@@ -373,25 +380,35 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 	    /* Populate procurements table. */
 	    var procurement_data = function(d) {
 		var row = [];
-		row.push(d.country.name);
+		var hash = 'procurement:'+d.id;
+		row.push({ text: d.country.name, hash: hash });
 		var ppu = d3.round(d.price_per_unit,4);
 		if (typeof ppu == 'number') {
-		    row.push(ppu);
+		    row.push({ text: ppu, hash: hash });
 		} else {
-		    row.push('(Not Available)');
+		    row.push({ text: '(Not Available)', hash: hash });
 		}
-		row.push(d3.round(d.price,4));
-		row.push(d.incoterm || '(Not Available)');
-		row.push(d.container.quantity+' '+d.container.unit+' ('+d.container.type+')');
-		row.push(d.volume || '(Not Available)');
-		if (d.start_date && d.end_date) {
-		    row.push(d.start_date+' to '+d.end_date);
-		} else if (d.start_date) {
-		    row.push('From '+d.start_date);
-		} else if (d.end_date) {
-		    row.push('Until '+d.end_date);
+		row.push({ text: d3.round(d.price_usd,4), hash: hash });
+		if (typeof ppu == 'number') {
+		    row.push({ text: d3.round((ppu / data.mshprice),4), hash: hash });
 		} else {
-		    row.push('(Not Available)');
+		    row.push({ text: '(Not Available)', hash: hash });
+		}
+		row.push({ text: (d.incoterm.name || '(Not Available)'), hash: hash });
+		//row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
+		row.push({
+            text: render_pack(d),
+            hash: hash 
+        });
+		row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
+		if (d.start_date && d.end_date) {
+		    row.push({ text: d.start_date+' to '+d.end_date, hash: hash });
+		} else if (d.start_date) {
+		    row.push({ text: 'From '+d.start_date, hash: hash });
+		} else if (d.end_date) {
+		    row.push({ text: 'Until '+d.end_date, hash: hash });
+		} else {
+		    row.push({ text: '(Not Available)', hash: hash });
 		}
 		return row;
 	    }
@@ -406,8 +423,11 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		    a_sort = a.price_per_unit;
 		    b_sort = b.price_per_unit;		    
 		} else if (sort == 'price') {
-		    a_sort = a.price;
-		    b_sort = b.price;		    
+		    a_sort = a.price_usd;
+		    b_sort = b.price_usd;		    
+		} else if (sort == 'msh_ratio') {
+		    a_sort = a.price_per_unit;
+		    b_sort = b.price_per_unit;		    
 		} else if (sort == 'incoterm') {
 		    a_sort = a.incoterm;
 		    b_sort = b.incoterm;		    
@@ -444,6 +464,7 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		{'sort': 'country', 'reverse': false},
 		{'sort': 'price_per_unit', 'reverse': false},
 		{'sort': 'price', 'reverse': false},
+		{'sort': 'msh_ratio', 'reverse': false},
 		{'sort': 'incoterm', 'reverse': false},
 		{'sort': 'pack_size', 'reverse': false},
 		{'sort': 'volume', 'reverse': false},
@@ -483,7 +504,9 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		.data(procurement_data)
 		.enter()
 		.append('td')
-		.text(function(d) { return d; });
+		.style('cursor', 'pointer')
+	        .on('click', function(d, i) { location.hash = d.hash; })
+		.text(function(d) { return d.text; });
 	    /* Populate products table. */
 	    var product_data = function(d) {
 		var row = [];
@@ -530,10 +553,11 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 	    var prices_data = function() {
 		var prices = {};
 		data.procurements.forEach(function(item) {
-		    if (typeof(prices[item.country.name]) == 'undefined') {
-			prices[item.country.name] = [];
+            label = item.country.name + ' - ' + render_pack(item);
+		    if (typeof(prices[label]) == 'undefined') {
+			prices[label] = [];
 		    }
-		    prices[item.country.name].push({ 'price' : item.price,
+		    prices[label].push({ 'price' : item.price_usd,
 						     'packsize' : item.container.quantity,
 						     'volume' : item.volume });
 		});
@@ -608,66 +632,136 @@ meddb.product = {};
 meddb.product.detail = function(id) {
     meddb.template.hide();
     load('/product_detail.html', function(fragment) {
-	load('/json/product/'+id+'/', function(data) {
+        load('/json/product/' + id + '/', function(data) {
+            /* Helper functions to process data. */
+            var detail = function() {
+                var d = [];
+                var formulation = [];
+                var strength = [];
+                data.medicine.ingredients.forEach(function(item) {
+                    formulation.push(item.inn);
+                    strength.push(item.strength);
+                });
+
+                d.push(formulation.join(' + '));
+                d.push(strength.join(' + '));
+                d.push(data.medicine.dosageform.name || '(Not Available)');
+
+                if ((data.manufacturer) && (data.manufacturer.name != '')) {
+                    d.push(data.manufacturer.name + ' - ' + data.manufacturer.country);
+                } else {
+                    d.push('(Not Available)');
+                }
+
+                if ((data.manufacturer.site) && (data.manufacturer.site != '')) {
+                    d.push(data.manufacturer.site);
+                } else {
+                    d.push('(Not Available)');
+                }
+
+                return d;
+
+            }
+
+            var procurement = function(d) {
+                var row = [];
+                row.push({
+                    text: d.country.name
+                });
+                if ((d.supplier) && (d.supplier.name != '')) {
+                    row.push({
+                    text: d.supplier.name,
+                    hash: 'supplier:' + d.supplier.id
+                    })
+                } else {
+                    row.push({ text: '(Not Available)' });
+                }
+                return row;
+            }
+
+            /* Populate product detail section. */
+            d3.select(fragment)
+                .select('#meddb_product_heading')
+                    .text(data.name);
+
+            d3.select(fragment)
+                .select('table#meddb_product_detail')
+                .selectAll('td')
+                    .data(detail)
+                    .text(function(d) { return d; });
+
+            /* Populate the product registrations table. */
+            var rows = d3.select(fragment)
+            .select('table#meddb_product_registration')
+                .select('tbody')
+                .selectAll('tr')
+                    .data(data.procurements)
+                    .enter()
+                        .append('tr');
+
+            rows.selectAll('td')
+                .data(procurement)
+                .enter()
+                .append('td')
+                    .text(function(d) { return d.text; })
+                    .style('cursor', function(d) { if (d.hash) { return 'pointer' } })
+                    .on('click', function(d) { location.hash = d.hash; });
+
+            meddb.history.add(location.hash, data.name);
+            meddb.template.show(fragment);
+        });
+    });
+}
+meddb.procurement = {};
+meddb.procurement.detail = function(id) {
+    meddb.template.hide();
+    load('/procurement_detail.html', function(fragment) {
+	load('/json/procurement/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var detail = function() {
 		var d = [];
-		var formulation = [];
-		var strength = [];
-		data.medicine.ingredients.forEach(function(item) {
-		    formulation.push(item.inn);
-		    strength.push(item.strength);
-		});
-		d.push(formulation.join(' + '));
-		d.push(strength.join(' + '));
-		d.push(data.medicine.dosageform.name || '(Not Available)');
-		if ((data.manufacturer) && (data.manufacturer.name != '')) {
-		    d.push(data.manufacturer.name);
+		if ((data.product) && (data.product.name)) {
+		    d.push({ text: data.product.name, hash: 'product:'+data.product.id });
 		} else {
-		    d.push('(Not Available)');
+		    d.push({ text: '(Not Available)' });
+		}
+		d.push({ text: data.container.quantity+' '+data.container.unit+' '+data.container.type });
+		d.push({ text: data.volume+' (in packs of '+(data.packsize || 'unknown size')+')' });
+		d.push({ text: d3.round(data.price_usd, 2) + ' USD'});
+		d.push({ text: data.incoterm.name || '(Not Available)' });
+		if ((data.supplier) && (data.supplier.name)) {
+		    d.push({ text: data.supplier.name, hash: 'supplier:'+data.supplier.id });
+		} else {
+		    d.push({ text: '(Not Available)' });
+		}
+		if ((data.manufacturer) && (data.manufacturer.name)) {
+		    d.push({
+                text: data.manufacturer.name + ' - ' + data.manufacturer.country,
+                hash: 'manufacturer:' + data.manufacturer.id
+            });
+		} else {
+		    d.push({ text: '(Not Available)' });
+		}
+		d.push({ text: data.country.name || '(Not Available)' });
+		d.push({ text: data.method || '(Not Available)' });
+		if ((data.start_date) && (data.end_date)) {
+		    d.push({ text: data.start_date+' to '+data.end_date });
+		} else if (data.start_date) {
+		    d.push({ text: 'From '+data.start_date });
+		} else if (data.end_date) {
+		    d.push({ text: 'Until '+data.end_date });
 		}
 		return d;
 	    }
-	    var procurement = function(d) {
-		var row = [];
-		row.push({
-		    text: d.country.name
-		});
-		if ((d.supplier) && (d.supplier.name != '')) {
-		    row.push({
-			text: d.supplier.name,
-			hash: 'supplier:'+d.supplier.id
-		    })
-		} else {
-		    row.push({ text: '(Not Available)' });
-		}
-		return row;
-	    }
 	    /* Populate product detail section. */
 	    d3.select(fragment)
-		.select('#meddb_product_heading')
-		.text(data.name);
-	    d3.select(fragment)
-		.select('table#meddb_product_detail')
+		.select('table#meddb_procurement_detail')
 		.selectAll('td')
 		.data(detail)
-		.text(function(d) { return d; });
-	    /* Populate the product registrations table. */
-	    var rows = d3.select(fragment)
-		.select('table#meddb_product_registration')
-		.select('tbody')
-		.selectAll('tr')
-		.data(data.procurements)
-		.enter()
-		.append('tr');
-	    rows.selectAll('td')
-		.data(procurement)
-		.enter()
-		.append('td')
 		.text(function(d) { return d.text; })
 		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
-		.on('click', function(d) { location.hash = d.hash; });
-	    meddb.history.add(location.hash, data.name);
+		.on('click', function(d) { location.hash = d.hash; })
+	    meddb.history.add(location.hash, 'Procurement '+data.id);
 	    meddb.template.show(fragment);
 	});
     });
@@ -679,11 +773,20 @@ meddb.supplier.detail = function(id) {
 	load('/json/supplier/'+id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var procurement = function(d) {
+        var product = d.product;
+
 		var row = [];
 		row.push({
 		    text: d.product.name,
 		    hash: 'product:'+d.product.id
 		});
+        row.push({
+            text: product["pack-size"]["quantity"] + ' ' + 
+                  product["pack-size"]["unit"] + ' ' + 
+                  product["pack-size"]["type"],
+            hash: 'product:'+ d.product.id
+        });
+
 		row.push({
 		    text: d.country.name,
 		});
@@ -704,14 +807,14 @@ meddb.supplier.detail = function(id) {
 	    /* Populate the supplier detail page. */
 	    var details = function() {
 		var row = [];
-		row.push(data.website || 'None');
-		row.push(data.contact || 'None');
-		row.push(data.email || 'None');
-		row.push(data.altemail || 'None');
-		row.push(data.phone || 'None');
-		row.push(data.altphone || 'None');
-		row.push(data.fax || 'None');
-		row.push(data.address || 'None');
+		row.push(data.website || '(Not Available)');
+		row.push(data.contact || '(Not Available)');
+		row.push(data.email || '(Not Available)');
+		row.push(data.altemail || '(Not Available)');
+		row.push(data.phone || '(Not Available)');
+		row.push(data.altphone || '(Not Available)');
+		row.push(data.fax || '(Not Available)');
+		row.push(data.address || '(Not Available)');
 		return row;
 	    }
 	    d3.select(fragment)

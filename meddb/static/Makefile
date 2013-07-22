@@ -5,7 +5,8 @@ JS_COMPILER = $(NODE_PATH)/uglify-js/bin/uglifyjs
 
 all: \
 	js/meddb.alpha.js \
-	js/meddb.alpha.min.js
+	js/meddb.alpha.min.js \
+    jsonp
 
 js/meddb.alpha.js: \
 	src/start.js \
@@ -21,6 +22,8 @@ js/meddb.alpha.js: \
 	src/medicine-detail.js \
 	src/product.js \
 	src/product-detail.js \
+	src/procurement.js \
+	src/procurement-detail.js \
 	src/supplier.js \
 	src/supplier-detail.js \
 	src/init.js \
@@ -34,6 +37,9 @@ js/meddb.alpha.js: Makefile
 	@rm -f $@
 	cat $(filter %.js,$^) > $@
 	@chmod a-w $@
+
+jsonp:
+	python buildjsonp.py
 
 clean:
 	rm -f js/meddb.*.js

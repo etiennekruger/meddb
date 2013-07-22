@@ -27,6 +27,9 @@ meddb.router = function() {
 	} else if (hash.substring(0,10) == '#supplier:') {
 	    var id = parseInt(hash.substring(10));
 	    meddb.supplier.detail(id);
+	} else if (hash.substring(0,13) == '#procurement:') {
+	    var id = parseInt(hash.substring(13));
+	    meddb.procurement.detail(id);
 	} else if (hash.substring(0,5) == '#tab:') {
 	    /* Handle switching of tabs. */
 	    var tab = hash.substring(5);
