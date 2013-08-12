@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.query import QuerySet
+from django.db.models import Q
 from django.core.urlresolvers import reverse
 import currency.models
 import datetime
@@ -380,6 +382,31 @@ class Currency(models.Model):
     class Meta:
         verbose_name_plural = 'Currencies'
 
+class ProcurementQuerySet(QuerySet):
+    def in_year(self, year):
+        startdt = datetime.datetime(year, 1, 31)
+        enddt = datetime.datetime(year, 12, 31)
+
+        return self.filter(start_date__lte=enddt, end_date__gte=startdt)
+
+    def medicine(self, medicine):
+        return self.filter(product__medicine=medicine)
+
+    def cheapest(self):
+        return min(p.price_per_unit for p in self)
+
+class ProcurementManager(models.Manager):
+
+    def get_query_set(self):
+        return ProcurementQuerySet(self.model)
+
+    def __getattr__(self, name):
+        """
+        Any method defined on our queryset is now available in our manager
+        """
+        return getattr(self.get_query_set(), name)
+
+
 class Procurement(SourcedModel):
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
@@ -394,6 +421,8 @@ class Procurement(SourcedModel):
     start_date = models.DateField(max_length=32, verbose_name='Period Start', help_text='This is the first day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     end_date = models.DateField(max_length=32, verbose_name='Period End', help_text='This is the last day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     
+    objects = ProcurementManager()
+
     def as_dict(self):
         d = { 'id': self.id,
               'incoterm': { 'id': self.incoterm.id,
