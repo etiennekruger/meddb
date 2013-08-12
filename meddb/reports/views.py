@@ -14,20 +14,42 @@ def get_procurements(start_date, end_date):
         start_date__lte=end_date
     ).order_by("product__medicine__name")
 
-def medicine_grid(procurements):
+def medicine_grid(request, year):
+    
+    class MedicinePrices(object):
+        def __init__(self, procurements):
+            self.prices = {}
+            self.procurements = procurements
 
-    medicine_prices = OrderedDict()
+        def lowest_price(self, medicine):
+            if not medicine in self.prices:
+                self.prices[medicine] = self.procurements.medicine(medicine).cheapest()
+
+            return self.prices[medicine]
+
+            
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment; filename=prices_%s.csv" % year
+    writer = csv.writer(response)
+
+    procurements = reg_models.Procurement.objects.in_year(int(year))
+    cache = MedicinePrices(procurements)
+    writer.writerow([
+        "Medicine", "Country", "Unit Price (USD)", "Volume", 
+        "Total Value (USD)", "Lowest Price (USD)", "Potential Savings (USD)"
+    ])
 
     for procurement in procurements:
-        print procurement.product.medicine
-        med_in_countries = medicine_prices.setdefault(procurement.product.medicine, defaultdict(int))
-        price = med_in_countries[procurement.country] 
-        if price == 0:
-            med_in_countries[procurement.country] = procurement.price_per_unit
-        else:
-            med_in_countries[procurement.country] = min(med_in_countries[procurement.country], procurement.price_per_unit)
+        unit_price = procurement.price_per_unit
+        lowest_price = cache.lowest_price(procurement.product.medicine)
+        total_value = unit_price * procurement.volume
+        potential_savings = total_value - (procurement.volume * lowest_price)
 
-    return medicine_prices
+        writer.writerow([
+            procurement.product.medicine, procurement.country, procurement.price_per_unit, 
+            procurement.volume, total_value, lowest_price, potential_savings
+        ])
+    return response
 
 def procurement_list(procurements):
     proclist = OrderedDict()

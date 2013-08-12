@@ -4,3 +4,4 @@ pysqlite==2.6.3
 python-memcached==1.48
 wsgiref==0.1.2
 xlrd==0.7.7
+python-dateutil
