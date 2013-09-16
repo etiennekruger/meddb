@@ -1,4 +1,5 @@
 from __future__ import division
+from itertools import groupby
 from dateutil import parser
 from django.http import Http404
 from django.http import HttpResponse
@@ -123,14 +124,14 @@ def export_by_procurement(request):
         raise Http404 
 
     response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = "attachment; filename=all_procurements.csv"
+    response["Content-Disposition"] = "attachment; filename=stats_by_medicine.csv"
     writer = csv.writer(response)
     
-    writer.writerow(["Medicine", "Median Price", "Minimum Price", "Maximum Price", "High/Low Ratio", "Median/MSH", "Num Procurements"])
+    writer.writerow(["Medicine", "Median Price", "Minimum Price", "Maximum Price", "High/Low Ratio", "Median/MSH", "# Procurements"])
 
     medicines = sorted(reg_models.Medicine.objects.all(), key=lambda x: unicode(x))
 
-    procurements = reg_models.Procurement.objects.filter(
+    procurements = reg_models.procurement.objects.filter(
         start_date__gte=start_date, start_date__lte=end_date
     )
       
@@ -148,5 +149,48 @@ def export_by_procurement(request):
                 msh_ratio = median_price / msh.price
                 writer.writerow([unicode(medicine), median_price, min_price, max_price, maxmin_ratio, msh_ratio, num_procurements])
         except reg_models.MSHPrice.DoesNotExist:
-            print medicine
+            pass
+    return response
+
+def export_all_countries(request):
+    try:
+        start_date = parser.parse(request.GET["start_date"])
+        end_date = parser.parse(request.GET["end_date"])
+    except IndexError:
+        raise Http404 
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment; filename=stats_by_country.csv"
+    writer = csv.writer(response)
+    
+    writer.writerow(["Country", "Medicine", "Pack Size", "MSH Ratio", "# Procurements"])
+     
+    procurements = reg_models.Procurement.objects.filter(
+        start_date__gte=start_date, start_date__lte=end_date
+    )
+    medicines = sorted(reg_models.Medicine.objects.all(), key=lambda x: unicode(x))
+    for country in sadc_countries:
+        country_procurements = procurements.filter(country__code=country)
+        if country_procurements.count() == 0:
+            continue
+
+        ratios = []
+        for medicine in medicines:
+            try:
+                msh = reg_models.MSHPrice.objects.get(medicine=medicine)
+                med_procurements = country_procurements.filter(product__medicine=medicine).order_by("container")
+                groups = groupby(med_procurements, lambda x : x.container)
+                for key, it in groups:
+                    prices = [p.price_per_unit for p in it]
+                    msh_ratio = median(prices) / msh.price
+                    writer.writerow([country, medicine, key, msh_ratio, len(prices)])
+                    ratios.append(msh_ratio)
+                
+            except reg_models.MSHPrice.DoesNotExist:
+                pass
+
+        writer.writerow([])
+        writer.writerow(["Median MSH Ratio", median(ratios)])
+        writer.writerow([])
+            
     return response
