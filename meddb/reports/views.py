@@ -1,3 +1,6 @@
+from __future__ import division
+from dateutil import parser
+from django.http import Http404
 from django.http import HttpResponse
 from registrations import models as reg_models
 from datetime import datetime
@@ -103,5 +106,47 @@ def procurement_export(request):
         ])
     
     return response
-   
+
+def median(vals):
+    vals = sorted(vals)
+    l = len(vals)
+    if l % 2 == 0:
+        return (vals[l // 2] + vals[(l - 1) // 2]) / 2
+    else:
+        return vals[l // 2]
     
+def export_by_procurement(request):
+    try:
+        start_date = parser.parse(request.GET["start_date"])
+        end_date = parser.parse(request.GET["end_date"])
+    except IndexError:
+        raise Http404 
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment; filename=all_procurements.csv"
+    writer = csv.writer(response)
+    
+    writer.writerow(["Medicine", "Median Price", "Minimum Price", "Maximum Price", "High/Low Ratio", "Median/MSH", "Num Procurements"])
+
+    medicines = sorted(reg_models.Medicine.objects.all(), key=lambda x: unicode(x))
+
+    procurements = reg_models.Procurement.objects.filter(
+        start_date__gte=start_date, start_date__lte=end_date
+    )
+      
+    for medicine in medicines:
+        med_procurements = procurements.filter(product__medicine=medicine)
+        prices = [p.price_per_unit for p in med_procurements]
+        try:
+            msh = reg_models.MSHPrice.objects.get(medicine=medicine)
+            if len(prices) > 0:
+                num_procurements = len(prices)
+                min_price = min(prices)
+                max_price = max(prices)
+                median_price = median(prices)
+                maxmin_ratio = max_price / min_price
+                msh_ratio = median_price / msh.price
+                writer.writerow([unicode(medicine), median_price, min_price, max_price, maxmin_ratio, msh_ratio, num_procurements])
+        except reg_models.MSHPrice.DoesNotExist:
+            print medicine
+    return response
