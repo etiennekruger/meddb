@@ -100,7 +100,7 @@ class ProcurementAdminForm(forms.ModelForm):
 class ProcurementAdmin(admin.ModelAdmin):
     form = ProcurementAdminForm
     list_display = ('__unicode__', 'product', 'country')
-    list_filter = ('country',)
+    list_filter = ('country', 'product__medicine')
 
 class ContextAdmin(admin.ModelAdmin):
     pass
