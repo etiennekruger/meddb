@@ -1,3 +1,7 @@
 .selector-single{
 	width: 282px !important;
 }
+
+.selector select.selectfilter {
+    width: auto;
+}
