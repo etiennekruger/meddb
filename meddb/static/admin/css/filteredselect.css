@@ -1,7 +1,16 @@
 .selector-single{
-	width: 282px !important;
+	/*width: 282px !important;*/
+}
+
+.selector {
+    width: auto;
+}
+
+.selector-available {
+    width: auto;
 }
 
 .selector select.selectfilter {
     width: auto;
+    min-width: 300px;
 }
