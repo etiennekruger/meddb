@@ -131,7 +131,7 @@ def export_by_procurement(request):
 
     medicines = sorted(reg_models.Medicine.objects.all(), key=lambda x: unicode(x))
 
-    procurements = reg_models.procurement.objects.filter(
+    procurements = reg_models.Procurement.objects.filter(
         start_date__gte=start_date, start_date__lte=end_date
     )
       
