@@ -45,3 +45,7 @@ table#meddb_supplier_details th:first-child {
     font-size: 12px;
     margin: 5px
 }
+
+#help {
+    display: none;
+}
