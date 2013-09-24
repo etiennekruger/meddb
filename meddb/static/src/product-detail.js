@@ -60,11 +60,14 @@ meddb.product.detail = function(id) {
                     .text(function(d) { return d; });
 
             /* Populate the product registrations table. */
+            uniq_suppliers = _.uniq(data.procurements, false, function(proc) {
+                return proc.supplier.hash + proc.country.name;
+            });
             var rows = d3.select(fragment)
             .select('table#meddb_product_registration')
                 .select('tbody')
                 .selectAll('tr')
-                    .data(data.procurements)
+                    .data(uniq_suppliers)
                     .enter()
                         .append('tr');
 

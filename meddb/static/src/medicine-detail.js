@@ -2,6 +2,46 @@ render_pack = function(procurement) {
     return procurement.container.quantity + ' '+ procurement.container.unit + ' (' + procurement.container.type +')';
 
 }
+
+meddb.product_row = function(d) {
+    var row = [];
+    var prod_name = d.product.name;
+
+    if (d.product.name == 0) {
+        prod_name = '(Name not Available)' 
+    }
+    row.push({
+        text: prod_name,
+        hash: 'product:' + d.product.id
+    });
+
+    if ((d.supplier) && (d.supplier.name != '')) {
+        row.push({
+            text: d.supplier.name,
+            hash: 'supplier:' + d.supplier.id
+        });
+    } else {
+        row.push({ text: '(Not Available)' });
+    }
+    if ((d.product.manufacturer) && (d.product.manufacturer.name != '')) {
+        row.push({
+            text: d.product.manufacturer.name,
+            hash: 'manufacturer:' + d.product.manufacturer.id
+        });
+    } else {
+        row.push({ text: '(Not Available)' });
+    }
+
+    row.push({
+        text: d.country.name,
+    });
+
+    return row;
+}
+
+meddb.products = function(rows) {
+}
+
 meddb.medicine.detail = function(id, sort, reverse, replace) {
     if (replace != true) {
 	meddb.template.hide();
@@ -9,49 +49,53 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
     if (sort == undefined) { sort = 'country'; }
     if (reverse == undefined) { reverse = false; }
     load('/medicine_detail.html', function(fragment) {
-	load('/json/medicine/'+id+'/', function(data) {
+	load('/json/medicine/' + id+'/', function(data) {
 	    /* Helper functions to process data. */
 	    var object_name = function() {
-		var formulation = [];
-		data.ingredients.forEach(function(item) {
-		    formulation.push(item.inn+' '+item.strength);
-		});
-		return formulation.join(' + ');
+            var formulation = [];
+
+            data.ingredients.forEach(function(item) {
+                formulation.push(item.inn+' '+item.strength);
+            });
+            return formulation.join(' + ');
 	    }
+
 	    /* Populate procurements table. */
 	    var procurement_data = function(d) {
-		var row = [];
-		var hash = 'procurement:'+d.id;
-		row.push({ text: d.country.name, hash: hash });
-		var ppu = d3.round(d.price_per_unit,4);
-		if (typeof ppu == 'number') {
-		    row.push({ text: ppu, hash: hash });
-		} else {
-		    row.push({ text: '(Not Available)', hash: hash });
-		}
-		row.push({ text: d3.round(d.price_usd,4), hash: hash });
-		if (typeof ppu == 'number') {
-		    row.push({ text: d3.round((ppu / data.mshprice),4), hash: hash });
-		} else {
-		    row.push({ text: '(Not Available)', hash: hash });
-		}
-		row.push({ text: (d.incoterm.name || '(Not Available)'), hash: hash });
-		//row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
-		row.push({
-            text: render_pack(d),
-            hash: hash 
-        });
-		row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
-		if (d.start_date && d.end_date) {
-		    row.push({ text: d.start_date+' to '+d.end_date, hash: hash });
-		} else if (d.start_date) {
-		    row.push({ text: 'From '+d.start_date, hash: hash });
-		} else if (d.end_date) {
-		    row.push({ text: 'Until '+d.end_date, hash: hash });
-		} else {
-		    row.push({ text: '(Not Available)', hash: hash });
-		}
-		return row;
+            var row = [];
+            var hash = 'procurement:'+d.id;
+            row.push({ text: d.country.name, hash: hash });
+            var ppu = d3.round(d.price_per_unit,4);
+
+            if (typeof ppu == 'number') {
+                row.push({ text: ppu, hash: hash });
+            } else {
+                row.push({ text: '(Not Available)', hash: hash });
+            }
+
+            row.push({ text: d3.round(d.price_usd,4), hash: hash });
+            if (typeof ppu == 'number') {
+                row.push({ text: d3.round((ppu / data.mshprice),4), hash: hash });
+            } else {
+                row.push({ text: '(Not Available)', hash: hash });
+            }
+            row.push({ text: (d.incoterm.name || '(Not Available)'), hash: hash });
+            //row.push({ text: d.container.quantity+' '+d.container.unit+' ('+d.container.type+')', hash: hash });
+            row.push({
+                text: render_pack(d),
+                hash: hash 
+            });
+            row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
+            if (d.start_date && d.end_date) {
+                row.push({ text: d.start_date+' to '+d.end_date, hash: hash });
+            } else if (d.start_date) {
+                row.push({ text: 'From '+d.start_date, hash: hash });
+            } else if (d.end_date) {
+                row.push({ text: 'Until '+d.end_date, hash: hash });
+            } else {
+                row.push({ text: '(Not Available)', hash: hash });
+            }
+            return row;
 	    }
 	    /* Sorting code. */
 	    var sorter = function(a, b) {
@@ -111,85 +155,125 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		{'sort': 'volume', 'reverse': false},
 		{'sort': 'start_date', 'reverse': false}
 	    ];
+
 	    for (i in sort_actions) {
-		sort_actions[i].append = '';
-		if (sort_actions[i].sort == sort) {
-		    sort_actions[i].reverse = !reverse;
-		    if (reverse) {
-			sort_actions[i].append = '&#9660;';
-		    } else {
-			sort_actions[i].append = '&#9650;';
-		    }
-		}
+            sort_actions[i].append = '';
+            if (sort_actions[i].sort == sort) {
+                sort_actions[i].reverse = !reverse;
+                if (reverse) {
+                    sort_actions[i].append = '&#9660;';
+                } else {
+                    sort_actions[i].append = '&#9650;';
+                }
+            }
 	    }
+
 	    d3.select(fragment)
-		.select('#meddb_medicine_procurement')
-		.select('thead')
-		.selectAll('th')
-		.data(sort_actions)
-		.attr('cursor', 'pointer')
-		.html(function(d, i) { return d3.select(this).html() + d.append })
-		.on('click', function(d, i) { meddb.medicine.detail(id, d.sort, d.reverse, true); });
+            .select('#meddb_medicine_procurement')
+            .select('thead')
+            .selectAll('th')
+            .data(sort_actions)
+            .attr('cursor', 'pointer')
+            .html(function(d, i) { return d3.select(this).html() + d.append })
+            .on('click', function(d, i) { meddb.medicine.detail(id, d.sort, d.reverse, true); });
+
 	    /* Sorting done. */
 	    d3.select(fragment)
-		.select('#meddb_medicine_heading')
-		.text(object_name());
+            .select('#meddb_medicine_heading')
+            .text(object_name());
+
 	    var rows = d3.select(fragment)
-		.select('#meddb_medicine_procurement')
-		.select('tbody')
-		.selectAll('tr')
-		.data(data.procurements.sort(sorter))
-		.enter()
-		.append('tr');
+            .select('#meddb_medicine_procurement')
+            .select('tbody')
+            .selectAll('tr')
+            .data(data.procurements.sort(sorter))
+            .enter()
+            .append('tr');
+
 	    rows.selectAll('td')
-		.data(procurement_data)
-		.enter()
-		.append('td')
-		.style('cursor', 'pointer')
-	        .on('click', function(d, i) { location.hash = d.hash; })
-		.text(function(d) { return d.text; });
+            .data(procurement_data)
+            .enter()
+            .append('td')
+            .style('cursor', 'pointer')
+                .on('click', function(d, i) { location.hash = d.hash; })
+            .text(function(d) { return d.text; });
+
+        var proc_rows = {};
+        for (idx in data.procurements) {
+            var row = meddb.product_row(data.procurements[idx]);
+            var prod_id = row[0].hash;
+
+            var product = row[0];
+            var supplier = row[1];
+            var manufacturer = row[2];
+            var country = row[3];
+            
+            if (product.hash in proc_rows) {
+                var p = proc_rows[product.hash]
+                p[3].push(country);
+                p[1].push(supplier);
+            } else {
+                var p = [
+                    product,
+                    [supplier],
+                    manufacturer,
+                    [country]
+                ]
+                proc_rows[product.hash] = p;
+            }
+        }
+        
+        proc_values = _.values(proc_rows);
 	    /* Populate products table. */
-	    var product_data = function(d) {
-		var row = [];
-		row.push({
-		    text: d.product.name,
-		    hash: 'product:'+d.product.id
-		});
-		if ((d.supplier) && (d.supplier.name != '')) {
-		    row.push({
-			text: d.supplier.name,
-			hash: 'supplier:'+d.supplier.id
-		    });
-		} else {
-		    row.push({ text: '(Not Available)' });
-		}
-		if ((d.product.manufacturer) && (d.product.manufacturer.name != '')) {
-		    row.push({
-			text: d.product.manufacturer.name,
-			hash: 'manufacturer:'+d.product.manufacturer.id
-		    });
-		} else {
-		    row.push({ text: '(Not Available)' });
-		}
-		row.push({
-		    text: d.country.name,
-		});
-		return row;
-	    }
 	    var rows = d3.select(fragment)
-		.select('#meddb_medicine_product')
-		.select('tbody')
-		.selectAll('tr')
-		.data(data.procurements);
-	    rows.enter()
-		.append('tr');
-	    rows.selectAll('td')
-		.data(product_data)
-		.enter()
-		.append('td')
-		.text(function(d) { return d.text; })
-		.style('cursor', function(d) { if (d.hash) { return 'pointer' } })
-		.on('click', function(d) { if (d.hash) {location.hash = d.hash;} });
+            .select('#meddb_medicine_product')
+            .select('tbody')
+            .selectAll('tr')
+            .data(proc_values)
+
+        click_if_hash = function(el) {
+            if (el.hash) {
+                location.hash = el.hash;
+            }
+        }
+
+        point_if_hash = function(el) {
+            if (el.hash) {
+                return 'pointer' 
+            }
+        }
+
+        return_text = function(el) {
+            return el.text;
+        }
+
+	    rows
+            .enter()
+            .append('tr')
+            .each(function(d, i) {
+                d3.select(this).selectAll('td')
+                    .data(d)
+                    .enter()
+                    .append('td')
+                    .each(function(cell, i) {
+                        if (_.isArray(cell)) {
+                            var uniq_elements = _.uniq(cell, false, return_text)
+                            d3.select(this).selectAll('span')
+                                .data(uniq_elements)
+                                .enter()
+                                .append('span')
+                                .classed('multi-element', true)
+                                .text(return_text)
+                                .style('cursor', point_if_hash)
+                                .on('click', click_if_hash);
+                        } else {
+                            return d3.select(this).text(return_text);
+                        }
+                    })
+                    .style('cursor', point_if_hash)
+                    .on('click', click_if_hash);
+            });
+        
 	    /* Add the medicine prices graph. */
 	    var prices_data = function() {
 		var prices = {};

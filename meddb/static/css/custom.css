@@ -39,3 +39,9 @@ table#meddb_supplier_details th:first-child {
     width: 200px;
 }
 
+.multi-element {
+    background-color: #cdcdcd;
+    padding: 1px 5px;
+    font-size: 12px;
+    margin: 5px
+}
