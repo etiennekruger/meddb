@@ -63,9 +63,9 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 	    /* Populate procurements table. */
 	    var procurement_data = function(d) {
             var row = [];
-            var hash = 'procurement:'+d.id;
+            var hash = 'procurement:' + d.id;
             row.push({ text: d.country.name, hash: hash });
-            var ppu = d3.round(d.price_per_unit,4);
+            var ppu = d3.round(d.price_per_unit, 4);
 
             if (typeof ppu == 'number') {
                 row.push({ text: ppu, hash: hash });
@@ -74,6 +74,13 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
             }
 
             row.push({ text: d3.round(d.price_usd,4), hash: hash });
+            console.log(d);
+            if (d.manufacturer) {
+                row.push({ text: d.manufacturer.name, hash:hash });
+            } else {
+                row.push({ text: '(Not Available)', hash: hash });
+            }
+                
             if (typeof ppu == 'number') {
                 row.push({ text: d3.round((ppu / data.mshprice),4), hash: hash });
             } else {
@@ -172,10 +179,14 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
             .select('#meddb_medicine_procurement')
             .select('thead')
             .selectAll('th')
-            .data(sort_actions)
-            .attr('cursor', 'pointer')
-            .html(function(d, i) { return d3.select(this).html() + d.append })
-            .on('click', function(d, i) { meddb.medicine.detail(id, d.sort, d.reverse, true); });
+                .data(sort_actions)
+                .style('cursor', 'pointer')
+                .html(function(d, i) {
+                    return d3.select(this).html() + d.append 
+                })
+                .on('click', function(d, i) {
+                    meddb.medicine.detail(id, d.sort, d.reverse, true);
+                });
 
 	    /* Sorting done. */
 	    d3.select(fragment)
@@ -195,8 +206,8 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
             .enter()
             .append('td')
             .style('cursor', 'pointer')
-                .on('click', function(d, i) { location.hash = d.hash; })
-            .text(function(d) { return d.text; });
+            .on('click', function(d, i) { location.hash = d.hash; })
+            .text(function(d) {return d.text; });
 
         var proc_rows = {};
         for (idx in data.procurements) {
@@ -308,49 +319,54 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		return graph_data;
 	    }
 	    var prices_max = function(d) {
-		var sum = 0, count = 0, max = 0;
-		d.forEach(function(i) {
-		    if (i.value > 0) {
-			sum += i.value;
-			if (i.value > max) {
-			    max = i.value;
-			}
-			count++;
-		    }
-		});
-		return d3.max([sum*2/count, data.mshprice*1.1, max*1.1]);
+            var sum = 0, count = 0, max = 0;
+
+            d.forEach(function(i) {
+                if (i.value > 0) {
+                    sum += i.value;
+                    if (i.value > max) {
+                        max = i.value;
+                    }
+                    count++;
+                }
+            });
+            return d3.max([sum*2/count, data.mshprice*1.1, max*1.1]);
 	    }
+
 	    var graph_data = prices_data();
 	    var graph_max = prices_max(graph_data);
+
 	    var prices_graph = {
-		width: 940,
-		height: graph_data.length * 25 + 20,
-		node: d3.select(fragment).select('#meddb_medicine_prices')[0][0],
-		bar : {
-		    'height': 25,
-		    'margin': 10,
-		    'max': graph_max,
-		    'background': '#dfe7e5'
-		},
-		colors: ['#08c', '#08c', '#08c', '#08c',
-			 '#08c', '#08c', '#08c', '#08c'],
-		data : graph_data
+            width: 940,
+            height: graph_data.length * 25 + 20,
+            node: d3.select(fragment).select('#meddb_medicine_prices')[0][0],
+            bar : {
+                'height': 25,
+                'margin': 10,
+                'max': graph_max,
+                'background': '#dfe7e5'
+            },
+            colors: ['#08c', '#08c', '#08c', '#08c', '#08c', '#08c', '#08c', '#08c'],
+            data : graph_data
 	    }
+
 	    if (data.mshprice) {
-		prices_graph.line = {
-            'constant': data.mshprice,
-            'text': 'MSH: $' + d3.round(data.mshprice, 4) + ' (2012 Median Buyer Price)' };
-	    }
-	    d3.select(fragment)
-		.select('#meddb_medicine_prices').html('');
-	    var graph = new HorizontalBarGraph(prices_graph);
-	    if (replace == true) {
-		meddb.template.replace(fragment);
-	    } else {
-		/* Add history option. */
-		meddb.history.add(location.hash, object_name());
-		meddb.template.show(fragment);
-	    }
+                prices_graph.line = {
+                    'constant': data.mshprice,
+                    'text': 'MSH: $' + d3.round(data.mshprice, 4) + ' (2012 Median Buyer Price)' 
+                };
+        }
+
+        d3.select(fragment).select('#meddb_medicine_prices').html('');
+        var graph = new HorizontalBarGraph(prices_graph);
+
+        if (replace == true) {
+            meddb.template.replace(fragment);
+        } else {
+            /* Add history option. */
+            meddb.history.add(location.hash, object_name());
+            meddb.template.show(fragment);
+        }
 	});
     });
 }
