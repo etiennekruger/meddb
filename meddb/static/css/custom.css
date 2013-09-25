@@ -50,6 +50,29 @@ div#meddb_medicine_prices {
     margin: 5px
 }
 
+#banner h1 {
+    line-height: 60px;
+}
+
+#banner img {
+    height: 60px;
+    vertical-align: bottom;
+    float: left;
+    margin-right:10px;
+}
+
 #help {
+    border: 3px solid #888;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    background-color: #CED7DC;
     display: none;
+}
+
+#help img {
+    height:100px;
+}
+
+#footer {
+    color: #888;
 }
