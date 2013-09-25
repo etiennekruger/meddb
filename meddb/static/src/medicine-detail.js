@@ -337,8 +337,9 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		data : graph_data
 	    }
 	    if (data.mshprice) {
-		prices_graph.line = { 'constant': data.mshprice,
-				      'text': 'MSH: $' + d3.round(data.mshprice,4) };
+		prices_graph.line = {
+            'constant': data.mshprice,
+            'text': 'MSH: $' + d3.round(data.mshprice, 4) + ' (2012 Median Buyer Price)' };
 	    }
 	    d3.select(fragment)
 		.select('#meddb_medicine_prices').html('');
