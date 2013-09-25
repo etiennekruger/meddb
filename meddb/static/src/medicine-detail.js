@@ -125,6 +125,12 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		} else if (sort == 'incoterm') {
 		    a_sort = a.incoterm;
 		    b_sort = b.incoterm;		    
+		} else if (sort == 'manufacturer') {
+		    a_sort = a.manufacturer;
+		    b_sort = b.manufacturer;		    
+		} else if (sort == 'manufacturer_country') {
+		    a_sort = a.manufacturer.country;
+		    b_sort = b.manufacturer.country;		    
 		} else if (sort == 'pack_size') {
 		    a_sort = a.container.quantity;
 		    b_sort = b.container.quantity;		    
@@ -158,6 +164,8 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
 		{'sort': 'country', 'reverse': false},
 		{'sort': 'price_per_unit', 'reverse': false},
 		{'sort': 'price', 'reverse': false},
+		{'sort': 'manufacturer', 'reverse': false},
+		{'sort': 'manufacturer_country', 'reverse': false},
 		{'sort': 'msh_ratio', 'reverse': false},
 		{'sort': 'incoterm', 'reverse': false},
 		{'sort': 'pack_size', 'reverse': false},
