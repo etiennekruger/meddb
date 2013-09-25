@@ -76,7 +76,9 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
             row.push({ text: d3.round(d.price_usd,4), hash: hash });
             if (d.manufacturer) {
                 row.push({ text: d.manufacturer.name, hash:hash });
+                row.push({ text: d.manufacturer.country, hash:hash });
             } else {
+                row.push({ text: '(Not Available)', hash: hash });
                 row.push({ text: '(Not Available)', hash: hash });
             }
                 
@@ -91,13 +93,14 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
                 text: render_pack(d),
                 hash: hash 
             });
-            row.push({ text: (d.volume ||'(Not Available)') , hash: hash });
+
+            row.push({ text: (d.volume || '(Not Available)') , hash: hash });
             if (d.start_date && d.end_date) {
-                row.push({ text: d.start_date+' to '+d.end_date, hash: hash });
+                row.push({ text: d.start_date +' to '+ d.end_date, hash: hash });
             } else if (d.start_date) {
-                row.push({ text: 'From '+d.start_date, hash: hash });
+                row.push({ text: 'From '+ d.start_date, hash: hash });
             } else if (d.end_date) {
-                row.push({ text: 'Until '+d.end_date, hash: hash });
+                row.push({ text: 'Until '+ d.end_date, hash: hash });
             } else {
                 row.push({ text: '(Not Available)', hash: hash });
             }
