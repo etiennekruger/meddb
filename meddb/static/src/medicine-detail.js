@@ -74,7 +74,6 @@ meddb.medicine.detail = function(id, sort, reverse, replace) {
             }
 
             row.push({ text: d3.round(d.price_usd,4), hash: hash });
-            console.log(d);
             if (d.manufacturer) {
                 row.push({ text: d.manufacturer.name, hash:hash });
             } else {
