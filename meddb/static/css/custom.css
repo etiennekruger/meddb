@@ -39,6 +39,10 @@ table#meddb_supplier_details th:first-child {
     width: 200px;
 }
 
+div#meddb_medicine_prices {
+    margin-bottom: 100px;
+}
+
 .multi-element {
     background-color: #cdcdcd;
     padding: 1px 5px;
