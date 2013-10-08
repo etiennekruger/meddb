@@ -7,5 +7,6 @@ urlpatterns = patterns('reports.views',
     url(r'^export/$', 'procurement_export', name='procurement_export'),
     url(r'^export/by_procurement/$', 'export_by_procurement', name='export_by_procurement'),
     url(r'^export/all_countries/$', 'export_all_countries', name='export_all_countries'),
+    url(r'^export/hli/$', 'export_hli', name='export_hli'),
 )
 
