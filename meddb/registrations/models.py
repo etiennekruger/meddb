@@ -182,7 +182,7 @@ class MSHPrice(models.Model):
 class Manufacturer(models.Model):
     name = models.CharField(max_length=64, verbose_name='Manufacturer Name')
     country = models.ForeignKey(Country, blank=True, null=True)
-    website = models.URLField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True, help_text="e.g. http://www.example.com, ensure that the leading http:// is included")
     
     def as_dict(self, minimal=False):
         d = { 'id': self.id,
@@ -226,11 +226,11 @@ class Supplier(models.Model):
     address = models.TextField(blank=True, null=True)
     country = models.ForeignKey(Country, blank=True, null=True)
     manufacturer = models.ForeignKey(Manufacturer, blank=True, null=True)
-    website = models.URLField(blank=True, null=True)
+    website = models.URLField(blank=True, null=True, help_text="e.g. http://www.example.com, ensure that the leading http:// is included")
     contact = models.CharField(max_length=64, verbose_name='Contact Person', blank=True, null=True)
-    phone = models.CharField(max_length=16, verbose_name='Phone Number', blank=True, null=True)
-    altphone = models.CharField(max_length=16, verbose_name='Alternative Phone Number', blank=True, null=True)
-    fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True)
+    phone = models.CharField(max_length=16, verbose_name='Phone Number', blank=True, null=True, help_text="e.g. +27214562456, ensure that the international dialing code is included, preceeded by a '+'")
+    altphone = models.CharField(max_length=16, verbose_name='Alternative Phone Number', blank=True, null=True, help_text="e.g. +27214562456, ensure that the international dialing code is included, preceeded by a '+'")
+    fax = models.CharField(max_length=16, verbose_name='Fax Number', blank=True, null=True, help_text="e.g. +27214562456, ensure that the international dialing code is included, preceeded by a '+'")
     email = models.EmailField(verbose_name='Email Address', blank=True, null=True)
     altemail = models.EmailField(verbose_name='Alternative Email Address', blank=True, null=True)
     authorized = models.BooleanField(verbose_name='Manufacturer Authorisation', default=False)
@@ -417,7 +417,7 @@ class Procurement(SourcedModel):
     price = models.FloatField(verbose_name='Price per container', help_text='The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).')
     currency = models.ForeignKey(Currency, help_text='This is the currency of the procurement price. This field is required to convert units to USD for comparison.')
     volume = models.IntegerField(help_text='The number of packages contracted at the specified unit price. Volume is calculated as # of packages * containers in pack', default=1)
-    method = models.CharField(max_length=32, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
+    method = models.CharField(max_length=100, verbose_name='Procurement Method', help_text='Open or restricted ICB, domestic tender, shopping, sole source.', blank=True, null=True)
     start_date = models.DateField(max_length=32, verbose_name='Period Start', help_text='This is the first day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     end_date = models.DateField(max_length=32, verbose_name='Period End', help_text='This is the last day that the procurement price is valid for (may be left blank).', blank=True, null=True)
     
