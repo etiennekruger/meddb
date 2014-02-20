@@ -194,3 +194,65 @@ def export_all_countries(request):
         writer.writerow([])
             
     return response
+
+def export_hli(request):
+    try:
+        start_date = parser.parse(request.GET["start_date"])
+        end_date = parser.parse(request.GET["end_date"])
+    except IndexError:
+        raise Http404 
+
+    countries = reg_models.Country.objects.filter(code__in=sadc_countries).order_by("name")
+    procurements = reg_models.Procurement.objects.filter(
+        start_date__gte=start_date, start_date__lte=end_date
+    )
+
+    medicines = reg_models.Medicine.objects.filter(id__in=[26, 42, 81, 83, 146]) 
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = "attachment; filename=hli-%s_%s.csv" % (
+        start_date.strftime("%Y-%m-%d"), 
+        end_date.strftime("%Y-%m-%d")
+    )
+    writer = csv.writer(response)
+
+    def header():
+        row = ["Medicine", "Unit", "MSH (2012) per unit"]
+        for country in countries:
+            row.append(country.name)
+            row.append("")
+        return row
+
+    def subheader():
+        row = ["", "", "Price per unit"]
+        for country in countries:
+            row.append("Price per unit")
+            row.append("Price ratio")
+        return row
+
+    def medicine_rows(medicine):
+        rows = []
+        medicine_procurements = procurements.filter(product__medicine=medicine).order_by("country")
+        containers = reg_models.Container.procurement_set
+        
+        return list(set(containers))
+        for p in medicine_procurements:
+            for country in countries:
+                row = [unicode(medicine), unicode(medicine.dosageform), medicine.msh]
+                country_procurements = medicine_procurements.filter(country=country)
+                if country_procurements.count() == 0:
+                    row.append([""])
+                    row.append([""])
+                for cp in country_procurements:
+                   row.append(cp.price_per_unit) 
+                   row.append(cp.msh_ratio)
+                
+            rows.append(row)
+        return rows
+        
+    writer.writerow(header())
+    writer.writerow(subheader())
+    for medicine in medicines:
+        writer.writerows(medicine_rows(medicine))
+    
+    return response

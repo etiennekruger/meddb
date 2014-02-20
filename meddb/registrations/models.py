@@ -465,6 +465,15 @@ class Procurement(SourcedModel):
         return d
     
     @property
+    def msh_ratio(self):
+
+        msh_price = MSHPrice.objects.get(medicine=self.product.medicine).price
+        if msh_price != 0:
+            return self.price_per_unit / msh_price
+        else:
+            return "N/A"
+        
+    @property
     def price_usd(self):
         c = currency.models.Currency.objects.get(code=self.currency.code)
         if c.code == 'USD':
