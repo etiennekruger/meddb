@@ -6,6 +6,7 @@ render_pack = function(procurement) {
 meddb.product_row = function(d) {
     var row = [];
     var prod_name = d.product.name;
+    var tracker = {}
 
     if (d.product.name == 0) {
         prod_name = '(Name not Available)' 
@@ -15,26 +16,40 @@ meddb.product_row = function(d) {
         hash: 'product:' + d.product.id
     });
 
+    tracker["Product Name"] = prod_name
+    tracker["Product ID"] = d.product.id
+    
+
     if ((d.supplier) && (d.supplier.name != '')) {
+        tracker["Supplier"] = d.supplier.name
         row.push({
             text: d.supplier.name,
             hash: 'supplier:' + d.supplier.id
         });
     } else {
-        row.push({ text: '(Not Available)' });
+        supplier_name = '(Not Available)';
+        row.push({ text: supplier_name });
+        tracker["Supplier"] = supplier_name;
     }
+
     if ((d.product.manufacturer) && (d.product.manufacturer.name != '')) {
+        tracker["Manufacturer"] = d.product.manufacturer.name;
         row.push({
             text: d.product.manufacturer.name,
             hash: 'manufacturer:' + d.product.manufacturer.id
         });
     } else {
-        row.push({ text: '(Not Available)' });
+        manufacturer_name = '(Not Available)';
+        row.push({ text: manufacturer_name });
+        tracker["Manufacturer"] = manufacturer_name;
     }
 
     row.push({
         text: d.country.name,
     });
+    tracker["Country"] = d.country.name;
+
+    mixpanel.track("Medicine Detail", tracker);
 
     return row;
 }

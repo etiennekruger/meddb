@@ -1,4 +1,5 @@
 var medicine_list = function(data, node) {
+    mixpanel.track("Medicine List");
     var row_data = function(d) {
 	var row = [];
 	var formulation = [];
