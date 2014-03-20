@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+
+<div id="page-container" class="container">
+    {% block page %}
+    <div class="row">
+        <p class="lead">Content goes here.</p>
+    </div>
+    {% endblock %}
+</div>
+
+{% block page_footer %}
+<div class="container" id="footer">
+    <div class="col-lg-12 text-center">
+        <hr>
+        <a class="tiny-logo" href="http://www.code4sa.org/"><img id="logo-code4sa" src="/static/images/code4sa-logo-small.png"></a>
+        <p id="copyright"><small>Copyright &copy; Code for South Africa 2014</small></p>
+    </div>
+</div>
+{% endblock %}
+
+</body>
+<script src="//code.jquery.com/jquery-2.0.3.min.js" type="text/javascript"></script>
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+{% block javascript %}
+<script>
+    $(document).ready(function(){
+
+    });
+</script>
+{% endblock %}
+</html>

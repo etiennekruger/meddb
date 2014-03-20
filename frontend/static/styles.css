@@ -1,0 +1,17 @@
+body{
+    background-color: #f6f6f6;
+}
+
+#footer{
+    height: 100px;
+}
+
+.tiny-logo{
+    float: right;
+    margin-left: 25px;
+    margin-right: 25px;
+}
+
+#copyright{
+    padding-top: 10px;
+}
