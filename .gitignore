@@ -4,3 +4,6 @@
 *.db
 .*.swp
 meddb.json
+
+.idea/
+env/
