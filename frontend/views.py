@@ -24,6 +24,14 @@ def medicine(medicine_id):
     return render_template('medicine.html', medicine=medicine, active_nav_button="medicines")
 
 
+@app.route('/product/<product_id>/')
+def product(product_id):
+
+    response = requests.get('http://127.0.0.1:8000/json/product/' + str(product_id) + "/")
+    product = response.json()
+    return render_template('product.html', product=product, active_nav_button="medicines")
+
+
 @app.route('/supplier/')
 def supplier_index():
 

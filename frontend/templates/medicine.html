@@ -102,7 +102,7 @@
                         {% for product in medicine.products %}
                             <tr>
                                 <td>
-                                    {{ product.name }}
+                                    {{ macros.render_product(product) }}
                                 </td>
                                 <td>
                                     {% for procurement in product.procurements -%}

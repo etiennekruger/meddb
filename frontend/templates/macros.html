@@ -22,6 +22,16 @@
     {% endfor %}
 {%- endmacro %}
 
+{% macro render_product(product) -%}
+    <a href="/product/{{ product.id }}/">
+        {% if product.name %}
+            {{ product.name }}
+        {% else %}
+            Generic
+        {% endif %}
+    </a>
+{%- endmacro %}
+
 {% macro render_supplier(supplier) -%}
     <a href="/supplier/{{ supplier.id }}/">
         {{ supplier.name }}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            <h1>
+                {% if product.name %}
+                    {{ product.name }}
+                {% else %}
+                    Generic
+                {% endif %}
+            </h1>
+
+            <h2>Details</h2>
+            <table class="table table-bordered table-striped">
+                <tbody>
+                <tr>
+                    <th>
+                        Formulation
+                    </th>
+                    <td>
+                        {{ macros.render_medicine(product.medicine) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Strength
+                    </th>
+                    <td>
+                        {{ macros.render_medicine_strength(product.medicine) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Dosage form
+                    </th>
+                    <td>
+                        {{ product.medicine.dosageform.name }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Manufacturer
+                    </th>
+                    <td>
+                        {% if product.manufacturer %}
+                            {{ product.manufacturer.name }}, {{ product.manufacturer.country }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Site
+                    </th>
+                    <td>
+                        {% if product.manufacturer %}
+                            {{ product.manufacturer.site }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <h2>Listed suppliers</h2>
+
+            <table class="table table-bordered table-striped">
+                <thead>
+                <th>Name</th>
+                <th>Procurement country</th>
+                </thead>
+                <tbody>
+                {% for procurement in product.procurements %}
+                    <tr>
+                        <td>
+                            <a href="/supplier/{{ procurement.supplier.id }}/">
+                                {% if procurement.supplier.name %}
+                                    {{ procurement.supplier.name }}
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </a>
+                        </td>
+                        <td>
+                            {{ macros.render_country(procurement.country) }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+{% endblock %}

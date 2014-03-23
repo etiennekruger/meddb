@@ -93,11 +93,13 @@
                 {% for procurement in supplier.procurements %}
                     <tr>
                         <td>
-                            {% if procurement.product.name %}
-                                {{ procurement.product.name }}
-                            {% else %}
-                                {{ macros.render_medicine(procurement.product.medicine) }}
-                            {% endif %}
+                            <a href="/product/{{ procurement.product.id }}/">
+                                {% if procurement.product.name %}
+                                    {{ procurement.product.name }}
+                                {% else %}
+                                    Generic
+                                {% endif %}
+                            </a>
                         </td>
                         <td>
                             {{ macros.render_country(procurement.country) }}
