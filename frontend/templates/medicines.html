@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block page %}
+<div class="row">
+    <div class="col-lg-12">
+
+        <h1>Medicines</h1>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <th>Formulation</th>
+            <th>Strength</th>
+            <th>Dosage Form</th>
+            <th>Average Price (USD)</th>
+            <th>MSH Price (USD)</th>
+            </thead>
+            <tbody>
+            {% for medicine in medicine_list %}
+            <tr>
+                <td>
+                    {% for ingredient in medicine.ingredients %}
+                    {% if loop.index > 1 %} + {% endif %}
+                    {{ ingredient.inn }}
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for ingredient in medicine.ingredients %}
+                    {% if loop.index > 1 %} + {% endif %}
+                    {{ ingredient.strength }}
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ medicine.dosageform.name }}
+                </td>
+                <td>
+                    {{ medicine.avgprice }}
+                </td>
+                <td>
+                    {{ medicine.mshprice }}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endblock %}

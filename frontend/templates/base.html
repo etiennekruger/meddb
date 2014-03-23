@@ -20,9 +20,9 @@
         </a>
 
         <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#">Medicines</a></li>
-            <li><a href="#">Suppliers</a></li>
+            <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
+            <li{% if active_nav_button == "medicines" %} class="active"{% endif %}><a href="/medicines">Medicines</a></li>
+            <li{% if active_nav_button == "suppliers" %} class="active"{% endif %}><a href="/suppliers">Suppliers</a></li>
         </ul>
 
         <form class="navbar-form navbar-right" role="search">
