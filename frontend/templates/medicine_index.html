@@ -18,18 +18,10 @@
             {% for medicine in medicine_list %}
             <tr>
                 <td>
-                    <a href="/medicine/{{ medicine.id }}/">
-                        {% for ingredient in medicine.ingredients %}
-                        {% if loop.index > 1 %} + {% endif %}
-                        {{ ingredient.inn }}
-                        {% endfor %}
-                    </a>
+                    {{ macros.render_medicine(medicine) }}
                 </td>
                 <td>
-                    {% for ingredient in medicine.ingredients %}
-                    {% if loop.index > 1 %} + {% endif %}
-                    {{ ingredient.strength }}
-                    {% endfor %}
+                    {{ macros.render_medicine_strength(medicine) }}
                 </td>
                 <td>
                     {{ medicine.dosageform.name }}

@@ -47,7 +47,7 @@
                         {% for procurement in medicine.procurements %}
                             <tr>
                                 <td>
-                                    {{ procurement.country.name }}
+                                    {{ macros.render_country(procurement.country) }}
                                 </td>
                                 <td>
                                     {{ procurement.price_usd }}
@@ -122,7 +122,7 @@
                                     {% for procurement in product.procurements -%}
                                         {% if procurement.country -%}
                                             {%- if loop.index > 1 -%}, {% endif -%}
-                                            {{ procurement.country.name }}
+                                            {{ macros.render_country(procurement.country) }}
                                         {%- endif -%}
                                     {% endfor %}
                                 </td>

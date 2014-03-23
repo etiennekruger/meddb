@@ -1,0 +1,30 @@
+{% macro render_country(country) -%}
+    {%- if country.name -%}
+        {{ country.name }}
+    {%- else -%}
+        N/A
+    {%- endif -%}
+{%- endmacro %}
+
+{% macro render_medicine(medicine) -%}
+    <a href="/medicine/{{ medicine.id }}/">
+        {% for ingredient in medicine.ingredients %}
+            {% if loop.index > 1 %} + {% endif %}
+            {{ ingredient.inn }}
+        {% endfor %}
+    </a>
+{%- endmacro %}
+
+{% macro render_medicine_strength(medicine) -%}
+    {% for ingredient in medicine.ingredients %}
+        {% if loop.index > 1 %} + {% endif %}
+        {{ ingredient.strength }}
+    {% endfor %}
+{%- endmacro %}
+
+{% macro render_supplier(supplier) -%}
+    <a href="/supplier/{{ supplier.id }}/">
+        {{ supplier.name }}
+    </a>
+{%- endmacro %}
+

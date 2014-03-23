@@ -16,16 +16,16 @@
             {% for supplier in supplier_list %}
             <tr>
                 <td>
-                    {{ supplier.name }}
+                    {{ macros.render_supplier(supplier) }}
                 </td>
                 <td>
                     {% if supplier.country %}
-                    {{ supplier.country.name }}
+                        {{ macros.render_country(supplier.country) }}
                     {% endif %}
                 </td>
                 <td>
                     {% if supplier.website %}
-                    <a href="{{ supplier.website }}">{{ supplier.website }}</a>
+                    <a href="{{ supplier.website }}" target="_blank">{{ supplier.website }}</a>
                     {% endif %}
                 </td>
             </tr>
