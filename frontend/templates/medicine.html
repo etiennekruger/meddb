@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            <h1>
+                {# name #}
+                {% for ingredient in medicine.ingredients -%}
+                    {% if loop.index > 1 %} + {% endif %}
+                    {{ ingredient.inn }}
+                {%- endfor %},
+                {# strength #}
+                {% for ingredient in medicine.ingredients -%}
+                    {% if loop.index > 1 %} + {% endif %}
+                    {{ ingredient.strength }}
+                {%- endfor %}
+                {# dosage form #}
+                {% if medicine.dosageform -%}
+                    <small> ({{ medicine.dosageform }})</small>
+                {%- endif %}
+            </h1>
+
+            <ul class="nav nav-tabs">
+                <li class="active"><a href="#purchases" data-toggle="tab">Purchases</a></li>
+                <li><a href="#products" data-toggle="tab">Products</a></li>
+            </ul>
+
+            <div class="tab-content">
+
+                <div class="tab-pane active" id="purchases">
+                    <h2>{{ medicine.procurements | length }} Purchases</h2>
+
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <th>Country</th>
+                        <th>Price (USD)</th>
+                        <th>Pack price (USD)</th>
+                        <th>Manufacturer + country</th>
+                        <th>MSH ratio</th>
+                        <th>Incoterm</th>
+                        <th>Pack size</th>
+                        <th>Volume (Packs)</th>
+                        <th>Procurement period</th>
+                        </thead>
+                        <tbody>
+                        {% for procurement in medicine.procurements %}
+                            <tr>
+                                <td>
+                                    {{ procurement.country.name }}
+                                </td>
+                                <td>
+                                    {{ procurement.price_usd }}
+                                </td>
+                                <td>
+                                    {{ procurement.price_per_unit }}
+                                </td>
+                                <td>
+                                    {{ procurement.manufacturer.name }}
+                                    (
+                                    {%- for tmp in procurement.manufacturer.country -%}
+                                        {{ tmp }}
+                                        {%- if loop.index > 1 -%}, {% endif -%}
+                                    {%- endfor -%}
+                                    )
+                                </td>
+                                <td>
+                                    {{ procurement.price_usd / medicine.mshprice }}
+                                </td>
+                                <td>
+                                    {{ procurement.incoterm.name }}
+                                </td>
+                                <td>
+                                    {{ procurement.packsize }}
+                                </td>
+                                <td>
+                                    {{ procurement.volume }}
+                                </td>
+                                <td>
+                                    <nobr>{{ procurement.start_date }}</nobr> to <nobr>{{ procurement.end_date }}</nobr>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+
+                <div class="tab-pane" id="products">
+                    <h2>{{ medicine.products | length }} Related Products</h2>
+
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <th>Name</th>
+                        <th>Supplier(s)</th>
+                        <th>Manufacturer(s)</th>
+                        <th>Procurement country</th>
+                        </thead>
+                        <tbody>
+                        {% for product in medicine.products %}
+                            <tr>
+                                <td>
+                                    {{ product.name }}
+                                </td>
+                                <td>
+                                    {% for procurement in product.procurements -%}
+                                        {% if procurement.supplier -%}
+                                            {%- if loop.index > 1 -%}, {% endif -%}
+                                            {{ procurement.supplier.name }}
+                                        {%- else -%}
+                                            N/A
+                                        {%- endif -%}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for procurement in product.procurements -%}
+                                        {%- if loop.index > 1 -%}, {% endif -%}
+                                        {{ procurement.manufacturer.name }}
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for procurement in product.procurements -%}
+                                        {% if procurement.country -%}
+                                            {%- if loop.index > 1 -%}, {% endif -%}
+                                            {{ procurement.country.name }}
+                                        {%- endif -%}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
