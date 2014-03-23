@@ -1,16 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}Medicine Prices Database{% endblock %}</title>
 
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 
     {% block head %}
     {% endblock %}
 </head>
 <body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img id="brand-logo" src="/static/images/sadc-logo-small.png"> Medicine Prices Database
+        </a>
+
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Medicines</a></li>
+            <li><a href="#">Suppliers</a></li>
+        </ul>
+
+        <form class="navbar-form navbar-right" role="search">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="Search">
+            </div>
+            <button type="submit" class="btn btn-default">Submit</button>
+        </form>
+    </div>
+
+</nav>
 
 <div id="page-container" class="container">
     {% block page %}

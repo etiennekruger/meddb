@@ -1,5 +1,5 @@
 body{
-    background-color: #f6f6f6;
+
 }
 
 #footer{
@@ -14,4 +14,13 @@ body{
 
 #copyright{
     padding-top: 10px;
+}
+
+.custom-blue{
+    color: #547CC1;
+}
+
+#brand-logo{
+    margin-top: -15px;
+    margin-bottom: -15px;
 }
