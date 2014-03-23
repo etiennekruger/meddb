@@ -19,4 +19,6 @@ def medicines():
 @app.route('/suppliers')
 def suppliers():
 
-    return render_template('suppliers.html', active_nav_button="suppliers")
+    response = requests.get('http://127.0.0.1:8000/json/supplier/')
+    supplier_list = response.json()
+    return render_template('suppliers.html', supplier_list=supplier_list, active_nav_button="suppliers")

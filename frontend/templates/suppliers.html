@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block page %}
+<div class="row">
+    <div class="col-lg-12">
+
+        <h1>Suppliers</h1>
+
+        <table class="table table-bordered table-striped">
+            <thead>
+            <th>Name</th>
+            <th>Country</th>
+            <th>Website</th>
+            </thead>
+            <tbody>
+            {% for supplier in supplier_list %}
+            <tr>
+                <td>
+                    {{ supplier.name }}
+                </td>
+                <td>
+                    {% if supplier.country %}
+                    {{ supplier.country.name }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if supplier.website %}
+                    <a href="{{ supplier.website }}">{{ supplier.website }}</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endblock %}
