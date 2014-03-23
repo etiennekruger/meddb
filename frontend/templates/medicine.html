@@ -50,10 +50,10 @@
                                     {{ macros.render_country(procurement.country) }}
                                 </td>
                                 <td>
-                                    {{ procurement.price_usd }}
+                                    {{ procurement.price_usd | round(4) }}
                                 </td>
                                 <td>
-                                    {{ procurement.price_per_unit }}
+                                    {{ procurement.price_per_unit | round(4) }}
                                 </td>
                                 <td>
                                     {{ procurement.manufacturer.name }}
@@ -65,7 +65,9 @@
                                     )
                                 </td>
                                 <td>
-                                    {{ procurement.price_usd / medicine.mshprice }}
+                                    {% if procurement.price_usd and medicine.mshprice %}
+                                        {{ (procurement.price_usd / medicine.mshprice) | round(1) }}
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {{ procurement.incoterm.name }}
