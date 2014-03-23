@@ -28,3 +28,10 @@
     </a>
 {%- endmacro %}
 
+{% macro render_pack_size(pack_size) -%}
+    {{ pack_size.quantity | round | int }} {{ pack_size.unit }} {{ pack_size.type }}
+{%- endmacro %}
+
+{% macro render_url(url) -%}
+    <a href="{{ url }}" target="_blank">{{ url }}</a>
+{%- endmacro %}

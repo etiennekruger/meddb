@@ -30,3 +30,11 @@ def supplier_index():
     response = requests.get('http://127.0.0.1:8000/json/supplier/')
     supplier_list = response.json()
     return render_template('supplier_index.html', supplier_list=supplier_list, active_nav_button="suppliers")
+
+
+@app.route('/supplier/<supplier_id>/')
+def supplier(supplier_id):
+
+    response = requests.get('http://127.0.0.1:8000/json/supplier/' + str(supplier_id) + "/")
+    supplier = response.json()
+    return render_template('supplier.html', supplier=supplier, active_nav_button="suppliers")
