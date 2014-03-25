@@ -44,7 +44,7 @@ def set_permissions():
 def setup():
 
     # install packages
-    sudo('apt-get install build-essential')
+    sudo('apt-get install build-essential python-dev sqlite3 libsqlite3-dev')
     sudo('apt-get install python-pip supervisor')
     sudo('pip install virtualenv')
 
@@ -60,7 +60,7 @@ def setup():
     # install the necessary Python packages
     with virtualenv():
         put('requirements.txt', '/tmp/requirements.txt')
-        sudo('pip install -r requirements.txt')
+        sudo('pip install -r /tmp/requirements.txt')
 
     # install nginx
     sudo('apt-get install nginx')
