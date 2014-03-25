@@ -7,3 +7,4 @@ xlrd==0.7.7
 python-dateutil
 Flask==0.10.1
 requests==2.0.1
+gunicorn==18.0

@@ -8,19 +8,15 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Etienne Kruger', 'etienne@acscomputers.co.za'),
+    ('Petrus', 'petrus@code4sa.org'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'meddb2013',
-        'USER': 'meddb',
-        'PASSWORD': 'sarpam2010',
-        'HOST': 'mysql',
-        'PORT': '3306',
+    'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(os.path.join(PROJECT_ROOT, '..'), "med-db.db"),
     }
 }
 
