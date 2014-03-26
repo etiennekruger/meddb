@@ -1,7 +1,6 @@
 import json
 from datetime import datetime, date
 from django.db import models
-from django.core import serializers
 
 
 class CustomEncoder(json.JSONEncoder):
@@ -14,7 +13,7 @@ class CustomEncoder(json.JSONEncoder):
             encoded_obj = obj.strftime("%B %d, %Y, %H:%M")
         elif isinstance(obj, date):
             encoded_obj = obj.strftime("%B %d, %Y")
-        elif isinstance(obj, models.Model):
+        elif isinstance(obj, db.Model):
             try:
                 encoded_obj = json.dumps(obj.to_dict(), cls=CustomEncoder, indent=4)
             except Exception:
@@ -34,7 +33,7 @@ class BaseSerializer():
 
     def to_dict(self, obj, include_related=False):
         tmp_dict = {
-            field_name: getattr(obj, obj._meta.get_field(field_name)) for field_name in obj._meta.get_all_field_names()
+            c.name: getattr(obj, c.name) for c in obj.__table__.columns
         }
         return tmp_dict
 
@@ -45,12 +44,4 @@ class BaseSerializer():
             out = []
             for obj in obj_or_list:
                 out.append(self.to_dict(obj, include_related))
-        return json.dumps(out, cls=CustomEncoder, indent=4)
-
-
-class MedicineSerializer(BaseSerializer):
-
-    def serialize(self, obj, include_related=False):
-        out = BaseSerializer.to_dict(self, obj, include_related=include_related)
-
         return json.dumps(out, cls=CustomEncoder, indent=4)
