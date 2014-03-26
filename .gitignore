@@ -7,3 +7,4 @@ meddb.json
 
 .idea/
 env/
+med-db/registrations/migrations/
