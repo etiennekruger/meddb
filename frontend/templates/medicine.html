@@ -79,7 +79,7 @@
                                     {{ procurement.volume }}
                                 </td>
                                 <td>
-                                    <nobr>{{ procurement.start_date }}</nobr> to <nobr>{{ procurement.end_date }}</nobr>
+                                    {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
                                 </td>
                             </tr>
                         {% endfor %}

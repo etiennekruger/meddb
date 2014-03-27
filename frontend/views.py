@@ -1,8 +1,16 @@
 from flask import render_template
 from frontend import app
 import requests
+import dateutil.parser
 
 api_host = app.config['API_HOST']
+
+@app.template_filter('format_date')
+def jinja2_filter_format_date(date_str):
+    date = dateutil.parser.parse(date_str)
+    native = date.replace(tzinfo=None)
+    format='%b %Y'
+    return native.strftime(format)
 
 @app.route('/')
 def root():
