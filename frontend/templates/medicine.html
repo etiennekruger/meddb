@@ -45,7 +45,7 @@
                         </thead>
                         <tbody>
                         {% for procurement in medicine.procurements %}
-                            <tr class="procurement-entry" data-procurement-id="{{ procurement.id }}">
+                            <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
                                 <td>
                                     {{ macros.render_country(procurement.country) }}
                                 </td>
@@ -100,7 +100,7 @@
                         </thead>
                         <tbody>
                         {% for product in medicine.products %}
-                            <tr>
+                            <tr class="product-entry clickable" data-product-id="{{ product.id }}">
                                 <td>
                                     {{ macros.render_product(product) }}
                                 </td>
@@ -145,6 +145,10 @@
         $(".procurement-entry").on('click', function(e){
             var procurement_id = $(this).attr('data-procurement-id').toString()
             window.location = "/procurement/" + procurement_id
+        })
+        $(".product-entry").on('click', function(e){
+            var product_id = $(this).attr('data-product-id').toString()
+            window.location = "/product/" + product_id
         })
     });
 </script>

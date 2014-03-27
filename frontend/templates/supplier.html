@@ -91,7 +91,7 @@
                 </thead>
                 <tbody>
                 {% for procurement in supplier.procurements %}
-                    <tr>
+                    <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
                         <td>
                             <a href="/product/{{ procurement.product.id }}/">
                                 {% if procurement.product.name %}
@@ -118,4 +118,16 @@
 
         </div>
     </div>
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+    $(document).ready(function(){
+        $(".procurement-entry").on('click', function(e){
+            var procurement_id = $(this).attr('data-procurement-id').toString()
+            window.location = "/procurement/" + procurement_id
+        })
+    });
+</script>
 {% endblock %}

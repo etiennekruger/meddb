@@ -16,7 +16,7 @@
             </thead>
             <tbody>
             {% for medicine in medicine_list %}
-            <tr>
+            <tr class="medicine-entry clickable" data-medicine-id="{{ medicine.id }}">
                 <td>
                     {{ macros.render_medicine(medicine) }}
                 </td>
@@ -39,4 +39,15 @@
 
     </div>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function(){
+        $(".medicine-entry").on('click', function(e){
+            var medicine_id = $(this).attr('data-medicine-id').toString()
+            window.location = "/medicine/" + medicine_id
+        })
+    });
+</script>
 {% endblock %}

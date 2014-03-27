@@ -14,7 +14,7 @@
                 </thead>
                 <tbody>
                 {% for supplier in supplier_list %}
-                    <tr>
+                    <tr class="supplier-entry clickable" data-supplier-id="{{ supplier.id }}">
                         <td>
                             {{ macros.render_supplier(supplier) }}
                         </td>
@@ -37,4 +37,15 @@
 
         </div>
     </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function(){
+        $(".supplier-entry").on('click', function(e){
+            var supplier_id = $(this).attr('data-supplier-id').toString()
+            window.location = "/supplier/" + supplier_id
+        })
+    });
+</script>
 {% endblock %}

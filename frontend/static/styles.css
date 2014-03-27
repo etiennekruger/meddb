@@ -25,10 +25,10 @@ body{
     margin-bottom: -15px;
 }
 
-.procurement-entry{
+tr.clickable{
     cursor: pointer;
 }
 
-.procurement-entry:hover td{
+tr.clickable:hover td{
     background-color: #eee!important;
 }

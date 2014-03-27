@@ -7,12 +7,12 @@
 {%- endmacro %}
 
 {% macro render_medicine(medicine) -%}
-    <a href="/medicine/{{ medicine.id }}/">
+    <strong>
         {% for ingredient in medicine.ingredients %}
             {% if loop.index > 1 %} + {% endif %}
             {{ ingredient.inn }}
         {% endfor %}
-    </a>
+    </strong>
 {%- endmacro %}
 
 {% macro render_medicine_strength(medicine) -%}
@@ -23,19 +23,17 @@
 {%- endmacro %}
 
 {% macro render_product(product) -%}
-    <a href="/product/{{ product.id }}/">
+    <strong>
         {% if product.name %}
             {{ product.name }}
         {% else %}
             Generic
         {% endif %}
-    </a>
+    </strong>
 {%- endmacro %}
 
 {% macro render_supplier(supplier) -%}
-    <a href="/supplier/{{ supplier.id }}/">
-        {{ supplier.name }}
-    </a>
+    <strong>{{ supplier.name }}</strong>
 {%- endmacro %}
 
 {% macro render_pack_size(pack_size) -%}
