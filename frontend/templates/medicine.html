@@ -45,7 +45,7 @@
                         </thead>
                         <tbody>
                         {% for procurement in medicine.procurements %}
-                            <tr>
+                            <tr class="procurement-entry" data-procurement-id="{{ procurement.id }}">
                                 <td>
                                     {{ macros.render_country(procurement.country) }}
                                 </td>
@@ -137,4 +137,15 @@
 
         </div>
     </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(document).ready(function(){
+        $(".procurement-entry").on('click', function(e){
+            var procurement_id = $(this).attr('data-procurement-id').toString()
+            window.location = "/procurement/" + procurement_id
+        })
+    });
+</script>
 {% endblock %}

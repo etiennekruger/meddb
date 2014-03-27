@@ -24,3 +24,11 @@ body{
     margin-top: -15px;
     margin-bottom: -15px;
 }
+
+.procurement-entry{
+    cursor: pointer;
+}
+
+.procurement-entry:hover td{
+    background-color: #eee!important;
+}
