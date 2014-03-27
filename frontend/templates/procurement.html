@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+
+            <h1>
+                Purchase details
+            </h1>
+
+            <h2>
+                {% if procurement.product.name %}
+                    {{ procurement.product.name }}
+                {% else %}
+                    Generic
+                {% endif %}
+            </h2>
+            <table class="table table-bordered table-striped">
+                <tbody>
+                <tr>
+                    <th>
+                        Supplier
+                    </th>
+                    <td>
+                        <a href="/supplier/{{ procurement.supplier.id }}/">
+                            {% if procurement.supplier.name %}
+                                {{ procurement.supplier.name }}
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Country
+                    </th>
+                    <td>
+                        {{ macros.render_country(procurement.country) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Pack price (USD)
+                    </th>
+                    <td>
+                        {{ procurement.price_per_unit | round(4) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Price (USD)
+                    </th>
+                    <td>
+                        {{ procurement.price_usd | round(4) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Volume (packs)
+                    </th>
+                    <td>
+                        {{ procurement.volume }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Pack Size
+                    </th>
+                    <td>
+                        {{ procurement.packsize }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Incoterm
+                    </th>
+                    <td>
+                        {{ procurement.incoterm.name }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Date</th>
+                    <td>
+                        {{ procurement.start_date }} to {{ procurement.end_date }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Manufacturer
+                    </th>
+                    <td>
+                        {% if procurement.manufacturer %}
+                            {{ procurement.manufacturer.name }}, {{ procurement.manufacturer.country[0] }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+
+
+        </div>
+    </div>
+{% endblock %}

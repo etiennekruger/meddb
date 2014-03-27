@@ -48,3 +48,11 @@ def supplier(supplier_id):
     response = requests.get(api_host + 'supplier/' + str(supplier_id) + "/")
     supplier = response.json()
     return render_template('supplier.html', supplier=supplier, active_nav_button="suppliers")
+
+
+@app.route('/procurement/<procurement_id>/')
+def procurement(procurement_id):
+
+    response = requests.get(api_host + 'procurement/' + str(procurement_id) + "/")
+    procurement = response.json()
+    return render_template('procurement.html', procurement=procurement)
