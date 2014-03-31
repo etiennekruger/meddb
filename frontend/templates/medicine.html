@@ -70,7 +70,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ procurement.incoterm.name }}
+                                    {{ macros.render_incoterm(procurement.incoterm) }}
                                 </td>
                                 <td>
                                     {{ procurement.packsize }}
