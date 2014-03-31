@@ -20,7 +20,7 @@
                         Formulation
                     </th>
                     <td>
-                        {{ macros.render_medicine(product.medicine) }}
+                        {{ macros.render_medicine(product.medicine.ingredients) }}
                     </td>
                 </tr>
                 <tr>
@@ -70,20 +70,21 @@
 
             <table class="table table-bordered table-striped">
                 <thead>
-                <th>Name</th>
+                <th>Supplier</th>
                 <th>Procurement country</th>
                 </thead>
                 <tbody>
                 {% for procurement in product.procurements %}
                     <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
                         <td>
-                            <a href="/supplier/{{ procurement.supplier.id }}/">
-                                {% if procurement.supplier.name %}
+
+                            {% if procurement.supplier and procurement.supplier.name %}
+                                <a href="/supplier/{{ procurement.supplier.id }}/">
                                     {{ procurement.supplier.name }}
-                                {% else %}
-                                    Unknown
-                                {% endif %}
-                            </a>
+                                </a>
+                            {% else %}
+                                Unknown
+                            {% endif %}
                         </td>
                         <td>
                             {{ macros.render_country(procurement.country) }}
@@ -98,12 +99,12 @@
 {% endblock %}
 
 {% block javascript %}
-<script>
-    $(document).ready(function(){
-        $(".procurement-entry").on('click', function(e){
-            var procurement_id = $(this).attr('data-procurement-id').toString()
-            window.location = "/procurement/" + procurement_id
-        })
-    });
-</script>
+    <script>
+        $(document).ready(function(){
+            $(".procurement-entry").on('click', function(e){
+                var procurement_id = $(this).attr('data-procurement-id').toString()
+                window.location = "/procurement/" + procurement_id
+            })
+        });
+    </script>
 {% endblock %}

@@ -109,7 +109,7 @@
                         {% for product in medicine.products %}
                             <tr class="product-entry clickable" data-product-id="{{ product.id }}">
                                 <td>
-                                    {{ macros.render_product(product) }}
+                                    {{ macros.render_product(product, medicine.ingredients) }}
                                 </td>
                                 <td>
                                     {% for procurement in product.procurements -%}

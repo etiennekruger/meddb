@@ -14,9 +14,9 @@
     {%- endif -%}
 {%- endmacro %}
 
-{% macro render_medicine(medicine) -%}
+{% macro render_medicine(ingredients) -%}
     <strong>
-        {% for ingredient in medicine.ingredients %}
+        {% for ingredient in ingredients %}
             {% if loop.index > 1 %} + {% endif %}
             {{ ingredient.inn }}
         {% endfor %}
@@ -30,12 +30,12 @@
     {% endfor %}
 {%- endmacro %}
 
-{% macro render_product(product) -%}
+{% macro render_product(product, ingredients=None) -%}
     <strong>
         {% if product.name %}
             {{ product.name }}
         {% else %}
-            Generic
+            {% if ingredients != None %}{{ render_medicine(ingredients) }} {% endif %}<nobr><span class="text-muted">(no name provided)</span></nobr>
         {% endif %}
     </strong>
 {%- endmacro %}
