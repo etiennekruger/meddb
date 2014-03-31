@@ -47,7 +47,7 @@ def medicine(medicine_id):
                 tmp[key]['total_units'] += procurement['container']['quantity'] * procurement['volume']
                 tmp[key]['avg_price'] = total_price / tmp[key]['total_units']
 
-    max_price = 0
+    max_price = medicine['mshprice']
     graph_data = []
     labels = []
     i = 0

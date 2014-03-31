@@ -293,11 +293,14 @@ class Product(models.Model):
     medicine = models.ForeignKey(Medicine)
     manufacturer = models.ForeignKey(Manufacturer, null=True)
     site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
+    generic = models.BooleanField(default=True)
     # TODO Need to add manufacturer to as_dict
     
     def as_dict(self, medicine=True, minimal=False, registrations=True):
         d = { 'id': self.id,
-              'name': self.name }
+              'name': self.name,
+              'generic': self.generic
+        }
         if self.manufacturer:
             d['manufacturer'] = {
                 'id': self.manufacturer.id,

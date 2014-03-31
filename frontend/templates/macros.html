@@ -35,7 +35,7 @@
         {% if product.name %}
             {{ product.name }}
         {% else %}
-            {% if ingredients != None %}{{ render_medicine(ingredients) }} {% endif %}<nobr><span class="text-muted">(no name provided)</span></nobr>
+            {% if ingredients != None %}{{ render_medicine(ingredients) }} {% endif %}<nobr><span class="text-muted"><small>(no name provided)</small></span></nobr>
         {% endif %}
     </strong>
 {%- endmacro %}

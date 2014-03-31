@@ -105,6 +105,7 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                         <th>Name</th>
+                        <th>Type</th>
                         <th>Supplier(s)</th>
                         <th>Manufacturer(s)</th>
                         <th>Procurement country</th>
@@ -114,6 +115,13 @@
                             <tr class="product-entry clickable" data-product-id="{{ product.id }}">
                                 <td>
                                     {{ macros.render_product(product, medicine.ingredients) }}
+                                </td>
+                                <td>
+                                    {% if product.generic %}
+                                        Generic
+                                    {% else %}
+                                        Proprietary
+                                    {% endif %}
                                 </td>
                                 <td>
                                     {% for procurement in product.procurements -%}

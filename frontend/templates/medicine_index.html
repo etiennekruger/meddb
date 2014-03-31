@@ -27,7 +27,7 @@
                     {{ medicine.dosageform.name }}
                 </td>
                 <td>
-                    {{ medicine.avgprice }}
+                    {{ medicine.avgprice | float | round(4)}}
                 </td>
                 <td>
                     {{ medicine.mshprice }}
