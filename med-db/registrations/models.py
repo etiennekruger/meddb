@@ -54,7 +54,7 @@ class Incoterm(models.Model):
     description = models.CharField(max_length=128)
     
     def as_dict(self, minimal=False):
-        return self.name
+        return {"name": self.name, "description": self.description}
     
     def __unicode__(self):
         return u'%s' % (self.name)
@@ -426,7 +426,8 @@ class Procurement(SourcedModel):
     def as_dict(self):
         d = { 'id': self.id,
               'incoterm': { 'id': self.incoterm.id,
-                            'name': self.incoterm.name },
+                            'name': self.incoterm.name,
+                            'description': self.incoterm.description},
               'price': self.price,
               'currency': { 'id': self.currency.id,
                             'code': self.currency.code },
