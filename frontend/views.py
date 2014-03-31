@@ -31,7 +31,25 @@ def medicine(medicine_id):
 
     response = requests.get(api_host + 'medicine/' + str(medicine_id) + "/")
     medicine = response.json()
-    return render_template('medicine.html', medicine=medicine, active_nav_button="medicines")
+
+    graph_data = []
+    labels = []
+    max_price = 0
+    if medicine.get('procurements'):
+        for i in range(len(medicine['procurements'])):
+            procurement = medicine['procurements'][i]
+            graph_data.append([procurement['price_per_unit'], i])
+            packing = str(procurement['container']['quantity']) + " " + str(procurement['container']['unit']) + " " + procurement['container']['type']
+            labels.append([i, str(procurement['country']['name'] + " - " + packing)])
+            if procurement['price_per_unit'] > max_price:
+                max_price = procurement['price_per_unit']
+
+    return render_template('medicine.html',
+                           medicine=medicine,
+                           active_nav_button="medicines",
+                           graph_data=graph_data,
+                           labels=labels,
+                           max_price=max_price)
 
 
 @app.route('/product/<product_id>/')
