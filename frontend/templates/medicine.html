@@ -175,6 +175,10 @@
         var ticks = {{ labels | safe }};
         console.log(ticks)
 
+        var markings = [
+            { color: "#FF4444", lineWidth: 2, xaxis: { from: {{ medicine.mshprice }}, to: {{ medicine.mshprice }} } }
+        ];
+
         var options = {
             series: {
                 bars: {
@@ -188,16 +192,24 @@
                 fillColor: { colors: [{ opacity: 0.9 }, { opacity: 1}] },
                 lineWidth: 1
             },
-            xaxis: {
-                axisLabel: "Unit price (USD)",
-                axisLabelUseCanvas: true,
-                axisLabelFontSizePixels: 12,
-                axisLabelFontFamily: 'Verdana, Arial',
-                axisLabelPadding: 10,
-                max: {{ max_price }},
-                tickColor: "#5E5E5E",
-                color: "black"
-            },
+            xaxes: [
+                {
+                    position: "bottom",
+                    axisLabel: "Unit price (USD)",
+                    axisLabelUseCanvas: true,
+                    axisLabelFontSizePixels: 12,
+                    axisLabelFontFamily: 'Verdana, Arial',
+                    axisLabelPadding: 10,
+                    max: {{ max_price }},
+                    tickColor: "#5E5E5E",
+                    color: "black"
+                },
+                {
+                    position: "top",
+                    ticks: [[{{ medicine.mshprice }}, "MSH price ({{ medicine.mshprice }})"]],
+                    max: {{ max_price }}
+                }
+            ],
             yaxis: {
                 axisLabel: "Country",
                 axisLabelUseCanvas: true,
@@ -214,12 +226,13 @@
             grid: {
                 hoverable: true,
                 borderWidth: 1,
-                backgroundColor: { colors: ["#fefefe", "#dddddd"] }
+                backgroundColor: { colors: ["#fefefe", "#dddddd"] },
+                markings: markings
             }
         };
 
         $(document).ready(function () {
-            $.plot($("#flot-placeholder"), dataSet, options);
+            $.plot($("#flot-placeholder"), [{ label: "Purchases", data: rawData, color: "#547CC1" }, { data: [[]], xaxis: 2}], options);
             $("#flot-placeholder").UseTooltip();
         });
 

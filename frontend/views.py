@@ -32,17 +32,31 @@ def medicine(medicine_id):
     response = requests.get(api_host + 'medicine/' + str(medicine_id) + "/")
     medicine = response.json()
 
-    graph_data = []
-    labels = []
-    max_price = 0
+
+    tmp = {}
     if medicine.get('procurements'):
         for i in range(len(medicine['procurements'])):
             procurement = medicine['procurements'][i]
-            graph_data.append([procurement['price_per_unit'], i])
             packing = str(procurement['container']['quantity']) + " " + str(procurement['container']['unit']) + " " + procurement['container']['type']
-            labels.append([i, str(procurement['country']['name'] + " - " + packing)])
-            if procurement['price_per_unit'] > max_price:
-                max_price = procurement['price_per_unit']
+            key = str(procurement['country']['name'] + " - " + packing)
+            if not tmp.get(key):
+                tmp[key] = {'avg_price': procurement['price_per_unit'], 'total_units': procurement['container']['quantity'] * procurement['volume']}
+            else:
+                total_price = tmp[key]['avg_price'] * tmp[key]['total_units']
+                total_price += (procurement['price_per_unit'] * procurement['container']['quantity'] * procurement['volume'])
+                tmp[key]['total_units'] += procurement['container']['quantity'] * procurement['volume']
+                tmp[key]['avg_price'] = total_price / tmp[key]['total_units']
+
+    max_price = 0
+    graph_data = []
+    labels = []
+    i = 0
+    for key, val in tmp.iteritems():
+        graph_data.append([val['avg_price'], i])
+        labels.append([i, key])
+        if val['avg_price'] > max_price:
+            max_price = val['avg_price']
+        i += 1
 
     return render_template('medicine.html',
                            medicine=medicine,
