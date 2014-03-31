@@ -67,32 +67,35 @@
             </table>
 
             <h2>Purchases</h2>
+            {% if product.procurements | length == 0 %}
+                <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+            {% else %}
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <th>Supplier</th>
+                    <th>Procurement country</th>
+                    </thead>
+                    <tbody>
+                    {% for procurement in product.procurements %}
+                        <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
+                            <td>
 
-            <table class="table table-bordered table-striped">
-                <thead>
-                <th>Supplier</th>
-                <th>Procurement country</th>
-                </thead>
-                <tbody>
-                {% for procurement in product.procurements %}
-                    <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
-                        <td>
-
-                            {% if procurement.supplier and procurement.supplier.name %}
-                                <a href="/supplier/{{ procurement.supplier.id }}/">
-                                    {{ procurement.supplier.name }}
-                                </a>
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ macros.render_country(procurement.country) }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+                                {% if procurement.supplier and procurement.supplier.name %}
+                                    <a href="/supplier/{{ procurement.supplier.id }}/">
+                                        {{ procurement.supplier.name }}
+                                    </a>
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ macros.render_country(procurement.country) }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
 
         </div>
     </div>

@@ -80,6 +80,9 @@
                 </tbody>
             </table>
 
+            {% if supplier.procurements | length == 0 %}
+                <p style="padding: 10px;" class="lead text-muted">No recent sales data</p>
+            {% else %}
             <h2>{{ supplier.procurements | length }} Sales</h2>
 
             <table class="table table-bordered table-striped">
@@ -115,6 +118,7 @@
                 {% endfor %}
                 </tbody>
             </table>
+        {% endif %}
 
         </div>
     </div>
