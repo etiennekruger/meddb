@@ -76,7 +76,7 @@
                                     {{ macros.render_incoterm(procurement.incoterm) }}
                                 </td>
                                 <td>
-                                    {{ procurement.packsize }}
+                                    {{ macros.render_pack_size(procurement.container, procurement.packsize) }}
                                 </td>
                                 <td>
                                     {{ procurement.volume }}

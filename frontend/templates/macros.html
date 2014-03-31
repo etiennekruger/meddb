@@ -44,8 +44,8 @@
     <strong>{{ supplier.name }}</strong>
 {%- endmacro %}
 
-{% macro render_pack_size(pack_size) -%}
-    {{ pack_size.quantity | round | int }} {{ pack_size.unit }} {{ pack_size.type }}
+{% macro render_pack_size(container, packsize=1) -%}
+    {% if not packsize == 1 %}{{ packsize }} x {% endif %}{{ container.quantity | round | int }} {{ container.unit }} {{ container.type }}
 {%- endmacro %}
 
 {% macro render_url(url) -%}

@@ -68,7 +68,7 @@
                         Pack Size
                     </th>
                     <td>
-                        {{ procurement.packsize }}
+                        {{ macros.render_pack_size(procurement.container, procurement.packsize) }}
                     </td>
                 </tr>
                 <tr>
