@@ -14,6 +14,14 @@
     {%- endif -%}
 {%- endmacro %}
 
+{% macro render_volume(volume) -%}
+    {%- if volume == 1 -%}
+        <nobr>no data</nobr>
+    {%- else -%}
+        {{ volume }}
+    {%- endif -%}
+{%- endmacro %}
+
 {% macro render_medicine(ingredients) -%}
     <strong>
         {% for ingredient in ingredients %}
@@ -57,3 +65,4 @@
        {{ incoterm.name }}
     </span>
 {%- endmacro %}
+
