@@ -11,12 +11,12 @@
             <p class="lead">
                 Product: {{ macros.render_product(procurement.product, procurement.product.medicine.ingredients) }}<br>
                 Type: <small>
-                    {% if procurement.product.generic %}
-                        Generic
-                    {% else %}
-                        Proprietary
-                    {% endif %}
-                </small>
+                {% if procurement.product.generic %}
+                    Generic
+                {% else %}
+                    Proprietary
+                {% endif %}
+            </small>
             </p>
             <table class="table table-bordered table-striped">
                 <tbody>
@@ -98,6 +98,14 @@
                         {% else %}
                             N/A
                         {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Information source
+                    </th>
+                    <td>
+                        {{ macros.render_source(procurement.source) }}
                     </td>
                 </tr>
 

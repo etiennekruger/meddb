@@ -66,3 +66,15 @@
     </span>
 {%- endmacro %}
 
+{% macro render_source(source) -%}
+    {% if source %}
+        {% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a>
+        {% else %}
+            {{ source.name }}
+        {% endif %}
+        <span class="label label-default pull-right">{{ source.date }}</span>
+    {% else %}
+        N/A
+    {% endif %}
+{%- endmacro %}
+
