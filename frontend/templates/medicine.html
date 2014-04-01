@@ -55,10 +55,10 @@
                                         {{ macros.render_country(procurement.country) }}
                                     </td>
                                     <td>
-                                        {{ procurement.price_usd | round(4) }}
+                                        {{ procurement.price_per_unit | round(4) }}
                                     </td>
                                     <td>
-                                        {{ procurement.price_per_unit | round(4) }}
+                                        {{ procurement.price_usd | round(4) }}
                                     </td>
                                     <td>
                                         {{ procurement.manufacturer.name }}
