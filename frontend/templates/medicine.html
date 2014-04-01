@@ -55,10 +55,10 @@
                                         {{ macros.render_country(procurement.country) }}
                                     </td>
                                     <td>
-                                        {{ procurement.price_per_unit | round(4) }}
+                                        {{ procurement.price_per_unit | round(3) }}
                                     </td>
                                     <td>
-                                        {{ procurement.price_usd | round(4) }}
+                                        {{ procurement.price_usd | round(3) }}
                                     </td>
                                     <td>
                                         {{ procurement.manufacturer.name }}
@@ -216,7 +216,7 @@
                 },
                 {
                     position: "top",
-                    ticks: [[{{ medicine.mshprice }}, "MSH price ({{ medicine.mshprice }})"]],
+                    ticks: [[{{ medicine.mshprice }}, "MSH price ({{ medicine.mshprice | round(3)}})"]],
                     max: {{ max_price }}
                 }
             ],
@@ -267,7 +267,7 @@
                                 item.pageY,
                                 color,
                                 "<strong>" + item.series.label + "</strong><br>" + item.series.yaxis.ticks[y].label +
-                                        " : <strong>" + x + "</strong> USD");
+                                        " : <strong>" + Math.round(x*1000)/1000 + "</strong> USD");
                     }
                 } else {
                     $("#tooltip").remove();
