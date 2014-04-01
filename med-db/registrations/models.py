@@ -451,6 +451,7 @@ class Procurement(SourcedModel):
         if self.product:
             d['product'] = { 'id': self.product.id,
                              'name': self.product.name,
+                             'generic': self.product.generic
                              }
             if self.product.medicine:
                 d['product']['medicine'] = self.product.medicine.as_dict(minimal=True, products=False, procurements=False)

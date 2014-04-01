@@ -8,13 +8,16 @@
                 Purchase details
             </h1>
 
-            <h2>
-                {% if procurement.product.name %}
-                    {{ procurement.product.name }}
-                {% else %}
-                    Generic
-                {% endif %}
-            </h2>
+            <p class="lead">
+                Product: {{ macros.render_product(procurement.product, procurement.product.medicine.ingredients) }}<br>
+                Type: <small>
+                    {% if procurement.product.generic %}
+                        Generic
+                    {% else %}
+                        Proprietary
+                    {% endif %}
+                </small>
+            </p>
             <table class="table table-bordered table-striped">
                 <tbody>
                 <tr>
@@ -22,13 +25,13 @@
                         Supplier
                     </th>
                     <td>
-                        <a href="/supplier/{{ procurement.supplier.id }}/">
-                            {% if procurement.supplier.name %}
+                        {% if procurement.supplier and procurement.supplier.name %}
+                            <a href="/supplier/{{ procurement.supplier.id }}/">
                                 {{ procurement.supplier.name }}
-                            {% else %}
-                                Unknown
-                            {% endif %}
-                        </a>
+                            </a>
+                        {% else %}
+                            Unknown
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
