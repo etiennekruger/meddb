@@ -2,8 +2,18 @@ from flask import render_template
 from frontend import app
 import requests
 import dateutil.parser
+import operator
 
 api_host = app.config['API_HOST']
+
+
+def sort_list(unsorted_list, key):
+    """
+    Sort a list of dicts by the value found with the key provided.
+    """
+
+    return sorted(unsorted_list, key=operator.itemgetter(key))
+
 
 @app.template_filter('format_date')
 def jinja2_filter_format_date(date_str):
@@ -22,7 +32,7 @@ def root():
 def medicine_index():
 
     response = requests.get(api_host + 'medicine/')
-    medicine_list = response.json()
+    medicine_list = sort_list(response.json(), 'name')
     return render_template('medicine_index.html', medicine_list=medicine_list, active_nav_button="medicines")
 
 
