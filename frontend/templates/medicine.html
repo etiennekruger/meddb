@@ -187,7 +187,9 @@
         var ticks = {{ labels | safe }};
 
         var markings = [
-            { color: "#FF4444", lineWidth: 2, xaxis: { from: {{ medicine.mshprice }}, to: {{ medicine.mshprice }} } }
+            {% if medicine.mshprice %}
+                { color: "#FF4444", lineWidth: 2, xaxis: { from: {{ medicine.mshprice }}, to: {{ medicine.mshprice }} } }
+            {% endif %}
         ];
 
         var options = {
@@ -217,7 +219,9 @@
                 },
                 {
                     position: "top",
-                    ticks: [[{{ medicine.mshprice }}, "MSH price ({{ medicine.mshprice | round(3)}})"]],
+                    ticks: [{% if medicine.mshprice %}
+                        [{{ medicine.mshprice }}, "MSH price ({{ medicine.mshprice | round(3)}})"]
+                    {% endif %}],
                     max: {{ max_price }}
                 }
             ],
