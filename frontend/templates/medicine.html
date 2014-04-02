@@ -107,7 +107,6 @@
                         <th>Name</th>
                         <th>Type</th>
                         <th>Supplier(s)</th>
-                        <th>Manufacturer(s)</th>
                         <th>Procurement country</th>
                         </thead>
                         <tbody>
@@ -131,12 +130,6 @@
                                         {%- else -%}
                                             N/A
                                         {%- endif -%}
-                                    {% endfor %}
-                                </td>
-                                <td>
-                                    {% for procurement in product.procurements -%}
-                                        {%- if loop.index > 1 -%}, {% endif -%}
-                                        {{ procurement.manufacturer.name }}
                                     {% endfor %}
                                 </td>
                                 <td>

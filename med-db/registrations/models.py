@@ -5,16 +5,20 @@ from django.core.urlresolvers import reverse
 import currency.models
 import datetime
 
+
 def avg(list):
+
     if len(list) == 0:
         return float(0)
     return sum(list) / len(list)
+
 
 # Abstract base models.
 #
 # These are base models for other complex models to derive off.
 
 class Source(models.Model):
+
     name = models.CharField(max_length=64)
     date = models.DateTimeField(default=datetime.datetime.now)
     url = models.URLField(blank=True, null=True, verbose_name='Source Document URL', help_text='Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional resource.')
@@ -23,11 +27,14 @@ class Source(models.Model):
         s = u'%s @ %s' % (self.name, self.date)
         return s
 
+
 class SourcedModel(models.Model):
+
     source = models.ForeignKey(Source)
 
     class Meta:
         abstract = True
+
 
 # Basic models.
 #
@@ -35,6 +42,7 @@ class SourcedModel(models.Model):
 # source of information. Other models may link back to these.
 
 class Country(models.Model):
+
     name = models.CharField(max_length=16)
     code = models.CharField(max_length=3)
 
@@ -49,7 +57,9 @@ class Country(models.Model):
     class Meta:
         verbose_name_plural = 'Countries'
 
+
 class Incoterm(models.Model):
+
     name = models.CharField(max_length=3)
     description = models.CharField(max_length=128)
 
@@ -59,7 +69,9 @@ class Incoterm(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+
 class DosageForm(models.Model):
+
     name = models.CharField(max_length=16)
 
     def as_dict(self, minimal=False):
@@ -68,7 +80,9 @@ class DosageForm(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+
 class INN(models.Model):
+
     name = models.CharField(max_length=128)
 
     def as_dict(self, minimal=False):
@@ -85,12 +99,14 @@ class INN(models.Model):
         verbose_name = 'INN'
         verbose_name_plural = 'INNs'
 
+
 # Generic product models.
 #
 # These models will represent a generic product including all it's active ingredients,
 # their strength and the dosage form of the product.
 
 class Medicine(models.Model):
+
     ingredients = models.ManyToManyField(INN, through='Ingredient')
     dosageform = models.ForeignKey(DosageForm)
     name = models.CharField(max_length=50, null=True, blank=True)
@@ -157,7 +173,9 @@ class Medicine(models.Model):
             return u'%s %s' % (self.name, self.dosageform)
         return u'%s %s' % (self.actives, self.dosageform)
 
+
 class Ingredient(models.Model):
+
     medicine = models.ForeignKey(Medicine)
     inn = models.ForeignKey(INN)
     strength = models.CharField(max_length=16)
@@ -173,19 +191,23 @@ class Ingredient(models.Model):
     class Meta:
         ordering = ('inn__name',)
 
+
 # Pricing information.
 #
 # These models will probably be altered at some stage to include alternative
 # defined prices per medicine. For now it is a simple MSH price.
 
 class MSHPrice(models.Model):
+
     medicine = models.OneToOneField(Medicine)
     price = models.FloatField(help_text='The MSH price for the medicine.')
 
     def __unicode__(self):
         return u'%s @ %.4f' % (self.medicine, self.price)
 
+
 class Manufacturer(models.Model):
+
     name = models.CharField(max_length=64, verbose_name='Manufacturer Name')
     country = models.ForeignKey(Country, blank=True, null=True)
     website = models.URLField(blank=True, null=True, help_text="e.g. http://www.example.com, ensure that the leading http:// is included")
@@ -203,7 +225,9 @@ class Manufacturer(models.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
 
+
 class Site(models.Model):
+
     manufacturer = models.ForeignKey(Manufacturer)
     name = models.CharField(max_length=64, verbose_name='Site Name')
     address = models.TextField(blank=True, null=True)
@@ -227,7 +251,9 @@ class Site(models.Model):
     class Meta:
         verbose_name = 'Manufacturing Site'
 
+
 class Supplier(models.Model):
+
     name = models.CharField(max_length=64)
     address = models.TextField(blank=True, null=True)
     country = models.ForeignKey(Country, blank=True, null=True)
@@ -295,7 +321,9 @@ class Supplier(models.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+
 class Product(models.Model):
+
     name = models.CharField(max_length=64, blank=True)
     medicine = models.ForeignKey(Medicine)
     manufacturer = models.ForeignKey(Manufacturer, null=True)
@@ -329,8 +357,8 @@ class Product(models.Model):
         return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
 
-
 class Container(models.Model):
+
     type = models.CharField(max_length=32, verbose_name='Container Type', help_text='This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.')
     unit = models.CharField(max_length=32, verbose_name='Basic Unit', help_text='This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).', blank=True)
     quantity = models.FloatField(verbose_name='Container size in basic units', help_text='The total container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).')
@@ -346,6 +374,7 @@ class Container(models.Model):
 
 
 class Registration(SourcedModel):
+
     country = models.ForeignKey(Country)
     number = models.CharField(max_length=32)
     product = models.ForeignKey(Product)
@@ -379,6 +408,7 @@ class Registration(SourcedModel):
     def __unicode__(self):
         return u'%s - %s' % (self.number, self.product.name)
 
+
 # Procurement information.
 #
 # Models for the procurement information.
@@ -392,7 +422,9 @@ class Currency(models.Model):
     class Meta:
         verbose_name_plural = 'Currencies'
 
+
 class ProcurementQuerySet(QuerySet):
+
     def in_year(self, year):
         startdt = datetime.datetime(year, 1, 31)
         enddt = datetime.datetime(year, 12, 31)
@@ -404,6 +436,7 @@ class ProcurementQuerySet(QuerySet):
 
     def cheapest(self):
         return min(p.price_per_unit for p in self)
+
 
 class ProcurementManager(models.Manager):
 
@@ -418,6 +451,7 @@ class ProcurementManager(models.Manager):
 
 
 class Procurement(SourcedModel):
+
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
     container = models.ForeignKey(Container, verbose_name='Container', help_text='Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.')
@@ -433,32 +467,8 @@ class Procurement(SourcedModel):
 
     objects = ProcurementManager()
 
-    def as_dict(self):
-        d = {
-            'id': self.id,
-            'incoterm': { 'id': self.incoterm.id,
-                          'name': self.incoterm.name,
-                          'description': self.incoterm.description},
-            'price': self.price,
-            'currency': { 'id': self.currency.id,
-                          'code': self.currency.code },
-            'price_usd': self.price_usd,
-            'volume': self.volume * (self.packsize or 1),
-            'method': self.method,
-            'country': { 'id': self.country.id,
-                         'code': self.country.code,
-                         'name': self.country.name },
-            'container': { 'id': self.container.id,
-                           'type': self.container.type,
-                           'unit': self.container.unit,
-                           'quantity': self.container.quantity },
-            'packsize': self.packsize,
-            'source': {'name': self.source.name,
-                       'date': self.source.date.date().isoformat(),
-                       'url': self.source.url},
-            }
-        if self.price_per_unit:
-            d['price_per_unit'] = self.price_per_unit
+    def as_dict(self, minimal=False):
+        d = {'id': self.id,}
         if self.product:
             d['product'] = { 'id': self.product.id,
                              'name': self.product.name,
@@ -466,13 +476,40 @@ class Procurement(SourcedModel):
             }
             if self.product.medicine:
                 d['product']['medicine'] = self.product.medicine.as_dict(minimal=True, products=False, procurements=False)
+
+        d['container'] = { 'id': self.container.id,
+                           'type': self.container.type,
+                           'unit': self.container.unit,
+                           'quantity': self.container.quantity }
+        d['country'] = { 'id': self.country.id,
+                         'code': self.country.code,
+                         'name': self.country.name }
+        if self.supplier:
+            d['supplier'] = { 'id': self.supplier.id,
+                              'name': self.supplier.name }
         if self.start_date:
             d['start_date'] = self.start_date.isoformat()
         if self.end_date:
             d['end_date'] = self.end_date.isoformat()
-        if self.supplier:
-            d['supplier'] = { 'id': self.supplier.id,
-                              'name': self.supplier.name }
+
+        if minimal:
+            return d
+
+        d['incoterm'] = { 'id': self.incoterm.id,
+                          'name': self.incoterm.name,
+                          'description': self.incoterm.description}
+        d['price'] = self.price
+        d['currency'] = { 'id': self.currency.id,
+                          'code': self.currency.code }
+        d['price_usd'] = self.price_usd
+        d['volume'] = self.volume * (self.packsize or 1)
+        d['method'] = self.method
+        d['packsize'] = self.packsize
+        d['source'] = {'name': self.source.name,
+                       'date': self.source.date.date().isoformat(),
+                       'url': self.source.url}
+        if self.price_per_unit:
+            d['price_per_unit'] = self.price_per_unit
         if self.product and self.product.manufacturer:
             d['manufacturer'] = {
                 'id': self.product.manufacturer.id,
@@ -510,11 +547,14 @@ class Procurement(SourcedModel):
             return u'%d x %s' % (self.volume, self.product.__unicode__())
         return u'unknown quantity x %s' % (self.product.__unicode__())
 
+
 # Contextual information.
 #
 # Models representing the contextual information for a source.
 
+
 class Context(SourcedModel):
+
     country = models.ForeignKey(Country)
     population = models.IntegerField(blank=True, null=True)
     gni_per_capita = models.FloatField(verbose_name='GNI per capita', blank=True, null=True)
@@ -540,7 +580,9 @@ class Context(SourcedModel):
     def __unicode__(self):
         return u'%d x %s' % (self.volume, self.product.name)
 
+
 class CountryMappingCode(models.Model):
+
     country = models.ForeignKey(Country)
     product = models.ForeignKey(Product)
     code = models.CharField(max_length=50)
