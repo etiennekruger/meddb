@@ -9,7 +9,7 @@
             </h1>
 
             <p class="lead">
-                Product: {{ macros.render_product(procurement.product, procurement.product.medicine.ingredients) }}<br>
+                Product: {{ macros.render_product(procurement.product) }}<br>
                 Type: <small>
                 {% if procurement.product.generic %}
                     Generic

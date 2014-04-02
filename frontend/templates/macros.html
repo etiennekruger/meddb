@@ -22,15 +22,6 @@
     {%- endif -%}
 {%- endmacro %}
 
-{% macro render_medicine(ingredients) -%}
-    <strong>
-        {% for ingredient in ingredients %}
-            {% if loop.index > 1 %} + {% endif %}
-            {{ ingredient.inn }}
-        {% endfor %}
-    </strong>
-{%- endmacro %}
-
 {% macro render_medicine_strength(medicine) -%}
     {% for ingredient in medicine.ingredients %}
         {% if loop.index > 1 %} + {% endif %}
@@ -38,12 +29,13 @@
     {% endfor %}
 {%- endmacro %}
 
-{% macro render_product(product, ingredients=None) -%}
+{% macro render_product(product) -%}
     <strong>
         {% if product.name %}
             {{ product.name }}
         {% else %}
-            {% if ingredients != None %}{{ render_medicine(ingredients) }} {% endif %}<nobr><span class="text-muted"><small>(no name provided)</small></span></nobr>
+            {% if product.medicine and product.medicine.name %}{{ product.medicine.name }} {% endif %}
+            <nobr><span class="text-muted"><small>(no name provided)</small></span></nobr>
         {% endif %}
     </strong>
 {%- endmacro %}

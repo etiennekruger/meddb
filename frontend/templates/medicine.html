@@ -114,7 +114,7 @@
                         {% for product in medicine.products %}
                             <tr class="product-entry clickable" data-product-id="{{ product.id }}">
                                 <td>
-                                    {{ macros.render_product(product, medicine.ingredients) }}
+                                    {{ macros.render_product(product) }}
                                 </td>
                                 <td>
                                     {% if product.generic %}

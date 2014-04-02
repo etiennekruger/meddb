@@ -5,7 +5,7 @@
         <div class="col-lg-12">
 
             <h1>
-                {{ macros.render_product(product, product.medicine.ingredients) }}
+                {{ macros.render_product(product) }}
                 <small>
                     {% if product.generic %}
                         Generic
@@ -23,7 +23,7 @@
                         Formulation
                     </th>
                     <td>
-                        {{ macros.render_medicine(product.medicine.ingredients) }}
+                        {{ product.medicine.name }}
                     </td>
                 </tr>
                 <tr>

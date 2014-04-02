@@ -106,10 +106,20 @@ class Medicine(models.Model):
         except:
             return None
 
+    def get_name(self):
+        if self.name:
+            medicine_name = self.name.capitalize()
+        elif self.ingredient_set.count() > 0:
+            medicine_name = " + ".join([i.inn.name.capitalize() for i in self.ingredient_set.all()])
+        else:
+            medicine_name = None
+        return medicine_name
+
     def as_dict(self, products=True, minimal=False, procurements=True):
         if minimal:
             d = {
                 'id': self.id,
+                'name': self.get_name(),
                 'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
                 'dosageform': { 'id': self.dosageform.id,
                                 'name': self.dosageform.name },
@@ -120,11 +130,11 @@ class Medicine(models.Model):
                 d['name'] = self.name.capitalize()
             return d
         d = { 'id': self.id,
+              'name': self.get_name(),
               'ingredients': [i.as_dict() for i in self.ingredient_set.all()],
               'dosageform': self.dosageform.as_dict(),
               'mshprice': self.msh }
-        if self.name:
-            d['name'] = self.name.capitalize()
+
         if procurements:
             d['procurements'] = [p.as_dict() for p in Procurement.objects.filter(product__medicine=self)]
         if products:
@@ -290,7 +300,6 @@ class Product(models.Model):
     manufacturer = models.ForeignKey(Manufacturer, null=True)
     site = models.ForeignKey(Site, verbose_name='Manufacturer Site', blank=True, null=True)
     generic = models.BooleanField(default=True)
-    # TODO Need to add manufacturer to as_dict
 
     def as_dict(self, medicine=True, minimal=False, registrations=True):
         d = { 'id': self.id,
@@ -302,9 +311,10 @@ class Product(models.Model):
                 'id': self.manufacturer.id,
                 'name': self.manufacturer.name,
                 'country': self.manufacturer.country.name,
-                'site': self.site.name,
                 }
-        if medicine:
+        if self.site:
+            d['site'] = self.site.name
+        if medicine and self.medicine:
             d['medicine'] = self.medicine.as_dict(minimal=True, products=False, procurements=False)
         if registrations:
             d['registrations'] = [r.as_dict(medicine=False, product=False) for r in self.registration_set.all()]
@@ -452,7 +462,7 @@ class Procurement(SourcedModel):
             d['product'] = { 'id': self.product.id,
                              'name': self.product.name,
                              'generic': self.product.generic
-                             }
+            }
             if self.product.medicine:
                 d['product']['medicine'] = self.product.medicine.as_dict(minimal=True, products=False, procurements=False)
         if self.start_date:

@@ -18,7 +18,7 @@
             {% for medicine in medicine_list %}
             <tr class="medicine-entry clickable" data-medicine-id="{{ medicine.id }}">
                 <td>
-                    {{ macros.render_medicine(medicine.ingredients) }}
+                    {{ medicine.name }}
                 </td>
                 <td>
                     {{ macros.render_medicine_strength(medicine) }}
