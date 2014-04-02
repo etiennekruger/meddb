@@ -136,7 +136,7 @@ class Medicine(models.Model):
               'mshprice': self.msh }
 
         if procurements:
-            d['procurements'] = [p.as_dict() for p in Procurement.objects.filter(product__medicine=self)]
+            d['procurements'] = [p.as_dict() for p in Procurement.objects.filter(product__medicine=self).order_by('start_date')]
         if products:
             d['products'] = [p.as_dict(medicine=False, minimal=minimal) for p in self.product_set.all()]
         return d

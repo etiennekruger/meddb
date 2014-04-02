@@ -42,7 +42,6 @@ def medicine(medicine_id):
     response = requests.get(api_host + 'medicine/' + str(medicine_id) + "/")
     medicine = response.json()
 
-
     tmp = {}
     if medicine.get('procurements'):
         for i in range(len(medicine['procurements'])):
@@ -57,15 +56,23 @@ def medicine(medicine_id):
                 tmp[key]['total_units'] += procurement['container']['quantity'] * procurement['volume']
                 tmp[key]['avg_price'] = total_price / tmp[key]['total_units']
 
+    # convert to a list, then sort
+    tmp_list = []
+    for key, val in tmp.iteritems():
+        val['label'] = key
+        tmp_list.append(val)
+    tmp_list = sort_list(tmp_list, 'avg_price')
+    tmp_list.reverse()
+
     max_price = medicine['mshprice']
     graph_data = []
     labels = []
     i = 0
-    for key, val in tmp.iteritems():
-        graph_data.append([val['avg_price'], i])
-        labels.append([i, key])
-        if val['avg_price'] > max_price:
-            max_price = val['avg_price']
+    for entry in tmp_list:
+        graph_data.append([entry['avg_price'], i])
+        labels.append([i, entry['label']])
+        if entry['avg_price'] > max_price:
+            max_price = entry['avg_price']
         i += 1
 
     return render_template('medicine.html',
