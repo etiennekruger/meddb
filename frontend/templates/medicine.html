@@ -41,6 +41,7 @@
                             <th>Country</th>
                             <th>Price (USD)</th>
                             <th>Pack price (USD)</th>
+                            <th>Type</th>
                             <th>Manufacturer</th>
                             <th>MSH ratio</th>
                             <th>Incoterm</th>
@@ -59,6 +60,13 @@
                                     </td>
                                     <td>
                                         {{ procurement.price_usd | round(3) }}
+                                    </td>
+                                    <td>
+                                        {% if procurement.product.generic %}
+                                            Generic
+                                        {% else %}
+                                            Originator
+                                        {% endif %}
                                     </td>
                                     <td>
                                         {{ procurement.manufacturer.name }}
