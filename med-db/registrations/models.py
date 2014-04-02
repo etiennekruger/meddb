@@ -272,6 +272,7 @@ class Supplier(models.Model):
                                          'name': p.product.name,
                                          'medicine': {
                                              'id': p.product.medicine.id,
+                                             'name': p.product.medicine.get_name(),
                                              'dosageform': {
                                                  'id': p.product.medicine.dosageform.id,
                                                  'name': p.product.medicine.dosageform.name

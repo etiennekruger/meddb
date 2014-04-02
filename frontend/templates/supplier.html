@@ -100,7 +100,7 @@
                                 {% if procurement.product.name %}
                                     {{ procurement.product.name }}
                                 {% else %}
-                                    Generic
+                                    {{ procurement.product.medicine.name }}
                                 {% endif %}
                             </a>
                         </td>
