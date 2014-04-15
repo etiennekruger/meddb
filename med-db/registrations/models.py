@@ -470,13 +470,7 @@ class Procurement(SourcedModel):
     def as_dict(self, minimal=False):
         d = {'id': self.id,}
         if self.product:
-            d['product'] = { 'id': self.product.id,
-                             'name': self.product.name,
-                             'generic': self.product.generic
-            }
-            if self.product.medicine:
-                d['product']['medicine'] = self.product.medicine.as_dict(minimal=True, products=False, procurements=False)
-
+            d['product'] = self.product.as_dict(medicine=False, minimal=True)
         d['container'] = { 'id': self.container.id,
                            'type': self.container.type,
                            'unit': self.container.unit,
