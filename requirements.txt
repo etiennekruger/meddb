@@ -1,10 +1,8 @@
-Django==1.4
-South==0.7.5
-pysqlite==2.6.3
-python-memcached==1.48
-wsgiref==0.1.2
-xlrd==0.7.7
 python-dateutil
 Flask==0.10.1
+SQLAlchemy==0.8.2
+Flask-SQLAlchemy==1.0
+Flask-Admin==1.0.7
+Flask-Login==0.2.10
 requests==2.0.1
 gunicorn==18.0
