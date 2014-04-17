@@ -66,24 +66,22 @@ class DosageForm(MyModel):
 class Medicine(MyModel):
 
     medicine_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50))
     
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm')
 
-    def get_name(self):
-        if self.name:
-            medicine_name = self.name.capitalize()
-        elif self.ingredient_set.count() > 0:
-            medicine_name = " + ".join([i.ingredient.name.capitalize() for i in self.ingredient_set.all()])
-        else:
-            medicine_name = None
-        return medicine_name
+    @property
+    def name(self):
+        out = None
+        if self.ingredients.count() > 0:
+            out = " + ".join([i.ingredient.name.capitalize() for i in self.ingredients])
+        return out
 
-    def avgprice(self):
+    @property
+    def average_price(self):
         sum = 0
         tot = 0
-        procurements =  Procurement.objects.filter(product__medicine=self)
+        procurements = Procurement.query.filter(medicine_id=self.medicine_id).all()
         for p in procurements:
             sum += p.price_usd * p.volume
             tot += p.container.quantity * p.volume
@@ -92,9 +90,7 @@ class Medicine(MyModel):
         return None
 
     def __unicode__(self):
-        if self.name:
-            return u'%s %s' % (self.name, self.dosage_form)
-        return u'%s %s' % (self.actives, self.dosage_form)
+        return u'%s %s' % (self.name, self.dosage_form)
 
 
 class Component(MyModel):
@@ -189,7 +185,7 @@ class Product(MyModel):
     generic = db.Column(db.Boolean, default=True)
 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
-    medicine = db.relationship('Medicine')
+    medicine = db.relationship('Medicine', backref('products'))
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
     manufacturer = db.relationship('Manufacturer')
     site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
