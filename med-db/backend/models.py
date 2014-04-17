@@ -1,4 +1,5 @@
-from main import app, db
+from main import db, logger
+import serializers
 from sqlalchemy.orm import backref
 import datetime
 
@@ -10,7 +11,15 @@ def avg(list):
     return sum(list) / float(len(list))
 
 
-class Source(db.Model):
+class MyModel(db.Model):
+
+    def __init__(self, serializer_class=serializers.BaseSerializer):
+        self.serializer = serializer_class()
+        self.to_json = self.serializer.to_json
+        super(MyModel, self).__init__()
+
+
+class Source(MyModel):
 
     country_id = db.Column(db.Integer, primary_key=True)
     name = name = db.Column(db.String(250))
@@ -22,7 +31,7 @@ class Source(db.Model):
         return s
 
 
-class Country(db.Model):
+class Country(MyModel):
 
     country_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16))
@@ -32,7 +41,7 @@ class Country(db.Model):
         return u'%s (%s)' % (self.name, self.code.upper())
 
 
-class Incoterm(db.Model):
+class Incoterm(MyModel):
 
     incoterm_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(3))
@@ -42,7 +51,7 @@ class Incoterm(db.Model):
         return u'%s' % (self.name)
 
 
-class DosageForm(db.Model):
+class DosageForm(MyModel):
 
     dosage_form_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16))
@@ -54,7 +63,7 @@ class DosageForm(db.Model):
         return u'%s' % (self.name)
 
 
-class Ingredient(db.Model):
+class Ingredient(MyModel):
 
     ingredient_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
@@ -68,7 +77,7 @@ medicine_ingredient_table = db.Table(
 )
 
 
-class Medicine(db.Model):
+class Medicine(MyModel):
 
     medicine_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
@@ -103,7 +112,7 @@ class Medicine(db.Model):
         return u'%s %s' % (self.actives, self.dosage_form)
 
 
-class Ingredient(db.Model):
+class Ingredient(MyModel):
 
     ingredient_id = db.Column(db.Integer, primary_key=True)
     strength = db.Column(db.String(16))
@@ -113,7 +122,7 @@ class Ingredient(db.Model):
 
 
 # TODO: Generalize this, to account for multiple benchmarks
-class MSHPrice(db.Model):
+class MSHPrice(MyModel):
 
     msh_price_id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Float) #'The MSH price for the medicine.')
@@ -125,7 +134,7 @@ class MSHPrice(db.Model):
         return u'%s @ %.4f' % (self.medicine, self.price)
 
 
-class Manufacturer(db.Model):
+class Manufacturer(MyModel):
 
     manufacturer_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -138,7 +147,7 @@ class Manufacturer(db.Model):
         return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
 
 
-class Site(db.Model):
+class Site(MyModel):
 
     site_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -153,7 +162,7 @@ class Site(db.Model):
         return u'%s (%s)' % (self.name, self.manufacturer.name)
 
 
-class Incoterm(db.Model):
+class Incoterm(MyModel):
 
     supplier_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
@@ -176,7 +185,7 @@ class Incoterm(db.Model):
         return u'%s' % (self.name)
 
 
-class Product(db.Model):
+class Product(MyModel):
 
     product_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64, blank=True))
@@ -195,7 +204,7 @@ class Product(db.Model):
         return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
 
-class Container(db.Model):
+class Container(MyModel):
 
     container_id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))  # This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.
@@ -206,7 +215,7 @@ class Container(db.Model):
         return u'%.7g %s %s' % (self.quantity, self.unit, self.type)
 
 
-class Registration(db.Model):
+class Registration(MyModel):
 
     registration_id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String(32))
@@ -230,7 +239,7 @@ class Registration(db.Model):
         return u'%s - %s' % (self.number, self.product.name)
 
 
-class Currency(db.Model):
+class Currency(MyModel):
 
     currency_id = db.Column(db.Integer, primary_key=True)
     code = db.Column(db.String(3))  # Enter the ISO 4217 currency code for the currency. This is a 3 letter code in all capitals eg. USD, ZAR etc.
@@ -239,7 +248,7 @@ class Currency(db.Model):
         return self.code
 
 
-class Procurement(db.Model):
+class Procurement(MyModel):
 
     procurement_id = db.Column(db.Integer, primary_key=True)
     packsize = db.Column(db.Integer) # Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.
@@ -284,7 +293,7 @@ class Procurement(db.Model):
         return u'unknown quantity x %s' % (self.product.__unicode__())
 
 
-class Context(db.Model):
+class Context(MyModel):
 
     context_id = db.Column(db.Integer, primary_key=True)
     population = db.Column(db.Integer)

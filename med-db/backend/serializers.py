@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, date
-from django.db import models
+from main import db, logger
 
 
 class CustomEncoder(json.JSONEncoder):
@@ -25,7 +25,7 @@ class CustomEncoder(json.JSONEncoder):
 
 class BaseSerializer():
     """
-    Convert Django models to Python dicts, before encoding them in JSON format.
+    Convert SQLAlchemy models to Python dicts, before encoding them in JSON format.
     """
 
     def __init__(self):
@@ -37,8 +37,8 @@ class BaseSerializer():
         }
         return tmp_dict
 
-    def serialize(self, obj_or_list, include_related=False):
-        if isinstance(obj_or_list, models.Model):
+    def to_json(self, obj_or_list, include_related=False):
+        if isinstance(obj_or_list, db.Model):
             out = self.to_dict(obj_or_list, include_related)
         else:
             out = []
