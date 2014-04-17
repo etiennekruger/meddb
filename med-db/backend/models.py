@@ -63,20 +63,6 @@ class DosageForm(MyModel):
         return u'%s' % (self.name)
 
 
-class Ingredient(MyModel):
-
-    ingredient_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128))
-
-
-# M2M table
-medicine_ingredient_table = db.Table(
-    'medicine_ingredient', db.Model.metadata,
-    db.Column('medicine_id', db.Integer, db.ForeignKey('medicine.medicine_id')),
-    db.Column('ingredient_id', db.Integer, db.ForeignKey('ingredient.ingredient_id'))
-)
-
-
 class Medicine(MyModel):
 
     medicine_id = db.Column(db.Integer, primary_key=True)
@@ -84,7 +70,6 @@ class Medicine(MyModel):
     
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm')
-    ingredients = db.relationship('Ingredient', secondary=medicine_ingredient_table, backref=backref("medicines"))
 
     def get_name(self):
         if self.name:
@@ -112,13 +97,24 @@ class Medicine(MyModel):
         return u'%s %s' % (self.actives, self.dosage_form)
 
 
+class Component(MyModel):
+
+    component_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128))
+    
+
 class Ingredient(MyModel):
 
     ingredient_id = db.Column(db.Integer, primary_key=True)
     strength = db.Column(db.String(16))
 
+    component_id = db.Column(db.Integer, db.ForeignKey('component.component_id'), nullable=True)
+    component = db.relationship('Component')
+    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
+    medicine = db.relationship('Medicine', backref=backref("ingredients"))
+
     def __unicode__(self):
-        return u'%s %s' % (self.ingredient, self.strength)
+        return u'%s %s' % (self.component.name, self.strength)
 
 
 # TODO: Generalize this, to account for multiple benchmarks
