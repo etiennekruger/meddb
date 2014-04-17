@@ -150,33 +150,31 @@ class Site(MyModel):
 
     site_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    address = db.Column(db.String(250))
+    street_address = db.Column(db.String(250))
 
-    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
-    manufacturer = db.relationship('Manufacturer')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
+    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
+    manufacturer = db.relationship('Manufacturer')
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.manufacturer.name)
 
 
-class Incoterm(MyModel):
+class Supplier(MyModel):
 
     supplier_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    address = db.Column(db.String(250))
+    street_address = db.Column(db.String(500))
     website = db.Column(db.String(250))
     contact = db.Column(db.String(64))
     phone = db.Column(db.String(16))
-    altphone = db.Column(db.String(16))
+    alt_phone = db.Column(db.String(16))
     fax = db.Column(db.String(16))
     email = db.Column(db.String(100))
-    altemail = db.Column(db.String(100))
+    alt_email = db.Column(db.String(100))
     authorized = db.Column(db.Boolean, default=False)
 
-    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
-    manufacturer = db.relationship('Manufacturer')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
 
