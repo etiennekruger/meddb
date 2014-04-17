@@ -12,6 +12,7 @@ def avg(list):
 
 class Source(db.Model):
 
+    country_id = db.Column(db.Integer, primary_key=True)
     name = name = db.Column(db.String(250))
     date = db.Column(db.Date, default=datetime.datetime.now)
     url = db.Column(db.String(250))  # Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional
@@ -27,16 +28,8 @@ class Country(db.Model):
     name = db.Column(db.String(16))
     code = db.Column(db.String(3))
 
-    def as_dict(self, minimal=False):
-        return { 'id': self.id,
-                 'name': self.name,
-                 'code': self.code }
-
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
-
-    class Meta:
-        verbose_name_plural = 'Countries'
 
 
 class Incoterm(db.Model):
@@ -44,9 +37,6 @@ class Incoterm(db.Model):
     incoterm_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(3))
     description = db.Column(db.String(128))
-
-    def as_dict(self, minimal=False):
-        return {"name": self.name, "description": self.description}
 
     def __unicode__(self):
         return u'%s' % (self.name)
@@ -116,19 +106,10 @@ class Medicine(db.Model):
 class Ingredient(db.Model):
 
     ingredient_id = db.Column(db.Integer, primary_key=True)
-
     strength = db.Column(db.String(16))
-
-    def as_dict(self, minimal=False):
-        return { 'id': self.ingredient.id,
-                 'ingredient': self.ingredient.name.capitalize(),
-                 'strength': self.strength }
 
     def __unicode__(self):
         return u'%s %s' % (self.ingredient, self.strength)
-
-    class Meta:
-        ordering = ('ingredient__name',)
 
 
 # TODO: Generalize this, to account for multiple benchmarks
