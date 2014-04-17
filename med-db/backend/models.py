@@ -101,7 +101,7 @@ class Component(MyModel):
 
     component_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
-    
+
 
 class Ingredient(MyModel):
 
@@ -117,14 +117,17 @@ class Ingredient(MyModel):
         return u'%s %s' % (self.component.name, self.strength)
 
 
-# TODO: Generalize this, to account for multiple benchmarks
-class MSHPrice(MyModel):
+class BenchmarkPrice(MyModel):
 
-    msh_price_id = db.Column(db.Integer, primary_key=True)
-    price = db.Column(db.Float) #'The MSH price for the medicine.')
+    __table_args__ = (db.UniqueConstraint('medicine', 'year', 'name'), {})
+
+    benchmark_price_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))  # this should be restricted by a select field in the Admin interface
+    price = db.Column(db.Float)  # The benchmark price for the medicine.
+    year = db.Column(db.Integer, nullable=False)
 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
-    medicine = db.relationship('Medicine')
+    medicine = db.relationship('Medicine', backref="benchmarks")
 
     def __unicode__(self):
         return u'%s @ %.4f' % (self.medicine, self.price)
@@ -134,7 +137,7 @@ class Manufacturer(MyModel):
 
     manufacturer_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    website = db.Column(db.String(250)) # e.g. http://www.example.com, ensure that the leading http:// is included")
+    website = db.Column(db.String(250))  # e.g. http://www.example.com, ensure that the leading http:// is included")
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
