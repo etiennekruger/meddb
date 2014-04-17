@@ -19,7 +19,7 @@ def staging():
     Env parameters for the staging environment.
     """
 
-    env.host_string = 'root@5.9.195.6:22'
+    env.host_string = 'root@5.9.195.1:22'
     env.project_dir = '/var/www/med-db'
     env.config_dir = 'config/staging'
     env.activate = 'source %s/env/bin/activate' % env.project_dir

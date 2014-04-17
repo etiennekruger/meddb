@@ -52,7 +52,7 @@ def setup():
     with settings(warn_only=True):
         if run("test -d %s" % env.project_dir).failed:
             # create project folder
-            sudo("touch %s" % env.project_dir)
+            sudo("mkdir %s" % env.project_dir)
         if run("test -d %s/env" % env.project_dir).failed:
             # create virtualenv
             sudo('virtualenv --no-site-packages %s/env' % env.project_dir)
@@ -66,7 +66,8 @@ def setup():
     sudo('apt-get install nginx')
     # restart nginx after reboot
     sudo('update-rc.d nginx defaults')
-    sudo('service nginx start')
+    with settings(warn_only=True):
+        sudo('service nginx start')
     return
 
 
@@ -89,7 +90,7 @@ def configure():
 
     # upload supervisor config
     put(env.config_dir + '/supervisor.conf', '/tmp/supervisor.conf')
-    sudo('mv /tmp/supervisor.conf /etc/supervisor/conf.d/supervisor_pmgbilltracker.conf')
+    sudo('mv /tmp/supervisor.conf /etc/supervisor/conf.d/supervisor_med-db.conf')
     sudo('supervisorctl reread')
     sudo('supervisorctl update')
 
