@@ -2,7 +2,7 @@ from main import db, logger
 import serializers
 from sqlalchemy.orm import backref
 import datetime
-
+from openexchangerates import OpenExchangeRates
 
 def avg(list):
 
