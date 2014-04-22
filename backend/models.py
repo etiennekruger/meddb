@@ -9,16 +9,9 @@ CURRENCIES = app.config['CURRENCIES']
 INCOTERMS = app.config['INCOTERMS']
 
 
-class MyModel(db.Model):
+class Source(db.Model):
 
-    def __init__(self, serializer_class=serializers.BaseSerializer):
-        self.serializer = serializer_class()
-        self.to_json = self.serializer.to_json
-        super(MyModel, self).__init__()
-
-
-class Source(MyModel):
-
+    __tablename__ = "source"
     source_id = db.Column(db.Integer, primary_key=True)
     name = name = db.Column(db.String(250))
     date = db.Column(db.Date, default=datetime.datetime.now)
@@ -27,10 +20,14 @@ class Source(MyModel):
     def __unicode__(self):
         s = u'%s @ %s' % (self.name, self.date)
         return s
+    
+    def to_json(self): 
+        return serializers.BaseSerializer.to_json()
 
 
-class Country(MyModel):
+class Country(db.Model):
 
+    __tablename__ = "country"
     country_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16))
     code = db.Column(db.String(3))
@@ -38,21 +35,26 @@ class Country(MyModel):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class DosageForm(MyModel):
 
+class DosageForm(db.Model):
+
+    __tablename__ = "dosage_form"
     dosage_form_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(16))
-
-    def as_dict(self, minimal=False):
-        return self.name
 
     def __unicode__(self):
         return u'%s' % (self.name)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Medicine(MyModel):
 
+class Medicine(db.Model):
+
+    __tablename__ = "medicine"
     medicine_id = db.Column(db.Integer, primary_key=True)
     average_price = db.Column(db.Float, nullable=True)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
@@ -82,15 +84,23 @@ class Medicine(MyModel):
     def __unicode__(self):
         return u'%s %s' % (self.name, self.dosage_form)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Component(MyModel):
 
+class Component(db.Model):
+
+    __tablename__ = "component"
     component_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Ingredient(MyModel):
 
+class Ingredient(db.Model):
+
+    __tablename__ = "ingredient"
     ingredient_id = db.Column(db.Integer, primary_key=True)
     strength = db.Column(db.String(16))
 
@@ -102,9 +112,13 @@ class Ingredient(MyModel):
     def __unicode__(self):
         return u'%s %s' % (self.component.name, self.strength)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class BenchmarkPrice(MyModel):
 
+class BenchmarkPrice(db.Model):
+
+    __tablename__ = "benchmark_price"
     __table_args__ = (db.UniqueConstraint('medicine', 'year', 'name'), {})
 
     benchmark_price_id = db.Column(db.Integer, primary_key=True)
@@ -118,9 +132,13 @@ class BenchmarkPrice(MyModel):
     def __unicode__(self):
         return u'%s @ %.4f' % (self.medicine, self.price)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Manufacturer(MyModel):
 
+class Manufacturer(db.Model):
+
+    __tablename__ = "manufacturer"
     manufacturer_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     website = db.Column(db.String(250))  # e.g. http://www.example.com, ensure that the leading http:// is included")
@@ -131,9 +149,13 @@ class Manufacturer(MyModel):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Site(MyModel):
 
+class Site(db.Model):
+
+    __tablename__ = "site"
     site_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     street_address = db.Column(db.String(250))
@@ -146,9 +168,13 @@ class Site(MyModel):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.manufacturer.name)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Supplier(MyModel):
 
+class Supplier(db.Model):
+
+    __tablename__ = "supplier"
     supplier_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
     street_address = db.Column(db.String(500))
@@ -167,9 +193,13 @@ class Supplier(MyModel):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Product(MyModel):
 
+class Product(db.Model):
+
+    __tablename__ = "product"
     product_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64, blank=True))
     generic = db.Column(db.Boolean, default=True)
@@ -186,9 +216,13 @@ class Product(MyModel):
             return u'%s - %s (%s)' % (self.name, self.manufacturer, str(self.medicine))
         return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Container(MyModel):
 
+class Container(db.Model):
+
+    __tablename__ = "container"
     container_id = db.Column(db.Integer, primary_key=True)
     type = db.Column(db.String(32))  # This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.
     unit = db.Column(db.String(32))  # This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).
@@ -197,9 +231,13 @@ class Container(MyModel):
     def __unicode__(self):
         return u'%.7g %s %s' % (self.quantity, self.unit, self.type)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Registration(MyModel):
 
+class Registration(db.Model):
+
+    __tablename__ = "registration"
     registration_id = db.Column(db.Integer, primary_key=True)
     number = db.Column(db.String(32))
     status = db.Column(db.Boolean, default=True)
@@ -221,9 +259,13 @@ class Registration(MyModel):
     def __unicode__(self):
         return u'%s - %s' % (self.number, self.product.name)
 
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
 
-class Procurement(MyModel):
 
+class Procurement(db.Model):
+
+    __tablename__ = "procurement"
     procurement_id = db.Column(db.Integer, primary_key=True)
     pack_size = db.Column(db.Integer) # Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.
     price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
@@ -272,3 +314,6 @@ class Procurement(MyModel):
         if self.volume:
             return u'%d x %s' % (self.volume, self.product.__unicode__())
         return u'unknown quantity x %s' % (self.product.__unicode__())
+
+    def to_json(self):
+        return serializers.BaseSerializer.to_json()
