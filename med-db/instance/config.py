@@ -7,5 +7,8 @@ LOG_LEVEL = logging.INFO
 LOGGER_NAME = "med-db-logger"  # make sure this is not the same as the name of the package to avoid conflicts with Flask's own logger
 DEBUG = True
 
-with open('available_currencies.json', 'r') as f:
-    AVAILABLE_CURRENCIES = json.loads(f.read())
+with open('currencies.json', 'r') as f:
+    CURRENCIES = json.loads(f.read())
+
+with open('incoterms.json', 'r') as f:
+    INCOTERMS = json.loads(f.read())

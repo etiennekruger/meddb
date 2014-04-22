@@ -5,7 +5,8 @@ import datetime
 import json
 from openexchangerates import OpenExchangeRates
 
-AVAILABLE_CURRENCIES = app.config['AVAILABLE_CURRENCIES']
+CURRENCIES = app.config['CURRENCIES']
+INCOTERMS = app.config['INCOTERMS']
 
 
 def avg(list):
@@ -43,16 +44,6 @@ class Country(MyModel):
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
-
-
-class Incoterm(MyModel):
-
-    incoterm_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(3))
-    description = db.Column(db.String(128))
-
-    def __unicode__(self):
-        return u'%s' % (self.name)
 
 
 class DosageForm(MyModel):
@@ -246,8 +237,9 @@ class Procurement(MyModel):
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.
     start_date = db.Column(db.Date, nullable=True) # This is the first day that the procurement price is valid for (may be left blank).
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
+    incoterm = db.Column(db.String(3), nullable=True)  # The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.
+    currency = db.Column(db.String(3), nullable=True)  # This is the currency of the procurement price. This field is required to convert units to USD for comparison.
 
-    currency_code = db.Column(db.String(100))  # This is the currency of the procurement price. This field is required to convert units to USD for comparison.
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
@@ -256,8 +248,6 @@ class Procurement(MyModel):
     supplier = db.relationship('Supplier')
     container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
     container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
-    incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
-    incoterm = db.relationship('Incoterm')  # The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
 
