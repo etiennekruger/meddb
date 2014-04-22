@@ -1,4 +1,4 @@
-from main import app, db, logger
+from backend import app, db, logger
 import serializers
 from sqlalchemy.orm import backref
 import datetime

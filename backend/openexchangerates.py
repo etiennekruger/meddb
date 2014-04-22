@@ -1,5 +1,5 @@
 import requests
-from main import app
+from backend import app
 
 API_BASE_URL = 'http://openexchangerates.org/api/'
 OPEN_EXCHANGE_RATES_APP_ID = app.config['OPEN_EXCHANGE_RATES_APP_ID']

@@ -1,6 +1,6 @@
 import json
 from datetime import datetime, date
-from main import db, logger
+from backend import db, logger
 
 
 class CustomEncoder(json.JSONEncoder):
