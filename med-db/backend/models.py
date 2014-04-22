@@ -1,8 +1,12 @@
-from main import db, logger
+from main import app, db, logger
 import serializers
 from sqlalchemy.orm import backref
 import datetime
+import json
 from openexchangerates import OpenExchangeRates
+
+AVAILABLE_CURRENCIES = app.config['AVAILABLE_CURRENCIES']
+
 
 def avg(list):
 
@@ -232,27 +236,18 @@ class Registration(MyModel):
         return u'%s - %s' % (self.number, self.product.name)
 
 
-class Currency(MyModel):
-
-    currency_id = db.Column(db.Integer, primary_key=True)
-    code = db.Column(db.String(3))  # Enter the ISO 4217 currency code for the currency. This is a 3 letter code in all capitals eg. USD, ZAR etc.
-
-    def __unicode__(self):
-        return self.code
-
-
 class Procurement(MyModel):
 
     procurement_id = db.Column(db.Integer, primary_key=True)
     pack_size = db.Column(db.Integer) # Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.
     price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
+    price_usd = db.Column(db.Float, nullable=True)
     volume = db.Column(db.Integer) # The number of packages contracted at the specified unit price. Volume is calculated as # of packages * containers in pack', default=1)
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.
     start_date = db.Column(db.Date, nullable=True) # This is the first day that the procurement price is valid for (may be left blank).
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
 
-    currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=True)
-    currency = db.relationship('Currency')  # This is the currency of the procurement price. This field is required to convert units to USD for comparison.
+    currency_code = db.Column(db.String(100))  # This is the currency of the procurement price. This field is required to convert units to USD for comparison.
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
@@ -266,17 +261,25 @@ class Procurement(MyModel):
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
 
-    @property
-    def price_usd(self):
-        c = currency.models.Currency.objects.get(code=self.currency.code)
-        if c.code == 'USD':
-            return self.price
-        e = currency.models.ExchangeRate.objects.get(currency=c, date=self.start_date)
-        return self.price/e.rate
+    def calculate_price_usd(self):
+        if self.currency_code == 'USD':
+            self.price_usd = self.price
+            return
+        e = OpenExchangeRates()
+        try:
+            rate = e.convert_to_usd(currency=self.currency_code, date=self.start_date)
+            self.price_usd = self.price/rate
+        except IOError as e:
+            logger.error("Cannot connect to OpenExchangeRates API: " + str(e))
+            raise
+        except Exception as e:
+            logger.error("Error converting between currencies: " + str(e))
+            raise
+        return
 
     @property
     def price_per_unit(self):
-        if self.container.quantity:
+        if self.container.quantity and self.price_usd:
             return self.price_usd / self.container.quantity
         return None
 
