@@ -9,13 +9,6 @@ CURRENCIES = app.config['CURRENCIES']
 INCOTERMS = app.config['INCOTERMS']
 
 
-def avg(list):
-
-    if len(list) == 0:
-        return float(0)
-    return sum(list) / float(len(list))
-
-
 class MyModel(db.Model):
 
     def __init__(self, serializer_class=serializers.BaseSerializer):
@@ -26,7 +19,7 @@ class MyModel(db.Model):
 
 class Source(MyModel):
 
-    country_id = db.Column(db.Integer, primary_key=True)
+    source_id = db.Column(db.Integer, primary_key=True)
     name = name = db.Column(db.String(250))
     date = db.Column(db.Date, default=datetime.datetime.now)
     url = db.Column(db.String(250))  # Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional
@@ -61,7 +54,7 @@ class DosageForm(MyModel):
 class Medicine(MyModel):
 
     medicine_id = db.Column(db.Integer, primary_key=True)
-    
+    average_price = db.Column(db.Float, nullable=True)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm')
 
@@ -72,14 +65,16 @@ class Medicine(MyModel):
             out = " + ".join([i.ingredient.name.capitalize() for i in self.ingredients])
         return out
 
-    @property
-    def average_price(self):
+    def calculate_average_price(self):
         sum = 0
         tot = 0
-        procurements = Procurement.query.filter(medicine_id=self.medicine_id).all()
-        for p in procurements:
-            sum += p.price_usd * p.volume
-            tot += p.container.quantity * p.volume
+        products = Product.query.filter(Product.medicine_id == self.medicine_id).all()
+        for product in products:
+            procurements = Procurement.query.filter(Product.product_id == product.product_id).all()
+            for p in procurements:
+                if p.price_usd and p.volume and p.container.quantity:
+                    sum += p.price_usd * p.volume
+                    tot += p.container.quantity * p.volume
         if tot > 0:
             return sum/tot
         return None
