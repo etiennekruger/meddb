@@ -272,32 +272,3 @@ class Procurement(MyModel):
         if self.volume:
             return u'%d x %s' % (self.volume, self.product.__unicode__())
         return u'unknown quantity x %s' % (self.product.__unicode__())
-
-
-class Context(MyModel):
-
-    context_id = db.Column(db.Integer, primary_key=True)
-    population = db.Column(db.Integer)
-    gni_per_capita = db.Column(db.Float)
-    nmra_name = db.Column(db.String(32))
-    nmra_website = db.Column(db.String(250))
-    pspa_name = db.Column(db.String(32))
-    pspa_website = db.Column(db.String(250))
-    nmpa_name = db.Column(db.String(32))
-    nmpa_website = db.Column(db.String(250))
-    nmpa_status = db.Column(db.String(32)) # e.g. MOH department, public company, NGO.
-    budget = db.Column(db.Float) # Annual public sector pharmaceutical procurement budget (USD), including all relevant on-budget budget lines (e.g. including vertical programmes, NMPA, districts, hospitals as adequate).
-    tender_time = db.Column(db.Integer) # Number of months from selection and quantification up to contract award; for open or restricted ICB only.
-    tender_currencies = db.Column(db.String(32))
-    payment_terms = db.Column(db.String(32))  # Payment terms/modalities, e.g. Letter of Credit, other forms of pre-payment against performance guarantee, on account (XX days).
-    local_preference = db.Column(db.String(64))  # Figure and requirements applicable to local preference.
-    import_duty = db.Column(db.Float) # Import duties and taxes, % figure as applicable.
-    freight = db.Column(db.Float) # Average cost for freight & insurance, % figure.
-
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
-    country = db.relationship('Country')
-    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
-    source = db.relationship('Source')
-
-    def __unicode__(self):
-        return u'%d x %s' % (self.volume, self.product.name)
