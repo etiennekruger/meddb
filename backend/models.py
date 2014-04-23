@@ -15,7 +15,7 @@ class Source(db.Model):
     source_id = db.Column(db.Integer, primary_key=True)
     name = name = db.Column(db.String(250))
     date = db.Column(db.Date, default=datetime.datetime.now)
-    url = db.Column(db.String(250))  # Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional
+    url = db.Column(db.String(250), nullable=True)  # Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional
 
     def __unicode__(self):
         s = u'%s @ %s' % (self.name, self.date)
@@ -29,7 +29,7 @@ class Country(db.Model):
 
     __tablename__ = "country"
     country_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(16))
+    name = db.Column(db.String(100))
     code = db.Column(db.String(3))
 
     def __unicode__(self):
@@ -43,7 +43,7 @@ class DosageForm(db.Model):
 
     __tablename__ = "dosage_form"
     dosage_form_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(16))
+    name = db.Column(db.String(100))
 
     def __unicode__(self):
         return u'%s' % (self.name)
@@ -119,7 +119,7 @@ class Ingredient(db.Model):
 class BenchmarkPrice(db.Model):
 
     __tablename__ = "benchmark_price"
-    __table_args__ = (db.UniqueConstraint('medicine', 'year', 'name'), {})
+    __table_args__ = (db.UniqueConstraint('medicine_id', 'year', 'name'), {})
 
     benchmark_price_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))  # this should be restricted by a select field in the Admin interface
@@ -201,11 +201,11 @@ class Product(db.Model):
 
     __tablename__ = "product"
     product_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64, blank=True))
+    name = db.Column(db.String(64), nullable=True)
     generic = db.Column(db.Boolean, default=True)
 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
-    medicine = db.relationship('Medicine', backref('products'))
+    medicine = db.relationship('Medicine', backref='products')
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
     manufacturer = db.relationship('Manufacturer')
     site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
@@ -285,8 +285,8 @@ class Procurement(db.Model):
     supplier = db.relationship('Supplier')
     container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
     container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
-    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
-    source = db.relationship('Source')
+    # source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
+    # source = db.relationship('Source')
 
     def calculate_price_usd(self):
         if self.currency_code == 'USD':
