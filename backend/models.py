@@ -8,6 +8,8 @@ from openexchangerates import OpenExchangeRates
 CURRENCIES = app.config['CURRENCIES']
 INCOTERMS = app.config['INCOTERMS']
 
+base_serializer = serializers.BaseSerializer()
+
 
 class Source(db.Model):
 
@@ -22,7 +24,7 @@ class Source(db.Model):
         return s
     
     def to_json(self): 
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Country(db.Model):
@@ -36,7 +38,7 @@ class Country(db.Model):
         return u'%s (%s)' % (self.name, self.code.upper())
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class DosageForm(db.Model):
@@ -49,7 +51,7 @@ class DosageForm(db.Model):
         return u'%s' % (self.name)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Medicine(db.Model):
@@ -85,7 +87,7 @@ class Medicine(db.Model):
         return u'%s %s' % (self.name, self.dosage_form)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Component(db.Model):
@@ -95,7 +97,7 @@ class Component(db.Model):
     name = db.Column(db.String(128))
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Ingredient(db.Model):
@@ -113,7 +115,7 @@ class Ingredient(db.Model):
         return u'%s %s' % (self.component.name, self.strength)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class BenchmarkPrice(db.Model):
@@ -133,7 +135,7 @@ class BenchmarkPrice(db.Model):
         return u'%s @ %.4f' % (self.medicine, self.price)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Manufacturer(db.Model):
@@ -150,7 +152,7 @@ class Manufacturer(db.Model):
         return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Site(db.Model):
@@ -169,7 +171,7 @@ class Site(db.Model):
         return u'%s (%s)' % (self.name, self.manufacturer.name)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Supplier(db.Model):
@@ -194,7 +196,7 @@ class Supplier(db.Model):
         return u'%s' % (self.name)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Product(db.Model):
@@ -217,7 +219,7 @@ class Product(db.Model):
         return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Container(db.Model):
@@ -232,7 +234,7 @@ class Container(db.Model):
         return u'%.7g %s %s' % (self.quantity, self.unit, self.type)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Registration(db.Model):
@@ -260,7 +262,7 @@ class Registration(db.Model):
         return u'%s - %s' % (self.number, self.product.name)
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)
 
 
 class Procurement(db.Model):
@@ -316,4 +318,4 @@ class Procurement(db.Model):
         return u'unknown quantity x %s' % (self.product.__unicode__())
 
     def to_json(self):
-        return serializers.BaseSerializer.to_json()
+        return base_serializer.to_json(self)

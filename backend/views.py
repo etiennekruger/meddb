@@ -1,7 +1,9 @@
 from backend import logger, app, db
 import models
 import flask
+import json
 
+API_HOST = app.config["API_HOST"]
 
 class ApiException(Exception):
     """
@@ -32,11 +34,12 @@ def handle_api_exception(error):
     return response
 
 
-def send_api_response(data_dict):
+def send_api_response(data_json):
 
-    response = flask.jsonify(data_dict)
+    response = flask.make_response(data_json)
     response.headers['Access-Control-Allow-Origin'] = "*"
     return response
+
 
 @app.route('/')
 def index():
@@ -44,5 +47,19 @@ def index():
     Landing page. Return links to available endpoints.
     """
 
-    out = {"hello": "world"}
+    out = {"medicines": API_HOST + "medicine/"}
+    return send_api_response(json.dumps(out))
+
+
+@app.route('/medicine/')
+def medicine():
+    """
+    """
+
+    medicines = models.Medicine.query.all()
+    out = "["
+    for medicine in medicines:
+        out += medicine.to_json() + ", "
+    out = out[0:-2]
+    out += "]"
     return send_api_response(out)
