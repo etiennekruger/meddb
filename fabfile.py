@@ -18,7 +18,7 @@ def virtualenv():
 
 
 def upload_db():
-    put('med-db.db', '/tmp/med-db.db')
+    put('~/Downloads/meddb.db', '/tmp/med-db.db')
     sudo('mv /tmp/med-db.db %s/med-db.db' % env.project_dir)
     set_permissions()
     restart()
