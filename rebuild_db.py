@@ -28,7 +28,29 @@ for medicine in medicines:
         ingredient_obj.strength = ingredient["strength"]
         ingredient_obj.medicine = medicine_obj
         db.session.add(ingredient_obj)
-    
+
+    # capture MSH benchmark price
+    if medicine['mshprice']:
+        benchmark_obj = models.BenchmarkPrice()
+        benchmark_obj.name = "msh"
+        benchmark_obj.year = 2013
+        benchmark_obj.price = medicine['mshprice']
+        db.session.add(benchmark_obj)
+    else:
+        print "this medicine has no benchmark price: " + medicine['name']
+
+    # capture dosage form
+    if medicine['dosageform']:
+        dosage_form_obj = models.DosageForm.query.filter(models.DosageForm.name==medicine['dosageform']).first()
+        if dosage_form_obj is None:
+            dosage_form_obj = models.DosageForm()
+            dosage_form_obj.name = medicine['dosageform']
+            db.session.add(dosage_form_obj)
+        medicine_obj.dosage_form = dosage_form_obj
+    else:
+        print "Unknown dosage form"
+        raise Exception
+
     db.session.add(medicine_obj)
 
     # capture procurements
@@ -45,9 +67,6 @@ for medicine in medicines:
 
         pass
 
-    # capture MSH benchmark price
-
-    # capture dosage form
 
 
 db.session.commit()
