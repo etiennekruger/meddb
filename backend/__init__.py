@@ -3,17 +3,10 @@ from logging.handlers import RotatingFileHandler
 import os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
-import json
 
 app = Flask('med_db_backend', instance_relative_config=True)
 app.config.from_pyfile('config.py', silent=True)
 app.config.from_pyfile('config_private.py', silent=True)
-
-
-with app.open_instance_resource('currencies.json') as f:
-    app.config['CURRENCIES'] = json.loads(f.read())  # see http://openexchangerates.org/api/currencies.json
-with app.open_instance_resource('incoterms.json') as f:
-    app.config['INCOTERMS'] = json.loads(f.read())  # see http://en.wikipedia.org/wiki/Incoterms
 
 db = SQLAlchemy(app)
 

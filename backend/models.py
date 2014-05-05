@@ -5,9 +5,6 @@ import datetime
 import json
 from openexchangerates import OpenExchangeRates
 
-CURRENCIES = app.config['CURRENCIES']
-INCOTERMS = app.config['INCOTERMS']
-
 base_serializer = serializers.BaseSerializer()
 
 
@@ -36,6 +33,34 @@ class Country(db.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
+
+    def to_json(self):
+        return base_serializer.to_json(self)
+
+
+class Currency(db.Model):
+
+    __tablename__ = "currency"
+    currency_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    code = db.Column(db.String(3))
+
+    def __unicode__(self):
+        return u'%s (%s)' % (self.name, self.code.upper())
+
+    def to_json(self):
+        return base_serializer.to_json(self)
+
+
+class Incoterm(db.Model):
+
+    __tablename__ = "incoterm"
+    incoterm_id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(100))
+    code = db.Column(db.String(3))
+
+    def __unicode__(self):
+        return u'(%s) %s' % (self.code.upper(), self.description)
 
     def to_json(self):
         return base_serializer.to_json(self)

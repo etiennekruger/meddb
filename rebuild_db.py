@@ -6,6 +6,34 @@ from datetime import datetime
 db.drop_all()
 db.create_all()
 
+# populate items from 3rd party datasets:
+# Country
+with open("data/countries.json", "r") as f:
+    countries = json.loads(f.read())
+    for country in countries:
+        country_obj = models.Country()
+        country_obj.name = country["name"]
+        country_obj.code = country["alpha-3"]
+        db.session.add(country_obj)
+# Currency
+with open("data/currencies.json", "r") as f:
+    currencies = json.loads(f.read())
+    for code, name in currencies.iteritems():
+        currency_obj = models.Currency()
+        currency_obj.name = name
+        currency_obj.code = code
+        db.session.add(currency_obj)
+# Incoterm
+with open("data/incoterms.json", "r") as f:
+    incoterms = json.loads(f.read())
+    for code, description in incoterms.iteritems():
+        incoterm_obj = models.Incoterm()
+        incoterm_obj.description = description
+        incoterm_obj.code = code
+        db.session.add(incoterm_obj)
+db.session.commit()
+
+# migrate data from json dump to new db
 f = open("dump.json", "r")
 medicines = json.loads(f.read())
 f.close()
@@ -72,7 +100,14 @@ for medicine in medicines:
             db.session.commit()
 
         # capture manufacturer
-        tmp_country = models.Country.query.filter(models.Country.name==procurement["manufacturer"]["country"][0]).first()
+        tmp_country_name = procurement["manufacturer"]["country"][0]
+        if tmp_country_name == "USA":
+            tmp_country_name = "United States"
+        if tmp_country_name == "DRC":
+            tmp_country_name = "Democratic Republic of the Congo"
+        if tmp_country_name == "Keyna":
+            tmp_country_name = "Kenya"
+        tmp_country = models.Country.query.filter(models.Country.name==tmp_country_name).first()
         manufacturer_obj = models.Manufacturer.query\
             .filter(models.Manufacturer.name==procurement["manufacturer"]["name"])\
             .filter(models.Manufacturer.country==tmp_country)\
@@ -80,10 +115,10 @@ for medicine in medicines:
         if manufacturer_obj is None:
             manufacturer_obj = models.Manufacturer()
             manufacturer_obj.name = procurement["manufacturer"]["name"]
-            if tmp_country:
+            if tmp_country and tmp_country.name!="Unknown":
                 manufacturer_obj.country = tmp_country
             else:
-                print "Unkown country: " + procurement["manufacturer"]["country"][0]
+                print "Unknown country: " + tmp_country_name
 
         # TODO: capture site
 
