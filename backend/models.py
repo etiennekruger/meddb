@@ -204,7 +204,7 @@ class Product(db.Model):
     __tablename__ = "product"
     product_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=True)
-    generic = db.Column(db.Boolean, default=True)
+    is_generic = db.Column(db.Boolean, default=True)
 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
     medicine = db.relationship('Medicine', backref='products')
@@ -285,6 +285,8 @@ class Procurement(db.Model):
     country = db.relationship('Country')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
     supplier = db.relationship('Supplier')
+    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
+    manufacturer = db.relationship('Manufacturer')
     container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
     container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     # source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
