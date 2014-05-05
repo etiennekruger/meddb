@@ -116,12 +116,18 @@ for medicine in medicines:
         if manufacturer_obj is None:
             manufacturer_obj = models.Manufacturer()
             manufacturer_obj.name = procurement["manufacturer"]["name"]
-            if tmp_country and tmp_country.name!="Unknown":
+            if tmp_country:
                 manufacturer_obj.country = tmp_country
             else:
                 print "Unknown country: " + tmp_country_name
 
-        # TODO: capture site
+        # capture site
+        site_obj = models.Site.query.filter(models.Site.name==procurement["product"]["site"]).first()
+        if site_obj is None:
+            site_obj = models.Site()
+            site_obj.name = procurement["product"]["site"]
+            db.session.add(site_obj)
+            db.session.commit()
 
         # capture product
         product_obj = models.Product.query.filter(models.Product.name==procurement["product"]["name"])\
@@ -137,15 +143,23 @@ for medicine in medicines:
             db.session.add(product_obj)
             db.session.commit()
 
-        # TODO: capture supplier
+        if procurement.get("supplier"):
+            supplier_obj = models.Supplier.query.filter(models.Supplier.name==procurement["supplier"]["name"]).first()
+            if not supplier_obj:
+                supplier_obj = models.Supplier()
+                supplier_obj.name = procurement["supplier"]["name"]
+                db.session.add(supplier_obj)
+                db.session.commit()
+        else:
+            print "Procurement sans supplier"
 
         procurement_obj.country = country_obj
+        procurement_obj.supplier = supplier_obj
         procurement_obj.manufacturer = manufacturer_obj
         procurement_obj.product = product_obj
         procurement_obj.price = procurement["price"]
         procurement_obj.start_date = datetime.strptime(procurement["start_date"], "%Y-%m-%d")
         procurement_obj.end_date = datetime.strptime(procurement["end_date"], "%Y-%m-%d")
-        # TODO: add incoterm
         procurement_obj.pack_size = procurement["packsize"]
         procurement_obj.volume = procurement["volume"]
 
