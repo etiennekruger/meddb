@@ -38,8 +38,6 @@ f = open("dump.json", "r")
 medicines = json.loads(f.read())
 f.close()
 
-print dir(medicines[0])
-
 for medicine in medicines:
     
     medicine_obj = models.Medicine()
@@ -90,14 +88,17 @@ for medicine in medicines:
     for procurement in medicine["procurements"]:
         procurement_obj = models.Procurement()
 
-        # capture country
-        country_obj = models.Country.query.filter(models.Country.code==procurement["country"]["code"]).first()
+        # set country relation
+        tmp_code = procurement["country"]["code"]
+        if tmp_code == "LES":
+            tmp_code = "LSO"
+        if tmp_code == "MAW":
+            tmp_code = "MWI"
+        if tmp_code == "SEY":
+            tmp_code = "SYC"
+        country_obj = models.Country.query.filter(models.Country.code==tmp_code).first()
         if country_obj is None:
-            country_obj = models.Country()
-            country_obj.name = procurement["country"]["name"]
-            country_obj.code = procurement["country"]["code"]
-            db.session.add(country_obj)
-            db.session.commit()
+            print "Country could not be found: " + procurement["country"]["code"]
 
         # capture manufacturer
         tmp_country_name = procurement["manufacturer"]["country"][0]
