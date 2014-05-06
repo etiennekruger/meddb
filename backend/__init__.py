@@ -1,6 +1,6 @@
 import logging
 from logging.handlers import RotatingFileHandler
-import os
+import sys, os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
@@ -24,10 +24,17 @@ file_formatter = logging.Formatter(
     '[in %(pathname)s:%(lineno)d]'
 )
 
+# add file handler
 log_path = app.instance_path[0:app.instance_path.index('instance')]
 file_handler = RotatingFileHandler(os.path.join(log_path, 'debug.log'))
 file_handler.setLevel(LOG_LEVEL)
 file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
+
+# also log to stdout
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_handler.setLevel(LOG_LEVEL)
+stream_handler.setFormatter(file_formatter)
+logger.addHandler(stream_handler)
 
 import views
