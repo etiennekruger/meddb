@@ -105,8 +105,8 @@ class Medicine(db.Model):
                     sum += p.price_usd * p.volume
                     tot += p.container.quantity * p.volume
         if tot > 0:
-            return sum/tot
-        return None
+            self.average_price = sum/tot
+        return
 
     def __unicode__(self):
         return u'%s %s' % (self.name, self.dosage_form)

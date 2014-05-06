@@ -143,6 +143,7 @@ for medicine in medicines:
             db.session.add(product_obj)
             db.session.commit()
 
+        # capture supplier
         if procurement.get("supplier"):
             supplier_obj = models.Supplier.query.filter(models.Supplier.name==procurement["supplier"]["name"]).first()
             if not supplier_obj:
@@ -153,6 +154,20 @@ for medicine in medicines:
         else:
             print "Procurement sans supplier"
 
+        # capture container
+        container_obj = models.Container.query.filter(models.Container.type==procurement["container"]["type"])\
+            .filter(models.Container.quantity==procurement["container"]["quantity"])\
+            .filter(models.Container.unit==procurement["container"]["unit"])\
+            .first()
+        if container_obj is None:
+            container_obj = models.Container()
+            container_obj.type = procurement["container"]["type"]
+            container_obj.quantity = procurement["container"]["quantity"]
+            container_obj.unit = procurement["container"]["unit"]
+            db.session.add(container_obj)
+            db.session.commit()
+        procurement_obj.container = container_obj
+
         procurement_obj.country = country_obj
         procurement_obj.supplier = supplier_obj
         procurement_obj.manufacturer = manufacturer_obj
@@ -162,6 +177,13 @@ for medicine in medicines:
         procurement_obj.end_date = datetime.strptime(procurement["end_date"], "%Y-%m-%d")
         procurement_obj.pack_size = procurement["packsize"]
         procurement_obj.volume = procurement["volume"]
+        # note: we could call calculate_price_usd at this point, but let's rather work from existing data, since the API's rate limited
+        procurement_obj.price_usd = procurement["price_usd"]
 
         db.session.add(procurement_obj)
         pass
+
+    medicine_obj.calculate_average_price()
+    db.session.add(medicine_obj)
+
+db.session.commit()
