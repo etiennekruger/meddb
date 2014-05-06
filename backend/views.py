@@ -5,6 +5,7 @@ import json
 
 API_HOST = app.config["API_HOST"]
 
+
 class ApiException(Exception):
     """
     Class for handling all of our expected API errors.
@@ -38,6 +39,7 @@ def send_api_response(data_json):
 
     response = flask.make_response(data_json)
     response.headers['Access-Control-Allow-Origin'] = "*"
+    response.headers['Content-Type'] = "application/json"
     return response
 
 
@@ -47,19 +49,29 @@ def index():
     Landing page. Return links to available endpoints.
     """
 
-    out = {"medicines": API_HOST + "medicine/"}
-    return send_api_response(json.dumps(out))
+    endpoints = {
+        "medicines": API_HOST + "medicine/",
+        "medicines/<id>/": API_HOST + "medicine/1/"
+    }
+    return send_api_response(json.dumps(endpoints))
 
 
 @app.route('/medicine/')
-def medicine():
+@app.route('/medicine/<int:medicine_id>/')
+def medicine(medicine_id=None):
     """
     """
 
-    medicines = models.Medicine.query.all()
-    out = "["
-    for medicine in medicines:
-        out += medicine.to_json() + ", "
-    out = out[0:-2]
-    out += "]"
+    if medicine_id:
+        medicine = models.Medicine.query.filter(models.Medicine.medicine_id==medicine_id).first()
+        if medicine is None:
+            raise ApiException(404, "Could not find the Medicine that you were looking for.")
+        out = medicine.to_json()
+    else:
+        medicines = models.Medicine.query.all()
+        out = "["
+        for medicine in medicines:
+            out += medicine.to_json() + ", "
+        out = out[0:-2]
+        out += "]"
     return send_api_response(out)
