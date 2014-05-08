@@ -23,7 +23,7 @@ class CustomEncoder(json.JSONEncoder):
         return encoded_obj
 
 
-def model_to_dict(obj, include_related=False, parent_class=None):
+def model_to_dict(obj):
     """
     Convert a single model object, or a list of model objects to dicts.
     Handle nested resources recursively.
@@ -34,31 +34,120 @@ def model_to_dict(obj, include_related=False, parent_class=None):
     tmp_dict = {
         key: getattr(obj, key) for key in columns
     }
-    # attributes from relationships
-    if include_related:
-        relationships = obj.__mapper__.relationships.keys()
-        for key in relationships:
-            child_or_list = getattr(obj, key)
-            if isinstance(child_or_list, db.Model):
-                # this is an only child
-                if not type(child_or_list) == parent_class:
-                    tmp_dict[key] = child_or_list.to_dict(include_related, parent_class=type(obj))
-            else:
-                # this is a list of children
-                tmp = []
-                if child_or_list:
-                    for child in child_or_list:
-                        if not type(child) == parent_class:
-                            tmp.append(child.to_dict(include_related, parent_class=type(obj)))
-                tmp_dict[key] = tmp
+    # attributes from relations are ignored
     return tmp_dict
 
 
 def medicine_to_dict(obj, include_related=False):
 
-    tmp_dict = model_to_dict(obj, include_related)
+    tmp_dict = model_to_dict(obj)
     tmp_dict['name'] = obj.name
     tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
+    if include_related:
+        # dosage form
+        tmp_dict['manufacturer'] = obj.dosage_form.to_dict()
+        tmp_dict.pop('dosage_form_id')
+        # components
+        tmp_components = []
+        for component in obj.components:
+            component_dict = component.to_dict()
+            component_dict.pop('medicine_id')
+            tmp_components.append(component_dict)
+        tmp_dict['components'] = tmp_components
+        # related products
+        products = []
+        for product in obj.products:
+            product_dict = product.to_dict(include_related=True)
+            product_dict.pop('medicine_id')
+            products.append(product_dict)
+        tmp_dict['products'] = products
+        # benchmark prices
+        benchmarks = []
+        for benchmark in obj.benchmarks:
+            benchmark_dict = benchmark.to_dict()
+            benchmark_dict.pop('medicine_id')
+            benchmarks.append(benchmark_dict)
+        tmp_dict['benchmarks'] = benchmarks
+    return tmp_dict
+
+
+def product_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    if include_related:
+        # related manufacturer
+        manufacturer = None
+        if obj.manufacturer:
+            manufacturer = obj.manufacturer.to_dict()
+        tmp_dict['manufacturer'] = manufacturer
+        tmp_dict.pop('manufacturer_id')
+        # related purchases
+        procurements = []
+        for procurement in obj.procurements:
+            procurement_dict = procurement.to_dict(include_related=True)
+            procurement_dict.pop('product_id')
+            procurement_dict.pop('manufacturer')
+            procurements.append(procurement_dict)
+        tmp_dict['procurements'] = procurements
+    return tmp_dict
+
+
+def procurement_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    # container
+    tmp_dict['container'] = obj.container.to_dict()
+    tmp_dict.pop('container_id')
+    # country
+    tmp_dict['country'] = obj.country.to_dict()
+    tmp_dict.pop('country_id')
+    if include_related:
+        # manufacturer
+        tmp_dict['manufacturer'] = obj.manufacturer.to_dict()
+        tmp_dict.pop('manufacturer_id')
+        # supplier
+        tmp_dict['supplier'] = obj.supplier.to_dict()
+        tmp_dict.pop('supplier_id')
+    return tmp_dict
+
+
+def manufacturer_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    # country
+    tmp_country = None
+    if obj.country:
+        tmp_country = obj.country.to_dict()
+    tmp_dict['country'] = tmp_country
+    tmp_dict.pop('country_id')
+    return tmp_dict
+
+
+def supplier_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    # country
+    tmp_country = None
+    if obj.country:
+        tmp_country = obj.country.to_dict()
+    tmp_dict['country'] = tmp_country
+    tmp_dict.pop('country_id')
+    return tmp_dict
+
+
+def site_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    # country
+    tmp_country = None
+    if obj.country:
+        tmp_country = obj.country.to_dict()
+    tmp_dict['country'] = tmp_country
+    tmp_dict.pop('country_id')
+    if include_related:
+        # manufacturer
+        tmp_dict['manufacturer'] = obj.manufacturer.to_dict()
+        tmp_dict.pop('manufacturer_id')
     return tmp_dict
 
 
