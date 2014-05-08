@@ -93,6 +93,15 @@ class Medicine(db.Model):
             out = " + ".join([component.ingredient.name.capitalize() for component in self.components])
         return out
 
+    @property
+    def procurements(self):
+        out = []
+        products = Product.query.filter(Product.medicine_id == self.medicine_id).all()
+        if products:
+            for product in products:
+                out += product.procurements
+        return out
+
     def calculate_average_price(self):
         sum = 0
         tot = 0
@@ -313,7 +322,7 @@ class Procurement(db.Model):
     __tablename__ = "procurement"
     procurement_id = db.Column(db.Integer, primary_key=True)
     pack_size = db.Column(db.Integer) # Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.
-    price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the purchase was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
+    price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
     price_usd = db.Column(db.Float, nullable=True)
     volume = db.Column(db.Integer) # The number of packages contracted at the specified unit price. Volume is calculated as # of packages * containers in pack', default=1)
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.

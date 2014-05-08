@@ -47,7 +47,7 @@ def medicine_to_dict(obj, include_related=False):
     tmp_dict['URI'] = API_HOST + 'medicine/' + str(obj.medicine_id) + '/'
     # name, as calculated form component names
     tmp_dict['name'] = obj.name
-    # average price, as calculated from purchase info
+    # average price, as calculated from procurement info
     if tmp_dict['average_price']:
         tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
     # dosage form
@@ -78,6 +78,12 @@ def medicine_to_dict(obj, include_related=False):
             product_dict.pop('medicine_id')
             products.append(product_dict)
         tmp_dict['products'] = products
+        # related procurements
+        procurements = []
+        for procurement in obj.procurements:
+            procurement_dict = procurement.to_dict()
+            procurements.append(procurement_dict)
+        tmp_dict['procurements'] = procurements
     return tmp_dict
 
 
@@ -93,7 +99,7 @@ def product_to_dict(obj, include_related=False):
     tmp_dict['manufacturer'] = manufacturer
     tmp_dict.pop('manufacturer_id')
     if include_related:
-        # related purchases
+        # related procurements
         procurements = []
         for procurement in obj.procurements:
             procurement_dict = procurement.to_dict(include_related=True)
@@ -157,7 +163,7 @@ def supplier_to_dict(obj, include_related=False):
     tmp_dict['country'] = tmp_country
     tmp_dict.pop('country_id')
     if include_related:
-        # products related to this supplier, as calculated from purchases
+        # products related to this supplier, as calculated from procurements
         products = []
         for product in obj.products:
             products.append(product.to_dict())
