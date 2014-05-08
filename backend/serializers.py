@@ -23,7 +23,7 @@ class CustomEncoder(json.JSONEncoder):
         return encoded_obj
 
 
-def model_to_dict(obj, include_related=False):
+def model_to_dict(obj, include_related=False, parent_class=None):
     """
     Convert a single model object, or a list of model objects to dicts.
     Handle nested resources recursively.
@@ -41,13 +41,15 @@ def model_to_dict(obj, include_related=False):
             child_or_list = getattr(obj, key)
             if isinstance(child_or_list, db.Model):
                 # this is an only child
-                tmp_dict[key] = model_to_dict(child_or_list)
+                if not type(child_or_list) == parent_class:
+                    tmp_dict[key] = child_or_list.to_dict(include_related, parent_class=type(obj))
             else:
                 # this is a list of children
                 tmp = []
                 if child_or_list:
                     for child in child_or_list:
-                        tmp.append(model_to_dict(child))
+                        if not type(child) == parent_class:
+                            tmp.append(child.to_dict(include_related, parent_class=type(obj)))
                 tmp_dict[key] = tmp
     return tmp_dict
 
