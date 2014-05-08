@@ -113,13 +113,16 @@ for medicine in medicines:
         if tmp_country_name == "Keyna":
             tmp_country_name = "Kenya"
         tmp_country = models.Country.query.filter(models.Country.name==tmp_country_name).first()
+        tmp_manufacturer_name = procurement["manufacturer"]["name"]
+        if tmp_manufacturer_name == "Unknown":
+            tmp_manufacturer_name = None
         manufacturer_obj = models.Manufacturer.query \
-            .filter(models.Manufacturer.name==procurement["manufacturer"]["name"]) \
+            .filter(models.Manufacturer.name==tmp_manufacturer_name) \
             .filter(models.Manufacturer.country==tmp_country) \
             .first()
         if manufacturer_obj is None:
             manufacturer_obj = models.Manufacturer()
-            manufacturer_obj.name = procurement["manufacturer"]["name"]
+            manufacturer_obj.name = tmp_manufacturer_name
             if tmp_country:
                 manufacturer_obj.country = tmp_country
             else:
@@ -149,10 +152,13 @@ for medicine in medicines:
 
         # capture supplier
         if procurement.get("supplier"):
-            supplier_obj = models.Supplier.query.filter(models.Supplier.name==procurement["supplier"]["name"]).first()
+            tmp_name = procurement["supplier"]["name"]
+            if tmp_name == "Unknown":
+                tmp_name = None
+            supplier_obj = models.Supplier.query.filter(models.Supplier.name==tmp_name).first()
             if not supplier_obj:
                 supplier_obj = models.Supplier()
-                supplier_obj.name = procurement["supplier"]["name"]
+                supplier_obj.name = tmp_name
                 db.session.add(supplier_obj)
                 db.session.commit()
         else:
