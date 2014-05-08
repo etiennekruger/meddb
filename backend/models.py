@@ -112,7 +112,7 @@ class Medicine(db.Model):
         return u'%s %s' % (self.name, self.dosage_form)
 
     def to_json(self):
-        return base_serializer.to_json(self)
+        return base_serializer.to_json(self, include_related=True)
 
 
 class Component(db.Model):
