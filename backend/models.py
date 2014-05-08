@@ -148,7 +148,7 @@ class Component(db.Model):
         return u'%s %s' % (self.ingredient.name, self.strength)
 
     def to_dict(self, include_related=False):
-        return serializers.model_to_dict(self)
+        return serializers.component_to_dict(self, include_related)
 
 
 class BenchmarkPrice(db.Model):

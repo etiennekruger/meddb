@@ -87,6 +87,18 @@ def medicine_to_dict(obj, include_related=False):
     return tmp_dict
 
 
+def component_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    # country
+    tmp_ingredient = None
+    if obj.ingredient:
+        tmp_ingredient = obj.ingredient.to_dict()
+    tmp_dict['ingredient'] = tmp_ingredient
+    tmp_dict.pop('ingredient_id')
+    return tmp_dict
+
+
 def product_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
