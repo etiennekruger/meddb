@@ -42,20 +42,20 @@ for medicine in medicines:
     
     medicine_obj = models.Medicine()
 
-    # capture ingredients
-    for ingredient in medicine["ingredients"]:
-        component_obj = models.Component.query.filter(models.Component.name==ingredient["inn"]).first()
-        if component_obj is None:
-            component_obj = models.Component()
-            component_obj.name = ingredient["inn"]
-            db.session.add(component_obj)
+    # capture components
+    for component in medicine["ingredients"]:
+        ingredient_obj = models.Ingredient.query.filter(models.Ingredient.name==component["inn"]).first()
+        if ingredient_obj is None:
+            ingredient_obj = models.Ingredient()
+            ingredient_obj.name = component["inn"]
+            db.session.add(ingredient_obj)
             db.session.commit()
 
-        ingredient_obj = models.Ingredient()
-        ingredient_obj.component = component_obj
-        ingredient_obj.strength = ingredient["strength"]
-        ingredient_obj.medicine = medicine_obj
-        db.session.add(ingredient_obj)
+        component_obj = models.Component()
+        component_obj.ingredient = ingredient_obj
+        component_obj.strength = component["strength"]
+        component_obj.medicine = medicine_obj
+        db.session.add(component_obj)
         db.session.commit()
 
     # capture MSH benchmark price

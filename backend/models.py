@@ -90,8 +90,8 @@ class Medicine(db.Model):
     @property
     def name(self):
         out = None
-        if self.ingredients.count() > 0:
-            out = " + ".join([i.ingredient.name.capitalize() for i in self.ingredients])
+        if self.components.count() > 0:
+            out = " + ".join([i.component.name.capitalize() for i in self.components])
         return out
 
     def calculate_average_price(self):
@@ -115,29 +115,29 @@ class Medicine(db.Model):
         return base_serializer.to_json(self, include_related=True)
 
 
-class Component(db.Model):
+class Ingredient(db.Model):
 
-    __tablename__ = "component"
-    component_id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = "ingredient"
+    ingredient_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
 
     def to_json(self):
         return base_serializer.to_json(self)
 
 
-class Ingredient(db.Model):
+class Component(db.Model):
 
-    __tablename__ = "ingredient"
-    ingredient_id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = "component"
+    component_id = db.Column(db.Integer, primary_key=True)
     strength = db.Column(db.String(16))
 
-    component_id = db.Column(db.Integer, db.ForeignKey('component.component_id'), nullable=True)
-    component = db.relationship('Component')
+    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.ingredient_id'), nullable=True)
+    ingredient = db.relationship('Ingredient')
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
-    medicine = db.relationship('Medicine', backref=backref("ingredients"))
+    medicine = db.relationship('Medicine', backref=backref("components"))
 
     def __unicode__(self):
-        return u'%s %s' % (self.component.name, self.strength)
+        return u'%s %s' % (self.ingredient.name, self.strength)
 
     def to_json(self):
         return base_serializer.to_json(self)
