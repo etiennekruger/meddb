@@ -42,7 +42,8 @@ def medicine_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
     tmp_dict['name'] = obj.name
-    tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
+    if tmp_dict['average_price']:
+        tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
     if include_related:
         # dosage form
         tmp_dict['manufacturer'] = obj.dosage_form.to_dict()
