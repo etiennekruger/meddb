@@ -2,6 +2,7 @@ from backend import logger, app, db
 import models
 import flask
 import json
+import serializers
 
 API_HOST = app.config["API_HOST"]
 
@@ -63,15 +64,10 @@ def medicine(medicine_id=None):
     """
 
     if medicine_id:
-        medicine = models.Medicine.query.filter(models.Medicine.medicine_id==medicine_id).first()
-        if medicine is None:
+        queryset = models.Medicine.query.filter(models.Medicine.medicine_id==medicine_id).first()
+        if queryset is None:
             raise ApiException(404, "Could not find the Medicine that you were looking for.")
-        out = medicine.to_json()
     else:
-        medicines = models.Medicine.query.all()
-        out = "["
-        for medicine in medicines:
-            out += medicine.to_json() + ", "
-        out = out[0:-2]
-        out += "]"
+        queryset = models.Medicine.query.all()
+    out = serializers.queryset_to_json(queryset)
     return send_api_response(out)

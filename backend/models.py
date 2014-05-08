@@ -4,8 +4,7 @@ from sqlalchemy.orm import backref
 import datetime
 import json
 from openexchangerates import OpenExchangeRates
-
-base_serializer = serializers.BaseSerializer()
+import serializers
 
 
 class Source(db.Model):
@@ -19,9 +18,9 @@ class Source(db.Model):
     def __unicode__(self):
         s = u'%s @ %s' % (self.name, self.date)
         return s
-    
-    def to_json(self): 
-        return base_serializer.to_json(self)
+
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Country(db.Model):
@@ -34,8 +33,8 @@ class Country(db.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Currency(db.Model):
@@ -48,8 +47,8 @@ class Currency(db.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Incoterm(db.Model):
@@ -62,8 +61,8 @@ class Incoterm(db.Model):
     def __unicode__(self):
         return u'(%s) %s' % (self.code.upper(), self.description)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class DosageForm(db.Model):
@@ -75,8 +74,8 @@ class DosageForm(db.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Medicine(db.Model):
@@ -111,8 +110,8 @@ class Medicine(db.Model):
     def __unicode__(self):
         return u'%s %s' % (self.name, self.dosage_form)
 
-    def to_json(self):
-        return base_serializer.to_json(self, include_related=True)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Ingredient(db.Model):
@@ -121,8 +120,8 @@ class Ingredient(db.Model):
     ingredient_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Component(db.Model):
@@ -139,8 +138,8 @@ class Component(db.Model):
     def __unicode__(self):
         return u'%s %s' % (self.ingredient.name, self.strength)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class BenchmarkPrice(db.Model):
@@ -159,8 +158,8 @@ class BenchmarkPrice(db.Model):
     def __unicode__(self):
         return u'%s @ %.4f' % (self.medicine, self.price)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Manufacturer(db.Model):
@@ -176,8 +175,8 @@ class Manufacturer(db.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Site(db.Model):
@@ -195,8 +194,8 @@ class Site(db.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.manufacturer.name)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Supplier(db.Model):
@@ -220,8 +219,8 @@ class Supplier(db.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Product(db.Model):
@@ -243,8 +242,8 @@ class Product(db.Model):
             return u'%s - %s (%s)' % (self.name, self.manufacturer, str(self.medicine))
         return u'%s (%s)' % (self.manufacturer, str(self.medicine))
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Container(db.Model):
@@ -258,8 +257,8 @@ class Container(db.Model):
     def __unicode__(self):
         return u'%.7g %s %s' % (self.quantity, self.unit, self.type)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Registration(db.Model):
@@ -286,8 +285,8 @@ class Registration(db.Model):
     def __unicode__(self):
         return u'%s - %s' % (self.number, self.product.name)
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
 
 
 class Procurement(db.Model):
@@ -344,5 +343,5 @@ class Procurement(db.Model):
             return u'%d x %s' % (self.volume, self.product.__unicode__())
         return u'unknown quantity x %s' % (self.product.__unicode__())
 
-    def to_json(self):
-        return base_serializer.to_json(self)
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self, include_related)
