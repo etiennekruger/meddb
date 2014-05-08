@@ -101,6 +101,7 @@ def product_to_dict(obj, include_related=False):
             procurement_dict.pop('manufacturer')
             procurements.append(procurement_dict)
         tmp_dict['procurements'] = procurements
+    # TODO: add list of alternative products
     return tmp_dict
 
 
@@ -150,6 +151,12 @@ def supplier_to_dict(obj, include_related=False):
         tmp_country = obj.country.to_dict()
     tmp_dict['country'] = tmp_country
     tmp_dict.pop('country_id')
+    if include_related:
+        # products related to this supplier, as calculated from purchases
+        products = []
+        for product in obj.products:
+            products.append(product.to_dict())
+        tmp_dict['products'] = products
     return tmp_dict
 
 

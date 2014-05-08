@@ -216,6 +216,15 @@ class Supplier(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
 
+    @property
+    def products(self):
+        out = []
+        if self.procurements:
+            for procurement in self.procurements:
+                if not (procurement.product in out):
+                    out.append(procurement.product)
+        return out
+
     def __unicode__(self):
         return u'%s' % (self.name)
 
@@ -308,9 +317,9 @@ class Procurement(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
-    supplier = db.relationship('Supplier')
+    supplier = db.relationship('Supplier', backref='procurements')
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
-    manufacturer = db.relationship('Manufacturer')
+    manufacturer = db.relationship('Manufacturer', backref='procurements')
     container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
     container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     # source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
