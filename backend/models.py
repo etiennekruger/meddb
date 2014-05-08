@@ -89,8 +89,8 @@ class Medicine(db.Model):
     @property
     def name(self):
         out = None
-        if self.components.count() > 0:
-            out = " + ".join([i.component.name.capitalize() for i in self.components])
+        if len(self.components) > 0:
+            out = " + ".join([component.ingredient.name.capitalize() for component in self.components])
         return out
 
     def calculate_average_price(self):
@@ -111,7 +111,7 @@ class Medicine(db.Model):
         return u'%s %s' % (self.name, self.dosage_form)
 
     def to_dict(self, include_related=False):
-        return serializers.model_to_dict(self, include_related)
+        return serializers.medicine_to_dict(self, include_related)
 
 
 class Ingredient(db.Model):

@@ -52,6 +52,14 @@ def model_to_dict(obj, include_related=False):
     return tmp_dict
 
 
+def medicine_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj, include_related)
+    tmp_dict['name'] = obj.name
+    tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
+    return tmp_dict
+
+
 def queryset_to_json(obj_or_list, include_related=False):
     """
     Convert a single model object, or a list of model objects to dicts, before
