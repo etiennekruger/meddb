@@ -64,6 +64,7 @@ for medicine in medicines:
         benchmark_obj.name = "msh"
         benchmark_obj.year = 2013
         benchmark_obj.price = medicine['mshprice']
+        benchmark_obj.medicine = medicine_obj
         db.session.add(benchmark_obj)
         db.session.commit()
     else:
