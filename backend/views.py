@@ -63,11 +63,13 @@ def medicine(medicine_id=None):
     """
     """
 
+    include_related = False
     if medicine_id:
+        include_related = True
         queryset = models.Medicine.query.filter(models.Medicine.medicine_id==medicine_id).first()
         if queryset is None:
             raise ApiException(404, "Could not find the Medicine that you were looking for.")
     else:
         queryset = models.Medicine.query.all()
-    out = serializers.queryset_to_json(queryset)
+    out = serializers.queryset_to_json(queryset, include_related)
     return send_api_response(out)

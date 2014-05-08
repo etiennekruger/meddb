@@ -1,7 +1,9 @@
 import json
 from datetime import datetime, date
 from backend import db, logger
+from backend import app
 
+API_HOST = app.config["API_HOST"]
 
 class CustomEncoder(json.JSONEncoder):
     """
@@ -41,20 +43,34 @@ def model_to_dict(obj):
 def medicine_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
+    # resource URI
+    tmp_dict['URI'] = API_HOST + 'medicine/' + str(obj.medicine_id) + '/'
+    # name, as calculated form component names
     tmp_dict['name'] = obj.name
+    # average price, as calculated from purchase info
     if tmp_dict['average_price']:
         tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
+    # dosage form
+    dosage_form = None
+    if obj.dosage_form:
+        dosage_form = obj.dosage_form.to_dict()
+    tmp_dict['dosage_form'] = dosage_form
+    tmp_dict.pop('dosage_form_id')
+    # components
+    tmp_components = []
+    for component in obj.components:
+        component_dict = component.to_dict()
+        component_dict.pop('medicine_id')
+        tmp_components.append(component_dict)
+    tmp_dict['components'] = tmp_components
+    # benchmark prices
+    benchmarks = []
+    for benchmark in obj.benchmarks:
+        benchmark_dict = benchmark.to_dict()
+        benchmark_dict.pop('medicine_id')
+        benchmarks.append(benchmark_dict)
+    tmp_dict['benchmarks'] = benchmarks
     if include_related:
-        # dosage form
-        tmp_dict['manufacturer'] = obj.dosage_form.to_dict()
-        tmp_dict.pop('dosage_form_id')
-        # components
-        tmp_components = []
-        for component in obj.components:
-            component_dict = component.to_dict()
-            component_dict.pop('medicine_id')
-            tmp_components.append(component_dict)
-        tmp_dict['components'] = tmp_components
         # related products
         products = []
         for product in obj.products:
@@ -62,26 +78,21 @@ def medicine_to_dict(obj, include_related=False):
             product_dict.pop('medicine_id')
             products.append(product_dict)
         tmp_dict['products'] = products
-        # benchmark prices
-        benchmarks = []
-        for benchmark in obj.benchmarks:
-            benchmark_dict = benchmark.to_dict()
-            benchmark_dict.pop('medicine_id')
-            benchmarks.append(benchmark_dict)
-        tmp_dict['benchmarks'] = benchmarks
     return tmp_dict
 
 
 def product_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
+    # resource URI
+    tmp_dict['URI'] = API_HOST + 'product/' + str(obj.product_id) + '/'
+    # related manufacturer
+    manufacturer = None
+    if obj.manufacturer:
+        manufacturer = obj.manufacturer.to_dict()
+    tmp_dict['manufacturer'] = manufacturer
+    tmp_dict.pop('manufacturer_id')
     if include_related:
-        # related manufacturer
-        manufacturer = None
-        if obj.manufacturer:
-            manufacturer = obj.manufacturer.to_dict()
-        tmp_dict['manufacturer'] = manufacturer
-        tmp_dict.pop('manufacturer_id')
         # related purchases
         procurements = []
         for procurement in obj.procurements:
@@ -96,6 +107,8 @@ def product_to_dict(obj, include_related=False):
 def procurement_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
+    # resource URI
+    tmp_dict['URI'] = API_HOST + 'procurement/' + str(obj.procurement_id) + '/'
     # container
     tmp_dict['container'] = obj.container.to_dict()
     tmp_dict.pop('container_id')
@@ -115,6 +128,8 @@ def procurement_to_dict(obj, include_related=False):
 def manufacturer_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
+    # resource URI
+    tmp_dict['URI'] = API_HOST + 'manufacturer/' + str(obj.manufacturer_id) + '/'
     # country
     tmp_country = None
     if obj.country:
@@ -127,6 +142,8 @@ def manufacturer_to_dict(obj, include_related=False):
 def supplier_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
+    # resource URI
+    tmp_dict['URI'] = API_HOST + 'supplier/' + str(obj.supplier_id) + '/'
     # country
     tmp_country = None
     if obj.country:
