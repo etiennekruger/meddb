@@ -74,7 +74,7 @@ def medicine_to_dict(obj, include_related=False):
         # related products
         products = []
         for product in obj.products:
-            product_dict = product.to_dict(include_related=True)
+            product_dict = product.to_dict()
             product_dict.pop('medicine_id')
             products.append(product_dict)
         tmp_dict['products'] = products
@@ -101,7 +101,12 @@ def product_to_dict(obj, include_related=False):
             procurement_dict.pop('manufacturer')
             procurements.append(procurement_dict)
         tmp_dict['procurements'] = procurements
-    # TODO: add list of alternative products
+        # alternative products
+        alternative_products = []
+        for product in obj.alternative_products:
+            product_dict = product.to_dict()
+            alternative_products.append(product_dict)
+        tmp_dict['alternative_products'] = alternative_products
     return tmp_dict
 
 

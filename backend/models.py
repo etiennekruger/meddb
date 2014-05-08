@@ -246,6 +246,16 @@ class Product(db.Model):
     site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
     site = db.relationship('Site')
 
+    @property
+    def alternative_products(self):
+        out = []
+        products = Product.query.filter(Product.medicine_id == self.medicine_id).all()
+        if len(products) > 1:
+            for product in products:
+                if not product == self:
+                    out.append(product)
+        return out
+
     def __unicode__(self):
         if self.name:
             return u'%s - %s (%s)' % (self.name, self.manufacturer, str(self.medicine))
