@@ -147,10 +147,16 @@ def procurement_to_dict(obj, include_related=False):
     tmp_dict.pop('source_id')
     if include_related:
         # manufacturer
-        tmp_dict['manufacturer'] = obj.manufacturer.to_dict()
+        tmp_manufacturer = None
+        if obj.manufacturer:
+            tmp_manufacturer = obj.manufacturer.to_dict()
+        tmp_dict['manufacturer'] = tmp_manufacturer
         tmp_dict.pop('manufacturer_id')
         # supplier
-        tmp_dict['supplier'] = obj.supplier.to_dict()
+        tmp_supplier = None
+        if obj.supplier:
+            tmp_supplier = obj.supplier.to_dict()
+        tmp_dict['supplier'] = tmp_supplier
         tmp_dict.pop('supplier_id')
     return tmp_dict
 

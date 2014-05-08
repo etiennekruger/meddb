@@ -121,12 +121,13 @@ for medicine in medicines:
             .filter(models.Manufacturer.country==tmp_country) \
             .first()
         if manufacturer_obj is None:
-            manufacturer_obj = models.Manufacturer()
-            manufacturer_obj.name = tmp_manufacturer_name
-            if tmp_country:
-                manufacturer_obj.country = tmp_country
-            else:
-                print "Unknown country: " + tmp_country_name
+            if tmp_manufacturer_name or tmp_country:
+                manufacturer_obj = models.Manufacturer()
+                manufacturer_obj.name = tmp_manufacturer_name
+                if tmp_country:
+                    manufacturer_obj.country = tmp_country
+                else:
+                    print "Unknown country: " + tmp_country_name
 
         # capture site
         site_obj = models.Site.query.filter(models.Site.name==procurement["product"]["site"]).first()
@@ -137,13 +138,16 @@ for medicine in medicines:
             db.session.commit()
 
         # capture product
-        product_obj = models.Product.query.filter(models.Product.name==procurement["product"]["name"]) \
+        tmp_name = procurement["product"]["name"]
+        if tmp_name == "":
+            tmp_name = None
+        product_obj = models.Product.query.filter(models.Product.name==tmp_name) \
             .filter(models.Product.medicine==medicine_obj) \
             .filter(models.Product.manufacturer==manufacturer_obj) \
             .first()
         if product_obj is None:
             product_obj = models.Product()
-            product_obj.name = procurement["product"]["name"]
+            product_obj.name = tmp_name
             product_obj.medicine = medicine_obj
             product_obj.manufacturer = manufacturer_obj
             product_obj.is_generic = bool(procurement["product"]["generic"])
@@ -151,6 +155,7 @@ for medicine in medicines:
             db.session.commit()
 
         # capture supplier
+        supplier_obj = None
         if procurement.get("supplier"):
             tmp_name = procurement["supplier"]["name"]
             if tmp_name == "Unknown":
@@ -161,8 +166,6 @@ for medicine in medicines:
                 supplier_obj.name = tmp_name
                 db.session.add(supplier_obj)
                 db.session.commit()
-        else:
-            print "Procurement sans supplier"
 
         # capture container
         container_obj = models.Container.query.filter(models.Container.type==procurement["container"]["type"]) \
