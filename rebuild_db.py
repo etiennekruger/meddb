@@ -53,7 +53,10 @@ for medicine in medicines:
 
         component_obj = models.Component()
         component_obj.ingredient = ingredient_obj
-        component_obj.strength = component["strength"]
+        tmp_strength = component["strength"]
+        if tmp_strength == "n/a":
+            tmp_strength = None
+        component_obj.strength = tmp_strength
         component_obj.medicine = medicine_obj
         db.session.add(component_obj)
         db.session.commit()
