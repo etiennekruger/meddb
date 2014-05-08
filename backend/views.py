@@ -44,32 +44,46 @@ def send_api_response(data_json):
     return response
 
 
+api_resources = {
+    'medicine': (models.Medicine, models.Medicine.medicine_id),
+    'product': (models.Product, models.Product.product_id),
+    'procurement': (models.Procurement, models.Procurement.procurement_id),
+    'manufacturer': (models.Manufacturer, models.Manufacturer.manufacturer_id),
+    'supplier': (models.Supplier, models.Supplier.supplier_id),
+}
+
+
 @app.route('/')
 def index():
     """
     Landing page. Return links to available endpoints.
     """
 
-    endpoints = {
-        "medicines": API_HOST + "medicine/",
-        "medicines/<id>/": API_HOST + "medicine/1/"
-    }
+    endpoints = {}
+    for resource in api_resources.keys():
+        endpoints[resource] = API_HOST + resource + "/"
     return send_api_response(json.dumps(endpoints))
 
 
-@app.route('/medicine/')
-@app.route('/medicine/<int:medicine_id>/')
-def medicine(medicine_id=None):
+@app.route('/<string:resource>/')
+@app.route('/<string:resource>/<int:resource_id>/')
+def resource(resource, resource_id=None):
     """
+    Generic endpoint for resources. If an ID is specified, a single record is returned,
+    otherwise a list of records is returned.
     """
 
+    if not api_resources.get(resource):
+        raise ApiException(400, "The specified resource type does not exist.")
+    model = api_resources[resource][0]
+    model_id = api_resources[resource][1]
     include_related = False
-    if medicine_id:
+    if resource_id:
         include_related = True
-        queryset = models.Medicine.query.filter(models.Medicine.medicine_id==medicine_id).first()
+        queryset = model.query.filter(model_id==resource_id).first()
         if queryset is None:
-            raise ApiException(404, "Could not find the Medicine that you were looking for.")
+            raise ApiException(404, "Could not find the " + resource.upper() + " that you were looking for.")
     else:
-        queryset = models.Medicine.query.all()
+        queryset = model.query.all()
     out = serializers.queryset_to_json(queryset, include_related)
     return send_api_response(out)
