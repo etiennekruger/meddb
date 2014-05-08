@@ -1,7 +1,7 @@
 import backend.models as models
 from backend import db
 import json
-from datetime import datetime
+from datetime import date, datetime
 
 db.drop_all()
 db.create_all()
@@ -39,7 +39,7 @@ medicines = json.loads(f.read())
 f.close()
 
 for medicine in medicines:
-    
+
     medicine_obj = models.Medicine()
 
     # capture components
@@ -110,9 +110,9 @@ for medicine in medicines:
         if tmp_country_name == "Keyna":
             tmp_country_name = "Kenya"
         tmp_country = models.Country.query.filter(models.Country.name==tmp_country_name).first()
-        manufacturer_obj = models.Manufacturer.query\
-            .filter(models.Manufacturer.name==procurement["manufacturer"]["name"])\
-            .filter(models.Manufacturer.country==tmp_country)\
+        manufacturer_obj = models.Manufacturer.query \
+            .filter(models.Manufacturer.name==procurement["manufacturer"]["name"]) \
+            .filter(models.Manufacturer.country==tmp_country) \
             .first()
         if manufacturer_obj is None:
             manufacturer_obj = models.Manufacturer()
@@ -131,9 +131,9 @@ for medicine in medicines:
             db.session.commit()
 
         # capture product
-        product_obj = models.Product.query.filter(models.Product.name==procurement["product"]["name"])\
-            .filter(models.Product.medicine==medicine_obj)\
-            .filter(models.Product.manufacturer==manufacturer_obj)\
+        product_obj = models.Product.query.filter(models.Product.name==procurement["product"]["name"]) \
+            .filter(models.Product.medicine==medicine_obj) \
+            .filter(models.Product.manufacturer==manufacturer_obj) \
             .first()
         if product_obj is None:
             product_obj = models.Product()
@@ -156,9 +156,9 @@ for medicine in medicines:
             print "Procurement sans supplier"
 
         # capture container
-        container_obj = models.Container.query.filter(models.Container.type==procurement["container"]["type"])\
-            .filter(models.Container.quantity==procurement["container"]["quantity"])\
-            .filter(models.Container.unit==procurement["container"]["unit"])\
+        container_obj = models.Container.query.filter(models.Container.type==procurement["container"]["type"]) \
+            .filter(models.Container.quantity==procurement["container"]["quantity"]) \
+            .filter(models.Container.unit==procurement["container"]["unit"]) \
             .first()
         if container_obj is None:
             container_obj = models.Container()
@@ -167,8 +167,31 @@ for medicine in medicines:
             container_obj.unit = procurement["container"]["unit"]
             db.session.add(container_obj)
             db.session.commit()
-        procurement_obj.container = container_obj
 
+        # capture source
+        if procurement["source"]:
+            tmp_name = procurement["source"]["name"].strip()
+            if tmp_name == "":
+                tmp_name = None
+            tmp_url = procurement["source"]["url"].strip()
+            if tmp_url == "":
+                tmp_url = None
+            tmp_date = procurement["source"]["date"].strip()
+            if tmp_date:
+                tmp_date = datetime.strptime(tmp_date, "%Y-%m-%d").date()
+            source_obj = models.Source.query.filter(models.Source.name==tmp_name) \
+                .filter(models.Source.date==tmp_date)\
+                .filter(models.Source.url==tmp_url).first()
+            if not source_obj:
+                source_obj = models.Source()
+                source_obj.name = tmp_name
+                source_obj.date = tmp_date
+                source_obj.url = tmp_url
+                db.session.add(source_obj)
+                db.session.commit()
+
+        procurement_obj.source = source_obj
+        procurement_obj.container = container_obj
         procurement_obj.country = country_obj
         procurement_obj.supplier = supplier_obj
         procurement_obj.manufacturer = manufacturer_obj

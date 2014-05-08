@@ -139,6 +139,12 @@ def procurement_to_dict(obj, include_related=False):
     # country
     tmp_dict['country'] = obj.country.to_dict()
     tmp_dict.pop('country_id')
+    #source
+    tmp_source = None
+    if obj.source:
+        tmp_source = obj.source.to_dict()
+    tmp_dict['source'] = tmp_source
+    tmp_dict.pop('source_id')
     if include_related:
         # manufacturer
         tmp_dict['manufacturer'] = obj.manufacturer.to_dict()
