@@ -115,6 +115,9 @@ def product_to_dict(obj, include_related=False):
     for registration in obj.registrations:
         tmp_dict['registrations'].append(registration.to_dict())
     if include_related:
+        # medicine
+        tmp_dict['medicine'] = obj.medicine.to_dict()
+        tmp_dict.pop('medicine_id')
         # related procurements
         procurements = []
         for procurement in obj.procurements:
