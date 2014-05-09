@@ -5,6 +5,60 @@ import datetime
 from openexchangerates import OpenExchangeRates
 
 
+class User(db.Model):
+    user_id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(120), unique=True)
+    password = db.Column(db.String(64))
+    is_active = db.Column(db.Boolean, default=False)
+
+    def is_active(self):
+        return self.is_active
+
+    def is_authenticated(self):
+        return True
+
+    def get_id(self):
+        return unicode(self.user_id)
+
+    def __repr__(self):
+        return self.email
+
+
+class EventType(db.Model):
+
+    __tablename__ = "event_type"
+    event_type_id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String, nullable=False)
+
+    def __unicode__(self):
+        s = unicode(self.description)
+        return s
+
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self)
+
+
+class Event(db.Model):
+
+    __tablename__ = "event"
+    event_id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.DateTime, default=datetime.datetime.now)
+
+    event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.event_type_id'), nullable=True)
+    event_type = db.relationship('EventType')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    user = db.relationship('User')
+    procurement_id = db.Column(db.Integer, db.ForeignKey('procurement.procurement_id'), nullable=True)
+    procurement = db.relationship('Procurement')
+
+    def __unicode__(self):
+        s = unicode(self.user.email + ' - ' + self.event_type.description)
+        return s
+
+    def to_dict(self, include_related=False):
+        return serializers.model_to_dict(self)
+
+
 class Source(db.Model):
 
     __tablename__ = "source"

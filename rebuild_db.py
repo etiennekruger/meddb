@@ -6,6 +6,24 @@ from datetime import date, datetime
 db.drop_all()
 db.create_all()
 
+# populate event types
+event_types = [
+    "Activate User account",
+    "De-activate User account",
+    "Set user role",
+    "Add Procurement record",
+    "Update Procurement record",
+    "Delete Procurement record",
+    "Approve Procurement record",
+    "Compare products",
+    "Login",
+    "Logout",
+]
+for event_type in event_types:
+    event_type_obj = models.EventType()
+    event_type_obj.description = event_type
+    db.session.add(event_type_obj)
+
 # populate items from 3rd party datasets:
 # Country
 with open("data/countries.json", "r") as f:
