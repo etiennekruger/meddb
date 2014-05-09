@@ -27,6 +27,7 @@ class Country(db.Model):
     country_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     code = db.Column(db.String(3))
+    code_short = db.Column(db.String(2))
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())

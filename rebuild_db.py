@@ -14,6 +14,7 @@ with open("data/countries.json", "r") as f:
         country_obj = models.Country()
         country_obj.name = country["name"]
         country_obj.code = country["alpha-3"]
+        country_obj.code_short = country["alpha-2"]
         db.session.add(country_obj)
 # Currency
 with open("data/currencies.json", "r") as f:
