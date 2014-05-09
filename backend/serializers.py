@@ -5,6 +5,7 @@ from backend import app
 
 API_HOST = app.config["API_HOST"]
 
+
 class CustomEncoder(json.JSONEncoder):
     """
     Define encoding rules for fields that are not readily serializable.

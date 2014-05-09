@@ -1,8 +1,10 @@
 from backend import logger, app, db
 import models
+import events
 import flask
 import json
 import serializers
+from flask.ext import login
 
 API_HOST = app.config["API_HOST"]
 
