@@ -8,3 +8,5 @@ LOGGER_NAME = "med-db-logger"  # make sure this is not the same as the name of t
 DEBUG = True
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///instance/med-db.db'
+
+RESULTS_PER_PAGE = 50

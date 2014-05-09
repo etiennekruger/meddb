@@ -75,15 +75,31 @@ def resource(resource, resource_id=None):
 
     if not api_resources.get(resource):
         raise ApiException(400, "The specified resource type does not exist.")
+
+
+
     model = api_resources[resource][0]
     model_id = api_resources[resource][1]
     include_related = False
+    count, next = None, None
     if resource_id:
         include_related = True
         queryset = model.query.filter(model_id==resource_id).first()
         if queryset is None:
             raise ApiException(404, "Could not find the " + resource.upper() + " that you were looking for.")
     else:
-        queryset = model.query.all()
-    out = serializers.queryset_to_json(queryset, include_related)
+        # validate paging parameters
+        page = 0
+        per_page = app.config['RESULTS_PER_PAGE']
+        if flask.request.args.get('page'):
+            try:
+                page = int(flask.request.args.get('page'))
+            except ValueError:
+                raise ApiException(422, "Please specify a valid 'page'.")
+        queryset = model.query.limit(per_page).offset(page*per_page).all()
+        count = model.query.count()
+        next = None
+        if count > (page + 1) * per_page:
+            next = flask.request.url_root + resource + "/?page=" + str(page+1)
+    out = serializers.queryset_to_json(queryset, count=count, next=next, include_related=include_related)
     return send_api_response(out)

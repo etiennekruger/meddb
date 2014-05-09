@@ -10,4 +10,4 @@ to ensure that git doesn't add any private information to the repo
 (see http://blog.pagebakers.nl/2009/01/29/git-ignoring-changes-in-tracked-files/).
 """
 
-SECRET_KEY = ""
+OPEN_EXCHANGE_RATES_APP_ID = ""

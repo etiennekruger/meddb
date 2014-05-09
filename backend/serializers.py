@@ -211,7 +211,7 @@ def site_to_dict(obj, include_related=False):
     return tmp_dict
 
 
-def queryset_to_json(obj_or_list, include_related=False):
+def queryset_to_json(obj_or_list, count=None, next=None, include_related=False):
     """
     Convert a single model object, or a list of model objects to dicts, before
     serializing the results as a json string.
@@ -222,7 +222,13 @@ def queryset_to_json(obj_or_list, include_related=False):
         out = obj_or_list.to_dict(include_related=True)
     else:
         # this is a list of objects
-        out = []
+        results = []
         for obj in obj_or_list:
-            out.append(obj.to_dict(include_related=False))
+            results.append(obj.to_dict(include_related=False))
+        out = {
+            'count': count,
+            'next': next,
+            'results': results
+            }
+
     return json.dumps(out, cls=CustomEncoder, indent=4)
