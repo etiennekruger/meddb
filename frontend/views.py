@@ -1,10 +1,18 @@
 from flask import render_template
 from frontend import app
 import requests
-import dateutil.parser
 import operator
+import dateutil
 
-api_host = app.config['API_HOST']
+API_HOST = app.config['API_HOST']
+
+
+@app.template_filter('format_date')
+def jinja2_filter_format_date(date_str):
+    date = dateutil.parser.parse(date_str)
+    native = date.replace(tzinfo=None)
+    format='%b %Y'
+    return native.strftime(format)
 
 
 def sort_list(unsorted_list, key):
@@ -23,13 +31,13 @@ def landing():
 @app.route('/product/<product_id>/')
 def product(product_id):
 
-    response = requests.get(api_host + 'product/' + str(product_id) + "/")
+    response = requests.get(API_HOST + 'product/' + str(product_id) + "/")
     product = response.json()
     return render_template('product.html', product=product, active_nav_button="medicines")
 
 @app.route('/supplier/<supplier_id>/')
 def supplier(supplier_id):
 
-    response = requests.get(api_host + 'supplier/' + str(supplier_id) + "/")
+    response = requests.get(API_HOST + 'supplier/' + str(supplier_id) + "/")
     supplier = response.json()
     return render_template('supplier.html', supplier=supplier, active_nav_button="suppliers")

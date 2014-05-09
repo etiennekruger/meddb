@@ -3,7 +3,7 @@ from logging.handlers import RotatingFileHandler
 import sys, os
 from flask import Flask
 
-app = Flask('med_db_frontend', instance_relative_config=True)
+app = Flask('frontend', instance_relative_config=True)
 app.config.from_pyfile('config.py', silent=True)
 app.config.from_pyfile('config_private.py', silent=True)
 

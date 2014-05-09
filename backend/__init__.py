@@ -4,7 +4,7 @@ import sys, os
 from flask import Flask
 from flask.ext.sqlalchemy import SQLAlchemy
 
-app = Flask('med_db_backend', instance_relative_config=True)
+app = Flask('med-db_backend', instance_relative_config=True)
 app.config.from_pyfile('config.py', silent=True)
 app.config.from_pyfile('config_private.py', silent=True)
 
