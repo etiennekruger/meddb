@@ -291,25 +291,20 @@ class Registration(db.Model):
 
     __tablename__ = "registration"
     registration_id = db.Column(db.Integer, primary_key=True)
-    number = db.Column(db.String(32))
-    status = db.Column(db.Boolean, default=True)
-    application_date = db.Column(db.Date, nullable=True)
+    registration_number = db.Column(db.String(32))
+    application_year = db.Column(db.Integer, nullable=True)
     registration_date = db.Column(db.Date, nullable=True)
-    expiration_date = db.Column(db.Date, nullable=True)
+    expired = db.Column(db.Boolean, default=False)
 
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
-    product = db.relationship('Product')
+    product = db.relationship('Product', backref='registrations')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
-    site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
-    site = db.relationship('Site')
-    supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
-    supplier = db.relationship('Supplier')
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
 
     def __unicode__(self):
-        return u'%s - %s' % (self.number, self.product.name)
+        return u'%s - %s (%s)' % (self.number, self.product.name, self.country.code)
 
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)

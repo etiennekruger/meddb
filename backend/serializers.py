@@ -110,6 +110,9 @@ def product_to_dict(obj, include_related=False):
         manufacturer = obj.manufacturer.to_dict()
     tmp_dict['manufacturer'] = manufacturer
     tmp_dict.pop('manufacturer_id')
+    tmp_dict['registrations'] = []
+    for registration in obj.registrations:
+        tmp_dict['registrations'].append(registration.to_dict())
     if include_related:
         # related procurements
         procurements = []
