@@ -2,6 +2,29 @@ body{
 
 }
 
+#jumbo{
+    background-image: url('/static/patterns/cream_pixels.png');
+    margin-top: -20px;
+}
+
+#search-banner{
+    padding-top: 80px;
+    padding-bottom: 100px;
+    padding-left: 200px;
+    padding-right: 200px;
+    border-bottom: solid #e7e7e7 1px;
+    margin-bottom: 20px;
+}
+
+#search-caption{
+    margin-top: 15px;
+}
+
+#stats{
+    border-bottom: solid #e7e7e7 1px;
+    margin-bottom: 20px;
+}
+
 #footer{
     height: 100px;
 }
@@ -32,3 +55,4 @@ tr.clickable{
 tr.clickable:hover td{
     background-color: #eee!important;
 }
+

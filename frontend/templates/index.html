@@ -1,18 +1,43 @@
 {% extends "base.html" %}
+{% block search %}
+{% endblock search %}
+
+{% block page_header %}
+    <div id="jumbo">
+        <div id="search-banner">
+
+            <h1>Search for a medicine</h1>
+
+            <form class="form" role="search">
+                <div class="input-group">
+                    <input id="search-box" autocomplete="off" data-provide="typeahead" type="text" class="form-control" placeholder="e.g. Amitryptiline">
+                        <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button">Search</button>
+                        </span>
+                </div>
+            </form>
+            <p id="search-caption">
+                <small>
+                    This database will provide you with up to date information on comparative medicine prices and properties (including dosage form and strength) as well as product, supplier and manufacturer information.
+                </small>
+            </p>
+        </div>
+    </div>
+{% endblock %}
 
 {% block page %}
-<div class="row">
-    <div class="col-lg-8">
-        <h1>SADC Medicine Prices Database</h1>
-        <p>
-            This database will provide you with up to date information on comparative medicine prices and properties (including dosage form and strength) as well as product, supplier and manufacturer information.
-        </p>
-        <p>
-            This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics ("SARPAM").
-        </p>
+    <div id="stats" class="row">
+        <div class="col-sm-12">
+            <p>Space for stats on the content in the index.</p>
+        </div>
     </div>
-    <div class="col-lg-4">
-        <img class="img-thumbnail" src="/static/images/medicine.jpg">
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h2 class="text-muted">Space for notifications</h2>
+        </div>
+        <div class="col-sm-4">
+            <h2 class="text-muted">Space for history</h2>
+        </div>
     </div>
-</div>
 {% endblock %}
