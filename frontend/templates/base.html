@@ -77,6 +77,10 @@
                     }
                     process(products);
                 },'json');
+            },
+            updater: function (item) {
+                window.location = 'product/' + map[item].product_id.toString() + '/';
+                return item;
             }
         });
         $("#search-box").focus()
