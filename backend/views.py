@@ -78,8 +78,6 @@ def resource(resource, resource_id=None):
     if not api_resources.get(resource):
         raise ApiException(400, "The specified resource type does not exist.")
 
-
-
     model = api_resources[resource][0]
     model_id = api_resources[resource][1]
     include_related = False
@@ -105,3 +103,14 @@ def resource(resource, resource_id=None):
             next = flask.request.url_root + resource + "/?page=" + str(page+1)
     out = serializers.queryset_to_json(queryset, count=count, next=next, include_related=include_related)
     return send_api_response(out)
+
+
+@app.route('/autocomplete/<query>/')
+def autocomplete(query):
+    """
+    Return only the name and product_id of each product that matches the given query.
+    """
+
+    out = db.session.query(models.Product.name, models.Product.product_id)\
+        .filter(models.Product.name.contains(query)).all()
+    return send_api_response(json.dumps(out))

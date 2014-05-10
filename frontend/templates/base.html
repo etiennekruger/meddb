@@ -66,20 +66,19 @@
             source:function(query, process){
                 products = [];
                 map = {};
-                $.get('http://localhost:5001/product/', function(data){
-                    console.log(data)
-                    for (var i = 0; i<data.results.length; i++)
+                $.get('http://localhost:5001/autocomplete/' + query + '/', function(data){
+                    for (var i = 0; i<data.length; i++)
                     {
-                        var key = data.results[i].name
+                        var key = data[i][0]
                         if (key)
                             products.push(key)
-                        map[key] = data.results[i]
+                        map[key] = data[i][1]
                     }
                     process(products);
                 },'json');
             },
             updater: function (item) {
-                window.location = 'product/' + map[item].product_id.toString() + '/';
+                window.location = '/product/' + map[item].toString() + '/';
                 return item;
             },
             matcher: function (item) {
