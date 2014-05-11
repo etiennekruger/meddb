@@ -26,7 +26,41 @@ def sort_list(unsorted_list, key):
 @app.route('/')
 def landing():
 
-    return render_template('index.html', active_nav_button="home")
+    top_sources = [
+        {"name": "Zambia", "contribution_count": 154},
+        {"name": "South Africa", "contribution_count": 98},
+        {"name": "Botswana", "contribution_count": 54},
+        {"name": "Malawi", "contribution_count": 34},
+        {"name": "Seychelles", "contribution_count": 20}
+    ]
+
+    recent_products = [
+        {"name": "Herpex-Acyclovir 200mg", "id": 1},
+        {"name": "Lovire", "id": 3},
+        {"name": "Benkil 400", "id": 8}
+    ]
+
+    recent_events = [
+        {"user": "adi eyal", "description": "Added purchase information.", "date": "2014-03-30"},
+        {"user": "pjvr", "description": "Added purchase information.", "date": "2014-03-10"},
+        {"user": "someone else", "description": "Added purchase information.", "date": "2014-02-15"},
+        {"user": "adi eyal", "description": "Added purchase information.", "date": "2014-03-30"},
+        {"user": "pjvr", "description": "Added purchase information.", "date": "2014-03-10"},
+        {"user": "someone else", "description": "Added purchase information.", "date": "2014-02-15"}
+    ]
+
+    count_products = 50
+    count_transactions = 450
+
+    return render_template(
+        'index.html',
+        active_nav_button="home",
+        top_sources=top_sources,
+        count_products=count_products,
+        count_transactions=count_transactions,
+        recent_products=recent_products,
+        recent_events=recent_events
+    )
 
 @app.route('/product/<product_id>/')
 def product(product_id):

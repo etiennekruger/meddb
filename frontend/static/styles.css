@@ -2,14 +2,17 @@ body{
 
 }
 
+#page-container{
+}
+
 #jumbo{
-    background-image: url('/static/patterns/cream_pixels.png');
+    background-image: url('/static/patterns/connect.png');
     margin-top: -20px;
 }
 
 #search-banner{
     padding-top: 80px;
-    padding-bottom: 100px;
+    padding-bottom: 120px;
     padding-left: 200px;
     padding-right: 200px;
     border-bottom: solid #e7e7e7 1px;
@@ -26,7 +29,12 @@ body{
 }
 
 #footer{
-    height: 100px;
+    height: 80px;
+    width: 100%;
+    padding-top: 20px;
+    margin-top: 20px;
+    background-color: #f8f8f8;
+    border-top: solid #e7e7e7 1px;
 }
 
 .tiny-logo{

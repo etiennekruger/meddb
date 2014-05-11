@@ -9,7 +9,7 @@
             <h1>Search for a medicine</h1>
 
             <form class="form" role="search">
-                <div class="input-group">
+                <div class="input-group input-group-lg">
                     <input id="search-box" autocomplete="off" data-provide="typeahead" type="text" class="form-control" placeholder="e.g. Amitryptiline">
                         <span class="input-group-btn">
                         <button class="btn btn-primary" type="button">Search</button>
@@ -17,27 +17,40 @@
                 </div>
             </form>
             <p id="search-caption">
-                <small>
-                    This database will provide you with up to date information on comparative medicine prices and properties (including dosage form and strength) as well as product, supplier and manufacturer information.
-                </small>
+                {% if recent_products %}
+                    Recent:
+                    {% for product in recent_products %}
+                        <a href="/product/{{ product.id }}/">{{ product.name }}</a>{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
             </p>
         </div>
     </div>
 {% endblock %}
 
 {% block page %}
-    <div id="stats" class="row">
-        <div class="col-sm-12">
-            <p>Space for stats on the content in the index.</p>
-        </div>
-    </div>
-
     <div class="row">
-        <div class="col-sm-8">
-            <h2 class="text-muted">Space for notifications</h2>
+        <div class="col-md-8">
+            <h3>Recent updates</h3>
+            {% for event in recent_events %}
+                <p><span class="badge">{{ event.user }}</span> - {{ event.description }} <span class="pull-right">{{ event.date }}</span></p>
+            {% endfor %}
+            {#            <h2>Welcome to the Medicine Prices Database</h2>#}
+            {#            <p>#}
+            {#                This database will provide you with up to date information on comparative medicine prices and properties (including dosage form and strength) as well as product, supplier and manufacturer information.#}
+            {#            </p>#}
         </div>
-        <div class="col-sm-4">
-            <h2 class="text-muted">Space for history</h2>
+        <div class="col-md-4">
+            <div class="well well-sm">
+                <h4>Database overview (past year)</h4>
+                <p>Products tracked: <span class="badge pull-right">{{ count_products }}</span></p>
+                <p>Transactions logged: <span class="badge pull-right">{{ count_transactions }}</span></p>
+
+                <h4>Top information contributors</h4>
+                {% for country in top_sources %}
+                    <p>{{ country.name }} <span class="badge pull-right">{{ country.contribution_count }}</span></p>
+                {% endfor %}
+            </div>
         </div>
     </div>
 {% endblock %}
