@@ -10,6 +10,14 @@ body{
     margin-top: -20px;
 }
 
+#message-container{
+    padding-top: 15px;
+}
+
+.flashed_msg{
+    background-image: url('/static/patterns/connect.png');
+}
+
 #search-banner{
     padding-top: 80px;
     padding-bottom: 120px;

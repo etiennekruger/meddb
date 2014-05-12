@@ -4,10 +4,9 @@
 
 {% block page_header %}
     <div id="jumbo">
+        {{ super() }}
         <div id="search-banner">
-
             <h1>Search for a medicine</h1>
-
             <form class="form" role="search">
                 <div class="input-group input-group-lg">
                     <input id="search-box" autocomplete="off" data-provide="typeahead" type="text" class="form-control" placeholder="e.g. Amitryptiline">

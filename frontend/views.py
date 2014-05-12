@@ -1,8 +1,9 @@
-from flask import render_template
+from flask import render_template, flash
 from frontend import app
 import requests
 import operator
 import dateutil
+import datetime
 
 API_HOST = app.config['API_HOST']
 
@@ -51,6 +52,10 @@ def landing():
 
     count_products = 50
     count_transactions = 450
+
+    flash("it is now: " + str(datetime.datetime.now()), "success")
+    flash("it is still: " + str(datetime.datetime.now()), "info")
+    flash("it is even still: " + str(datetime.datetime.now()), "warning")
 
     return render_template(
         'index.html',
