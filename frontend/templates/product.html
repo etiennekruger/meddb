@@ -4,8 +4,23 @@
     <div class="row">
         <div class="col-lg-12">
 
+            {% if product.average_price %}
+                <div class="pull-right">
+                    <h1 class="product_price">
+                        <span class="label label-info">${{ product.average_price }}*</span>
+                    </h1>
+                    <small>*Average price (in USD) per {{ product.medicine.dosage_form.name }}</small>
+                </div>
+            {% endif %}
             <h1>
-                {{ macros.render_product(product) }}
+                <strong>
+                    {% if product.name %}
+                        {{ product.name }}
+                    {% else %}
+                        {% if product.medicine.name %}{{ product.medicine.name }} {% endif %}
+                        <nobr><span class="text-muted"><small>(no name provided)</small></span></nobr>
+                    {% endif %}
+                </strong>
                 <small>
                     {% if product.generic %}
                         Generic

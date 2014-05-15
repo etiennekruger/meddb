@@ -29,17 +29,6 @@
     {% endfor %}
 {%- endmacro %}
 
-{% macro render_product(product) -%}
-    <strong>
-        {% if product.name %}
-            {{ product.name }}
-        {% else %}
-            {% if product.medicine and product.medicine.name %}{{ product.medicine.name }} {% endif %}
-            <nobr><span class="text-muted"><small>(no name provided)</small></span></nobr>
-        {% endif %}
-    </strong>
-{%- endmacro %}
-
 {% macro render_supplier(supplier) -%}
     <strong>{{ supplier.name }}</strong>
 {%- endmacro %}
