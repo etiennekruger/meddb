@@ -48,9 +48,6 @@ def medicine_to_dict(obj, include_related=False):
     tmp_dict['URI'] = API_HOST + 'medicine/' + str(obj.medicine_id) + '/'
     # name, as calculated form component names
     tmp_dict['name'] = obj.name
-    # average price, as calculated from procurement info
-    if tmp_dict['average_price']:
-        tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
     # dosage form
     dosage_form = None
     if obj.dosage_form:

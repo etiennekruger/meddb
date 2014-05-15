@@ -135,7 +135,6 @@ class Medicine(db.Model):
 
     __tablename__ = "medicine"
     medicine_id = db.Column(db.Integer, primary_key=True)
-    average_price = db.Column(db.Float, nullable=True)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm')
 
@@ -154,20 +153,6 @@ class Medicine(db.Model):
             for product in products:
                 out += product.procurements
         return out
-
-    def calculate_average_price(self):
-        sum = 0
-        tot = 0
-        products = Product.query.filter(Product.medicine_id == self.medicine_id).all()
-        for product in products:
-            procurements = Procurement.query.filter(Product.product_id == product.product_id).all()
-            for p in procurements:
-                if p.price_usd and p.volume and p.container.quantity:
-                    sum += p.price_usd * p.volume
-                    tot += p.container.quantity * p.volume
-        if tot > 0:
-            self.average_price = sum/tot
-        return
 
     def __unicode__(self):
         return u'%s %s' % (self.name, self.dosage_form)

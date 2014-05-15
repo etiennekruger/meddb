@@ -238,7 +238,6 @@ for medicine in medicines:
         db.session.add(procurement_obj)
         pass
 
-    medicine_obj.calculate_average_price()
     db.session.add(medicine_obj)
 
 db.session.commit()
