@@ -242,3 +242,10 @@ for medicine in medicines:
     db.session.add(medicine_obj)
 
 db.session.commit()
+
+# calculate average product prices
+products = models.Product.query.all()
+for product in products:
+    product.calculate_average_price()
+    db.session.add(product)
+db.session.commit()

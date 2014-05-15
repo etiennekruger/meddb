@@ -105,6 +105,9 @@ def product_to_dict(obj, include_related=False):
     tmp_dict = model_to_dict(obj)
     # resource URI
     tmp_dict['URI'] = API_HOST + 'product/' + str(obj.product_id) + '/'
+    # average price, as calculated from procurement info
+    if tmp_dict['average_price']:
+        tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
     # related manufacturer
     manufacturer = None
     if obj.manufacturer:

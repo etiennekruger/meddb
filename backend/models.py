@@ -298,6 +298,7 @@ class Product(db.Model):
 
     __tablename__ = "product"
     product_id = db.Column(db.Integer, primary_key=True)
+    average_price = db.Column(db.Float, nullable=True)
     name = db.Column(db.String(64), nullable=True)
     is_generic = db.Column(db.Boolean, default=True)
 
@@ -307,6 +308,17 @@ class Product(db.Model):
     manufacturer = db.relationship('Manufacturer')
     site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
     site = db.relationship('Site')
+
+    def calculate_average_price(self):
+        sum = 0
+        tot = 0
+        for p in self.procurements:
+            if p.price_usd and p.volume and p.container.quantity:
+                sum += p.price_usd * p.volume
+                tot += p.container.quantity * p.volume
+        if tot > 0:
+            self.average_price = sum/tot
+        return
 
     @property
     def alternative_products(self):
