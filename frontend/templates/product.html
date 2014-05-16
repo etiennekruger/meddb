@@ -18,18 +18,23 @@
                 </div>
             {% endif %}
             <h1>
-
                 {% if product.name %}
                     {{ product.name }}
                 {% else %}
                     {% if product.medicine.name %}{{ product.medicine.name }} {% endif %}
                     Unnamed product
                 {% endif %}
-
-                <small class="text-muted">{% for component in product.medicine.components %}
-                    {{ component.ingredient.name }} ({{ component.strength }})
-                    {% if not loop.last %}, {% endif %}
-                {% endfor %}</small>
+                {% if product.medicine.dosage_form %}
+                    ({{ product.medicine.dosage_form.name }})
+                {% endif %}
+                <nobr>
+                    <small class="text-muted">
+                        {% for component in product.medicine.components %}
+                            {{ component.ingredient.name }} ({{ component.strength }})
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </small>
+                </nobr>
             </h1>
             <p>
                 <strong>
@@ -52,8 +57,6 @@
                 </span></nobr>
                 </strong>
             </p>
-
-
         </div>
     </div>
 {% endblock %}
@@ -62,7 +65,41 @@
     <div class="row">
         <div class="col-lg-12">
 
-        {{ product.medicine.dosage_form.name }}
+            <form role="form">
+                <div class="form-group">
+                    <label for="select-alternative">Alternative products: </label>
+                    {% if product.alternative_products %}
+                        <select id="select-alternative" class="form-control">
+                            {% for alternative_product in product.alternative_products %}
+                                <option data-product-id="{{ alternative_product.product_id }}">
+                                    {% if alternative_product.name %}
+                                        {{ alternative_product.name }}
+                                    {% else %}
+                                        Unnamed
+                                    {% endif %}
+                                    {{ product.medicine.name }}
+                                    by
+                                    {% if alternative_product.manufacturer %}
+                                        {{ alternative_product.manufacturer.name }}
+                                        {% if alternative_product.manufacturer.country %}
+                                            of {{ alternative_product.manufacturer.country.name }}
+                                        {% endif %}
+                                    {% else %}
+                                        Unknown manufacturer
+                                    {% endif %}
+                                    {% if alternative_product.average_price %}
+                                        (${{ alternative_product.average_price }})
+                                    {% endif %}
+                                </option>
+                            {% endfor %}
+                            {% else %}
+                            <div class="col-sm-10">
+                                <p class="form-control-static">We don't know of any alternatives to this product.</p>
+                            </div>
+                        </select>
+                    {% endif %}
+                </div>
+            </form>
 
             <h2>Purchases</h2>
             {% if product.procurements | length == 0 %}
