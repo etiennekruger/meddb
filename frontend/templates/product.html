@@ -64,7 +64,21 @@
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
+            {% if product.medicine.benchmarks %}
+                {% for benchmark in product.medicine.benchmarks %}
+                    {% set difference = 100*(product.average_price - benchmark.price)/product.average_price %}
+                    <p class="lead">
+                        This product was
+                        <span class="text-{% if difference > 0 %}danger{% else %}success{% endif %}">{{ difference | round }}% {% if difference > 0 %}more{% else %}less{% endif %} expensive</span>
+                        than the {{ benchmark.name }} benchmark price of ${{ benchmark.price }} for {{ benchmark.year }}.
+                    </p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
 
+    <div class="row">
+        <div class="col-lg-12">
             <form role="form">
                 <div class="form-group">
                     <label for="select-alternative">Alternative products: </label>
@@ -92,14 +106,19 @@
                                     {% endif %}
                                 </option>
                             {% endfor %}
-                            {% else %}
-                            <div class="col-sm-10">
-                                <p class="form-control-static">We don't know of any alternatives to this product.</p>
-                            </div>
                         </select>
+                    {% else %}
+                        <div class="col-sm-10">
+                            <p class="form-control-static">We don't know of any alternatives to this product.</p>
+                        </div>
                     {% endif %}
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
 
             <h2>Purchases</h2>
             {% if product.procurements | length == 0 %}
