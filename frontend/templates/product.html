@@ -141,7 +141,7 @@
     <div class="row">
         <div class="col-lg-12">
 
-            <h2>Purchases</h2>
+            <h2>Purchase details</h2>
             {% if product.procurements | length == 0 %}
                 <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
             {% else %}
@@ -149,14 +149,17 @@
                     <thead>
                     <th>Supplier</th>
                     <th>Procurement country</th>
+                    <th>Date</th>
+                    <th>Terms</th>
+                    <th>Volume</th>
+                    <th>Price</th>
                     </thead>
                     <tbody>
                     {% for procurement in product.procurements %}
                         <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
                             <td>
-
                                 {% if procurement.supplier and procurement.supplier.name %}
-                                    <a href="/supplier/{{ procurement.supplier.id }}/">
+                                    <a href="/supplier/{{ procurement.supplier.supplier_id }}/">
                                         {{ procurement.supplier.name }}
                                     </a>
                                 {% else %}
@@ -165,6 +168,18 @@
                             </td>
                             <td>
                                 {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                            </td>
+                            <td>
+                                {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
+                            </td>
+                            <td>
+                                {{ procurement.incoterm }}
+                            </td>
+                            <td>
+                                {{ procurement.volume * procurement.pack_size }} ({{ procurement.container.quantity | int }}{{ procurement.container.unit }} {{ procurement.container.type }}s)
+                            </td>
+                            <td>
+                                ${{ procurement.price_usd }}
                             </td>
                         </tr>
                     {% endfor %}
