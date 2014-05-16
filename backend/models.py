@@ -378,6 +378,8 @@ class Procurement(db.Model):
 
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product', backref='procurements')
+    incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
+    incoterm = db.relationship('Incoterm')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)

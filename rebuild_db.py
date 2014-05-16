@@ -221,6 +221,10 @@ for medicine in medicines:
                 db.session.add(source_obj)
                 db.session.commit()
 
+        if procurement['incoterm']:
+            incoterm_obj = models.Incoterm.query.filter(models.Incoterm.code==procurement['incoterm']['name']).first()
+            procurement_obj.incoterm = incoterm_obj
+
         procurement_obj.source = source_obj
         procurement_obj.container = container_obj
         procurement_obj.country = country_obj

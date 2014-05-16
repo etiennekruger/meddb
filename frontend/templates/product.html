@@ -173,7 +173,9 @@
                                 {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
                             </td>
                             <td>
-                                {{ procurement.incoterm }}
+                                {% if procurement.incoterm %}
+                                {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+                                {% endif %}
                             </td>
                             <td>
                                 {{ procurement.volume * procurement.pack_size }} ({{ procurement.container.quantity | int }}{{ procurement.container.unit }} {{ procurement.container.type }}s)
@@ -195,10 +197,7 @@
     {{ super() }}
     <script>
         $(document).ready(function(){
-            $(".procurement-entry").on('click', function(e){
-                var procurement_id = $(this).attr('data-procurement-id').toString()
-                window.location = "/procurement/" + procurement_id
-            })
+
         });
     </script>
 {% endblock %}

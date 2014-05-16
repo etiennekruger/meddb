@@ -148,7 +148,13 @@ def procurement_to_dict(obj, include_related=False):
     # country
     tmp_dict['country'] = obj.country.to_dict()
     tmp_dict.pop('country_id')
-    #source
+    # incoterm
+    tmp_incoterm = None
+    if obj.incoterm:
+        tmp_incoterm = obj.incoterm.to_dict()
+    tmp_dict['incoterm'] = tmp_incoterm
+    tmp_dict.pop('incoterm_id')
+    # source
     tmp_source = None
     if obj.source:
         tmp_source = obj.source.to_dict()
