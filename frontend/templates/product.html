@@ -1,88 +1,68 @@
 {% extends "base.html" %}
 
+{% block page_header %}
+    <div id="jumbo">
+        {{ super() }}
+        <div class="container">
+            {% if product.average_price %}
+                <div class="pull-right">
+                    <h1 class="product_price">
+                        <span
+                                class="label label-info tooltip-enabled"
+                                data-toggle="tooltip"
+                                data-placement="left"
+                                title="*Average price (in USD) per {{ product.medicine.dosage_form.name }}">
+                            ${{ product.average_price }}*
+                        </span>
+                    </h1>
+                </div>
+            {% endif %}
+            <h1>
+
+                {% if product.name %}
+                    {{ product.name }}
+                {% else %}
+                    {% if product.medicine.name %}{{ product.medicine.name }} {% endif %}
+                    Unnamed product
+                {% endif %}
+
+                <small class="text-muted">{% for component in product.medicine.components %}
+                    {{ component.ingredient.name }} ({{ component.strength }})
+                    {% if not loop.last %}, {% endif %}
+                {% endfor %}</small>
+            </h1>
+            <p>
+                <strong>
+                    <nobr><span class="text-muted"> by
+                        {% if product.manufacturer and product.manufacturer.name %}
+                            {{ product.manufacturer.name }}
+                        {% else %}
+                            unspecified manufacturer
+                        {% endif %}
+                        {% if product.manufacturer and product.manufacturer.country %}
+                            of {{ product.manufacturer.country.name }}
+                        {% endif %}
+                        <span>
+                            {% if product.generic %}
+                                (generic)
+                            {% else %}
+                                (originator)
+                            {% endif %}
+                        </span>
+                </span></nobr>
+                </strong>
+            </p>
+
+
+        </div>
+    </div>
+{% endblock %}
+
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
 
-            {% if product.average_price %}
-                <div class="pull-right">
-                    <h1 class="product_price">
-                        <span class="label label-info">${{ product.average_price }}*</span>
-                    </h1>
-                    <small>*Average price (in USD) per {{ product.medicine.dosage_form.name }}</small>
-                </div>
-            {% endif %}
-            <h1>
-                <strong>
-                    {% if product.name %}
-                        {{ product.name }}
-                    {% else %}
-                        {% if product.medicine.name %}{{ product.medicine.name }} {% endif %}
-                        <nobr><span class="text-muted"><small>(no name provided)</small></span></nobr>
-                    {% endif %}
-                </strong>
-                <small>
-                    {% if product.generic %}
-                        Generic
-                    {% else %}
-                        Originator
-                    {% endif %}
-                </small>
-            </h1>
-
-            <h2>Details</h2>
-            <table class="table table-bordered table-striped">
-                <tbody>
-                <tr>
-                    <th>
-                        Formulation
-                    </th>
-                    <td>
-                        {{ product.medicine.name }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Strength
-                    </th>
-                    <td>
-                        {{ macros.render_medicine_strength(product.medicine) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Dosage form
-                    </th>
-                    <td>
-                        {{ product.medicine.dosage_form.name }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Manufacturer
-                    </th>
-                    <td>
-                        {% if product.manufacturer %}
-                            {{ product.manufacturer.name }}, {{ product.manufacturer.country }}
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Site
-                    </th>
-                    <td>
-                        {% if product.manufacturer %}
-                            {{ product.manufacturer.site }}
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+        {{ product.medicine.dosage_form.name }}
 
             <h2>Purchases</h2>
             {% if product.procurements | length == 0 %}
@@ -120,6 +100,7 @@
 {% endblock %}
 
 {% block javascript %}
+    {{ super() }}
     <script>
         $(document).ready(function(){
             $(".procurement-entry").on('click', function(e){

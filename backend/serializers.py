@@ -152,6 +152,9 @@ def procurement_to_dict(obj, include_related=False):
         tmp_source = obj.source.to_dict()
     tmp_dict['source'] = tmp_source
     tmp_dict.pop('source_id')
+    # round the price
+    if tmp_dict['price_usd']:
+        tmp_dict['price_usd'] = float('%.3g' % tmp_dict['price_usd'])
     if include_related:
         # manufacturer
         tmp_manufacturer = None

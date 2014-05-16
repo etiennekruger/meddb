@@ -8,6 +8,9 @@ body{
 #jumbo{
     background-image: url('/static/patterns/connect.png');
     margin-top: -20px;
+    border-bottom: solid #e7e7e7 1px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 #message-container{
@@ -23,8 +26,6 @@ body{
     padding-bottom: 120px;
     padding-left: 200px;
     padding-right: 200px;
-    border-bottom: solid #e7e7e7 1px;
-    margin-bottom: 20px;
 }
 
 #search-caption{
