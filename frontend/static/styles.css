@@ -65,11 +65,17 @@ body{
     margin-bottom: -15px;
 }
 
-tr.clickable{
+.alternative-product-item{
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+.alternative-product-item:hover{
+    background-color: #f5f5f5;
     cursor: pointer;
 }
 
-tr.clickable:hover td{
-    background-color: #eee!important;
+.alternative-product-item a{
+    text-decoration: inherit;
+    color: inherit;
 }
-

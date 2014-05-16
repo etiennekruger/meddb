@@ -21,8 +21,10 @@
                 {% if product.name %}
                     {{ product.name }}
                 {% else %}
-                    {% if product.medicine.name %}{{ product.medicine.name }} {% endif %}
-                    Unnamed product
+                    Unnamed
+                    {% if product.medicine and product.medicine.name %}
+                        {{ product.medicine.name }}
+                    {% endif %}
                 {% endif %}
                 {% if product.medicine.dosage_form %}
                     ({{ product.medicine.dosage_form.name }})
@@ -66,10 +68,12 @@
         <div class="col-lg-12">
             {% if product.medicine.benchmarks %}
                 {% for benchmark in product.medicine.benchmarks %}
-                    {% set difference = 100*(product.average_price - benchmark.price)/product.average_price %}
+                    {% set difference = 100 * (product.average_price - benchmark.price) / product.average_price %}
                     <p class="lead">
                         This product was
-                        <span class="text-{% if difference > 0 %}danger{% else %}success{% endif %}">{{ difference | round }}% {% if difference > 0 %}more{% else %}less{% endif %} expensive</span>
+                        <span class="text-{% if difference > 0 %}danger{% else %}success{% endif %}">
+                            {{ difference | round | int | abs }}% {% if difference > 0 %}more{% else %}less{% endif %} expensive
+                        </span>
                         than the {{ benchmark.name }} benchmark price of ${{ benchmark.price }} for {{ benchmark.year }}.
                     </p>
                 {% endfor %}
@@ -79,41 +83,55 @@
 
     <div class="row">
         <div class="col-lg-12">
-            <form role="form">
-                <div class="form-group">
-                    <label for="select-alternative">Alternative products: </label>
-                    {% if product.alternative_products %}
-                        <select id="select-alternative" class="form-control">
-                            {% for alternative_product in product.alternative_products %}
-                                <option data-product-id="{{ alternative_product.product_id }}">
-                                    {% if alternative_product.name %}
-                                        {{ alternative_product.name }}
-                                    {% else %}
-                                        Unnamed
-                                    {% endif %}
-                                    {{ product.medicine.name }}
-                                    by
-                                    {% if alternative_product.manufacturer %}
-                                        {{ alternative_product.manufacturer.name }}
-                                        {% if alternative_product.manufacturer.country %}
-                                            of {{ alternative_product.manufacturer.country.name }}
+            <h2>Alternative products</h2>
+
+            {% if product.alternative_products %}
+                <ul class="list-unstyled">
+
+                    {% for alternative_product in product.alternative_products %}
+                        {% set difference = 100 * (alternative_product.average_price - product.average_price) / alternative_product.average_price %}
+                        <a href="/product/{{ alternative_product.product_id }}/">
+
+                            <li class="alternative-product-item" data-product-id="{{ alternative_product.product_id }}">
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        {% if alternative_product.name %}
+                                            {{ alternative_product.name }}
+                                        {% else %}
+                                            Unnamed
                                         {% endif %}
-                                    {% else %}
-                                        Unknown manufacturer
-                                    {% endif %}
-                                    {% if alternative_product.average_price %}
-                                        (${{ alternative_product.average_price }})
-                                    {% endif %}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    {% else %}
-                        <div class="col-sm-10">
-                            <p class="form-control-static">We don't know of any alternatives to this product.</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </form>
+                                        {{ product.medicine.name }}
+                                    </div>
+                                    <div class="col-md-5">
+                                        <em>
+                                            {% if alternative_product.manufacturer %}
+                                                {{ alternative_product.manufacturer.name }}
+                                                {% if alternative_product.manufacturer.country %}
+                                                    of {{ alternative_product.manufacturer.country.name }}
+                                                {% endif %}
+                                            {% else %}
+                                                Unknown manufacturer
+                                            {% endif %}
+                                        </em>
+                                    </div>
+                                    <div class="col-md-3">
+                                        {% if alternative_product.average_price %}
+                                            ${{ alternative_product.average_price }}
+                                        {% endif %}
+                                        <span class="badge pull-right alert-{% if difference > 0 %}danger{% else %}success{% endif %}">
+                                        {% if difference > 0 %} + {% else %} - {% endif %}{{ difference | round | int | abs }}%
+                                    </span>
+                                    </div>
+                                </div>
+                            </li>
+                        </a>
+                    {% endfor %}
+
+                </ul>
+            {% else %}
+                <p>We don't know of any alternatives to this product.</p>
+            {% endif %}
         </div>
     </div>
 
