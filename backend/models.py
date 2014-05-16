@@ -260,9 +260,6 @@ class Supplier(db.Model):
     alt_email = db.Column(db.String(100))
     authorized = db.Column(db.Boolean, default=False)
 
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
-    country = db.relationship('Country')
-
     @property
     def products(self):
         out = []

@@ -115,10 +115,10 @@ def product_to_dict(obj, include_related=False):
     tmp_dict['registrations'] = []
     for registration in obj.registrations:
         tmp_dict['registrations'].append(registration.to_dict())
+    # medicine
+    tmp_dict['medicine'] = obj.medicine.to_dict()
+    tmp_dict.pop('medicine_id')
     if include_related:
-        # medicine
-        tmp_dict['medicine'] = obj.medicine.to_dict()
-        tmp_dict.pop('medicine_id')
         # related procurements
         procurements = []
         for procurement in obj.procurements:
@@ -198,12 +198,6 @@ def supplier_to_dict(obj, include_related=False):
     tmp_dict = model_to_dict(obj)
     # resource URI
     tmp_dict['URI'] = API_HOST + 'supplier/' + str(obj.supplier_id) + '/'
-    # country
-    tmp_country = None
-    if obj.country:
-        tmp_country = obj.country.to_dict()
-    tmp_dict['country'] = tmp_country
-    tmp_dict.pop('country_id')
     if include_related:
         # products related to this supplier, as calculated from procurements
         products = []

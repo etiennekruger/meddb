@@ -1,26 +1,24 @@
 {% extends "base.html" %}
 
+{% block page_header %}
+    <div id="jumbo">
+        {{ super() }}
+        <div class="container">
+            <h1>{{ supplier.name }}</h1>
+            {% if supplier.website %}
+                {{ macros.render_url(supplier.website) }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
 
-            <h1>{{ supplier.name }}</h1>
-
             <h2>Details</h2>
             <table class="table table-bordered table-striped">
                 <tbody>
-                <tr>
-                    <th>
-                        Website
-                    </th>
-                    <td>
-                        {% if supplier.website %}
-                            {{ macros.render_url(supplier.website) }}
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
-                </tr>
                 <tr>
                     <th>
                         Contact Person
@@ -35,14 +33,9 @@
                     </th>
                     <td>
                         {{ supplier.email }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Alt. Email
-                    </th>
-                    <td>
-                        {{ supplier.altemail }}
+                        {% if supplier.altemail %}
+                        , {{ supplier.altemail }}
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -51,14 +44,9 @@
                     </th>
                     <td>
                         {{ supplier.phone }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Alt. Telephone
-                    </th>
-                    <td>
-                        {{ supplier.altphone }}
+                        {% if supplier.altphone %}
+                        , {{ supplier.altphone }}
+                        {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -80,58 +68,64 @@
                 </tbody>
             </table>
 
-            {% if supplier.procurements | length == 0 %}
-                <p style="padding: 10px;" class="lead text-muted">No recent sales data</p>
-            {% else %}
-            <h2>{{ supplier.procurements | length }} Sales</h2>
+        </div>
+    </div>
 
-            <table class="table table-bordered table-striped">
-                <thead>
-                <th>Name</th>
-                <th>Country</th>
-                <th>Formulation</th>
-                <th>Pack size</th>
-                </thead>
-                <tbody>
-                {% for procurement in supplier.procurements %}
-                    <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
-                        <td>
-                            <a href="/product/{{ procurement.product.id }}/">
-                                {% if procurement.product.name %}
-                                    {{ procurement.product.name }}
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Product catalogue</h2>
+
+            {% if supplier.products %}
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <th>Name</th>
+                    <th>Manufacturer</th>
+                    </thead>
+                    <tbody>
+                    {% for product in supplier.products %}
+                        <tr>
+                            <td>
+                                <a href="/product/{{ product.product_id }}/">
+                                    {% if product.name %}
+                                        {{ product.name }}
+                                    {% else %}
+                                        Unnamed
+                                    {% endif %}
+                                    {{ product.medicine.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if product.manufacturer %}
+                                    {% if product.manufacturer.country %}
+                                        {{ macros.render_flag(product.manufacturer.country) }}
+                                    {% endif %}
+                                    {{ product.manufacturer.name }}
+                                    {% if product.manufacturer.country %}
+                                        in {{ product.manufacturer.country.name }}
+                                    {% endif %}
                                 {% else %}
-                                    {{ procurement.product.medicine.name }}
+                                    Unknown manufacturer
                                 {% endif %}
-                            </a>
-                        </td>
-                        <td>
-                            {{ macros.render_country(procurement.country) }}
-                        </td>
-                        <td>
-                            {{ procurement.product.medicine.name }},
-                            {{ macros.render_medicine_strength(procurement.product.medicine) }}
-                        </td>
-                        <td>
-                            {{ macros.render_pack_size(procurement.product['pack-size']) }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        {% endif %}
-
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>We don't know of any products sold by this supplier.</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
 
 
 {% block javascript %}
-<script>
-    $(document).ready(function(){
-        $(".procurement-entry").on('click', function(e){
-            var procurement_id = $(this).attr('data-procurement-id').toString()
-            window.location = "/procurement/" + procurement_id
-        })
-    });
-</script>
+    <script>
+        $(document).ready(function(){
+            $(".procurement-entry").on('click', function(e){
+                var procurement_id = $(this).attr('data-procurement-id').toString()
+                window.location = "/procurement/" + procurement_id
+            })
+        });
+    </script>
 {% endblock %}

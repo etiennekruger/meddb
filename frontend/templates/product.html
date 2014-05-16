@@ -86,52 +86,54 @@
             <h2>Alternative products</h2>
 
             {% if product.alternative_products %}
-                <ul class="list-unstyled">
-
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <th>Name</th>
+                    <th>Manufacturer</th>
+                    <th>Average price (USD)</th>
+                    <th>Price difference</th>
+                    </thead>
+                    <tbody>
                     {% for alternative_product in product.alternative_products %}
                         {% set difference = 100 * (alternative_product.average_price - product.average_price) / alternative_product.average_price %}
-                        <a href="/product/{{ alternative_product.product_id }}/">
-
-                            <li class="alternative-product-item" data-product-id="{{ alternative_product.product_id }}">
-
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <em>
-                                            {% if alternative_product.manufacturer %}
-                                                {% if alternative_product.manufacturer.country %}
-                                                    {{ macros.render_flag(alternative_product.manufacturer.country) }}
-                                                {% endif %}
-                                                Manufactured by {{ alternative_product.manufacturer.name }}
-                                                {% if alternative_product.manufacturer.country %}
-                                                    in {{ alternative_product.manufacturer.country.name }}
-                                                {% endif %}
-                                            {% else %}
-                                                Unknown manufacturer
-                                            {% endif %}
-                                        </em>
-                                    </div>
-                                    <div class="col-md-4">
-                                        {% if alternative_product.name %}
-                                            {{ alternative_product.name }}
-                                        {% else %}
-                                            Unnamed
-                                        {% endif %}
-                                        {{ product.medicine.name }}
-                                    </div>
-                                    <div class="col-md-3">
-                                        {% if alternative_product.average_price %}
-                                            ${{ alternative_product.average_price }}
-                                        {% endif %}
+                        <tr>
+                            <td>
+                                <a href="/product/{{ alternative_product.product_id }}/">
+                                    {% if alternative_product.name %}
+                                        {{ alternative_product.name }}
+                                    {% else %}
+                                        Unnamed
+                                    {% endif %}
+                                    {{ product.medicine.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if alternative_product.manufacturer %}
+                                    {% if alternative_product.manufacturer.country %}
+                                        {{ macros.render_flag(alternative_product.manufacturer.country) }}
+                                    {% endif %}
+                                    {{ alternative_product.manufacturer.name }}
+                                    {% if alternative_product.manufacturer.country %}
+                                        in {{ alternative_product.manufacturer.country.name }}
+                                    {% endif %}
+                                {% else %}
+                                    Unknown manufacturer
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if alternative_product.average_price %}
+                                    ${{ alternative_product.average_price }}
+                                {% endif %}
+                            </td>
+                            <td>
                                         <span class="badge pull-right alert-{% if difference > 0 %}danger{% else %}success{% endif %}">
                                         {% if difference > 0 %} + {% else %} - {% endif %}{{ difference | round | int | abs }}%
                                     </span>
-                                    </div>
-                                </div>
-                            </li>
-                        </a>
+                            </td>
+                        </tr>
                     {% endfor %}
-
-                </ul>
+                    </tbody>
+                </table>
             {% else %}
                 <p>We don't know of any alternatives to this product.</p>
             {% endif %}
@@ -174,11 +176,11 @@
                             </td>
                             <td>
                                 {% if procurement.incoterm %}
-                                {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+                                    {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
                                 {% endif %}
                             </td>
                             <td>
-                                {{ procurement.volume * procurement.pack_size }} ({{ procurement.container.quantity | int }}{{ procurement.container.unit }} {{ procurement.container.type }}s)
+                                {{ procurement.volume * procurement.pack_size }} ({{ procurement.container.quantity | int }} {{ procurement.container.unit }} {{ procurement.container.type }}s)
                             </td>
                             <td>
                                 ${{ procurement.price_usd }}

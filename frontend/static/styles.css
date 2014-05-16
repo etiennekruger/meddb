@@ -64,18 +64,3 @@ body{
     margin-top: -15px;
     margin-bottom: -15px;
 }
-
-.alternative-product-item{
-    padding-top: 3px;
-    padding-bottom: 3px;
-}
-
-.alternative-product-item:hover{
-    background-color: #f5f5f5;
-    cursor: pointer;
-}
-
-.alternative-product-item a{
-    text-decoration: inherit;
-    color: inherit;
-}
