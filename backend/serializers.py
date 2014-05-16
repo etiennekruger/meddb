@@ -2,6 +2,7 @@ import json
 from datetime import datetime, date
 from backend import db, logger
 from backend import app
+from operator import itemgetter
 
 API_HOST = app.config["API_HOST"]
 
@@ -131,6 +132,7 @@ def product_to_dict(obj, include_related=False):
         for product in obj.alternative_products:
             product_dict = product.to_dict()
             alternative_products.append(product_dict)
+        alternative_products = sorted(alternative_products, key=itemgetter('average_price'))
         tmp_dict['alternative_products'] = alternative_products
     return tmp_dict
 
