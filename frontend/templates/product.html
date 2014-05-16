@@ -40,14 +40,14 @@
             </h1>
             <p>
                 <strong>
-                    <nobr><span class="text-muted"> by
+                    <nobr><span class="text-muted">
                         {% if product.manufacturer and product.manufacturer.name %}
-                            {{ product.manufacturer.name }}
+                            Manufactured by {{ product.manufacturer.name }}
                         {% else %}
-                            unspecified manufacturer
+                            Unknown manufacturer
                         {% endif %}
                         {% if product.manufacturer and product.manufacturer.country %}
-                            of {{ product.manufacturer.country.name }}
+                            in {{ product.manufacturer.country.name }}
                         {% endif %}
                         <span>
                             {% if product.generic %}
@@ -95,6 +95,21 @@
                             <li class="alternative-product-item" data-product-id="{{ alternative_product.product_id }}">
 
                                 <div class="row">
+                                    <div class="col-md-5">
+                                        <em>
+                                            {% if alternative_product.manufacturer %}
+                                                {% if alternative_product.manufacturer.country %}
+                                                    {{ macros.render_flag(alternative_product.manufacturer.country) }}
+                                                {% endif %}
+                                                Manufactured by {{ alternative_product.manufacturer.name }}
+                                                {% if alternative_product.manufacturer.country %}
+                                                    in {{ alternative_product.manufacturer.country.name }}
+                                                {% endif %}
+                                            {% else %}
+                                                Unknown manufacturer
+                                            {% endif %}
+                                        </em>
+                                    </div>
                                     <div class="col-md-4">
                                         {% if alternative_product.name %}
                                             {{ alternative_product.name }}
@@ -102,18 +117,6 @@
                                             Unnamed
                                         {% endif %}
                                         {{ product.medicine.name }}
-                                    </div>
-                                    <div class="col-md-5">
-                                        <em>
-                                            {% if alternative_product.manufacturer %}
-                                                {{ alternative_product.manufacturer.name }}
-                                                {% if alternative_product.manufacturer.country %}
-                                                    of {{ alternative_product.manufacturer.country.name }}
-                                                {% endif %}
-                                            {% else %}
-                                                Unknown manufacturer
-                                            {% endif %}
-                                        </em>
                                     </div>
                                     <div class="col-md-3">
                                         {% if alternative_product.average_price %}
@@ -161,7 +164,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {{ macros.render_country(procurement.country) }}
+                                {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                             </td>
                         </tr>
                     {% endfor %}
