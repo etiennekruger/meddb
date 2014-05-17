@@ -22,9 +22,6 @@
                     {{ product.name }}
                 {% else %}
                     Unnamed
-                    {% if product.medicine and product.medicine.name %}
-                        {{ product.medicine.name }}
-                    {% endif %}
                 {% endif %}
                 {% if product.medicine.dosage_form %}
                     ({{ product.medicine.dosage_form.name }})
@@ -104,7 +101,6 @@
                                     {% else %}
                                         Unnamed
                                     {% endif %}
-                                    {{ product.medicine.name }}
                                 </a>
                             </td>
                             <td>
