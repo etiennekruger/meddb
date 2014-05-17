@@ -42,12 +42,13 @@
         <div class="col-md-4">
             <div class="well well-sm">
                 <h4>Database overview (past year)</h4>
-                <p>Products tracked: <span class="badge pull-right">{{ count_products }}</span></p>
-                <p>Transactions logged: <span class="badge pull-right">{{ count_transactions }}</span></p>
+                <p>Products tracked: <span class="badge pull-right">{{ overview.count_products }}</span></p>
+                <p>Medicines: <span class="badge pull-right">{{ overview.count_medicines }}</span></p>
+                <p>Recent procurements: <span class="badge pull-right">{{ overview.count_recent_procurements }}</span></p>
 
                 <h4>Top information contributors</h4>
-                {% for country in top_sources %}
-                    <p>{{ country.name }} <span class="badge pull-right">{{ country.contribution_count }}</span></p>
+                {% for source in overview.top_sources %}
+                    <p>{{ source.country.name }} <span class="badge pull-right">{{ source.procurement_count }}</span></p>
                 {% endfor %}
             </div>
         </div>

@@ -27,14 +27,6 @@ def sort_list(unsorted_list, key):
 @app.route('/')
 def landing():
 
-    top_sources = [
-        {"name": "Zambia", "contribution_count": 154},
-        {"name": "South Africa", "contribution_count": 98},
-        {"name": "Botswana", "contribution_count": 54},
-        {"name": "Malawi", "contribution_count": 34},
-        {"name": "Seychelles", "contribution_count": 20}
-    ]
-
     recent_products = [
         {"name": "Herpex-Acyclovir 200mg", "id": 1},
         {"name": "Lovire", "id": 3},
@@ -50,19 +42,13 @@ def landing():
         {"user": "someone else", "description": "Added purchase information.", "date": "2014-02-15"}
     ]
 
-    count_products = 50
-    count_transactions = 450
-
-    flash("it is now: " + str(datetime.datetime.now()), "success")
-    flash("it is still: " + str(datetime.datetime.now()), "info")
-    flash("it is even still: " + str(datetime.datetime.now()), "warning")
+    response = requests.get(API_HOST + 'overview/')
+    overview = response.json()
 
     return render_template(
         'index.html',
         active_nav_button="home",
-        top_sources=top_sources,
-        count_products=count_products,
-        count_transactions=count_transactions,
+        overview=overview,
         recent_products=recent_products,
         recent_events=recent_events
     )

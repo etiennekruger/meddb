@@ -5,6 +5,8 @@ import flask
 import json
 import serializers
 from flask.ext import login
+from sqlalchemy import func, or_
+import datetime
 
 API_HOST = app.config["API_HOST"]
 
@@ -46,14 +48,81 @@ def send_api_response(data_json):
     return response
 
 
+def calculate_db_overview():
+    """
+    Run a set of queries to get an overview of the database. This may be an expensive operation,
+    so that's why it's not coupled directly to a view endpoint. Allowing for the overview to only be
+    recalculated from time to time, as needed.
+    """
+
+    overview = {}
+
+    # number of products being tracked
+    count_products = db.session.query(
+        func.count(models.Product.product_id)
+    ).scalar()
+    overview['count_products'] = count_products
+
+    # number of distinct medicines
+    count_medicines = db.session.query(
+        func.count(models.Medicine.medicine_id)
+    ).scalar()
+    overview['count_medicines'] = count_medicines
+
+    # number of recent procurements
+    # i.e. thye have start or end dates after the cutoff
+    cutoff = datetime.datetime.today() - datetime.timedelta(days=365)
+    count_recent_procurements = db.session.query(
+        func.count(models.Procurement.procurement_id)) \
+        .filter(
+        or_(
+            models.Procurement.start_date > cutoff,
+            models.Procurement.end_date > cutoff
+        )
+    ).scalar()
+    overview['count_recent_procurements'] = count_recent_procurements
+
+    # number of recent procurements logged per country
+    top_sources = []
+    sources = db.session.query(models.Procurement.country_id,
+                               func.count(models.Procurement.procurement_id)) \
+        .filter(
+        or_(
+            models.Procurement.start_date > cutoff,
+            models.Procurement.end_date > cutoff
+        )
+    ) \
+        .group_by(models.Procurement.country_id) \
+        .order_by(func.count(models.Procurement.procurement_id).desc()).all()
+
+    for country_id, count in sources[0:5]:
+        print 'Country ID %d: %d' % (country_id, count)
+        country = models.Country.query.get(country_id)
+        top_sources.append(
+            {
+                'country': country.to_dict(),
+                'procurement_count': count
+            }
+        )
+    overview['top_sources'] = top_sources
+    return overview
+
+
+@app.route('/overview/')
+def overview():
+    """
+    Give a broad overview of the size of -, and recent activity related to, the database.
+    """
+
+    return send_api_response(json.dumps(calculate_db_overview()))
+
 api_resources = {
     'medicine': (models.Medicine, models.Medicine.medicine_id),
     'product': (models.Product, models.Product.product_id),
     'procurement': (models.Procurement, models.Procurement.procurement_id),
     'manufacturer': (models.Manufacturer, models.Manufacturer.manufacturer_id),
     'supplier': (models.Supplier, models.Supplier.supplier_id),
-}
-
+    }
 
 @app.route('/')
 def index():
@@ -111,6 +180,6 @@ def autocomplete(query):
     Return only the name and product_id of each product that matches the given query.
     """
 
-    out = db.session.query(models.Product.name, models.Product.product_id)\
+    out = db.session.query(models.Product.name, models.Product.product_id) \
         .filter(models.Product.name.contains(query)).all()
     return send_api_response(json.dumps(out))
