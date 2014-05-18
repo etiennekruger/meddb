@@ -83,7 +83,7 @@
             source:function(query, process){
                 products = [];
                 map = {};
-                $.get('http://localhost:5001/autocomplete/' + query + '/', function(data){
+                $.get('{{ API_HOST }}autocomplete/' + query + '/', function(data){
                     for (var i = 0; i < data.length; i++)
                     {
                         var key = data[i].name

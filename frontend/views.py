@@ -47,6 +47,7 @@ def landing():
 
     return render_template(
         'index.html',
+        API_HOST=API_HOST,
         active_nav_button="home",
         overview=overview,
         recent_products=recent_products,
@@ -58,11 +59,21 @@ def product(product_id):
 
     response = requests.get(API_HOST + 'product/' + str(product_id) + "/")
     product = response.json()
-    return render_template('product.html', product=product, active_nav_button="medicines")
+    return render_template(
+        'product.html',
+        API_HOST=API_HOST,
+        product=product,
+        active_nav_button="medicines"
+    )
 
 @app.route('/supplier/<supplier_id>/')
 def supplier(supplier_id):
 
     response = requests.get(API_HOST + 'supplier/' + str(supplier_id) + "/")
     supplier = response.json()
-    return render_template('supplier.html', supplier=supplier, active_nav_button="suppliers")
+    return render_template(
+        'supplier.html',
+        API_HOST=API_HOST,
+        supplier=supplier,
+        active_nav_button="suppliers"
+    )
