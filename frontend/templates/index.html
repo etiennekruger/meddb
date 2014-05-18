@@ -1,18 +1,56 @@
 {% extends "base.html" %}
+{% block search %}
+{% endblock search %}
+
+{% block page_header %}
+    <div id="jumbo">
+        {{ super() }}
+        <div id="search-banner">
+            <h1>Search for a medicine</h1>
+            <form class="form" role="search">
+                <div class="input-group input-group-lg">
+                    <input id="search-box" autocomplete="off" data-provide="typeahead" type="text" class="form-control" placeholder="e.g. Amitryptiline">
+                        <span class="input-group-btn">
+                        <button class="btn btn-primary" type="button">Search</button>
+                        </span>
+                </div>
+            </form>
+            <p id="search-caption">
+                {% if recent_products %}
+                    Recent:
+                    {% for product in recent_products %}
+                        <a href="/product/{{ product.id }}/">{{ product.name }}</a>{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </p>
+        </div>
+    </div>
+{% endblock %}
 
 {% block page %}
-<div class="row">
-    <div class="col-lg-8">
-        <h1>SADC Medicine Prices Database</h1>
-        <p>
-            This database will provide you with up to date information on comparative medicine prices and properties (including dosage form and strength) as well as product, supplier and manufacturer information.
-        </p>
-        <p>
-            This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics ("SARPAM").
-        </p>
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Recent updates</h3>
+            {% for event in recent_events %}
+                <p><span class="badge">{{ event.user }}</span> - {{ event.description }} <span class="pull-right">{{ event.date }}</span></p>
+            {% endfor %}
+            {#            <h2>Welcome to the Medicine Prices Database</h2>#}
+            {#            <p>#}
+            {#                This database will provide you with up to date information on comparative medicine prices and properties (including dosage form and strength) as well as product, supplier and manufacturer information.#}
+            {#            </p>#}
+        </div>
+        <div class="col-md-4">
+            <div class="well well-sm">
+                <h4>Database overview (past year)</h4>
+                <p>Products tracked: <span class="badge pull-right">{{ overview.count_products }}</span></p>
+                <p>Medicines: <span class="badge pull-right">{{ overview.count_medicines }}</span></p>
+                <p>Recent procurements: <span class="badge pull-right">{{ overview.count_recent_procurements }}</span></p>
+
+                <h4>Top information contributors</h4>
+                {% for source in overview.top_sources %}
+                    <p>{{ source.country.name }} <span class="badge pull-right">{{ source.procurement_count }}</span></p>
+                {% endfor %}
+            </div>
+        </div>
     </div>
-    <div class="col-lg-4">
-        <img class="img-thumbnail" src="/static/images/medicine.jpg">
-    </div>
-</div>
 {% endblock %}

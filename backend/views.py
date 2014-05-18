@@ -5,6 +5,8 @@ import flask
 import json
 import serializers
 from flask.ext import login
+from sqlalchemy import func, or_
+import datetime
 
 API_HOST = app.config["API_HOST"]
 
@@ -45,6 +47,91 @@ def send_api_response(data_json):
     response.headers['Content-Type'] = "application/json"
     return response
 
+# -------------------------------------------------------------------
+# Expensive functions, that only needs to be run from time to time:
+#
+
+def calculate_db_overview():
+    """
+    Run a set of queries to get an overview of the database.
+    THIS IS COMPUTATIONALLY EXPENSIVE
+    """
+
+    overview = {}
+
+    # number of products being tracked
+    count_products = db.session.query(
+        func.count(models.Product.product_id)
+    ).scalar()
+    overview['count_products'] = count_products
+
+    # number of distinct medicines
+    count_medicines = db.session.query(
+        func.count(models.Medicine.medicine_id)
+    ).scalar()
+    overview['count_medicines'] = count_medicines
+
+    # number of recent procurements
+    # i.e. they have start or end dates after the cutoff
+    cutoff = datetime.datetime.today() - datetime.timedelta(days=365)
+    count_recent_procurements = db.session.query(
+        func.count(models.Procurement.procurement_id)) \
+        .filter(
+        or_(
+            models.Procurement.start_date > cutoff,
+            models.Procurement.end_date > cutoff
+        )
+    ).scalar()
+    overview['count_recent_procurements'] = count_recent_procurements
+
+    # number of recent procurements logged per country
+    top_sources = []
+    sources = db.session.query(models.Procurement.country_id,
+                               func.count(models.Procurement.procurement_id)) \
+        .filter(
+        or_(
+            models.Procurement.start_date > cutoff,
+            models.Procurement.end_date > cutoff
+        )
+    ) \
+        .group_by(models.Procurement.country_id) \
+        .order_by(func.count(models.Procurement.procurement_id).desc()).all()
+
+    for country_id, count in sources[0:5]:
+        print 'Country ID %d: %d' % (country_id, count)
+        country = models.Country.query.get(country_id)
+        top_sources.append(
+            {
+                'country': country.to_dict(),
+                'procurement_count': count
+            }
+        )
+    overview['top_sources'] = top_sources
+    return overview
+
+
+def calculate_autocomplete():
+    """
+    Retrieve all product records and serialize them for use by the autocomplete endpoint.
+    THIS IS COMPUTATIONALLY EXPENSIVE
+    """
+
+    products = []
+    for product in models.Product.query.all():
+        products.append(product.to_dict())
+    return products
+
+# -------------------------------------------------------------------
+# API endpoints:
+#
+
+@app.route('/overview/')
+def overview():
+    """
+    Give a broad overview of the size of -, and recent activity related to, the database.
+    """
+
+    return send_api_response(json.dumps(calculate_db_overview()))
 
 api_resources = {
     'medicine': (models.Medicine, models.Medicine.medicine_id),
@@ -52,8 +139,7 @@ api_resources = {
     'procurement': (models.Procurement, models.Procurement.procurement_id),
     'manufacturer': (models.Manufacturer, models.Manufacturer.manufacturer_id),
     'supplier': (models.Supplier, models.Supplier.supplier_id),
-}
-
+    }
 
 @app.route('/')
 def index():
@@ -77,8 +163,6 @@ def resource(resource, resource_id=None):
 
     if not api_resources.get(resource):
         raise ApiException(400, "The specified resource type does not exist.")
-
-
 
     model = api_resources[resource][0]
     model_id = api_resources[resource][1]
@@ -105,3 +189,25 @@ def resource(resource, resource_id=None):
             next = flask.request.url_root + resource + "/?page=" + str(page+1)
     out = serializers.queryset_to_json(queryset, count=count, next=next, include_related=include_related)
     return send_api_response(out)
+
+
+@app.route('/autocomplete/<query>/')
+def autocomplete(query):
+    """
+    Return the name and product_id of each product that matches the given query, together with the name and
+    country of the manufacturer.
+    """
+
+    out = []
+    for product in calculate_autocomplete():
+        tmp = {}
+        if query in product['name'].lower():
+            tmp['product_id'] = product['product_id']
+            tmp['name'] = product['name']
+            if product['manufacturer']:
+                tmp['manufacturer'] = {}
+                tmp['manufacturer']['name'] = product['manufacturer']['name']
+                if product['manufacturer']['country']:
+                    tmp['manufacturer']['country'] = product['manufacturer']['country']
+            out.append(tmp)
+    return send_api_response(json.dumps(out))

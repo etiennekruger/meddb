@@ -6,12 +6,8 @@
     {% endif %}
 {%- endmacro %}
 
-{% macro render_country(country) -%}
-    {%- if country.name -%}
-        {{ country.name }}
-    {%- else -%}
-        N/A
-    {%- endif -%}
+{% macro render_flag(country) -%}
+    <img src="static/flags.png" class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}" />
 {%- endmacro %}
 
 {% macro render_volume(volume) -%}
@@ -27,17 +23,6 @@
         {% if loop.index > 1 %} + {% endif %}
         {{ ingredient.strength }}
     {% endfor %}
-{%- endmacro %}
-
-{% macro render_product(product) -%}
-    <strong>
-        {% if product.name %}
-            {{ product.name }}
-        {% else %}
-            {% if product.medicine and product.medicine.name %}{{ product.medicine.name }} {% endif %}
-            <nobr><span class="text-muted"><small>(no name provided)</small></span></nobr>
-        {% endif %}
-    </strong>
 {%- endmacro %}
 
 {% macro render_supplier(supplier) -%}

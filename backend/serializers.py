@@ -2,6 +2,7 @@ import json
 from datetime import datetime, date
 from backend import db, logger
 from backend import app
+from operator import itemgetter
 
 API_HOST = app.config["API_HOST"]
 
@@ -48,9 +49,6 @@ def medicine_to_dict(obj, include_related=False):
     tmp_dict['URI'] = API_HOST + 'medicine/' + str(obj.medicine_id) + '/'
     # name, as calculated form component names
     tmp_dict['name'] = obj.name
-    # average price, as calculated from procurement info
-    if tmp_dict['average_price']:
-        tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
     # dosage form
     dosage_form = None
     if obj.dosage_form:
@@ -103,8 +101,13 @@ def component_to_dict(obj, include_related=False):
 def product_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
+    # product name
+    tmp_dict['name'] = obj.get_name()
     # resource URI
     tmp_dict['URI'] = API_HOST + 'product/' + str(obj.product_id) + '/'
+    # average price, as calculated from procurement info
+    if tmp_dict['average_price']:
+        tmp_dict['average_price'] = float('%.3g' % tmp_dict['average_price'])
     # related manufacturer
     manufacturer = None
     if obj.manufacturer:
@@ -114,6 +117,9 @@ def product_to_dict(obj, include_related=False):
     tmp_dict['registrations'] = []
     for registration in obj.registrations:
         tmp_dict['registrations'].append(registration.to_dict())
+    # medicine
+    tmp_dict['medicine'] = obj.medicine.to_dict()
+    tmp_dict.pop('medicine_id')
     if include_related:
         # related procurements
         procurements = []
@@ -128,6 +134,7 @@ def product_to_dict(obj, include_related=False):
         for product in obj.alternative_products:
             product_dict = product.to_dict()
             alternative_products.append(product_dict)
+        alternative_products = sorted(alternative_products, key=itemgetter('average_price'))
         tmp_dict['alternative_products'] = alternative_products
     return tmp_dict
 
@@ -143,12 +150,21 @@ def procurement_to_dict(obj, include_related=False):
     # country
     tmp_dict['country'] = obj.country.to_dict()
     tmp_dict.pop('country_id')
-    #source
+    # incoterm
+    tmp_incoterm = None
+    if obj.incoterm:
+        tmp_incoterm = obj.incoterm.to_dict()
+    tmp_dict['incoterm'] = tmp_incoterm
+    tmp_dict.pop('incoterm_id')
+    # source
     tmp_source = None
     if obj.source:
         tmp_source = obj.source.to_dict()
     tmp_dict['source'] = tmp_source
     tmp_dict.pop('source_id')
+    # round the price
+    if tmp_dict['price_usd']:
+        tmp_dict['price_usd'] = float('%.3g' % tmp_dict['price_usd'])
     if include_related:
         # manufacturer
         tmp_manufacturer = None
@@ -184,12 +200,6 @@ def supplier_to_dict(obj, include_related=False):
     tmp_dict = model_to_dict(obj)
     # resource URI
     tmp_dict['URI'] = API_HOST + 'supplier/' + str(obj.supplier_id) + '/'
-    # country
-    tmp_country = None
-    if obj.country:
-        tmp_country = obj.country.to_dict()
-    tmp_dict['country'] = tmp_country
-    tmp_dict.pop('country_id')
     if include_related:
         # products related to this supplier, as calculated from procurements
         products = []

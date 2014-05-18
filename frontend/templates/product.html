@@ -1,75 +1,145 @@
 {% extends "base.html" %}
 
+{% block page_header %}
+    <div id="jumbo">
+        {{ super() }}
+        <div class="container">
+            {% if product.average_price %}
+                <div class="pull-right">
+                    <h1 class="product_price">
+                        <span
+                                class="label label-info tooltip-enabled"
+                                data-toggle="tooltip"
+                                data-placement="left"
+                                title="*Average price (in USD) per {{ product.medicine.dosage_form.name }}">
+                            ${{ product.average_price }}*
+                        </span>
+                    </h1>
+                </div>
+            {% endif %}
+            <h1>
+                {% if product.name %}
+                    {{ product.name }}
+                {% else %}
+                    Unnamed
+                {% endif %}
+                {% if product.medicine.dosage_form %}
+                    ({{ product.medicine.dosage_form.name }})
+                {% endif %}
+                <nobr>
+                    <small class="text-muted">
+                        {% for component in product.medicine.components %}
+                            {{ component.ingredient.name }} ({{ component.strength }})
+                            {% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </small>
+                </nobr>
+            </h1>
+            <p>
+                <strong>
+                    <nobr><span class="text-muted">
+                        {% if product.manufacturer and product.manufacturer.name %}
+                            Manufactured by {{ product.manufacturer.name }}
+                        {% else %}
+                            Unknown manufacturer
+                        {% endif %}
+                        {% if product.manufacturer and product.manufacturer.country %}
+                            in {{ product.manufacturer.country.name }}
+                        {% endif %}
+                        <span>
+                            {% if product.generic %}
+                                (generic)
+                            {% else %}
+                                (originator)
+                            {% endif %}
+                        </span>
+                </span></nobr>
+                </strong>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
 {% block page %}
     <div class="row">
         <div class="col-lg-12">
+            {% if product.medicine.benchmarks %}
+                {% for benchmark in product.medicine.benchmarks %}
+                    {% set difference = 100 * (product.average_price - benchmark.price) / product.average_price %}
+                    <p class="lead">
+                        This product was
+                        <span class="text-{% if difference > 0 %}danger{% else %}success{% endif %}">
+                            {{ difference | round | int | abs }}% {% if difference > 0 %}more{% else %}less{% endif %} expensive
+                        </span>
+                        than the {{ benchmark.name }} benchmark price of ${{ benchmark.price }} for {{ benchmark.year }}.
+                    </p>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
 
-            <h1>
-                {{ macros.render_product(product) }}
-                <small>
-                    {% if product.generic %}
-                        Generic
-                    {% else %}
-                        Originator
-                    {% endif %}
-                </small>
-            </h1>
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Alternative products</h2>
 
-            <h2>Details</h2>
-            <table class="table table-bordered table-striped">
-                <tbody>
-                <tr>
-                    <th>
-                        Formulation
-                    </th>
-                    <td>
-                        {{ product.medicine.name }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Strength
-                    </th>
-                    <td>
-                        {{ macros.render_medicine_strength(product.medicine) }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Dosage form
-                    </th>
-                    <td>
-                        {{ product.medicine.dosageform.name }}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Manufacturer
-                    </th>
-                    <td>
-                        {% if product.manufacturer %}
-                            {{ product.manufacturer.name }}, {{ product.manufacturer.country }}
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>
-                        Site
-                    </th>
-                    <td>
-                        {% if product.manufacturer %}
-                            {{ product.manufacturer.site }}
-                        {% else %}
-                            N/A
-                        {% endif %}
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            {% if product.alternative_products %}
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <th>Name</th>
+                    <th>Manufacturer</th>
+                    <th>Average price (USD)</th>
+                    <th>Price difference</th>
+                    </thead>
+                    <tbody>
+                    {% for alternative_product in product.alternative_products %}
+                        {% set difference = 100 * (alternative_product.average_price - product.average_price) / alternative_product.average_price %}
+                        <tr>
+                            <td>
+                                <a href="/product/{{ alternative_product.product_id }}/">
+                                    {% if alternative_product.name %}
+                                        {{ alternative_product.name }}
+                                    {% else %}
+                                        Unnamed
+                                    {% endif %}
+                                </a>
+                            </td>
+                            <td>
+                                {% if alternative_product.manufacturer %}
+                                    {% if alternative_product.manufacturer.country %}
+                                        {{ macros.render_flag(alternative_product.manufacturer.country) }}
+                                    {% endif %}
+                                    {{ alternative_product.manufacturer.name }}
+                                    {% if alternative_product.manufacturer.country %}
+                                        in {{ alternative_product.manufacturer.country.name }}
+                                    {% endif %}
+                                {% else %}
+                                    Unknown manufacturer
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if alternative_product.average_price %}
+                                    ${{ alternative_product.average_price }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                        <span class="badge pull-right alert-{% if difference > 0 %}danger{% else %}success{% endif %}">
+                                        {% if difference > 0 %} + {% else %} - {% endif %}{{ difference | round | int | abs }}%
+                                    </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>We don't know of any alternatives to this product.</p>
+            {% endif %}
+        </div>
+    </div>
 
-            <h2>Purchases</h2>
+    <div class="row">
+        <div class="col-lg-12">
+
+            <h2>Purchase details</h2>
             {% if product.procurements | length == 0 %}
                 <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
             {% else %}
@@ -77,14 +147,17 @@
                     <thead>
                     <th>Supplier</th>
                     <th>Procurement country</th>
+                    <th>Date</th>
+                    <th>Terms</th>
+                    <th>Volume</th>
+                    <th>Price</th>
                     </thead>
                     <tbody>
                     {% for procurement in product.procurements %}
                         <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
                             <td>
-
                                 {% if procurement.supplier and procurement.supplier.name %}
-                                    <a href="/supplier/{{ procurement.supplier.id }}/">
+                                    <a href="/supplier/{{ procurement.supplier.supplier_id }}/">
                                         {{ procurement.supplier.name }}
                                     </a>
                                 {% else %}
@@ -92,7 +165,21 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {{ macros.render_country(procurement.country) }}
+                                {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                            </td>
+                            <td>
+                                {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
+                            </td>
+                            <td>
+                                {% if procurement.incoterm %}
+                                    {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ procurement.volume * procurement.pack_size }} ({{ procurement.container.quantity | int }} {{ procurement.container.unit }} {{ procurement.container.type }}s)
+                            </td>
+                            <td>
+                                ${{ procurement.price_usd }}
                             </td>
                         </tr>
                     {% endfor %}
@@ -105,12 +192,10 @@
 {% endblock %}
 
 {% block javascript %}
+    {{ super() }}
     <script>
         $(document).ready(function(){
-            $(".procurement-entry").on('click', function(e){
-                var procurement_id = $(this).attr('data-procurement-id').toString()
-                window.location = "/procurement/" + procurement_id
-            })
+
         });
     </script>
 {% endblock %}

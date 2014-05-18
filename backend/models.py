@@ -135,7 +135,6 @@ class Medicine(db.Model):
 
     __tablename__ = "medicine"
     medicine_id = db.Column(db.Integer, primary_key=True)
-    average_price = db.Column(db.Float, nullable=True)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm')
 
@@ -154,20 +153,6 @@ class Medicine(db.Model):
             for product in products:
                 out += product.procurements
         return out
-
-    def calculate_average_price(self):
-        sum = 0
-        tot = 0
-        products = Product.query.filter(Product.medicine_id == self.medicine_id).all()
-        for product in products:
-            procurements = Procurement.query.filter(Product.product_id == product.product_id).all()
-            for p in procurements:
-                if p.price_usd and p.volume and p.container.quantity:
-                    sum += p.price_usd * p.volume
-                    tot += p.container.quantity * p.volume
-        if tot > 0:
-            self.average_price = sum/tot
-        return
 
     def __unicode__(self):
         return u'%s %s' % (self.name, self.dosage_form)
@@ -275,9 +260,6 @@ class Supplier(db.Model):
     alt_email = db.Column(db.String(100))
     authorized = db.Column(db.Boolean, default=False)
 
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
-    country = db.relationship('Country')
-
     @property
     def products(self):
         out = []
@@ -298,6 +280,7 @@ class Product(db.Model):
 
     __tablename__ = "product"
     product_id = db.Column(db.Integer, primary_key=True)
+    average_price = db.Column(db.Float, nullable=True)
     name = db.Column(db.String(64), nullable=True)
     is_generic = db.Column(db.Boolean, default=True)
 
@@ -307,6 +290,25 @@ class Product(db.Model):
     manufacturer = db.relationship('Manufacturer')
     site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
     site = db.relationship('Site')
+
+    def calculate_average_price(self):
+        sum = 0
+        tot = 0
+        for p in self.procurements:
+            if p.price_usd and p.volume and p.container.quantity:
+                sum += p.price_usd * p.volume
+                tot += p.container.quantity * p.volume
+        if tot > 0:
+            self.average_price = sum/tot
+        return
+
+    def get_name(self):
+        tmp = "Unnamed"
+        if self.name:
+            tmp = self.name
+        if self.medicine.name:
+            tmp += " - " + self.medicine.name
+        return tmp
 
     @property
     def alternative_products(self):
@@ -381,6 +383,8 @@ class Procurement(db.Model):
 
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product', backref='procurements')
+    incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
+    incoterm = db.relationship('Incoterm')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
