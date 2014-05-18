@@ -84,18 +84,27 @@
                 products = [];
                 map = {};
                 $.get('http://localhost:5001/autocomplete/' + query + '/', function(data){
-                    for (var i = 0; i<data.length; i++)
+                    for (var i = 0; i < data.length; i++)
                     {
-                        var key = data[i][0]
+                        var key = data[i].name
+                        if(data[i].manufacturer)
+                        {
+                            key += " [" + data[i].manufacturer.name
+                            if (data[i].manufacturer.country)
+                            {
+                                key += ", " + data[i].manufacturer.country.name
+                            }
+                            key += "]"
+                        }
                         if (key)
                             products.push(key)
-                        map[key] = data[i][1]
+                        map[key] = data[i]
                     }
                     process(products);
                 },'json');
             },
             updater: function (item) {
-                window.location = '/product/' + map[item].toString() + '/';
+                window.location = '/product/' + map[item].product_id.toString() + '/';
                 return item;
             },
             matcher: function (item) {

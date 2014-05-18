@@ -47,12 +47,14 @@ def send_api_response(data_json):
     response.headers['Content-Type'] = "application/json"
     return response
 
+# -------------------------------------------------------------------
+# Expensive functions, that only needs to be run from time to time:
+#
 
 def calculate_db_overview():
     """
-    Run a set of queries to get an overview of the database. This may be an expensive operation,
-    so that's why it's not coupled directly to a view endpoint. Allowing for the overview to only be
-    recalculated from time to time, as needed.
+    Run a set of queries to get an overview of the database.
+    THIS IS COMPUTATIONALLY EXPENSIVE
     """
 
     overview = {}
@@ -70,7 +72,7 @@ def calculate_db_overview():
     overview['count_medicines'] = count_medicines
 
     # number of recent procurements
-    # i.e. thye have start or end dates after the cutoff
+    # i.e. they have start or end dates after the cutoff
     cutoff = datetime.datetime.today() - datetime.timedelta(days=365)
     count_recent_procurements = db.session.query(
         func.count(models.Procurement.procurement_id)) \
@@ -107,6 +109,21 @@ def calculate_db_overview():
     overview['top_sources'] = top_sources
     return overview
 
+
+def calculate_autocomplete():
+    """
+    Retrieve all product records and serialize them for use by the autocomplete endpoint.
+    THIS IS COMPUTATIONALLY EXPENSIVE
+    """
+
+    products = []
+    for product in models.Product.query.all():
+        products.append(product.to_dict())
+    return products
+
+# -------------------------------------------------------------------
+# API endpoints:
+#
 
 @app.route('/overview/')
 def overview():
@@ -177,9 +194,20 @@ def resource(resource, resource_id=None):
 @app.route('/autocomplete/<query>/')
 def autocomplete(query):
     """
-    Return only the name and product_id of each product that matches the given query.
+    Return the name and product_id of each product that matches the given query, together with the name and
+    country of the manufacturer.
     """
 
-    out = db.session.query(models.Product.name, models.Product.product_id) \
-        .filter(models.Product.name.contains(query)).all()
+    out = []
+    for product in calculate_autocomplete():
+        tmp = {}
+        if query in product['name'].lower():
+            tmp['product_id'] = product['product_id']
+            tmp['name'] = product['name']
+            if product['manufacturer']:
+                tmp['manufacturer'] = {}
+                tmp['manufacturer']['name'] = product['manufacturer']['name']
+                if product['manufacturer']['country']:
+                    tmp['manufacturer']['country'] = product['manufacturer']['country']
+            out.append(tmp)
     return send_api_response(json.dumps(out))
