@@ -133,3 +133,64 @@ def deploy():
     set_permissions()
     restart()
     return
+
+
+def configure_redis():
+
+    # upload config file
+    put('instance/redis.conf', '/tmp/redis.conf')
+    sudo('mv -f /tmp/redis.conf /etc/redis/6379.conf')
+
+    return
+
+
+def install_redis():
+    """
+    Install the redis key-value store on port 6379
+    http://redis.io/topics/quickstart
+    """
+    sudo('apt-get install tcl8.5')
+    with cd(env['code_dir']):
+        sudo('wget http://download.redis.io/redis-stable.tar.gz')
+        sudo('tar xvzf redis-stable.tar.gz')
+        with cd('redis-stable'):
+            sudo('make')
+            sudo('make test')
+            if confirm("Do you want to continue?"):
+                #continue processing
+                sudo('cp src/redis-server /usr/local/bin/')
+                sudo('cp src/redis-cli /usr/local/bin/')
+            with settings(warn_only=True):
+                # create dir for config files, data and log
+                sudo('mkdir /etc/redis')
+                sudo('mkdir /var/redis')
+                sudo('touch /var/log/redis_6379.log')
+            # init file for handling server restart
+            sudo('cp utils/redis_init_script /etc/init.d/redis_6379')
+            # copy config file
+            sudo('cp redis.conf /etc/redis/6379.conf')
+            with settings(warn_only=True):
+                # create working directory
+                sudo('mkdir /var/redis/6379')
+
+            # ensure redis restarts if the server reboots
+            sudo('update-rc.d redis_6379 defaults')
+
+    configure_redis()
+    # reboot once, to let redis start up automatically
+    sudo('reboot')
+    return
+
+
+def test_redis():
+
+    sudo('redis-cli ping')
+    return
+
+
+def restart_redis():
+
+    with settings(warn_only=True):
+        sudo('/etc/init.d/redis_6379 stop')
+    sudo('/etc/init.d/redis_6379 start')
+    return
