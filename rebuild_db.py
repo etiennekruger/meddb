@@ -6,23 +6,11 @@ from datetime import date, datetime
 db.drop_all()
 db.create_all()
 
-# populate event types
-event_types = [
-    "Activate User account",
-    "De-activate User account",
-    "Set user role",
-    "Add Procurement record",
-    "Update Procurement record",
-    "Delete Procurement record",
-    "Approve Procurement record",
-    "Compare products",
-    "Login",
-    "Logout",
-]
-for event_type in event_types:
-    event_type_obj = models.EventType()
-    event_type_obj.description = event_type
-    db.session.add(event_type_obj)
+# add first user
+user_obj = models.User()
+user_obj.email = 'adi@code4sa.org'
+db.session.add(user_obj)
+db.session.commit()
 
 # populate items from 3rd party datasets:
 # Country
@@ -244,6 +232,7 @@ for medicine in medicines:
             incoterm_obj = models.Incoterm.query.filter(models.Incoterm.code==procurement['incoterm']['name']).first()
             procurement_obj.incoterm = incoterm_obj
 
+        procurement_obj.added_by = user_obj
         procurement_obj.source = source_obj
         procurement_obj.container = container_obj
         procurement_obj.country = country_obj

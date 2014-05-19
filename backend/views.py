@@ -1,6 +1,5 @@
 from backend import logger, app, db
 import models
-import events
 import flask
 import json
 import serializers
