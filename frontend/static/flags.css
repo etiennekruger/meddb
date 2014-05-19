@@ -3,7 +3,10 @@
 .flag {
 	width: 25px;
 	height: 15px;
-	background:url(flags.png) no-repeat
+	background:url(flags.png) no-repeat;
+    display:inline-block;
+    margin-left: 5px;
+    margin-right: 1px;
 }
 
 .flag.flag-ad {background-position: -25px 0}

@@ -7,7 +7,7 @@
 {%- endmacro %}
 
 {% macro render_flag(country) -%}
-    <img src="static/flags.png" class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}" />
+    <span class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}"></span>
 {%- endmacro %}
 
 {% macro render_volume(volume) -%}

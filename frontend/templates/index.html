@@ -16,12 +16,12 @@
                 </div>
             </form>
             <p id="search-caption">
-                {% if recent_products %}
-                    Recent:
-                    {% for product in recent_products %}
-                        <a href="/product/{{ product.id }}/">{{ product.name }}</a>{% if not loop.last %}, {% endif %}
-                    {% endfor %}
-                {% endif %}
+{#                {% if recent_products %}#}
+{#                    Recent:#}
+{#                    {% for product in recent_products %}#}
+{#                        <a href="/product/{{ product.id }}/">{{ product.name }}</a>{% if not loop.last %}, {% endif %}#}
+{#                    {% endfor %}#}
+{#                {% endif %}#}
             </p>
         </div>
     </div>
@@ -34,7 +34,7 @@
             {% for procurement in recent_updates %}
                 <p>
                     <span class="badge" style="margin-right: 15px;">{{ procurement.added_by.email }}</span>
-                    {{ procurement.product.name }}{% if procurement.country %}, {{ procurement.country.name }}{% endif %}
+                    {{ procurement.product.name }}{% if procurement.country %}, {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}{% endif %}
                     <span class="pull-right">{{ procurement.added_on }}</span></p>
             {% endfor %}
             {#            <h2>Welcome to the Medicine Prices Database</h2>#}
