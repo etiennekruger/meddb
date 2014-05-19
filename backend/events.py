@@ -1,20 +1,17 @@
-from backend import app, db, logger
-import models
+from backend import logger, app, db
+import cache
 
 
 def clean_description(description):
 
-    return description.lower().replace(" ", "_")
+    clean_description = description.replace(" ", "_").lower()
+    return clean_description
 
 
-def log_event(user, description):
-    event_obj = models.Event()
-    event_type_obj = models.EventType.query.filter(models.EventType.description==clean_description(description)).first()
-    if event_type_obj is None:
-        event_type_obj = models.EventType()
-        event_type_obj.description = clean_description(description)
-    event_obj.event_type = event_type_obj
-    event_obj.user = user
-    db.session.add(event_obj)
-    db.session.commit()
+def log_event(description, user):
+    cache.store(clean_description(description), user.email)
     return
+
+
+def read_event_log(description):
+    return str(cache.retrieve(clean_description(description)))

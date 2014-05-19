@@ -24,41 +24,6 @@ class User(db.Model):
         return self.email
 
 
-class EventType(db.Model):
-
-    __tablename__ = "event_type"
-    event_type_id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String, nullable=False)
-
-    def __unicode__(self):
-        s = unicode(self.description)
-        return s
-
-    def to_dict(self, include_related=False):
-        return serializers.model_to_dict(self)
-
-
-class Event(db.Model):
-
-    __tablename__ = "event"
-    event_id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.DateTime, default=datetime.datetime.now)
-
-    event_type_id = db.Column(db.Integer, db.ForeignKey('event_type.event_type_id'), nullable=True)
-    event_type = db.relationship('EventType')
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
-    user = db.relationship('User')
-    procurement_id = db.Column(db.Integer, db.ForeignKey('procurement.procurement_id'), nullable=True)
-    procurement = db.relationship('Procurement')
-
-    def __unicode__(self):
-        s = unicode(self.user.email + ' - ' + self.event_type.description)
-        return s
-
-    def to_dict(self, include_related=False):
-        return serializers.model_to_dict(self)
-
-
 class Source(db.Model):
 
     __tablename__ = "source"
@@ -380,6 +345,8 @@ class Procurement(db.Model):
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
     incoterm = db.Column(db.String(3), nullable=True)  # The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.
     currency = db.Column(db.String(3), nullable=True)  # This is the currency of the procurement price. This field is required to convert units to USD for comparison.
+    added_on = db.Column(db.Date, default=datetime.datetime.today())
+    approved_on = db.Column(db.Date, nullable=True)
 
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product', backref='procurements')
@@ -395,6 +362,10 @@ class Procurement(db.Model):
     container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by = db.relationship('User', foreign_keys=added_by_id, backref='procurements_added')
+    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    approved_by = db.relationship('User', foreign_keys=approved_by_id, backref='procurements_approved')
 
     def calculate_price_usd(self):
         if self.currency_code == 'USD':
