@@ -1,7 +1,7 @@
 import requests
 import json
 
-API_ROOT = "http://localhost:8000/json/"
+API_ROOT = "http://medicines.sadc.int/meddb/json/"
 
 r = requests.get(API_ROOT + "medicine/")
 
@@ -12,10 +12,15 @@ print str(len(medicines)) + " medicines found"
 dump = []
 
 for medicine in medicines:
-    r = requests.get(API_ROOT + "medicine/" + str(medicine["id"]) + "/")
-    rec = r.json()
-    print rec["name"]
-    dump.append(rec)
+    tmp_url = API_ROOT + "medicine/" + str(medicine["id"]) + "/"
+    r = requests.get(tmp_url)
+    if r.status_code == 200:
+        rec = r.json()
+        if rec.get('name'):
+            print rec["name"]
+        dump.append(rec)
+    else:
+        print "Error: " + str(r.status_code) + " " + tmp_url
 
 f = open("dump.json", "w")
 f.write(json.dumps(dump, indent=4))

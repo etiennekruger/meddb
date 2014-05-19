@@ -90,7 +90,12 @@ for medicine in medicines:
         db.session.add(benchmark_obj)
         db.session.commit()
     else:
-        print "this medicine has no benchmark price: " + medicine['name']
+        tmp = "this medicine has no benchmark price: "
+        if medicine.get('name'):
+            tmp += medicine['name']
+        else:
+            tmp += str(medicine['id'])
+        print tmp
 
     # capture dosage form
     if medicine['dosageform'] and not medicine['dosageform'] == "N/A":
@@ -102,7 +107,12 @@ for medicine in medicines:
             db.session.commit()
         medicine_obj.dosage_form = dosage_form_obj
     else:
-        print "Unknown dosage form for: " + medicine["name"]
+        tmp = "this medicine has no dosage form: "
+        if medicine.get('name'):
+            tmp += medicine['name']
+        else:
+            tmp += str(medicine['id'])
+        print tmp
 
     db.session.add(medicine_obj)
     db.session.commit()
@@ -119,6 +129,8 @@ for medicine in medicines:
             tmp_code = "MWI"
         if tmp_code == "SEY":
             tmp_code = "SYC"
+        if tmp_code == "ANG":
+            tmp_code = "AGO"
         country_obj = models.Country.query.filter(models.Country.code==tmp_code).first()
         if country_obj is None:
             print "Country could not be found: " + procurement["country"]["code"]
@@ -149,10 +161,13 @@ for medicine in medicines:
                     print "Unknown country: " + tmp_country_name
 
         # capture site
-        site_obj = models.Site.query.filter(models.Site.name==procurement["product"]["site"]).first()
+        site_obj = None
+        if procurement["product"].get('site'):
+            site_obj = models.Site.query.filter(models.Site.name==procurement["product"]["site"]).first()
         if site_obj is None:
             site_obj = models.Site()
-            site_obj.name = procurement["product"]["site"]
+            if procurement["product"].get('site'):
+                site_obj.name = procurement["product"]["site"]
             db.session.add(site_obj)
             db.session.commit()
 
@@ -169,7 +184,10 @@ for medicine in medicines:
             product_obj.name = tmp_name
             product_obj.medicine = medicine_obj
             product_obj.manufacturer = manufacturer_obj
-            product_obj.is_generic = bool(procurement["product"]["generic"])
+            if procurement["product"].get('generic'):
+                product_obj.is_generic = bool(procurement["product"]["generic"])
+            else:
+                product_obj.is_generic = True
             db.session.add(product_obj)
             db.session.commit()
 
@@ -200,7 +218,8 @@ for medicine in medicines:
             db.session.commit()
 
         # capture source
-        if procurement["source"]:
+        source_obj = None
+        if procurement.get("source") and procurement["source"]:
             tmp_name = procurement["source"]["name"].strip()
             if tmp_name == "":
                 tmp_name = None
@@ -233,7 +252,8 @@ for medicine in medicines:
         procurement_obj.product = product_obj
         procurement_obj.price = procurement["price"]
         procurement_obj.start_date = datetime.strptime(procurement["start_date"], "%Y-%m-%d")
-        procurement_obj.end_date = datetime.strptime(procurement["end_date"], "%Y-%m-%d")
+        if procurement.get("end_date"):
+            procurement_obj.end_date = datetime.strptime(procurement["end_date"], "%Y-%m-%d")
         procurement_obj.pack_size = procurement["packsize"]
         procurement_obj.volume = procurement["volume"]
         # note: we could call calculate_price_usd at this point, but let's rather work from existing data, since the API's rate limited
