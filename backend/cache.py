@@ -21,7 +21,7 @@ def store(key, str_in):
         p.execute()
     except ConnectionError:
         # fall back to filesystem, if Redis is not available
-        with open('/tmp/med-db.cache', 'r+') as f:
+        with open('/tmp/med-db.cache', 'w+') as f:
             try:
                 cache = json.loads(f.read())
             except Exception:
@@ -46,7 +46,7 @@ def log(key, str_in):
         p.execute()
     except ConnectionError:
         # fall back to filesystem, if Redis is not available
-        with open('/tmp/med-db.cache', 'r+') as f:
+        with open('/tmp/med-db.cache', 'w+') as f:
             try:
                 cache = json.loads(f.read())
             except Exception:
@@ -65,7 +65,7 @@ def retrieve(key):
         return redis.get(key)
     except ConnectionError:
         # fall back to filesystem, if Redis is not available
-        with open('/tmp/med-db.cache', 'r+') as f:
+        with open('/tmp/med-db.cache', 'w+') as f:
             try:
                 cache = json.loads(f.read())
             except Exception:

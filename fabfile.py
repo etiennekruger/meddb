@@ -18,8 +18,8 @@ def virtualenv():
 
 
 def upload_db():
-    put('med-db.db', '/tmp/med-db.db')
-    sudo('mv /tmp/med-db.db %s/med-db.db' % env.project_dir)
+    put('instance/med-db.db', '/tmp/med-db.db')
+    sudo('mv /tmp/med-db.db %s/instance/med-db.db' % env.project_dir)
     set_permissions()
     restart()
     return
@@ -27,7 +27,7 @@ def upload_db():
 
 def restart():
     sudo("supervisorctl restart frontend")
-    sudo("supervisorctl restart med-db")
+    sudo("supervisorctl restart backend")
     sudo('service nginx restart')
     return
 
@@ -86,7 +86,7 @@ def configure():
 
     # link server blocks to Nginx config
     with settings(warn_only=True):
-        sudo('ln -s %s/nginx_med-db.conf /etc/nginx/conf.d/' % env.project_dir)
+        sudo('ln -s %s/nginx_med-db.conf /etc/nginx/sites-enabled/' % env.project_dir)
 
     # upload supervisor config
     put(env.config_dir + '/supervisor.conf', '/tmp/supervisor.conf')
@@ -108,11 +108,11 @@ def configure():
 
 def deploy():
     # create a tarball of our packages
-    local('tar -czf med-db.tar.gz med-db/', capture=False)
+    local('tar -czf backend.tar.gz backend/', capture=False)
     local('tar -czf frontend.tar.gz frontend/', capture=False)
 
     # upload the source tarballs to the server
-    put('med-db.tar.gz', '/tmp/med-db.tar.gz')
+    put('backend.tar.gz', '/tmp/backend.tar.gz')
     put('frontend.tar.gz', '/tmp/frontend.tar.gz')
 
     with settings(warn_only=True):
@@ -121,13 +121,13 @@ def deploy():
     # enter application directory
     with cd(env.project_dir):
         # and unzip new files
-        sudo('tar xzf /tmp/med-db.tar.gz')
+        sudo('tar xzf /tmp/backend.tar.gz')
         sudo('tar xzf /tmp/frontend.tar.gz')
 
     # now that all is set up, delete the tarballs again
-    sudo('rm /tmp/med-db.tar.gz')
+    sudo('rm /tmp/backend.tar.gz')
     sudo('rm /tmp/frontend.tar.gz')
-    local('rm med-db.tar.gz')
+    local('rm backend.tar.gz')
     local('rm frontend.tar.gz')
 
     set_permissions()
