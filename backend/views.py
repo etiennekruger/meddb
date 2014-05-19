@@ -7,6 +7,7 @@ from flask.ext import login
 from sqlalchemy import func, or_
 import datetime
 import events
+import cache
 
 API_HOST = app.config["API_HOST"]
 
@@ -57,6 +58,8 @@ def calculate_db_overview():
     THIS IS COMPUTATIONALLY EXPENSIVE
     """
 
+
+    logger.debug("Calculating DB overview")
     overview = {}
 
     # number of products being tracked
@@ -116,10 +119,12 @@ def calculate_autocomplete():
     THIS IS COMPUTATIONALLY EXPENSIVE
     """
 
-    products = []
-    for product in models.Product.query.all():
-        products.append(product.to_dict())
-    return products
+    logger.debug("Calculating autocomplete")
+    products = models.Product.query.all()
+    out = []
+    for product in products:
+        out.append(product.to_dict())
+    return out
 
 # -------------------------------------------------------------------
 # API endpoints:
@@ -131,7 +136,15 @@ def overview():
     Give a broad overview of the size of -, and recent activity related to, the database.
     """
 
-    return send_api_response(json.dumps(calculate_db_overview()))
+    tmp = cache.retrieve('db_overview')
+    if tmp:
+        logger.debug("DB overview served from cache")
+        return send_api_response(tmp)
+    else:
+        tmp = calculate_db_overview()
+        cache.store('db_overview', json.dumps(tmp, cls=serializers.CustomEncoder))
+        return send_api_response(json.dumps(tmp))
+
 
 api_resources = {
     'medicine': (models.Medicine, models.Medicine.medicine_id),
@@ -199,7 +212,14 @@ def autocomplete(query):
     """
 
     out = []
-    for product in calculate_autocomplete():
+    product_list_json = cache.retrieve('product_list')
+    if product_list_json:
+        logger.debug('calculating autocomplete from cache')
+        product_list = json.loads(product_list_json)
+    else:
+        product_list = calculate_autocomplete()
+        cache.store('product_list', json.dumps(product_list, cls=serializers.CustomEncoder))
+    for product in product_list:
         tmp = {}
         if query in product['name'].lower():
             tmp['product_id'] = product['product_id']

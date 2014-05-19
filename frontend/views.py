@@ -35,7 +35,6 @@ def landing():
 
     tmp_response = requests.get(API_HOST + 'recent_updates/')
     recent_updates = tmp_response.json()['results']
-    logger.debug(recent_updates)
 
     tmp_response = requests.get(API_HOST + 'overview/')
     overview = tmp_response.json()
