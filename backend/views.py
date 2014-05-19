@@ -6,6 +6,7 @@ import serializers
 from flask.ext import login
 from sqlalchemy import func, or_
 import datetime
+import events
 
 API_HOST = app.config["API_HOST"]
 
