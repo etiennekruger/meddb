@@ -30,9 +30,12 @@
 {% block page %}
     <div class="row">
         <div class="col-md-8">
-            <h3>Recent updates</h3>
-            {% for event in recent_events %}
-                <p><span class="badge">{{ event.user }}</span> - {{ event.description }} <span class="pull-right">{{ event.date }}</span></p>
+            <h3>Recently added procurement entries</h3>
+            {% for procurement in recent_updates %}
+                <p>
+                    <span class="badge" style="margin-right: 15px;">{{ procurement.added_by.email }}</span>
+                    {{ procurement.product.name }}{% if procurement.country %}, {{ procurement.country.name }}{% endif %}
+                    <span class="pull-right">{{ procurement.added_on }}</span></p>
             {% endfor %}
             {#            <h2>Welcome to the Medicine Prices Database</h2>#}
             {#            <p>#}

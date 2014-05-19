@@ -144,6 +144,8 @@ def procurement_to_dict(obj, include_related=False):
     tmp_dict = model_to_dict(obj)
     # resource URI
     tmp_dict['URI'] = API_HOST + 'procurement/' + str(obj.procurement_id) + '/'
+    # product
+    tmp_dict['product'] = obj.product.to_dict()
     # container
     tmp_dict['container'] = obj.container.to_dict()
     tmp_dict.pop('container_id')
@@ -162,6 +164,17 @@ def procurement_to_dict(obj, include_related=False):
         tmp_source = obj.source.to_dict()
     tmp_dict['source'] = tmp_source
     tmp_dict.pop('source_id')
+    # added & approved by
+    tmp_added_by = None
+    tmp_approved_by = None
+    if obj.added_by:
+        tmp_added_by = obj.added_by.to_dict()
+    if obj.approved_by:
+        tmp_approved_by = obj.approved_by.to_dict()
+    tmp_dict['added_by'] = tmp_added_by
+    tmp_dict['approved_by'] = tmp_approved_by
+    tmp_dict.pop('added_by_id')
+    tmp_dict.pop('approved_by_id')
     # round the price
     if tmp_dict['price_usd']:
         tmp_dict['price_usd'] = float('%.3g' % tmp_dict['price_usd'])

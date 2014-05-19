@@ -1,5 +1,5 @@
 from flask import render_template, flash
-from frontend import app
+from frontend import app, logger
 import requests
 import operator
 import dateutil
@@ -33,17 +33,12 @@ def landing():
         {"name": "Benkil 400", "id": 8}
     ]
 
-    recent_events = [
-        {"user": "adi eyal", "description": "Added purchase information.", "date": "2014-03-30"},
-        {"user": "pjvr", "description": "Added purchase information.", "date": "2014-03-10"},
-        {"user": "someone else", "description": "Added purchase information.", "date": "2014-02-15"},
-        {"user": "adi eyal", "description": "Added purchase information.", "date": "2014-03-30"},
-        {"user": "pjvr", "description": "Added purchase information.", "date": "2014-03-10"},
-        {"user": "someone else", "description": "Added purchase information.", "date": "2014-02-15"}
-    ]
+    tmp_response = requests.get(API_HOST + 'recent_updates/')
+    recent_updates = tmp_response.json()['results']
+    logger.debug(recent_updates)
 
-    response = requests.get(API_HOST + 'overview/')
-    overview = response.json()
+    tmp_response = requests.get(API_HOST + 'overview/')
+    overview = tmp_response.json()
 
     return render_template(
         'index.html',
@@ -51,7 +46,7 @@ def landing():
         active_nav_button="home",
         overview=overview,
         recent_products=recent_products,
-        recent_events=recent_events
+        recent_updates=recent_updates
     )
 
 @app.route('/product/<product_id>/')

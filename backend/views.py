@@ -211,3 +211,13 @@ def autocomplete(query):
                     tmp['manufacturer']['country'] = product['manufacturer']['country']
             out.append(tmp)
     return send_api_response(json.dumps(out))
+
+
+@app.route('/recent_updates/')
+def recent_updates():
+    """
+    Return a list of purchases that have recently been added
+    """
+
+    procurements = models.Procurement.query.order_by(models.Procurement.added_on.desc()).limit(20).all()
+    return serializers.queryset_to_json(procurements)

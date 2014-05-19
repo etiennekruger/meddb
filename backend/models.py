@@ -23,6 +23,9 @@ class User(db.Model):
     def __repr__(self):
         return self.email
 
+    def to_dict(self, include_related=False):
+        return {'user_id': self.user_id, 'email': self.email}
+
 
 class Source(db.Model):
 
