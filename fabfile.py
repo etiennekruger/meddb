@@ -18,8 +18,8 @@ def virtualenv():
 
 
 def upload_db():
-    put('~/Downloads/meddb.db', '/tmp/med-db.db')
-    sudo('mv /tmp/med-db.db %s/med-db.db' % env.project_dir)
+    put('instance/med-db.db', '/tmp/med-db.db')
+    sudo('mv /tmp/med-db.db %s/instance/med-db.db' % env.project_dir)
     set_permissions()
     restart()
     return
@@ -27,7 +27,7 @@ def upload_db():
 
 def restart():
     sudo("supervisorctl restart frontend")
-    sudo("supervisorctl restart med-db")
+    sudo("supervisorctl restart backend")
     sudo('service nginx restart')
     return
 
@@ -86,7 +86,7 @@ def configure():
 
     # link server blocks to Nginx config
     with settings(warn_only=True):
-        sudo('ln -s %s/nginx_med-db.conf /etc/nginx/conf.d/' % env.project_dir)
+        sudo('ln -s %s/nginx_med-db.conf /etc/nginx/sites-enabled/' % env.project_dir)
 
     # upload supervisor config
     put(env.config_dir + '/supervisor.conf', '/tmp/supervisor.conf')
@@ -108,11 +108,11 @@ def configure():
 
 def deploy():
     # create a tarball of our packages
-    local('tar -czf med-db.tar.gz med-db/', capture=False)
+    local('tar -czf backend.tar.gz backend/', capture=False)
     local('tar -czf frontend.tar.gz frontend/', capture=False)
 
     # upload the source tarballs to the server
-    put('med-db.tar.gz', '/tmp/med-db.tar.gz')
+    put('backend.tar.gz', '/tmp/backend.tar.gz')
     put('frontend.tar.gz', '/tmp/frontend.tar.gz')
 
     with settings(warn_only=True):
@@ -121,15 +121,76 @@ def deploy():
     # enter application directory
     with cd(env.project_dir):
         # and unzip new files
-        sudo('tar xzf /tmp/med-db.tar.gz')
+        sudo('tar xzf /tmp/backend.tar.gz')
         sudo('tar xzf /tmp/frontend.tar.gz')
 
     # now that all is set up, delete the tarballs again
-    sudo('rm /tmp/med-db.tar.gz')
+    sudo('rm /tmp/backend.tar.gz')
     sudo('rm /tmp/frontend.tar.gz')
-    local('rm med-db.tar.gz')
+    local('rm backend.tar.gz')
     local('rm frontend.tar.gz')
 
     set_permissions()
     restart()
+    return
+
+
+def configure_redis():
+
+    # upload config file
+    put('instance/redis.conf', '/tmp/redis.conf')
+    sudo('mv -f /tmp/redis.conf /etc/redis/6379.conf')
+
+    return
+
+
+def install_redis():
+    """
+    Install the redis key-value store on port 6379
+    http://redis.io/topics/quickstart
+    """
+    sudo('apt-get install tcl8.5')
+    with cd(env['code_dir']):
+        sudo('wget http://download.redis.io/redis-stable.tar.gz')
+        sudo('tar xvzf redis-stable.tar.gz')
+        with cd('redis-stable'):
+            sudo('make')
+            sudo('make test')
+            if confirm("Do you want to continue?"):
+                #continue processing
+                sudo('cp src/redis-server /usr/local/bin/')
+                sudo('cp src/redis-cli /usr/local/bin/')
+            with settings(warn_only=True):
+                # create dir for config files, data and log
+                sudo('mkdir /etc/redis')
+                sudo('mkdir /var/redis')
+                sudo('touch /var/log/redis_6379.log')
+            # init file for handling server restart
+            sudo('cp utils/redis_init_script /etc/init.d/redis_6379')
+            # copy config file
+            sudo('cp redis.conf /etc/redis/6379.conf')
+            with settings(warn_only=True):
+                # create working directory
+                sudo('mkdir /var/redis/6379')
+
+            # ensure redis restarts if the server reboots
+            sudo('update-rc.d redis_6379 defaults')
+
+    configure_redis()
+    # reboot once, to let redis start up automatically
+    sudo('reboot')
+    return
+
+
+def test_redis():
+
+    sudo('redis-cli ping')
+    return
+
+
+def restart_redis():
+
+    with settings(warn_only=True):
+        sudo('/etc/init.d/redis_6379 stop')
+    sudo('/etc/init.d/redis_6379 start')
     return

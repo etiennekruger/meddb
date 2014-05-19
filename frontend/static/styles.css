@@ -2,8 +2,48 @@ body{
 
 }
 
+#page-container{
+}
+
+#jumbo{
+    background-image: url('/static/patterns/connect.png');
+    margin-top: -20px;
+    border-bottom: solid #e7e7e7 1px;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+#message-container{
+    padding-top: 15px;
+}
+
+.flashed_msg{
+    background-image: url('/static/patterns/connect.png');
+}
+
+#search-banner{
+    padding-top: 80px;
+    padding-bottom: 120px;
+    padding-left: 200px;
+    padding-right: 200px;
+}
+
+#search-caption{
+    margin-top: 15px;
+}
+
+#stats{
+    border-bottom: solid #e7e7e7 1px;
+    margin-bottom: 20px;
+}
+
 #footer{
-    height: 100px;
+    height: 80px;
+    width: 100%;
+    padding-top: 20px;
+    margin-top: 20px;
+    background-color: #f8f8f8;
+    border-top: solid #e7e7e7 1px;
 }
 
 .tiny-logo{
@@ -23,12 +63,4 @@ body{
 #brand-logo{
     margin-top: -15px;
     margin-bottom: -15px;
-}
-
-tr.clickable{
-    cursor: pointer;
-}
-
-tr.clickable:hover td{
-    background-color: #eee!important;
 }
