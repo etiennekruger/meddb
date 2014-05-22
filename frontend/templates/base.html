@@ -90,7 +90,7 @@
                 $.get('{{ API_HOST }}autocomplete/' + query + '/', function(data){
                     for (var i = 0; i < data.length; i++)
                     {
-                        var key = data[i].name
+                        var key = data[i].name + " - " + data[i].medicine.name;
                         if(data[i].manufacturer)
                         {
                             key += ' <span class=\"text-muted\">' + data[i].manufacturer.name

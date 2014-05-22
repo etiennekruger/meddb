@@ -86,13 +86,7 @@
                         <tr>
                             <td>
                                 <strong>
-                                    <a href="/product/{{ product.product_id }}/">
-                                        {% if product.name %}
-                                            {{ product.name }}
-                                        {% else %}
-                                            Unnamed
-                                        {% endif %}
-                                    </a>
+                                    <a href="/product/{{ product.product_id }}/">{{ product.name }} - {{ product.medicine.name }}</a>
                                 </strong>
                             </td>
                             <td>
