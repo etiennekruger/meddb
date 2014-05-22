@@ -108,9 +108,15 @@ class Medicine(db.Model):
 
     @property
     def name(self):
-        out = None
+        out = "Unnamed Medicine"
         if len(self.components) > 0:
-            out = " + ".join([component.ingredient.name.capitalize() for component in self.components])
+            component_names = []
+            for component in self.components:
+                tmp = component.ingredient.name.capitalize()
+                if component.strength:
+                    tmp += " (" + str(component.strength) + ")"
+                component_names.append(tmp)
+            out = ", ".join(component_names)
         return out
 
     @property
@@ -271,11 +277,9 @@ class Product(db.Model):
         return
 
     def get_name(self):
-        tmp = "Unnamed"
+        tmp = "Unnamed Product"
         if self.name:
             tmp = self.name
-        if self.medicine.name:
-            tmp += " - " + self.medicine.name
         return tmp
 
     @property

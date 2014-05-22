@@ -222,7 +222,11 @@ def autocomplete(query):
     i = 0
     for product in product_list:
         tmp = {}
-        if i < 10 and query in product['name'].lower():
+        product_name = product['name'].lower()
+        medicine_name = ""
+        if product.get('medicine'):
+            medicine_name = product['medicine']['name'].lower()
+        if i < 10 and (query in product_name or query in medicine_name):
             i += 1
             tmp['product_id'] = product['product_id']
             tmp['name'] = product['name']
