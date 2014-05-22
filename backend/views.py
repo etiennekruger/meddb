@@ -219,9 +219,11 @@ def autocomplete(query):
     else:
         product_list = calculate_autocomplete()
         cache.store('product_list', json.dumps(product_list, cls=serializers.CustomEncoder))
+    i = 0
     for product in product_list:
         tmp = {}
-        if query in product['name'].lower():
+        if i < 10 and query in product['name'].lower():
+            i += 1
             tmp['product_id'] = product['product_id']
             tmp['name'] = product['name']
             if product['manufacturer']:

@@ -23,7 +23,7 @@
 
         <ul class="nav navbar-nav">
             <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
-{#            <li{% if active_nav_button == "medicines" %} class="active"{% endif %}><a href="/admin/">Admin</a></li>#}
+            {#            <li{% if active_nav_button == "medicines" %} class="active"{% endif %}><a href="/admin/">Admin</a></li>#}
         </ul>
 
         {% block search %}
@@ -89,12 +89,12 @@
                         var key = data[i].name
                         if(data[i].manufacturer)
                         {
-                            key += " [" + data[i].manufacturer.name
+                            key += ' <span class=\"text-muted\">' + data[i].manufacturer.name
                             if (data[i].manufacturer.country)
                             {
                                 key += ", " + data[i].manufacturer.country.name
                             }
-                            key += "]"
+                            key += '<\/span>'
                         }
                         if (key)
                             products.push(key)
@@ -108,7 +108,12 @@
                 return item;
             },
             matcher: function (item) {
-                return true;
+                // matching's done on the backend
+                return true
+            },
+            highlighter: function (item) {
+                // don't do any highlighting
+                return item;
             }
         });
         $("#search-box").focus()
