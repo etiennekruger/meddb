@@ -24,7 +24,7 @@
                         Contact Person
                     </th>
                     <td>
-                        {{ supplier.contact }}
+                        {% if supplier.contact %}{{ supplier.contact }}{% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -32,10 +32,12 @@
                         Email
                     </th>
                     <td>
+                    {% if supplier.email %}
                         {{ supplier.email }}
                         {% if supplier.altemail %}
                             , {{ supplier.altemail }}
                         {% endif %}
+                    {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -43,10 +45,12 @@
                         Telephone
                     </th>
                     <td>
+                    {% if supplier.phone %}
                         {{ supplier.phone }}
                         {% if supplier.altphone %}
                             , {{ supplier.altphone }}
                         {% endif %}
+                    {% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -54,7 +58,7 @@
                         Facsmile
                     </th>
                     <td>
-                        {{ supplier.fax }}
+                        {% if supplier.fax %}{{ supplier.fax }}{% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -62,7 +66,7 @@
                         Address
                     </th>
                     <td>
-                        {{ supplier.address }}
+                        {% if supplier.address %}{{ supplier.address }}{% endif %}
                     </td>
                 </tr>
                 </tbody>
