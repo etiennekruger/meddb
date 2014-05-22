@@ -41,7 +41,7 @@ with open("data/incoterms.json", "r") as f:
 db.session.commit()
 
 # migrate data from json dump to new db
-f = open("dump.json", "r")
+f = open("dump_medicines.json", "r")
 medicines = json.loads(f.read())
 f.close()
 
@@ -260,4 +260,38 @@ products = models.Product.query.all()
 for product in products:
     product.calculate_average_price()
     db.session.add(product)
+db.session.commit()
+
+# populate detailed supplier info
+f = open("dump_suppliers.json", "r")
+suppliers = json.loads(f.read())
+f.close()
+
+for supplier in suppliers:
+    supplier_obj = None
+
+    supplier_obj = models.Supplier.query.filter(models.Supplier.name==supplier['name']).first()
+    if not supplier_obj:
+        print "Unknown supplier: " + supplier['name']
+        supplier_obj = models.Supplier()
+        supplier_obj.name = supplier['name']
+
+    if supplier["email"]:
+        supplier_obj.email = supplier["email"]
+    if supplier["altemail"]:
+        supplier_obj.alt_email = supplier["altemail"]
+    if supplier["address"]:
+        supplier_obj.street_address = supplier["address"]
+    if supplier["contact"]:
+        supplier_obj.contact = supplier["contact"]
+    if supplier["phone"]:
+        supplier_obj.phone = supplier["phone"]
+    if supplier["altphone"]:
+        supplier_obj.alt_phone = supplier["altphone"]
+    if supplier["fax"]:
+        supplier_obj.fax = supplier["fax"]
+    if supplier["website"]:
+        supplier_obj.website = supplier["website"]
+
+    db.session.add(supplier_obj)
 db.session.commit()
