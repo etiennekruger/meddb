@@ -35,9 +35,19 @@
                 <tbody>
                 {% for procurement in recent_updates %}
                     <tr>
-                        <td>{{ procurement.added_on }}</td>
-                        <td>{% if procurement.country %}{{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}{% endif %}</td>
-                        <td>{{ procurement.product.name }}</td>
+                        <td><nobr>{{ procurement.added_on }}</nobr></td>
+                        <td>{% if procurement.country %}<nobr>{{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}</nobr>{% endif %}</td>
+                        <td>
+                            {% if procurement.product %}
+                                <strong>
+                                    <a href="/product/{{ procurement.product.product_id }}/">
+                                        {{ procurement.product.name }}
+                                    </a>
+                                </strong>
+                            {% else %}
+                                Unknown product
+                            {% endif %}
+                        </td>
                         <td><span class="label label-info">{{ procurement.added_by.email }}</span></td>
                     </tr>
                 {% endfor %}
@@ -45,7 +55,7 @@
             </table>
         </div>
         <div class="col-md-4">
-        <h3>Database overview</h3>
+            <h3>Database overview</h3>
             <div class="well well-lg">
 
                 <p>

@@ -95,13 +95,15 @@
                         {% set difference = 100 * (alternative_product.average_price - product.average_price) / alternative_product.average_price %}
                         <tr>
                             <td>
-                                <a href="/product/{{ alternative_product.product_id }}/">
-                                    {% if alternative_product.name %}
-                                        {{ alternative_product.name }}
-                                    {% else %}
-                                        Unnamed
-                                    {% endif %}
-                                </a>
+                                <strong>
+                                    <a href="/product/{{ alternative_product.product_id }}/">
+                                        {% if alternative_product.name %}
+                                            {{ alternative_product.name }}
+                                        {% else %}
+                                            Unnamed
+                                        {% endif %}
+                                    </a>
+                                </strong>
                             </td>
                             <td>
                                 {% if alternative_product.manufacturer %}
@@ -157,9 +159,11 @@
                         <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
                             <td>
                                 {% if procurement.supplier and procurement.supplier.name %}
-                                    <a href="/supplier/{{ procurement.supplier.supplier_id }}/">
-                                        {{ procurement.supplier.name }}
-                                    </a>
+                                    <strong>
+                                        <a href="/supplier/{{ procurement.supplier.supplier_id }}/">
+                                            {{ procurement.supplier.name }}
+                                        </a>
+                                    </strong>
                                 {% else %}
                                     Unknown
                                 {% endif %}

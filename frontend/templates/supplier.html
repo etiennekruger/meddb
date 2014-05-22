@@ -34,7 +34,7 @@
                     <td>
                         {{ supplier.email }}
                         {% if supplier.altemail %}
-                        , {{ supplier.altemail }}
+                            , {{ supplier.altemail }}
                         {% endif %}
                     </td>
                 </tr>
@@ -45,7 +45,7 @@
                     <td>
                         {{ supplier.phone }}
                         {% if supplier.altphone %}
-                        , {{ supplier.altphone }}
+                            , {{ supplier.altphone }}
                         {% endif %}
                     </td>
                 </tr>
@@ -85,13 +85,15 @@
                     {% for product in supplier.products %}
                         <tr>
                             <td>
-                                <a href="/product/{{ product.product_id }}/">
-                                    {% if product.name %}
-                                        {{ product.name }}
-                                    {% else %}
-                                        Unnamed
-                                    {% endif %}
-                                </a>
+                                <strong>
+                                    <a href="/product/{{ product.product_id }}/">
+                                        {% if product.name %}
+                                            {{ product.name }}
+                                        {% else %}
+                                            Unnamed
+                                        {% endif %}
+                                    </a>
+                                </strong>
                             </td>
                             <td>
                                 {% if product.manufacturer %}
