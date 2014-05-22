@@ -2,6 +2,7 @@ from __future__ import with_statement
 import sys
 from fabric.api import *
 from contextlib import contextmanager
+from fabric.contrib.console import confirm
 
 try:
     from fabdefs import *
@@ -150,7 +151,8 @@ def install_redis():
     http://redis.io/topics/quickstart
     """
     sudo('apt-get install tcl8.5')
-    with cd(env['code_dir']):
+    sudo('apt-get install wget')
+    with cd(env.project_dir):
         sudo('wget http://download.redis.io/redis-stable.tar.gz')
         sudo('tar xvzf redis-stable.tar.gz')
         with cd('redis-stable'):
