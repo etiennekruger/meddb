@@ -59,13 +59,13 @@
             {% if product.medicine.benchmarks %}
                 {% for benchmark in product.medicine.benchmarks %}
                     {% set difference = 100 * (product.average_price - benchmark.price) / product.average_price %}
-                    <p class="lead">
+                    <div class="alert alert-{% if difference > 0 %}danger{% else %}success{% endif %}">
                         This product was
-                        <span class="text-{% if difference > 0 %}danger{% else %}success{% endif %}">
+                        <strong>
                             {{ difference | round | int | abs }}% {% if difference > 0 %}more{% else %}less{% endif %} expensive
-                        </span>
+                        </strong>
                         than the {{ benchmark.name }} benchmark price of ${{ benchmark.price }} for {{ benchmark.year }}.
-                    </p>
+                    </div>
                 {% endfor %}
             {% endif %}
         </div>
@@ -116,10 +116,10 @@
                                     ${{ alternative_product.average_price }}
                                 {% endif %}
                             </td>
-                            <td>
-                                        <span class="badge pull-right alert-{% if difference > 0 %}danger{% else %}success{% endif %}">
-                                        {% if difference > 0 %} + {% else %} - {% endif %}{{ difference | round | int | abs }}%
-                                    </span>
+                            <td class="{% if difference > 0 %}danger{% else %}success{% endif %}">
+                                <strong>
+                                    <i class="fa fa-arrow-circle-{% if difference > 0 %}up{% else %}down{% endif %}"></i> {{ difference | round | int | abs }}%
+                                </strong>
                             </td>
                         </tr>
                     {% endfor %}
