@@ -4,7 +4,7 @@
 <head>
     <title>{% block title %}Medicine Prices Database{% endblock %}</title>
 
-    <link href="/static/font-awesome-4.0.1.css" rel="stylesheet">
+    <link href="/static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
     <link href="/static/flags.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
@@ -27,11 +27,15 @@
         </ul>
 
         {% block search %}
-            <form class="navbar-form navbar-right" role="search">
-                <div class="form-group">
-                    <input id="search-box" autocomplete="off" data-provide="typeahead" type="text" class="form-control" placeholder="Search">
+            <form class="navbar-form">
+                <div id="search-form-container" class="pull-right">
+                    <div class="form-group" style="display:inline;">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input id="search-box" class="form-control" name="search" placeholder="Search Here" autocomplete="off" autofocus="autofocus" type="text">
+                        </div>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-default">Go</button>
             </form>
         {% endblock search %}
     </div>
