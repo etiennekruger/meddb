@@ -20,41 +20,34 @@
             <h1>
                 {% if product.name %}
                     {{ product.name }}
-                {% else %}
-                    Unnamed
-                {% endif %}
-                {% if product.medicine.dosage_form %}
-                    ({{ product.medicine.dosage_form.name }})
                 {% endif %}
                 <nobr>
                     <small class="text-muted">
-                        {% for component in product.medicine.components %}
-                            {{ component.ingredient.name }} ({{ component.strength }})
-                            {% if not loop.last %}, {% endif %}
-                        {% endfor %}
+                        {%- if product.manufacturer %}
+                            {%- if product.manufacturer.name -%}
+                                {{ product.manufacturer.name }}
+                            {%- else -%}
+                                Unknown manufacturer
+                            {%- endif -%}
+                            {%- if product.manufacturer.country -%}
+                                , {{ product.manufacturer.country.name }}
+                            {%- endif -%}
+                        {% endif -%}
                     </small>
                 </nobr>
             </h1>
-            <p>
-                <strong>
-                    <nobr><span class="text-muted">
-                        {% if product.manufacturer and product.manufacturer.name %}
-                            Manufactured by {{ product.manufacturer.name }}
-                        {% else %}
-                            Unknown manufacturer
-                        {% endif %}
-                        {% if product.manufacturer and product.manufacturer.country %}
-                            in {{ product.manufacturer.country.name }}
-                        {% endif %}
-                        <span>
-                            {% if product.generic %}
-                                (generic)
-                            {% else %}
-                                (originator)
-                            {% endif %}
-                        </span>
-                </span></nobr>
-                </strong>
+            <p class="lead">
+                {{ product.medicine.name }}
+                {%- if product.medicine.dosage_form -%}
+                    , {{ product.medicine.dosage_form.name }}
+                {%- endif -%}
+                <span>
+                {%- if product.generic -%}
+                    , generic
+                {%- else -%}
+                    , originator
+                {%- endif -%}
+                </span>
             </p>
         </div>
     </div>
@@ -107,13 +100,13 @@
                             </td>
                             <td>
                                 {% if alternative_product.manufacturer %}
-                                    {% if alternative_product.manufacturer.country %}
+                                    {%- if alternative_product.manufacturer.country -%}
                                         {{ macros.render_flag(alternative_product.manufacturer.country) }}
-                                    {% endif %}
+                                    {% endif -%}
                                     {{ alternative_product.manufacturer.name }}
-                                    {% if alternative_product.manufacturer.country %}
-                                        in {{ alternative_product.manufacturer.country.name }}
-                                    {% endif %}
+                                    {%- if alternative_product.manufacturer.country -%}
+                                        , {{ alternative_product.manufacturer.country.name }}
+                                    {%- endif -%}
                                 {% else %}
                                     Unknown manufacturer
                                 {% endif %}

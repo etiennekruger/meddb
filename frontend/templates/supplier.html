@@ -97,13 +97,13 @@
                             </td>
                             <td>
                                 {% if product.manufacturer %}
-                                    {% if product.manufacturer.country %}
+                                    {%- if product.manufacturer.country -%}
                                         {{ macros.render_flag(product.manufacturer.country) }}
-                                    {% endif %}
+                                    {% endif -%}
                                     {{ product.manufacturer.name }}
-                                    {% if product.manufacturer.country %}
-                                        in {{ product.manufacturer.country.name }}
-                                    {% endif %}
+                                    {%- if product.manufacturer.country -%}
+                                        , {{ product.manufacturer.country.name }}
+                                    {%- endif -%}
                                 {% else %}
                                     Unknown manufacturer
                                 {% endif %}
