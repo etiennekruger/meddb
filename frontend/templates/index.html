@@ -16,12 +16,12 @@
                 </div>
             </form>
             <p id="search-caption">
-{#                {% if recent_products %}#}
-{#                    Recent:#}
-{#                    {% for product in recent_products %}#}
-{#                        <a href="/product/{{ product.id }}/">{{ product.name }}</a>{% if not loop.last %}, {% endif %}#}
-{#                    {% endfor %}#}
-{#                {% endif %}#}
+                {#                {% if recent_products %}#}
+                {#                    Recent:#}
+                {#                    {% for product in recent_products %}#}
+                {#                        <a href="/product/{{ product.id }}/">{{ product.name }}</a>{% if not loop.last %}, {% endif %}#}
+                {#                    {% endfor %}#}
+                {#                {% endif %}#}
             </p>
         </div>
     </div>
@@ -31,23 +31,28 @@
     <div class="row">
         <div class="col-md-8">
             <h3>Recently added procurement entries</h3>
-            {% for procurement in recent_updates %}
-                <p>
-                    <span class="badge" style="margin-right: 15px;">{{ procurement.added_by.email }}</span>
-                    {{ procurement.product.name }}{% if procurement.country %}, {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}{% endif %}
-                    <span class="pull-right">{{ procurement.added_on }}</span></p>
-            {% endfor %}
-            {#            <h2>Welcome to the Medicine Prices Database</h2>#}
-            {#            <p>#}
-            {#                This database will provide you with up to date information on comparative medicine prices and properties (including dosage form and strength) as well as product, supplier and manufacturer information.#}
-            {#            </p>#}
+            <table class="table table-striped">
+                <tbody>
+                {% for procurement in recent_updates %}
+                    <tr>
+                        <td>{{ procurement.added_on }}</td>
+                        <td>{% if procurement.country %}{{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}{% endif %}</td>
+                        <td>{{ procurement.product.name }}</td>
+                        <td><span class="label label-info">{{ procurement.added_by.email }}</span></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
         </div>
         <div class="col-md-4">
-            <div class="well well-sm">
-                <h4>Database overview (past year)</h4>
-                <p>Products tracked: <span class="badge pull-right">{{ overview.count_products }}</span></p>
-                <p>Medicines: <span class="badge pull-right">{{ overview.count_medicines }}</span></p>
-                <p>Recent procurements: <span class="badge pull-right">{{ overview.count_recent_procurements }}</span></p>
+        <h3>Database overview</h3>
+            <div class="well well-lg">
+
+                <p>
+                    Over the past year, <strong>{{ overview.count_recent_procurements }}
+                    Procurements</strong> have been tracked, of <strong>{{ overview.count_products }} Products</strong>, representing
+                    <strong>{{ overview.count_medicines }} distinct Medicines</strong>.
+                </p>
 
                 <h4>Top information contributors</h4>
                 {% for source in overview.top_sources %}
