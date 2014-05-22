@@ -71,7 +71,7 @@ for medicine in medicines:
     # capture MSH benchmark price
     if medicine['mshprice']:
         benchmark_obj = models.BenchmarkPrice()
-        benchmark_obj.name = "msh"
+        benchmark_obj.name = "MSH"
         benchmark_obj.year = 2013
         benchmark_obj.price = medicine['mshprice']
         benchmark_obj.medicine = medicine_obj
