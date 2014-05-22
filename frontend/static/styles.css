@@ -68,3 +68,8 @@ body{
 #search-form-container{
     max-width: 500px;
 }
+
+.flag{
+    margin-left: 2px;
+    margin-right: 2px;
+}
