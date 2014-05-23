@@ -199,6 +199,8 @@ def manufacturer_to_dict(obj, include_related=False):
     tmp_dict = model_to_dict(obj)
     # resource URI
     tmp_dict['URI'] = API_HOST + 'manufacturer/' + str(obj.manufacturer_id) + '/'
+    # name
+    tmp_dict['name'] = obj.get_name()
     # country
     tmp_country = None
     if obj.country:

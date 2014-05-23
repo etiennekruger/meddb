@@ -17,6 +17,7 @@
         <div class="col-lg-12">
 
             <h2>Details</h2>
+        {% if supplier.contact or supplier.email or supplier.phone or supplier.fax or supplier.address %}
             <table class="table table-bordered table-striped">
                 <tbody>
                 <tr>
@@ -24,7 +25,7 @@
                         Contact Person
                     </th>
                     <td>
-                        {% if supplier.contact %}{{ supplier.contact }}{% endif %}
+                        {% if supplier.contact %}{{ supplier.contact }}{% else %}<span class="text-muted">no contact person provided</span>{% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -37,6 +38,8 @@
                         {% if supplier.altemail %}
                             , {{ supplier.altemail }}
                         {% endif %}
+                        {% else %}
+                        <span class="text-muted">no email provided</span>
                     {% endif %}
                     </td>
                 </tr>
@@ -50,6 +53,8 @@
                         {% if supplier.altphone %}
                             , {{ supplier.altphone }}
                         {% endif %}
+                    {% else %}
+                        <span class="text-muted">no number provided</span>
                     {% endif %}
                     </td>
                 </tr>
@@ -58,7 +63,7 @@
                         Facsmile
                     </th>
                     <td>
-                        {% if supplier.fax %}{{ supplier.fax }}{% endif %}
+                        {% if supplier.fax %}{{ supplier.fax }}{% else %}<span class="text-muted">no number provided</span>{% endif %}
                     </td>
                 </tr>
                 <tr>
@@ -66,11 +71,14 @@
                         Address
                     </th>
                     <td>
-                        {% if supplier.address %}{{ supplier.address }}{% endif %}
+                        {% if supplier.address %}{{ supplier.address }}{% else %}<span class="text-muted">no address provided</span>{% endif %}
                     </td>
                 </tr>
                 </tbody>
             </table>
+        {% else %}
+        <p class="lead text-muted">We don't have any contact details for this supplier.</p>
+        {% endif %}
 
         </div>
     </div>
@@ -103,7 +111,7 @@
                                         , {{ product.manufacturer.country.name }}
                                     {%- endif -%}
                                 {% else %}
-                                    Unknown manufacturer
+                                    Unknown Manufacturer
                                 {% endif %}
                             </td>
                         </tr>
@@ -111,7 +119,7 @@
                     </tbody>
                 </table>
             {% else %}
-                <p>We don't know of any products sold by this supplier.</p>
+                <p class="lead text-muted">We don't know of any products sold by this supplier.</p>
             {% endif %}
         </div>
     </div>

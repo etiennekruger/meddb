@@ -24,15 +24,13 @@
                 <nobr>
                     <small class="text-muted">
                         {%- if product.manufacturer %}
-                            {%- if product.manufacturer.name -%}
-                                {{ product.manufacturer.name }}
-                            {%- else -%}
-                                Unknown manufacturer
-                            {%- endif -%}
+                            {{ product.manufacturer.name }}
                             {%- if product.manufacturer.country -%}
                                 , {{ product.manufacturer.country.name }}
                             {%- endif -%}
-                        {% endif -%}
+                        {%- else -%}
+                                Unknown Manufacturer
+                        {%- endif -%}
                     </small>
                 </nobr>
             </h1>
@@ -90,11 +88,7 @@
                             <td>
                                 <strong>
                                     <a href="/product/{{ alternative_product.product_id }}/">
-                                        {% if alternative_product.name %}
-                                            {{ alternative_product.name }}
-                                        {% else %}
-                                            Unnamed
-                                        {% endif %}
+                                        {{ alternative_product.name }}
                                     </a>
                                 </strong>
                             </td>
@@ -108,7 +102,7 @@
                                         , {{ alternative_product.manufacturer.country.name }}
                                     {%- endif -%}
                                 {% else %}
-                                    Unknown manufacturer
+                                    Unknown Manufacturer
                                 {% endif %}
                             </td>
                             <td>

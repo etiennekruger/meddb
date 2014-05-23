@@ -193,6 +193,12 @@ class Manufacturer(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
 
+    def get_name(self):
+        tmp = "Unnamed Manufacturer"
+        if self.name:
+            tmp = self.name
+        return tmp
+
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
 
