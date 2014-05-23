@@ -73,3 +73,8 @@ body{
     margin-left: 2px;
     margin-right: 2px;
 }
+
+#search-banner .dropdown-menu li{
+    font-size: 18px;
+    line-height: 1.33;
+}
