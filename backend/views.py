@@ -4,7 +4,7 @@ import flask
 import json
 import serializers
 from flask.ext import login
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, distinct
 import datetime
 import events
 import cache
@@ -58,34 +58,25 @@ def calculate_db_overview():
     THIS IS COMPUTATIONALLY EXPENSIVE
     """
 
+    cutoff = datetime.datetime.today() - datetime.timedelta(days=365)
 
     logger.debug("Calculating DB overview")
     overview = {}
 
-    # number of products being tracked
-    count_products = db.session.query(
-        func.count(models.Product.product_id)
-    ).scalar()
-    overview['count_products'] = count_products
-
-    # number of distinct medicines
-    count_medicines = db.session.query(
-        func.count(models.Medicine.medicine_id)
-    ).scalar()
-    overview['count_medicines'] = count_medicines
-
-    # number of recent procurements
-    # i.e. they have start or end dates after the cutoff
-    cutoff = datetime.datetime.today() - datetime.timedelta(days=365)
-    count_recent_procurements = db.session.query(
-        func.count(models.Procurement.procurement_id)) \
-        .filter(
+    # number of recent products & medicines
+    count_procurements, count_products, count_medicines = models.Procurement.query.join(models.Product).filter(
         or_(
             models.Procurement.start_date > cutoff,
             models.Procurement.end_date > cutoff
         )
-    ).scalar()
-    overview['count_recent_procurements'] = count_recent_procurements
+    ).with_entities(
+        func.count(models.Procurement.procurement_id),
+        func.count(distinct(models.Procurement.product_id)),
+        func.count(distinct(models.Product.medicine_id))
+    ).first()
+    overview['count_procurements'] = count_procurements
+    overview['count_products'] = count_products
+    overview['count_medicines'] = count_medicines
 
     # number of recent procurements logged per country
     top_sources = []
