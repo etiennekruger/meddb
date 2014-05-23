@@ -4,6 +4,7 @@ from sqlalchemy.orm import backref
 import datetime
 from openexchangerates import OpenExchangeRates
 
+UNIT_CONTAINERS = ["vial", "ampoule", "injection", "tube"]
 
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
@@ -275,9 +276,12 @@ class Product(db.Model):
         sum = 0
         tot = 0
         for p in self.procurements:
-            if p.price_usd and p.volume and p.container.quantity:
+            if p.price_usd and p.volume:
                 sum += p.price_usd * p.volume
-                tot += p.container.quantity * p.volume
+                num_units = p.volume
+                if p.container.quantity and not p.container.type in UNIT_CONTAINERS:
+                    num_units *= p.container.quantity
+                tot += num_units
         if tot > 0:
             self.average_price = sum/tot
         return
@@ -351,7 +355,7 @@ class Procurement(db.Model):
     procurement_id = db.Column(db.Integer, primary_key=True)
     pack_size = db.Column(db.Integer) # Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.
     price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
-    price_usd = db.Column(db.Float, nullable=True)
+    price_usd = db.Column(db.Float, nullable=True) # per container
     volume = db.Column(db.Integer) # The number of packages contracted at the specified unit price. Volume is calculated as # of packages * containers in pack', default=1)
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.
     start_date = db.Column(db.Date, nullable=True) # This is the first day that the procurement price is valid for (may be left blank).
@@ -399,6 +403,10 @@ class Procurement(db.Model):
     @property
     def price_per_unit(self):
         if self.container.quantity and self.price_usd:
+            # some containers are priced per container
+            if self.container.type in UNIT_CONTAINERS:
+                return self.price_usd
+            # others are priced per unit (e.g. ml or grammes)
             return self.price_usd / self.container.quantity
         return None
 

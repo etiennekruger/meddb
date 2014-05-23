@@ -193,6 +193,9 @@ for medicine in medicines:
                 db.session.commit()
 
         # capture container
+        procurement["container"]["type"] = procurement["container"]["type"].lower()
+        if procurement["container"]["type"] == "ampoules":
+            procurement["container"]["type"] = "ampoule"
         container_obj = models.Container.query.filter(models.Container.type==procurement["container"]["type"]) \
             .filter(models.Container.quantity==procurement["container"]["quantity"]) \
             .filter(models.Container.unit==procurement["container"]["unit"]) \
