@@ -72,7 +72,7 @@ for medicine in medicines:
     if medicine['mshprice']:
         benchmark_obj = models.BenchmarkPrice()
         benchmark_obj.name = "MSH"
-        benchmark_obj.year = 2013
+        benchmark_obj.year = 2012
         benchmark_obj.price = medicine['mshprice']
         benchmark_obj.medicine = medicine_obj
         db.session.add(benchmark_obj)
