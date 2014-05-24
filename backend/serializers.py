@@ -178,8 +178,6 @@ def procurement_to_dict(obj, include_related=False):
     if tmp_dict['price_usd']:
         tmp_dict['price_usd'] = float('%.3g' % tmp_dict['price_usd'])
     price = obj.price_per_unit
-    if price:
-        price = float('%.3g' % price)
     tmp_dict['price_per_unit'] = price
     if include_related:
         # supplier

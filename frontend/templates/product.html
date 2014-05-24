@@ -170,7 +170,7 @@
                                 {{ procurement.volume * procurement.pack_size }} ({{ procurement.container.quantity | int }} {{ procurement.container.unit }} {{ procurement.container.type }}s)
                             </td>
                             <td>
-                                ${{ procurement.price_per_unit }}/{{ procurement.container.unit }}
+                                ${{ procurement.price_per_unit }}
                             </td>
                         </tr>
                     {% endfor %}

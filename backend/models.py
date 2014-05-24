@@ -314,10 +314,11 @@ class Product(db.Model):
 class Container(db.Model):
 
     __tablename__ = "container"
+    __table_args__ = (db.UniqueConstraint('type', 'unit', 'quantity'), {})
     container_id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(32))  # This should be the actual type of containter that the medicine is distributed in eg. bottle, blister pack, tube etc.
-    unit = db.Column(db.String(32))  # This represents the basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).
-    quantity = db.Column(db.Float)  # The total container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).
+    type = db.Column(db.String(32))  # eg. bottle, blister pack, tube
+    unit = db.Column(db.String(32))  # The basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).
+    quantity = db.Column(db.Float)  # Container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).
 
     def __unicode__(self):
         return u'%.7g %s %s' % (self.quantity, self.unit, self.type)
@@ -403,9 +404,13 @@ class Procurement(db.Model):
         if self.container.quantity and self.price_usd:
             # some containers are priced per container
             if self.container.type in UNIT_CONTAINERS:
-                return self.price_usd
-            # others are priced per unit (e.g. ml or grammes)
-            return self.price_usd / self.container.quantity
+                tmp_price = self.price_usd
+                tmp_unit = self.container.type
+            else:
+                # others are priced per unit (e.g. ml or grammes)
+                tmp_price = self.price_usd / self.container.quantity
+                tmp_unit = self.container.unit
+            return '%.3g/%s' % (tmp_price, tmp_unit)
         return None
 
     def __unicode__(self):
