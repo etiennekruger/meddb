@@ -151,10 +151,10 @@ for medicine in medicines:
 
         # capture manufacturer
         tmp_country_name = procurement["manufacturer"]["country"][0]
-        if tmp_country_name == "USA":
+        if tmp_country_name in ["USA", "United States "]:
             tmp_country_name = "United States"
         if tmp_country_name == "DRC":
-            tmp_country_name = "Democratic Republic of the Congo"
+            tmp_country_name = "Congo (DRC)"
         if tmp_country_name == "Keyna":
             tmp_country_name = "Kenya"
         tmp_country = models.Country.query.filter(models.Country.name==tmp_country_name).first()
