@@ -3,6 +3,30 @@ from backend import db
 import json
 from datetime import date, datetime
 
+
+def map_dosage_form(dosage_form):
+
+    dosage_forms = {
+        'cap/tab': 'cap/tab',
+        'vial': 'vial',
+        'powder': 'powder',
+        'eye oint': 'eye ointment',
+        'injection': 'injection',
+        'powder for injec': 'powder for injection',
+        'syrup/susp': 'syrup/susp',
+        'pessary': 'pessary',
+        'dispersible tab': 'dispersible tab',
+        'tablets': 'cap/tab',
+        'suspension': 'syrup/susp',
+        'syrup': 'syrup/susp',
+        'susp': 'syrup/susp',
+        'infusion': 'infusion',
+        }
+    if dosage_forms.get(dosage_form):
+        return dosage_forms[dosage_form]
+    return dosage_form
+
+
 db.drop_all()
 db.create_all()
 
@@ -44,6 +68,7 @@ db.session.commit()
 f = open("./data/dump_medicines.json", "r")
 medicines = json.loads(f.read())
 f.close()
+
 
 for medicine in medicines:
 
@@ -87,10 +112,11 @@ for medicine in medicines:
 
     # capture dosage form
     if medicine['dosageform'] and not medicine['dosageform'] == "N/A":
-        dosage_form_obj = models.DosageForm.query.filter(models.DosageForm.name==medicine['dosageform']).first()
+        dosage_form_name = map_dosage_form(medicine['dosageform'])
+        dosage_form_obj = models.DosageForm.query.filter(models.DosageForm.name==dosage_form_name).first()
         if dosage_form_obj is None:
             dosage_form_obj = models.DosageForm()
-            dosage_form_obj.name = medicine['dosageform']
+            dosage_form_obj.name = dosage_form_name
             db.session.add(dosage_form_obj)
             db.session.commit()
         medicine_obj.dosage_form = dosage_form_obj

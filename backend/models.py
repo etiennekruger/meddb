@@ -91,7 +91,7 @@ class DosageForm(db.Model):
 
     __tablename__ = "dosage_form"
     dosage_form_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), unique=True)
 
     def __unicode__(self):
         return u'%s' % (self.name)
