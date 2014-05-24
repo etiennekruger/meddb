@@ -373,8 +373,6 @@ class Procurement(db.Model):
     country = db.relationship('Country')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
     supplier = db.relationship('Supplier', backref='procurements')
-    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
-    manufacturer = db.relationship('Manufacturer', backref='procurements')
     container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
     container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)

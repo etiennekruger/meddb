@@ -126,7 +126,6 @@ def product_to_dict(obj, include_related=False):
         for procurement in obj.procurements:
             procurement_dict = procurement.to_dict(include_related=True)
             procurement_dict.pop('product_id')
-            procurement_dict.pop('manufacturer')
             procurements.append(procurement_dict)
         tmp_dict['procurements'] = procurements
         # alternative products
@@ -183,12 +182,6 @@ def procurement_to_dict(obj, include_related=False):
         price = float('%.3g' % price)
     tmp_dict['price_per_unit'] = price
     if include_related:
-        # manufacturer
-        tmp_manufacturer = None
-        if obj.manufacturer:
-            tmp_manufacturer = obj.manufacturer.to_dict()
-        tmp_dict['manufacturer'] = tmp_manufacturer
-        tmp_dict.pop('manufacturer_id')
         # supplier
         tmp_supplier = None
         if obj.supplier:
