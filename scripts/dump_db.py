@@ -23,7 +23,7 @@ for medicine in medicines:
     else:
         print "Error: " + str(r.status_code) + " " + tmp_url
 
-with open("./data/dump_medicines.json", "w") as f:
+with open("data/dump_medicines.json", "w") as f:
     f.write(json.dumps(dump, indent=4))
 
 # collect existing supplier info
@@ -46,5 +46,5 @@ for supplier in suppliers:
     else:
         print "Error: " + str(r.status_code) + " " + tmp_url
 
-with open("./data/dump_suppliers.json", "w") as f:
+with open("data/dump_suppliers.json", "w") as f:
     f.write(json.dumps(dump, indent=4))
