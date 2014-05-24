@@ -14,7 +14,7 @@ db.session.commit()
 
 # populate items from 3rd party datasets:
 # Country
-with open("data/countries.json", "r") as f:
+with open("./data/countries.json", "r") as f:
     countries = json.loads(f.read())
     for country in countries:
         country_obj = models.Country()
@@ -23,7 +23,7 @@ with open("data/countries.json", "r") as f:
         country_obj.code_short = country["alpha-2"]
         db.session.add(country_obj)
 # Currency
-with open("data/currencies.json", "r") as f:
+with open("./data/currencies.json", "r") as f:
     currencies = json.loads(f.read())
     for code, name in currencies.iteritems():
         currency_obj = models.Currency()
@@ -31,7 +31,7 @@ with open("data/currencies.json", "r") as f:
         currency_obj.code = code
         db.session.add(currency_obj)
 # Incoterm
-with open("data/incoterms.json", "r") as f:
+with open("./data/incoterms.json", "r") as f:
     incoterms = json.loads(f.read())
     for code, description in incoterms.iteritems():
         incoterm_obj = models.Incoterm()
@@ -41,7 +41,7 @@ with open("data/incoterms.json", "r") as f:
 db.session.commit()
 
 # migrate data from json dump to new db
-f = open("dump_medicines.json", "r")
+f = open("./data/dump_medicines.json", "r")
 medicines = json.loads(f.read())
 f.close()
 
@@ -266,7 +266,7 @@ for product in products:
 db.session.commit()
 
 # populate detailed supplier info
-f = open("dump_suppliers.json", "r")
+f = open("./data/dump_suppliers.json", "r")
 suppliers = json.loads(f.read())
 f.close()
 
