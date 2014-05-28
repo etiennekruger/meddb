@@ -3512,6 +3512,39 @@
                     "name": ""
                 }, 
                 "id": 2772
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 19, 
+                            "name": "tablets"
+                        }, 
+                        "id": 143, 
+                        "ingredients": [
+                            {
+                                "inn": "Lopinavir", 
+                                "strength": "200mg"
+                            }, 
+                            {
+                                "inn": "Ritonavir", 
+                                "strength": "50mg"
+                            }
+                        ]
+                    }, 
+                    "id": 3083, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 120.0
+                    }, 
+                    "name": "Lopinavir + Ritonavir 200mg + 50mg tablets"
+                }, 
+                "id": 2795
             }
         ], 
         "contact": "Roberta Heig/Joanna Van Vilet", 
@@ -7464,35 +7497,6 @@
                     "name": "Cipla - Lamivudine 150"
                 }, 
                 "id": 2720
-            }, 
-            {
-                "country": {
-                    "id": 3, 
-                    "name": "South Africa"
-                }, 
-                "product": {
-                    "medicine": {
-                        "dosageform": {
-                            "id": 29, 
-                            "name": "inhaler"
-                        }, 
-                        "id": 37, 
-                        "ingredients": [
-                            {
-                                "inn": "Salbutamol", 
-                                "strength": "100mcg/dose"
-                            }
-                        ]
-                    }, 
-                    "id": 183, 
-                    "pack-size": {
-                        "type": "pack", 
-                        "unit": "unit", 
-                        "quantity": 1.0
-                    }, 
-                    "name": "Asthavent MDI 200"
-                }, 
-                "id": 2745
             }, 
             {
                 "country": {
@@ -17457,6 +17461,64 @@
                     "name": ""
                 }, 
                 "id": 2177
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 23, 
+                            "name": "injection"
+                        }, 
+                        "id": 83, 
+                        "ingredients": [
+                            {
+                                "inn": "Magnesium Sulphate", 
+                                "strength": "500 mg/ml"
+                            }
+                        ]
+                    }, 
+                    "id": 3149, 
+                    "pack-size": {
+                        "type": "injection", 
+                        "unit": "ml", 
+                        "quantity": 1.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2796
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 6, 
+                            "name": "powder"
+                        }, 
+                        "id": 31, 
+                        "ingredients": [
+                            {
+                                "inn": "Oral Rehydration Salts", 
+                                "strength": "who formula"
+                            }
+                        ]
+                    }, 
+                    "id": 2816, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "sachet", 
+                        "quantity": 1.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2798
             }
         ], 
         "contact": "", 
@@ -17633,6 +17695,97 @@
                     "name": ""
                 }, 
                 "id": 2182
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 164, 
+                        "ingredients": [
+                            {
+                                "inn": "Amoxicillin", 
+                                "strength": "250mg"
+                            }
+                        ]
+                    }, 
+                    "id": 3147, 
+                    "pack-size": {
+                        "type": "bottle", 
+                        "unit": "ml", 
+                        "quantity": 100.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2786
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 172, 
+                        "ingredients": [
+                            {
+                                "inn": "Amoxicillin", 
+                                "strength": "500mg"
+                            }
+                        ]
+                    }, 
+                    "id": 3146, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 500.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2787
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 7, 
+                            "name": "syrup/susp"
+                        }, 
+                        "id": 72, 
+                        "ingredients": [
+                            {
+                                "inn": "Sulfamethoxazole", 
+                                "strength": "200mg/5ml"
+                            }, 
+                            {
+                                "inn": "Trimethoprim", 
+                                "strength": "40mg/5ml"
+                            }
+                        ]
+                    }, 
+                    "id": 4, 
+                    "pack-size": {
+                        "type": "bottle", 
+                        "unit": "ml", 
+                        "quantity": 100.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2793
             }
         ], 
         "contact": "", 
@@ -18550,6 +18703,138 @@
                     "name": ""
                 }, 
                 "id": 2309
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 7, 
+                        "ingredients": [
+                            {
+                                "inn": "Artemether", 
+                                "strength": "20mg"
+                            }, 
+                            {
+                                "inn": "Lumefantrine", 
+                                "strength": "120mg"
+                            }
+                        ]
+                    }, 
+                    "id": 2956, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 30.0
+                    }, 
+                    "name": "Artementer Lumefantrine"
+                }, 
+                "id": 2788
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 7, 
+                        "ingredients": [
+                            {
+                                "inn": "Artemether", 
+                                "strength": "20mg"
+                            }, 
+                            {
+                                "inn": "Lumefantrine", 
+                                "strength": "120mg"
+                            }
+                        ]
+                    }, 
+                    "id": 2956, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 30.0
+                    }, 
+                    "name": "Artementer Lumefantrine"
+                }, 
+                "id": 2789
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 7, 
+                        "ingredients": [
+                            {
+                                "inn": "Artemether", 
+                                "strength": "20mg"
+                            }, 
+                            {
+                                "inn": "Lumefantrine", 
+                                "strength": "120mg"
+                            }
+                        ]
+                    }, 
+                    "id": 2956, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 30.0
+                    }, 
+                    "name": "Artementer Lumefantrine"
+                }, 
+                "id": 2790
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 7, 
+                        "ingredients": [
+                            {
+                                "inn": "Artemether", 
+                                "strength": "20mg"
+                            }, 
+                            {
+                                "inn": "Lumefantrine", 
+                                "strength": "120mg"
+                            }
+                        ]
+                    }, 
+                    "id": 2956, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 30.0
+                    }, 
+                    "name": "Artementer Lumefantrine"
+                }, 
+                "id": 2791
             }
         ], 
         "contact": "", 
@@ -24237,7 +24522,37 @@
         }, 
         "altphone": "", 
         "registrations": [], 
-        "procurements": [], 
+        "procurements": [
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 24, 
+                            "name": "powder for injec"
+                        }, 
+                        "id": 65, 
+                        "ingredients": [
+                            {
+                                "inn": "Ceftriaxone", 
+                                "strength": "250mg"
+                            }
+                        ]
+                    }, 
+                    "id": 3148, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "vial", 
+                        "quantity": 1.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2792
+            }
+        ], 
         "contact": "", 
         "authorized": false, 
         "address": "Nirma House\r\nAshram Road\r\nAhmedabad\r\nGujarat\r\n380009\r\n", 
@@ -27939,6 +28254,35 @@
                     "name": ""
                 }, 
                 "id": 2555
+            }, 
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 147, 
+                        "ingredients": [
+                            {
+                                "inn": "Metformin", 
+                                "strength": "500mg"
+                            }
+                        ]
+                    }, 
+                    "id": 3150, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 500.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2797
             }
         ], 
         "contact": "", 
@@ -29318,6 +29662,100 @@
         "authorized": false, 
         "address": "", 
         "id": 228, 
+        "altemail": "", 
+        "email": ""
+    }, 
+    {
+        "website": "", 
+        "fax": "", 
+        "name": "Fuel Africa", 
+        "phone": "", 
+        "altphone": "", 
+        "registrations": [], 
+        "procurements": [
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 2, 
+                            "name": "cap/tab"
+                        }, 
+                        "id": 102, 
+                        "ingredients": [
+                            {
+                                "inn": "Lamivudine", 
+                                "strength": "150mg"
+                            }, 
+                            {
+                                "inn": "Zidovudine", 
+                                "strength": "300mg"
+                            }
+                        ]
+                    }, 
+                    "id": 71, 
+                    "pack-size": {
+                        "type": "pack", 
+                        "unit": "tablet", 
+                        "quantity": 60.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2794
+            }
+        ], 
+        "contact": "", 
+        "authorized": false, 
+        "address": "", 
+        "id": 229, 
+        "altemail": "", 
+        "email": ""
+    }, 
+    {
+        "website": "", 
+        "fax": "", 
+        "name": "Medifarma", 
+        "phone": "", 
+        "altphone": "", 
+        "registrations": [], 
+        "procurements": [
+            {
+                "country": {
+                    "id": 23, 
+                    "name": "Mozambique"
+                }, 
+                "product": {
+                    "medicine": {
+                        "dosageform": {
+                            "id": 33, 
+                            "name": "suspension"
+                        }, 
+                        "id": 152, 
+                        "ingredients": [
+                            {
+                                "inn": "Paracetamol", 
+                                "strength": "120mg/5ml"
+                            }
+                        ]
+                    }, 
+                    "id": 3151, 
+                    "pack-size": {
+                        "type": "bottle", 
+                        "unit": "ml", 
+                        "quantity": 100.0
+                    }, 
+                    "name": ""
+                }, 
+                "id": 2799
+            }
+        ], 
+        "contact": "", 
+        "authorized": false, 
+        "address": "", 
+        "id": 230, 
         "altemail": "", 
         "email": ""
     }
