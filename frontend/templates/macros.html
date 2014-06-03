@@ -10,14 +10,6 @@
     <span class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}"></span>
 {%- endmacro %}
 
-{% macro render_volume(volume) -%}
-    {%- if volume == 1 -%}
-        <nobr>no data</nobr>
-    {%- else -%}
-        {{ volume }}
-    {%- endif -%}
-{%- endmacro %}
-
 {% macro render_medicine_strength(medicine) -%}
     {% for ingredient in medicine.ingredients %}
         {% if loop.index > 1 %} + {% endif %}

@@ -16,6 +16,17 @@ def jinja2_filter_format_date(date_str):
     return native.strftime(format)
 
 
+@app.template_filter('add_commas')
+def jinja2_filter_add_commas(quantity):
+    out = ""
+    quantity_str = str(quantity)
+    while len(quantity_str) > 3:
+        tmp = quantity_str[-3::]
+        out = "," + tmp + out
+        quantity_str = quantity_str[0:-3]
+    return quantity_str + out
+
+
 def sort_list(unsorted_list, key):
     """
     Sort a list of dicts by the value found with the key provided.
