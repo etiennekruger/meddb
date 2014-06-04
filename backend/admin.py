@@ -59,6 +59,9 @@ class UserView(MyModelView):
     def is_accessible(self):
         return login.current_user.is_authenticated() and login.current_user.is_admin
 
+# class BenchmarkView(MyModelView):
+#
+
 
 # Customized index view that handles login & registration
 class HomeView(AdminIndexView):
@@ -137,3 +140,4 @@ init_login()
 admin = Admin(app, name='Med-DB', base_template='admin/my_master.html', index_view=HomeView(name='Home'))
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
+admin.add_view(MyModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
