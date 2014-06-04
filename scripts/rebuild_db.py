@@ -257,6 +257,12 @@ for medicine in medicines:
                 db.session.add(source_obj)
                 db.session.commit()
 
+        # capture currency relation
+        if procurement['currency']:
+            currency_obj = models.Currency.query.filter(models.Currency.code==procurement['currency']['code']).first()
+            procurement_obj.currency = currency_obj
+
+        # capture terms of transaction
         if procurement['incoterm']:
             incoterm_obj = models.Incoterm.query.filter(models.Incoterm.code==procurement['incoterm']['name']).first()
             procurement_obj.incoterm = incoterm_obj

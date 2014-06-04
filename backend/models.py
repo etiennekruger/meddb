@@ -10,10 +10,11 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True)
     password = db.Column(db.String(64))
-    is_active = db.Column(db.Boolean, default=False)
+    activated = db.Column(db.Boolean, default=False)
+    is_admin = db.Column(db.Boolean, default=False)
 
     def is_active(self):
-        return self.is_active
+        return self.activated
 
     def is_authenticated(self):
         return True
@@ -220,7 +221,7 @@ class Site(db.Model):
     manufacturer = db.relationship('Manufacturer')
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, self.manufacturer.name)
+        return unicode(self.name)
 
     def to_dict(self, include_related=False):
         return serializers.site_to_dict(self, include_related)
@@ -304,8 +305,8 @@ class Product(db.Model):
 
     def __unicode__(self):
         if self.name:
-            return u'%s - %s (%s)' % (self.name, self.manufacturer, str(self.medicine))
-        return u'%s (%s)' % (self.manufacturer, str(self.medicine))
+            return u'%s (%s), %s' % (self.name, self.medicine, self.manufacturer)
+        return u'%s, %s' % (self.medicine, self.manufacturer)
 
     def to_dict(self, include_related=False):
         return serializers.product_to_dict(self, include_related)
@@ -362,10 +363,11 @@ class Procurement(db.Model):
     start_date = db.Column(db.Date, nullable=True) # This is the first day that the procurement price is valid for (may be left blank).
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
     incoterm = db.Column(db.String(3), nullable=True)  # The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.
-    currency = db.Column(db.String(3), nullable=True)  # This is the currency of the procurement price. This field is required to convert units to USD for comparison.
     added_on = db.Column(db.Date, default=datetime.datetime.today())
     approved_on = db.Column(db.Date, nullable=True)
 
+    currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=True)
+    currency = db.relationship('Currency', backref='procurements')
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product', backref='procurements')
     incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
@@ -375,7 +377,7 @@ class Procurement(db.Model):
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
     supplier = db.relationship('Supplier', backref='procurements')
     container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
-    container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
+    container = db.relationship('Container', backref='procurements')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
