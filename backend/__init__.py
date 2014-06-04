@@ -38,3 +38,4 @@ stream_handler.setFormatter(file_formatter)
 logger.addHandler(stream_handler)
 
 import views
+import admin
