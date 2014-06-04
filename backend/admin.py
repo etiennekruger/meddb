@@ -50,6 +50,16 @@ class MyModelView(ModelView):
         return login.current_user.is_authenticated()
 
 
+class UserView(MyModelView):
+    can_create = False
+    column_list = ['email', 'is_admin', 'activated']
+    column_exclude_list = ['password']
+    form_excluded_columns = ['password', 'procurements_added', 'procurements_approved']
+
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
 # Customized index view that handles login & registration
 class HomeView(AdminIndexView):
 
@@ -95,7 +105,7 @@ class HomeView(AdminIndexView):
             # activate the admin user
             if user.email == app.config['ADMIN_USER']:
                 user.is_admin = True
-                user.is_active = True
+                user.activated = True
 
             db.session.add(user)
             db.session.commit()
@@ -125,3 +135,5 @@ def init_login():
 init_login()
 
 admin = Admin(app, name='Med-DB', base_template='admin/my_master.html', index_view=HomeView(name='Home'))
+
+admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
