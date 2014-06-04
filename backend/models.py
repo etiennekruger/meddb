@@ -221,7 +221,7 @@ class Site(db.Model):
     manufacturer = db.relationship('Manufacturer')
 
     def __unicode__(self):
-        return u'%s (%s)' % (self.name, self.manufacturer.name)
+        return unicode(self.name)
 
     def to_dict(self, include_related=False):
         return serializers.site_to_dict(self, include_related)
@@ -377,7 +377,7 @@ class Procurement(db.Model):
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
     supplier = db.relationship('Supplier', backref='procurements')
     container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
-    container = db.relationship('Container')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
+    container = db.relationship('Container', backref='procurements')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)

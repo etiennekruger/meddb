@@ -8,3 +8,4 @@ requests==2.0.1
 gunicorn==18.0
 redis==2.8.0
 beautifulsoup4
+WTForms==1.0.3

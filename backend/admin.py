@@ -4,7 +4,8 @@ from flask import Flask, flash, redirect, url_for, request, render_template
 from flask.ext.admin import Admin, expose, AdminIndexView, helpers
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext import login
-from wtforms import form, fields, validators
+from wtforms import form, fields, validators, BooleanField
+from datetime import datetime
 
 
 # Define login and registration forms (for flask-login)
@@ -59,8 +60,27 @@ class UserView(MyModelView):
     def is_accessible(self):
         return login.current_user.is_authenticated() and login.current_user.is_admin
 
-# class BenchmarkView(MyModelView):
-#
+
+class ProcurementView(MyModelView):
+    column_list = [
+        'country',
+        'product',
+        'supplier',
+        'price_usd',
+        'volume',
+        'pack_size',
+        'start_date',
+        'end_date',
+        'approved_by',
+        'container',
+    ]
+
+    form_excluded_columns = [
+        'approved_by',
+        'approved_on',
+        'added_by',
+        'added_on',
+        ]
 
 
 # Customized index view that handles login & registration
@@ -141,3 +161,9 @@ admin = Admin(app, name='Med-DB', base_template='admin/my_master.html', index_vi
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 admin.add_view(MyModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
+admin.add_view(MyModelView(models.Container, db.session, name="Container", endpoint='container'))
+admin.add_view(MyModelView(models.Medicine, db.session, name="Medicine", endpoint='medicine'))
+admin.add_view(MyModelView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient'))
+admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
+admin.add_view(MyModelView(models.Product, db.session, name="Product", endpoint='product'))
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
