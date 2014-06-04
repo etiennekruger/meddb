@@ -1,0 +1,5 @@
+{% extends 'admin/model/list.html' %}
+
+{% macro render_country(model, column) %}
+    <span class="flag flag-{{ model.code_short | lower }}" alt="{{ model.name }}"></span>
+{% endmacro %}
