@@ -94,6 +94,7 @@ class HomeView(AdminIndexView):
 
             # activate the admin user
             if user.email == app.config['ADMIN_USER']:
+                user.is_admin = True
                 user.is_active = True
 
             db.session.add(user)

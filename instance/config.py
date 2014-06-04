@@ -10,3 +10,5 @@ DEBUG = True
 SQLALCHEMY_DATABASE_URI = 'sqlite:////Users/petrus/Desktop/code4sa/med-db/instance/med-db.db'
 
 RESULTS_PER_PAGE = 50
+
+ADMIN_USER = "admin@code4sa.org"
