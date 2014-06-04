@@ -305,8 +305,8 @@ class Product(db.Model):
 
     def __unicode__(self):
         if self.name:
-            return u'%s - %s (%s)' % (self.name, self.manufacturer, str(self.medicine))
-        return u'%s (%s)' % (self.manufacturer, str(self.medicine))
+            return u'%s (%s), %s' % (self.name, self.medicine, self.manufacturer)
+        return u'%s, %s' % (self.medicine, self.manufacturer)
 
     def to_dict(self, include_related=False):
         return serializers.product_to_dict(self, include_related)
@@ -363,10 +363,11 @@ class Procurement(db.Model):
     start_date = db.Column(db.Date, nullable=True) # This is the first day that the procurement price is valid for (may be left blank).
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
     incoterm = db.Column(db.String(3), nullable=True)  # The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.
-    currency = db.Column(db.String(3), nullable=True)  # This is the currency of the procurement price. This field is required to convert units to USD for comparison.
     added_on = db.Column(db.Date, default=datetime.datetime.today())
     approved_on = db.Column(db.Date, nullable=True)
 
+    currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=True)
+    currency = db.relationship('Currency', backref='procurements')
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product', backref='procurements')
     incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
