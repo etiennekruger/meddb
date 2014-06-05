@@ -86,43 +86,26 @@
         $("#search-box").typeahead({
             minLength: 1,
             source:function(query, process){
-                products = [];
+                medicines = [];
                 map = {};
                 $.get('{{ API_HOST }}autocomplete/' + query + '/', function(data){
                     for (var i = 0; i < data.length; i++)
                     {
-                        var key = data[i].name + " - " + data[i].medicine.name;
-                        if(data[i].manufacturer)
-                        {
-                            key += ' <span class=\"text-muted\">' + data[i].manufacturer.name
-                            if (data[i].manufacturer.country)
-                            {
-                                key += ", " + data[i].manufacturer.country.name
-                            }
-                            key += '<\/span>'
-                        }
+                        var key = data[i].name;
                         if (key)
-                            products.push(key)
+                            medicines.push(key)
                         map[key] = data[i]
                     }
-                    process(products);
+                    process(medicines);
                 },'json');
             },
             updater: function (item) {
-                window.location = '/product/' + map[item].product_id.toString() + '/';
-                if(item.indexOf(' <span') > -1)
-                {
-                    item = item.substr(0, item.indexOf(' <span'))
-                }
+                window.location = '/medicine/' + map[item].medicine_id.toString() + '/';
                 return item;
             },
             matcher: function (item) {
                 // matching's done on the backend
                 return true
-            },
-            highlighter: function (item) {
-                // don't do any highlighting
-                return item;
             }
         });
         $("#search-box").focus()
