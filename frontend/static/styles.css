@@ -24,8 +24,8 @@ body{
 #search-banner{
     padding-top: 80px;
     padding-bottom: 120px;
-    padding-left: 200px;
-    padding-right: 200px;
+    padding-left: 250px;
+    padding-right: 250px;
 }
 
 #search-caption{
@@ -66,7 +66,7 @@ body{
 }
 
 #search-form-container{
-    max-width: 500px;
+    max-width: 350px;
 }
 
 .flag{

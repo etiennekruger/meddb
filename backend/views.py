@@ -106,15 +106,15 @@ def calculate_db_overview():
 
 def calculate_autocomplete():
     """
-    Retrieve all product records and serialize them for use by the autocomplete endpoint.
-    THIS IS COMPUTATIONALLY EXPENSIVE
+    Retrieve all medicine records and serialize them for use by the autocomplete endpoint.
+    THIS IS slightly COMPUTATIONALLY EXPENSIVE
     """
 
     logger.debug("Calculating autocomplete")
-    products = models.Product.query.all()
+    medicines = models.Medicine.query.all()
     out = []
-    for product in products:
-        out.append(product.to_dict())
+    for medicine in medicines:
+        out.append(medicine.to_dict())
     return out
 
 # -------------------------------------------------------------------
@@ -198,35 +198,29 @@ def resource(resource, resource_id=None):
 @app.route('/autocomplete/<query>/')
 def autocomplete(query):
     """
-    Return the name and product_id of each product that matches the given query, together with the name and
-    country of the manufacturer.
+    Return the name and medicine_id of each medicine that matches the given query.
     """
 
     out = []
-    product_list_json = cache.retrieve('product_list')
-    if product_list_json:
+    medicine_list_json = cache.retrieve('medicine_list')
+    if medicine_list_json:
         logger.debug('calculating autocomplete from cache')
-        product_list = json.loads(product_list_json)
+        medicine_list = json.loads(medicine_list_json)
     else:
-        product_list = calculate_autocomplete()
-        cache.store('product_list', json.dumps(product_list, cls=serializers.CustomEncoder))
+        medicine_list = calculate_autocomplete()
+        cache.store('medicine_list', json.dumps(medicine_list, cls=serializers.CustomEncoder))
     i = 0
-    for product in product_list:
+    for medicine in medicine_list:
+
         tmp = {}
-        product_name = product['name']
-        medicine_name = ""
-        if product.get('medicine'):
-            medicine_name = product['medicine']['name']
-        if i < 10 and (query in product_name.lower() or query in medicine_name.lower()):
+        component_names = ""
+        for component in medicine['components']:
+            if component['ingredient']['name']:
+                component_names += ", " + component['ingredient']['name']
+        if i < 10 and (query in component_names.lower()):
             i += 1
-            tmp['product_id'] = product['product_id']
-            tmp['name'] = product_name
-            tmp['medicine'] = {'name': medicine_name}
-            if product['manufacturer']:
-                tmp['manufacturer'] = {}
-                tmp['manufacturer']['name'] = product['manufacturer']['name']
-                if product['manufacturer']['country']:
-                    tmp['manufacturer']['country'] = product['manufacturer']['country']
+            tmp['medicine_id'] = medicine['medicine_id']
+            tmp['name'] = medicine['name']
             out.append(tmp)
     return send_api_response(json.dumps(out))
 

@@ -80,12 +80,23 @@ class ProcurementView(MyModelView):
         'approved_by',
         'container',
     ]
-
     form_excluded_columns = [
         'approved_by',
         'approved_on',
         'added_by',
         'added_on',
+        ]
+
+
+class MedicineView(MyModelView):
+    column_list = [
+        'name',
+        'dosage_form',
+    ]
+    column_sortable_list = ['name', 'dosage_form', ]
+    form_excluded_columns = [
+        'benchmarks',
+        'products',
         ]
 
 
@@ -168,7 +179,7 @@ admin = Admin(app, name='Med-DB', base_template='admin/my_master.html', index_vi
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 admin.add_view(MyModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
 admin.add_view(MyModelView(models.Container, db.session, name="Container", endpoint='container'))
-admin.add_view(MyModelView(models.Medicine, db.session, name="Medicine", endpoint='medicine'))
+admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine'))
 admin.add_view(MyModelView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient'))
 admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
 admin.add_view(MyModelView(models.Product, db.session, name="Product", endpoint='product'))

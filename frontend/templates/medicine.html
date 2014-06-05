@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+    <div id="jumbo">
+        {{ super() }}
+        <div class="container">
+            <h1>
+                {% if medicine.name %}
+                    {{ medicine.name }}
+                {% endif %}
+                <nobr>
+                    <small class="text-muted">
+                        {{ medicine.dosage_form.name }}
+                    </small>
+                </nobr>
+            </h1>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+            {% if medicine.benchmarks %}
+                {% for benchmark in medicine.benchmarks %}
+                    <div class="alert alert-success">
+                        This medicine's {{ benchmark.name }} benchmark price for {{ benchmark.year }} is ${{ benchmark.price }}.
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Products</h2>
+
+            {% if medicine.products %}
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <th>Name</th>
+                    <th>Manufacturer</th>
+                    <th>Average price (USD)</th>
+                    <th>Price difference</th>
+                    </thead>
+                    <tbody>
+                    {% for product in medicine.products %}
+                        {% set difference = 100 * (product.average_price - product.average_price) / product.average_price %}
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a href="/product/{{ product.product_id }}/">
+                                        {{ product.name }}
+                                    </a>
+                                </strong>
+                            </td>
+                            <td>
+                                {% if product.manufacturer %}
+                                    {%- if product.manufacturer.country -%}
+                                        {{ macros.render_flag(product.manufacturer.country) }}
+                                    {% endif -%}
+                                    {{ product.manufacturer.name }}
+                                    {%- if product.manufacturer.country -%}
+                                        , {{ product.manufacturer.country.name }}
+                                    {%- endif -%}
+                                {% else %}
+                                    Unknown Manufacturer
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if product.average_price %}
+                                    ${{ product.average_price }}
+                                {% endif %}
+                            </td>
+                            <td class="{% if difference > 0 %}danger{% else %}success{% endif %}">
+                                <strong>
+                                    <i class="fa fa-arrow-circle-{% if difference > 0 %}up{% else %}down{% endif %}"></i> {{ difference | round | int | abs }}%
+                                </strong>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>We don't know of any products for this medicine.</p>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script>
+        $(document).ready(function(){
+
+        });
+    </script>
+{% endblock %}
