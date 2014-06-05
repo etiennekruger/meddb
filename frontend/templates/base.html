@@ -84,6 +84,7 @@
         $(".tooltip-enabled").tooltip();
 
         $("#search-box").typeahead({
+            minLength: 1,
             source:function(query, process){
                 products = [];
                 map = {};
