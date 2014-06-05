@@ -41,11 +41,11 @@
                     <th>Name</th>
                     <th>Manufacturer</th>
                     <th>Average price (USD)</th>
-                    <th>Price difference</th>
                     </thead>
                     <tbody>
+
                     {% for product in medicine.products %}
-                        {% set difference = 100 * (product.average_price - product.average_price) / product.average_price %}
+                        {% set width = (100 * (1 - (max_price - product.average_price) / max_price)) | int%}
                         <tr>
                             <td>
                                 <strong>
@@ -67,15 +67,14 @@
                                     Unknown Manufacturer
                                 {% endif %}
                             </td>
-                            <td>
+                            <td style="padding-right: 60px; min-width: 250px;">
                                 {% if product.average_price %}
+                                    <span class="pull-right" style="margin-right: -50px;">
                                     ${{ product.average_price }}
+                                    </span>
+                                    <div class="price-bar" style="width: {{ width }}%;"></div>
+
                                 {% endif %}
-                            </td>
-                            <td class="{% if difference > 0 %}danger{% else %}success{% endif %}">
-                                <strong>
-                                    <i class="fa fa-arrow-circle-{% if difference > 0 %}up{% else %}down{% endif %}"></i> {{ difference | round | int | abs }}%
-                                </strong>
                             </td>
                         </tr>
                     {% endfor %}

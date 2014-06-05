@@ -76,11 +76,16 @@ def medicine(medicine_id):
 
     response = requests.get(API_HOST + 'medicine/' + str(medicine_id) + "/")
     medicine = response.json()
+    max_price = 0
+    for product in medicine['products']:
+        if product['average_price'] > max_price:
+            max_price = product['average_price']
     return render_template(
         'medicine.html',
         API_HOST=API_HOST,
         medicine=medicine,
-        active_nav_button="medicine"
+        active_nav_button="medicine",
+        max_price = max_price
     )
 
 @app.route('/supplier/<supplier_id>/')
