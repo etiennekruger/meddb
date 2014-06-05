@@ -23,7 +23,10 @@
 
         <ul class="nav navbar-nav">
             <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
-            {#            <li{% if active_nav_button == "medicines" %} class="active"{% endif %}><a href="/admin/">Admin</a></li>#}
+            <li{% if active_nav_button == "medicine" %} class="active"{% endif %}><a href="/">Medicine</a></li>
+            <li{% if active_nav_button == "product" %} class="active"{% endif %}><a href="/">Product</a></li>
+            <li{% if active_nav_button == "supplier" %} class="active"{% endif %}><a href="/">Supplier</a></li>
+            <li><a href="/admin/">Admin</a></li>
         </ul>
 
         {% block search %}

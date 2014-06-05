@@ -1,4 +1,4 @@
-from flask import render_template, flash
+from flask import render_template, flash, redirect
 from frontend import app, logger
 import requests
 import operator
@@ -68,7 +68,19 @@ def product(product_id):
         'product.html',
         API_HOST=API_HOST,
         product=product,
-        active_nav_button="medicines"
+        active_nav_button="product"
+    )
+
+@app.route('/medicine/<medicine_id>/')
+def medicine(medicine_id):
+
+    response = requests.get(API_HOST + 'medicine/' + str(medicine_id) + "/")
+    medicine = response.json()
+    return render_template(
+        'medicine.html',
+        API_HOST=API_HOST,
+        medicine=medicine,
+        active_nav_button="medicine"
     )
 
 @app.route('/supplier/<supplier_id>/')
@@ -80,5 +92,9 @@ def supplier(supplier_id):
         'supplier.html',
         API_HOST=API_HOST,
         supplier=supplier,
-        active_nav_button="suppliers"
+        active_nav_button="supplier"
     )
+
+@app.route('/admin/')
+def admin_redirect():
+    return redirect(API_HOST + "admin/")

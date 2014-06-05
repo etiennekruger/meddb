@@ -29,16 +29,18 @@
                                 , {{ product.manufacturer.country.name }}
                             {%- endif -%}
                         {%- else -%}
-                                Unknown Manufacturer
+                            Unknown Manufacturer
                         {%- endif -%}
                     </small>
                 </nobr>
             </h1>
             <p class="lead">
-                {{ product.medicine.name }}
-                {%- if product.medicine.dosage_form -%}
-                    , {{ product.medicine.dosage_form.name }}
-                {%- endif -%}
+                <a href="/medicine/{{ product.medicine.medicine_id }}/">
+                    {{ product.medicine.name }}
+                    {%- if product.medicine.dosage_form -%}
+                        , {{ product.medicine.dosage_form.name }}
+                    {%- endif -%}
+                </a>
                 <span>
                 {%- if product.generic -%}
                     , generic
@@ -52,78 +54,6 @@
 {% endblock %}
 
 {% block page %}
-    <div class="row">
-        <div class="col-lg-12">
-            {% if product.medicine.benchmarks %}
-                {% for benchmark in product.medicine.benchmarks %}
-                    {% set difference = 100 * (product.average_price - benchmark.price) / product.average_price %}
-                    <div class="alert alert-{% if difference > 0 %}danger{% else %}success{% endif %}">
-                        This product was
-                        <strong>
-                            {{ difference | round | int | abs }}% {% if difference > 0 %}more{% else %}less{% endif %} expensive
-                        </strong>
-                        than the {{ benchmark.name }} benchmark price of ${{ benchmark.price }} for {{ benchmark.year }}.
-                    </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <h2>Alternative products</h2>
-
-            {% if product.alternative_products %}
-                <table class="table table-bordered table-striped">
-                    <thead>
-                    <th>Name</th>
-                    <th>Manufacturer</th>
-                    <th>Average price (USD)</th>
-                    <th>Price difference</th>
-                    </thead>
-                    <tbody>
-                    {% for alternative_product in product.alternative_products %}
-                        {% set difference = 100 * (alternative_product.average_price - product.average_price) / alternative_product.average_price %}
-                        <tr>
-                            <td>
-                                <strong>
-                                    <a href="/product/{{ alternative_product.product_id }}/">
-                                        {{ alternative_product.name }}
-                                    </a>
-                                </strong>
-                            </td>
-                            <td>
-                                {% if alternative_product.manufacturer %}
-                                    {%- if alternative_product.manufacturer.country -%}
-                                        {{ macros.render_flag(alternative_product.manufacturer.country) }}
-                                    {% endif -%}
-                                    {{ alternative_product.manufacturer.name }}
-                                    {%- if alternative_product.manufacturer.country -%}
-                                        , {{ alternative_product.manufacturer.country.name }}
-                                    {%- endif -%}
-                                {% else %}
-                                    Unknown Manufacturer
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if alternative_product.average_price %}
-                                    ${{ alternative_product.average_price }}
-                                {% endif %}
-                            </td>
-                            <td class="{% if difference > 0 %}danger{% else %}success{% endif %}">
-                                <strong>
-                                    <i class="fa fa-arrow-circle-{% if difference > 0 %}up{% else %}down{% endif %}"></i> {{ difference | round | int | abs }}%
-                                </strong>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>We don't know of any alternatives to this product.</p>
-            {% endif %}
-        </div>
-    </div>
 
     <div class="row">
         <div class="col-lg-12">
