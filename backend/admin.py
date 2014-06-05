@@ -7,6 +7,12 @@ from flask.ext import login
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
 
+HOST = app.config['HOST']
+
+@app.context_processor
+def inject_paths():
+    return dict(HOST=HOST)
+
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):

@@ -1,5 +1,6 @@
 import logging
 
+HOST = 'http://med-db.demo4sa.org/'
 API_HOST = 'http://med-db-api.demo4sa.org/'
 
 LOG_LEVEL = logging.INFO

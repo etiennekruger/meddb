@@ -5,6 +5,10 @@
     </style>
 {% endblock head_css%}
 
+{% block brand %}
+    <span class="brand"><a href="{{ HOST }}">{{ admin_view.admin.name }}</a></span>
+{% endblock %}
+
 {% block access_control %}
     {% if current_user.is_authenticated() %}
         <div class="btn-group pull-right">
