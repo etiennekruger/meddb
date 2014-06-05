@@ -2,6 +2,7 @@ import backend.models as models
 from backend import db
 import json
 from datetime import date, datetime
+import scrape_bechmarks
 
 
 def map_dosage_form(dosage_form):
@@ -32,7 +33,11 @@ db.create_all()
 
 # add first user
 user_obj = models.User()
-user_obj.email = 'adi@code4sa.org'
+user_obj.email = 'adi@sarpam.net'
+password = raw_input("Please enter a password:")
+user_obj.password = password
+user_obj.activated = True
+user_obj.is_admin = True
 db.session.add(user_obj)
 db.session.commit()
 
@@ -276,6 +281,7 @@ for medicine in medicines:
         procurement_obj.product = product_obj
         procurement_obj.price = procurement["price"]
         procurement_obj.start_date = datetime.strptime(procurement["start_date"], "%Y-%m-%d")
+        procurement_obj.added_on = datetime.strptime("2014-05-15", "%Y-%m-%d")
         if procurement.get("end_date"):
             procurement_obj.end_date = datetime.strptime(procurement["end_date"], "%Y-%m-%d")
         procurement_obj.pack_size = procurement["packsize"]
@@ -330,3 +336,5 @@ for supplier in suppliers:
 
     db.session.add(supplier_obj)
 db.session.commit()
+
+scrape_bechmarks.save_benchmark_records()
