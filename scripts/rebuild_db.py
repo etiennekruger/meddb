@@ -31,7 +31,7 @@ def map_dosage_form(dosage_form):
 db.drop_all()
 db.create_all()
 
-# add first user
+# add first user & admin user
 user_obj = models.User()
 user_obj.email = 'adi@sarpam.net'
 password = raw_input("Please enter a password:")
@@ -39,6 +39,14 @@ user_obj.password = password
 user_obj.activated = True
 user_obj.is_admin = True
 db.session.add(user_obj)
+
+admin_user_obj = models.User()
+admin_user_obj.email = 'admin@sarpam.net'
+admin_user_obj.password = password
+admin_user_obj.activated = True
+admin_user_obj.is_admin = True
+db.session.add(admin_user_obj)
+
 db.session.commit()
 
 # populate items from 3rd party datasets:
@@ -273,6 +281,7 @@ for medicine in medicines:
             procurement_obj.incoterm = incoterm_obj
 
         procurement_obj.added_by = user_obj
+        procurement_obj.approved_by = admin_user_obj
         procurement_obj.source = source_obj
         procurement_obj.container = container_obj
         procurement_obj.country = country_obj
@@ -282,6 +291,7 @@ for medicine in medicines:
         procurement_obj.price = procurement["price"]
         procurement_obj.start_date = datetime.strptime(procurement["start_date"], "%Y-%m-%d")
         procurement_obj.added_on = datetime.strptime("2014-05-15", "%Y-%m-%d")
+        procurement_obj.approved_on = datetime.strptime("2014-05-17", "%Y-%m-%d")
         if procurement.get("end_date"):
             procurement_obj.end_date = datetime.strptime(procurement["end_date"], "%Y-%m-%d")
         procurement_obj.pack_size = procurement["packsize"]
