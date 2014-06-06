@@ -3,3 +3,14 @@
 {% macro render_country(model, column) %}
     <span class="flag flag-{{ model.code_short | lower }}" alt="{{ model.name }}"></span>
 {% endmacro %}
+
+{% macro render_approve(model, column) %}
+    <div class="status-container">
+        <form class="icon" method="POST" action="/update_status/">
+            {% if csrf_token %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            {% endif %}
+            <input type="checkbox" {% if model.activated_by %}checked="True"{% endif %}>
+        </form>
+    </div>
+{% endmacro %}

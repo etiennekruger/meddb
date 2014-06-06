@@ -2,6 +2,7 @@ from backend import logger, app, db
 import models
 from flask import Flask, flash, redirect, url_for, request, render_template
 from flask.ext.admin import Admin, expose, AdminIndexView, helpers
+from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext import login
 from wtforms import form, fields, validators, BooleanField
@@ -51,6 +52,7 @@ class MyModelView(ModelView):
     can_edit = True
     can_delete = True
     page_size = 50
+    list_template = "admin/custom_list_template.html"
     column_exclude_list = []
 
     def is_accessible(self):
@@ -77,8 +79,9 @@ class ProcurementView(MyModelView):
         'pack_size',
         'start_date',
         'end_date',
-        'approved_by',
         'container',
+        'approved_by',
+        'approved'
     ]
     form_excluded_columns = [
         'approved_by',
@@ -86,6 +89,9 @@ class ProcurementView(MyModelView):
         'added_by',
         'added_on',
         ]
+    column_formatters = dict(
+        approved=macro('render_approve'),
+    )
 
 
 class MedicineView(MyModelView):
