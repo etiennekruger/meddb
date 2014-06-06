@@ -152,7 +152,7 @@ class HomeView(AdminIndexView):
 
             flash('Please wait for your new account to be activated.', 'info')
             return redirect(url_for('.login_view'))
-        link = '<p>Already have an account? <a href="' + url_for('.login_view') + '">Click here to log in.</a></p>'
+        link = '<p>Already have an account? <a href="' + url_for('.login_view') + '">Click here to sign in.</a></p>'
         return self.render('admin/home.html', form=form, link=link, register=True)
 
     @expose('/logout/')

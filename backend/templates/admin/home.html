@@ -2,13 +2,9 @@
 {% block body %}
     {{ super() }}
     <div class="row-fluid">
-        <h1>Med-DB Admin</h1>
-        {% if not register %}
-            <p class="lead">Manage procurement information on Med-DB.</p>
-            <p>Here you can add new procurement records, or update supplier & manufacturer information.</p>
-            <p>If you have just registered, please note that you will only be able to log in once your account has been activated by an administrator.</p>
-            <a class="btn btn-primary" href="{{ HOST }}"><i class="icon-chevron-left icon-white"></i> Back to Med-DB</a>
-        {% endif %}
+        <h1>Med-DB Admin <small>Manage procurement information</small></h1>
+        <p>Here you can add new procurement records, or update supplier & manufacturer information.</p>
+        <p>If you have just registered, please note that you will only be able to log in once your account has been activated by an administrator.</p>
     </div>
 
     <div class="row-fluid">
@@ -16,31 +12,34 @@
         <div class="span1"></div>
         <div class="span9">
             {% if current_user.is_authenticated() %}
-{#                <div class="row-fluid">#}
-{#                    <div class="span9">#}
-{#                        <p>#}
-{#                            Add a new Procurement record#}
-{#                        </p>#}
-{#                    </div>#}
-{#                    <div class="span3">#}
-{#                        <a class="btn btn-primary" href="/admin/procurement/new/"><i class="icon-plus icon-white"></i> Procurement</a>#}
-{#                    </div>#}
-{#                <hr>#}
-{#                </div>#}
-{#                <div class="row-fluid">#}
-{#                    <div class="span9">#}
-{#                        <p>#}
-{#                            Add a new Medicine Registration record:#}
-{#                        </p>#}
-{#                    </div>#}
-{#                    <div class="span3">#}
-{#                        <a class="btn btn-primary" href="/admin/registration/new/"><i class="icon-plus icon-white"></i> Registration</a>#}
-{#                    </div>#}
-{#                </div>#}
+                {#                <div class="row-fluid">#}
+                {#                    <div class="span9">#}
+                {#                        <p>#}
+                {#                            Add a new Procurement record#}
+                {#                        </p>#}
+                {#                    </div>#}
+                {#                    <div class="span3">#}
+                {#                        <a class="btn btn-primary" href="/admin/procurement/new/"><i class="icon-plus icon-white"></i> Procurement</a>#}
+                {#                    </div>#}
+                {#                <hr>#}
+                {#                </div>#}
+                {#                <div class="row-fluid">#}
+                {#                    <div class="span9">#}
+                {#                        <p>#}
+                {#                            Add a new Medicine Registration record:#}
+                {#                        </p>#}
+                {#                    </div>#}
+                {#                    <div class="span3">#}
+                {#                        <a class="btn btn-primary" href="/admin/registration/new/"><i class="icon-plus icon-white"></i> Registration</a>#}
+                {#                    </div>#}
+                {#                </div>#}
             {% else %}
                 {% if register %}
                     <p class="lead">Please register by entering your details below.</p>
+                {% else %}
+                    <p class="lead">Sign in by entering your details below.</p>
                 {% endif %}
+
                 <form method="POST" action="">
                     {{ form.hidden_tag() if form.hidden_tag }}
                     {% for f in form if f.type != 'CSRFTokenField' %}
@@ -59,6 +58,8 @@
                     <button class="btn" type="submit">Submit</button>
                 </form>
                 {{ link | safe }}
+
+                <a class="btn btn-primary" href="{{ HOST }}"><i class="icon-chevron-left icon-white"></i> Back to Med-DB</a>
             {% endif %}
         </div>
         <div class="span2"></div>
