@@ -406,6 +406,17 @@ f = open("data/dump_medicines.json", "r")
 medicines = json.loads(f.read())
 f.close()
 
+# dict for storing site info, which isn't included in the nested procurement record
+product_sites = {}
+for medicine in medicines:
+    for product in medicine['products']:
+        manufacturer =  product['manufacturer']
+        if manufacturer.get('site') and not manufacturer['site'] in ["Uknown", "Unknown", "Unknown - Unknown"]:
+            # capture site
+            tmp_id = product['id']
+            product_sites[tmp_id] = product['manufacturer']['site']
+
+
 
 for medicine in medicines:
 
@@ -503,22 +514,26 @@ for medicine in medicines:
             .filter(models.Manufacturer.country==tmp_country) \
             .first()
         if manufacturer_obj is None:
+            manufacturer_obj = models.Manufacturer()
             if tmp_manufacturer_name or tmp_country:
-                manufacturer_obj = models.Manufacturer()
                 manufacturer_obj.name = tmp_manufacturer_name
-                if tmp_country:
-                    manufacturer_obj.country = tmp_country
-                else:
-                    print "Unknown country: " + tmp_country_name
+                manufacturer_obj.country = tmp_country
+            db.session.add(manufacturer_obj)
+            db.session.commit()
 
-        # capture site
-        site_obj = None
-        if procurement["product"].get('site'):
-            site_obj = models.Site.query.filter(models.Site.name==procurement["product"]["site"]).first()
+        # capture manufacturer site
+        tmp_site_name = None
+        tmp_product_id = procurement["product"]["id"]
+        if product_sites.get(tmp_product_id):
+            tmp_site_name = product_sites[tmp_product_id]
+        site_obj = models.Site.query \
+            .filter(models.Site.manufacturer_id==manufacturer_obj.manufacturer_id) \
+            .filter(models.Site.name==tmp_site_name) \
+            .first()
         if site_obj is None:
             site_obj = models.Site()
-            if procurement["product"].get('site'):
-                site_obj.name = procurement["product"]["site"]
+            site_obj.name = tmp_site_name
+            site_obj.manufacturer = manufacturer_obj
             db.session.add(site_obj)
             db.session.commit()
 
@@ -529,12 +544,14 @@ for medicine in medicines:
         product_obj = models.Product.query.filter(models.Product.name==tmp_name) \
             .filter(models.Product.medicine==medicine_obj) \
             .filter(models.Product.manufacturer==manufacturer_obj) \
+            .filter(models.Product.site==site_obj) \
             .first()
         if product_obj is None:
             product_obj = models.Product()
             product_obj.name = map_product_name(tmp_name)
             product_obj.medicine = medicine_obj
             product_obj.manufacturer = manufacturer_obj
+            product_obj.site = site_obj
             if procurement["product"].get('generic'):
                 product_obj.is_generic = bool(procurement["product"]["generic"])
             else:
