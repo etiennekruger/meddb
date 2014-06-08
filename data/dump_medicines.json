@@ -15034,14 +15034,14 @@
                             "id": 94, 
                             "name": "Mylan Captopril 25"
                         }, 
-                        "price_usd": 0.47903048809580606, 
+                        "price_usd": 0.474160608210157, 
                         "container": {
                             "type": "pack", 
                             "id": 24, 
                             "unit": "tablet", 
                             "quantity": 56.0
                         }, 
-                        "price_per_unit": 0.00855411585885368, 
+                        "price_per_unit": 0.008467153718038517, 
                         "packsize": 1, 
                         "country": {
                             "code": "ZAF", 
@@ -97704,14 +97704,14 @@
                             "id": 3126, 
                             "name": "Co-trimoxazole 480mg 400mg + 80mg "
                         }, 
-                        "price_usd": 0.2533994942506799, 
+                        "price_usd": 0.25082340539881914, 
                         "container": {
                             "type": "pack", 
                             "id": 11, 
                             "unit": "tablet", 
                             "quantity": 10.0
                         }, 
-                        "price_per_unit": 0.02533994942506799, 
+                        "price_per_unit": 0.025082340539881915, 
                         "packsize": 1, 
                         "country": {
                             "code": "ZAF", 

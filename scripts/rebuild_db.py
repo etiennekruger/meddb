@@ -416,7 +416,7 @@ for medicine in medicines:
             tmp_id = product['id']
             product_sites[tmp_id] = product['manufacturer']['site']
 
-
+procurement_ids = []
 
 for medicine in medicines:
 
@@ -481,6 +481,11 @@ for medicine in medicines:
 
     # capture procurements
     for procurement in medicine["procurements"]:
+
+        # save ID, so we can know which records to scrape from API.
+        if not procurement['id'] in procurement_ids:
+            procurement_ids.append(procurement['id'])
+
         procurement_obj = models.Procurement()
 
         # set country relation
@@ -590,26 +595,28 @@ for medicine in medicines:
 
         # capture source
         source_obj = None
-        if procurement.get("source") and procurement["source"]:
-            tmp_name = procurement["source"]["name"].strip()
-            if tmp_name == "":
-                tmp_name = None
-            tmp_url = procurement["source"]["url"].strip()
-            if tmp_url == "":
-                tmp_url = None
-            tmp_date = procurement["source"]["date"].strip()
-            if tmp_date:
-                tmp_date = datetime.strptime(tmp_date, "%Y-%m-%d").date()
-            source_obj = models.Source.query.filter(models.Source.name==tmp_name) \
-                .filter(models.Source.date==tmp_date) \
-                .filter(models.Source.url==tmp_url).first()
-            if not source_obj:
-                source_obj = models.Source()
-                source_obj.name = tmp_name
-                source_obj.date = tmp_date
-                source_obj.url = tmp_url
-                db.session.add(source_obj)
-                db.session.commit()
+        # hit /procurement endpoint on API to get source info
+
+        # if procurement.get("source") and procurement["source"]:
+        #     tmp_name = procurement["source"]["name"].strip()
+        #     if tmp_name == "":
+        #         tmp_name = None
+        #     tmp_url = procurement["source"]["url"].strip()
+        #     if tmp_url == "":
+        #         tmp_url = None
+        #     tmp_date = procurement["source"]["date"].strip()
+        #     if tmp_date:
+        #         tmp_date = datetime.strptime(tmp_date, "%Y-%m-%d").date()
+        #     source_obj = models.Source.query.filter(models.Source.name==tmp_name) \
+        #         .filter(models.Source.date==tmp_date) \
+        #         .filter(models.Source.url==tmp_url).first()
+        #     if not source_obj:
+        #         source_obj = models.Source()
+        #         source_obj.name = tmp_name
+        #         source_obj.date = tmp_date
+        #         source_obj.url = tmp_url
+        #         db.session.add(source_obj)
+        #         db.session.commit()
 
         # capture currency relation
         if procurement['currency']:
@@ -689,3 +696,6 @@ for supplier in suppliers:
 db.session.commit()
 
 scrape_bechmarks.save_benchmark_records()
+
+procurement_ids.sort()
+print procurement_ids
