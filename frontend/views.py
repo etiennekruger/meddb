@@ -80,12 +80,17 @@ def medicine(medicine_id):
     for product in medicine['products']:
         if product['average_price'] > max_price:
             max_price = product['average_price']
+    # find the best procurements
+    best_procurements = sort_list(medicine['procurements'], 'price_per_unit')
+    if len(best_procurements) > 5:
+        best_procurements = best_procurements[0:5]
     return render_template(
         'medicine.html',
         API_HOST=API_HOST,
         medicine=medicine,
         active_nav_button="medicine",
-        max_price = max_price
+        max_price = max_price,
+        best_procurements = best_procurements,
     )
 
 @app.route('/supplier/<supplier_id>/')
