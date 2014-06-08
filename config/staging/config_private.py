@@ -11,4 +11,4 @@ to ensure that git doesn't add any private information to the repo
 """
 
 OPEN_EXCHANGE_RATES_APP_ID = ""
-SECRET_KEY = ""
+SECRET_KEY = "aerfaergaeg"

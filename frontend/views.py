@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect
+from flask import render_template, flash, redirect, request
 from frontend import app, logger
 import requests
 import operator
@@ -80,10 +80,29 @@ def medicine(medicine_id):
     for product in medicine['products']:
         if product['average_price'] > max_price:
             max_price = product['average_price']
+
     # find the best procurements
     best_procurements = sort_list(medicine['procurements'], 'price_per_unit')
     if len(best_procurements) > 5:
         best_procurements = best_procurements[0:5]
+
+    # calculate potential cost difference
+    form_args = []
+    if request.args.get("compare-quantity") and request.args.get("compare-price"):
+        form_args = request.args
+        try:
+            compare_quantity = int(form_args['compare-quantity'])
+            compare_price = float(form_args['compare-price'])
+            total_expected = compare_price * compare_quantity
+
+            for procurement in best_procurements:
+                unit_price = float(procurement['price_per_unit'].split("/")[0])
+                procurement['cost_difference'] = (compare_price - unit_price) * compare_quantity
+        except Exception as e:
+            flash("There was a problem with your input.", "alert-error")
+            logger.debug(e)
+            pass
+
     return render_template(
         'medicine.html',
         API_HOST=API_HOST,
@@ -91,6 +110,7 @@ def medicine(medicine_id):
         active_nav_button="medicine",
         max_price = max_price,
         best_procurements = best_procurements,
+        form_args = form_args,
     )
 
 @app.route('/supplier/<supplier_id>/')
