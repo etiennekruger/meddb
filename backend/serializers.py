@@ -145,10 +145,10 @@ def procurement_to_dict(obj, include_related=False):
     # product
     tmp_dict['product'] = obj.product.to_dict()
     # container
-    tmp_dict['container'] = obj.container.to_dict()
+    tmp_dict['container'] = obj.container.to_dict() if obj.container else None
     tmp_dict.pop('container_id')
     # country
-    tmp_dict['country'] = obj.country.to_dict()
+    tmp_dict['country'] = obj.country.to_dict() if obj.country else None
     tmp_dict.pop('country_id')
     # incoterm
     tmp_incoterm = None

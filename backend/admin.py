@@ -15,6 +15,15 @@ def inject_paths():
     return dict(HOST=HOST)
 
 
+country_choices = [
+    ("BWA", "Botswana"),
+    ("MWI", "Malawi"),
+    ("SYC", "Seychelles"),
+    ("ZAF", "South Africa"),
+    ("TZA", "Tanzania"),
+    ("ZMB", "Zambia"),
+]
+
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
     email = fields.TextField(validators=[validators.required()])
@@ -41,6 +50,7 @@ class RegistrationForm(form.Form):
             validators.length(min=6, message="Your password needs to have at least six characters.")
         ]
     )
+    country = fields.SelectField(choices=country_choices)
 
     def validate_login(self, field):
         if db.session.query(models.User).filter_by(email=self.email.data).count() > 0:
@@ -61,7 +71,7 @@ class MyModelView(ModelView):
 
 class UserView(MyModelView):
     can_create = False
-    column_list = ['email', 'is_admin', 'activated']
+    column_list = ['country', 'email', 'is_admin', 'activated']
     column_exclude_list = ['password']
     form_excluded_columns = ['password', 'procurements_added', 'procurements_approved']
 
@@ -84,6 +94,7 @@ class ProcurementView(MyModelView):
         'approved'
     ]
     form_excluded_columns = [
+        'country',
         'approved_by',
         'approved_on',
         'added_by',
@@ -93,8 +104,9 @@ class ProcurementView(MyModelView):
         approved=macro('render_approve'),
     )
 
-    def after_model_change(self, form, model, is_created):
+    def on_model_change(self, form, model, is_created):
         if is_created:
+            model.country_id = login.current_user.country.country_id if login.current_user.country else None
             model.added_by = login.current_user
 
 
@@ -212,6 +224,8 @@ class HomeView(AdminIndexView):
 
             # hash password, before populating User object
             form.password.data = hash(form.password.data)
+            country = models.Country.query.filter(models.Country.code==form.country.data).first()
+            form.country.data =country
             form.populate_obj(user)
 
             # activate the admin user

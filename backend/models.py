@@ -13,6 +13,9 @@ class User(db.Model):
     activated = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
 
+    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
+    country = db.relationship('Country')
+
     def is_active(self):
         return self.activated
 
@@ -365,18 +368,18 @@ class Procurement(db.Model):
     procurement_id = db.Column(db.Integer, primary_key=True)
     pack_size = db.Column(db.Integer) # Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.
     price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
-    price_usd = db.Column(db.Float, nullable=True) # per container
-    volume = db.Column(db.Integer) # The number of packages contracted at the specified unit price. Volume is calculated as # of packages * containers in pack', default=1)
+    price_usd = db.Column(db.Float, nullable=False) # per container
+    volume = db.Column(db.Integer, nullable=False) # The number of packages contracted at the specified unit price. Volume is calculated as # of packages * containers in pack', default=1)
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.
-    start_date = db.Column(db.Date, nullable=True) # This is the first day that the procurement price is valid for (may be left blank).
+    start_date = db.Column(db.Date, nullable=False) # This is the first day that the procurement price is valid for (may be left blank).
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
     incoterm = db.Column(db.String(3), nullable=True)  # The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.
     added_on = db.Column(db.Date, default=datetime.datetime.today())
     approved_on = db.Column(db.Date, nullable=True)
 
-    currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=True)
+    currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=False)
     currency = db.relationship('Currency', backref='procurements')
-    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=False)
     product = db.relationship('Product', backref='procurements')
     incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
     incoterm = db.relationship('Incoterm')
@@ -384,7 +387,7 @@ class Procurement(db.Model):
     country = db.relationship('Country')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
     supplier = db.relationship('Supplier', backref='procurements')
-    container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=True)
+    container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=False)
     container = db.relationship('Container', backref='procurements')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
