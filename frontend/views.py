@@ -97,7 +97,7 @@ def medicine(medicine_id):
 
             for procurement in best_procurements:
                 unit_price = float(procurement['price_per_unit'].split("/")[0])
-                procurement['cost_difference'] = (compare_price - unit_price) * compare_quantity
+                procurement['cost_difference'] = (unit_price - compare_price) * compare_quantity
         except Exception as e:
             flash("There was a problem with your input.", "alert-error")
             logger.debug(e)

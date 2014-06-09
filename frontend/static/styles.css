@@ -85,3 +85,12 @@ body{
     margin-bottom: -2px;
     background-color: lightgreen;
 }
+
+#form-comparison{
+    padding-bottom: 20px;
+}
+
+#form-comparison p{
+    margin-top: 10px;
+    margin-right: 15px;
+}
