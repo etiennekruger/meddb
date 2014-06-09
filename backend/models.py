@@ -294,9 +294,10 @@ class Product(db.Model):
         return
 
     def get_name(self):
-        tmp = "Unnamed Product"
         if self.name:
             tmp = self.name
+        else:
+            tmp = self.medicine.name
         return tmp
 
     @property
