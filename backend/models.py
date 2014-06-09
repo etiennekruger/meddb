@@ -194,6 +194,8 @@ class Manufacturer(db.Model):
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by = db.relationship('User', foreign_keys=added_by_id, backref='manufacturers_added')
 
     def get_name(self):
         tmp = "Unnamed Manufacturer"
@@ -241,6 +243,8 @@ class Supplier(db.Model):
     email = db.Column(db.String(100))
     alt_email = db.Column(db.String(100))
     authorized = db.Column(db.Boolean, default=False)
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by = db.relationship('User', foreign_keys=added_by_id, backref='suppliers_added')
 
     @property
     def products(self):
@@ -272,6 +276,8 @@ class Product(db.Model):
     manufacturer = db.relationship('Manufacturer')
     site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
     site = db.relationship('Site')
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by = db.relationship('User', foreign_keys=added_by_id, backref='products_added')
 
     def calculate_average_price(self):
         sum = 0

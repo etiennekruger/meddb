@@ -93,6 +93,10 @@ class ProcurementView(MyModelView):
         approved=macro('render_approve'),
     )
 
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = login.current_user
+
 
 class MedicineView(MyModelView):
     column_list = [
@@ -103,7 +107,12 @@ class MedicineView(MyModelView):
     form_excluded_columns = [
         'benchmarks',
         'products',
+        'added_by',
         ]
+
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = login.current_user
 
 
 class BenchmarkView(MyModelView):
@@ -112,13 +121,34 @@ class BenchmarkView(MyModelView):
 
 
 class ProductView(MyModelView):
+    column_exclude_list = [
+        'added_by',
+        ]
+    form_excluded_columns = [
+        'added_by',
+        ]
+
     def is_accessible(self):
         return login.current_user.is_authenticated() and login.current_user.is_admin
+
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = login.current_user
 
 
 class ManufacturerView(MyModelView):
+    column_exclude_list = [
+        'added_by',
+        ]
+    form_excluded_columns = [
+        'added_by',
+        ]
     def is_accessible(self):
         return login.current_user.is_authenticated() and login.current_user.is_admin
+
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = login.current_user
 
 
 class SiteView(MyModelView):
