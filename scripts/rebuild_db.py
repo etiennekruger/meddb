@@ -371,6 +371,12 @@ admin_user_obj.activated = True
 admin_user_obj.is_admin = True
 db.session.add(admin_user_obj)
 
+user2__obj = models.User()
+user2__obj.email = 'petrus@code4sa.org'
+user2__obj.password = password
+user2__obj.activated = True
+db.session.add(user2__obj)
+
 db.session.commit()
 
 # populate items from 3rd party datasets:

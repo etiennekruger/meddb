@@ -218,7 +218,7 @@ class Site(db.Model):
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
-    manufacturer = db.relationship('Manufacturer')
+    manufacturer = db.relationship('Manufacturer', backref='sites')
 
     def __unicode__(self):
         return unicode(self.name)

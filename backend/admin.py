@@ -106,6 +106,42 @@ class MedicineView(MyModelView):
         ]
 
 
+class BenchmarkView(MyModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
+class ProductView(MyModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
+class ManufacturerView(MyModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
+class SiteView(MyModelView):
+    # inline_models = (models.Manufacturer,)
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
+class ContainerView(MyModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
+class IngredientView(MyModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
+class ComponentView(MyModelView):
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
 # Customized index view that handles login & registration
 class HomeView(AdminIndexView):
 
@@ -183,10 +219,16 @@ init_login()
 admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'))
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
-admin.add_view(MyModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
-admin.add_view(MyModelView(models.Container, db.session, name="Container", endpoint='container'))
-admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine'))
-admin.add_view(MyModelView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient'))
-admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
-admin.add_view(MyModelView(models.Product, db.session, name="Product", endpoint='product'))
-admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
+admin.add_view(BenchmarkView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
+
+admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Product Records'))
+admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Product Records'))
+admin.add_view(SiteView(models.Site, db.session, name="Site", endpoint='site', category='Product Records'))
+admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine', category='Product Records'))
+admin.add_view(ContainerView(models.Container, db.session, name="Container", endpoint='container', category='Product Records'))
+
+admin.add_view(IngredientView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient', category='Product Records'))
+admin.add_view(ComponentView(models.Component, db.session, name="Component", endpoint='component', category='Product Records'))
+
+admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Procurement Records'))
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement', category='Procurement Records'))
