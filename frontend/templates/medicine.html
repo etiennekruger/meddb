@@ -110,8 +110,8 @@
             {% else %}
                 <table class="table table-bordered table-striped">
                     <thead>
-                    <th>Product</th>
                     <th>Procurement country</th>
+                    <th>Product</th>
                     <th>Date</th>
                     <th>Terms</th>
                     <th>Volume</th>
@@ -122,6 +122,9 @@
                     {% for procurement in best_procurements %}
                         <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
                             <td>
+                                {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                            </td>
+                            <td>
                                 {% if procurement.product %}
                                     <strong>
                                         <a href="/product/{{ procurement.product.product_id }}/">
@@ -131,9 +134,6 @@
                                 {% else %}
                                     Unknown
                                 {% endif %}
-                            </td>
-                            <td>
-                                {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                             </td>
                             <td>
                                 {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
