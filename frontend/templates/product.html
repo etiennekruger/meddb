@@ -48,6 +48,11 @@
                     , originator
                 {%- endif -%}
                 </span>
+                <span>
+                {%- if product.shelf_life -%}
+                    , maximum shelf life: {{ product.shelf_life }}
+                {%- endif -%}
+                </span>
             </p>
         </div>
     </div>

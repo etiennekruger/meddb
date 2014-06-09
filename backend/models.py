@@ -269,6 +269,7 @@ class Product(db.Model):
     average_price = db.Column(db.Float, nullable=True)
     name = db.Column(db.String(64), nullable=True)
     is_generic = db.Column(db.Boolean, default=True)
+    shelf_life = db.Column(db.String, nullable=True)
 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
     medicine = db.relationship('Medicine', backref='products')

@@ -49,7 +49,11 @@
                         <tr>
                             <td>
                                 <strong>
-                                    <a href="/product/{{ product.product_id }}/">
+                                    <a href="/product/{{ product.product_id }}/"
+                                       class="tooltip-enabled"
+                                       data-toggle="tooltip"
+                                       data-placement="right"
+                                       title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
                                         {{ product.name }}
                                     </a>
                                 </strong>
