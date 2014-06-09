@@ -260,5 +260,6 @@ admin.add_view(ContainerView(models.Container, db.session, name="Container", end
 admin.add_view(IngredientView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient', category='Product Records'))
 admin.add_view(ComponentView(models.Component, db.session, name="Component", endpoint='component', category='Product Records'))
 
+admin.add_view(MyModelView(models.Source, db.session, name="Source of info", endpoint='source', category='Procurement Records'))
 admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Procurement Records'))
 admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement', category='Procurement Records'))

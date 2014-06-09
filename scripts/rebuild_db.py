@@ -408,6 +408,13 @@ with open("data/incoterms.json", "r") as f:
 db.session.commit()
 
 # migrate data from json dump to new db
+procurements = {}
+f = open("data/dump_procurements.json", "r")
+tmp = json.loads(f.read())
+f.close()
+for tmp_proc in tmp:
+    procurements[tmp_proc['id']] = tmp_proc
+
 f = open("data/dump_medicines.json", "r")
 medicines = json.loads(f.read())
 f.close()
@@ -601,28 +608,29 @@ for medicine in medicines:
 
         # capture source
         source_obj = None
-        # hit /procurement endpoint on API to get source info
-
-        # if procurement.get("source") and procurement["source"]:
-        #     tmp_name = procurement["source"]["name"].strip()
-        #     if tmp_name == "":
-        #         tmp_name = None
-        #     tmp_url = procurement["source"]["url"].strip()
-        #     if tmp_url == "":
-        #         tmp_url = None
-        #     tmp_date = procurement["source"]["date"].strip()
-        #     if tmp_date:
-        #         tmp_date = datetime.strptime(tmp_date, "%Y-%m-%d").date()
-        #     source_obj = models.Source.query.filter(models.Source.name==tmp_name) \
-        #         .filter(models.Source.date==tmp_date) \
-        #         .filter(models.Source.url==tmp_url).first()
-        #     if not source_obj:
-        #         source_obj = models.Source()
-        #         source_obj.name = tmp_name
-        #         source_obj.date = tmp_date
-        #         source_obj.url = tmp_url
-        #         db.session.add(source_obj)
-        #         db.session.commit()
+        tmp_proc = procurements.get(procurement["id"])
+        if tmp_proc.get("source"):
+            tmp_name = tmp_proc["source"]["name"].strip()
+            if tmp_name == "":
+                tmp_name = None
+            tmp_url = tmp_proc["source"]["url"]
+            if tmp_url:
+                tmp_url = tmp_url.strip()
+            if tmp_url == "":
+                tmp_url = None
+            tmp_date = tmp_proc["source"]["date"].strip()[0:10]
+            if tmp_date:
+                tmp_date = datetime.strptime(tmp_date, "%Y-%m-%d").date()
+            source_obj = models.Source.query.filter(models.Source.name==tmp_name) \
+                .filter(models.Source.date==tmp_date) \
+                .filter(models.Source.url==tmp_url).first()
+            if not source_obj:
+                source_obj = models.Source()
+                source_obj.name = tmp_name
+                source_obj.date = tmp_date
+                source_obj.url = tmp_url
+                db.session.add(source_obj)
+                db.session.commit()
 
         # capture currency relation
         if procurement['currency']:
