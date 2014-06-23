@@ -1,0 +1,6 @@
+select country.name, count(DISTINCT medicine.medicine_id) from procurement 
+join country using (country_id)
+join product using (product_id)
+join medicine using (medicine_id)
+group by procurement.country_id 
+order by country.name;
