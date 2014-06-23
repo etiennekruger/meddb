@@ -1,0 +1,49 @@
+{% macro render_date_range(start_date, end_date) -%}
+    {% if start_date | format_date == end_date | format_date %}
+        <nobr>{{ start_date | format_date }}</nobr>
+    {% else %}
+        <nobr>{{ start_date | format_date }}</nobr> to <nobr>{{ end_date | format_date }}</nobr>
+    {% endif %}
+{%- endmacro %}
+
+{% macro render_flag(country) -%}
+    <span class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}"></span>
+{%- endmacro %}
+
+{% macro render_medicine_strength(medicine) -%}
+    {% for ingredient in medicine.ingredients %}
+        {% if loop.index > 1 %} + {% endif %}
+        {{ ingredient.strength }}
+    {% endfor %}
+{%- endmacro %}
+
+{% macro render_supplier(supplier) -%}
+    <strong>{{ supplier.name }}</strong>
+{%- endmacro %}
+
+{% macro render_pack_size(container, packsize=1) -%}
+    {% if not packsize == 1 %}{{ packsize }} x {% endif %}{{ container.quantity | round | int }} {{ container.unit }} {{ container.type }}
+{%- endmacro %}
+
+{% macro render_url(url) -%}
+    <a href="{{ url }}" target="_blank">{{ url }}</a>
+{%- endmacro %}
+
+{% macro render_incoterm(incoterm) -%}
+    <span class="tooltip-enabled" title="{{ incoterm.description }}" data-toggle="tooltip">
+       {{ incoterm.name }}
+    </span>
+{%- endmacro %}
+
+{% macro render_source(source) -%}
+    {% if source %}
+        {% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a>
+        {% else %}
+            {{ source.name }}
+        {% endif %}
+        <span class="label label-default pull-right">{{ source.date }}</span>
+    {% else %}
+        N/A
+    {% endif %}
+{%- endmacro %}
+

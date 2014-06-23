@@ -1,0 +1,136 @@
+{% import 'macros.html' as macros %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Medicine Prices Database{% endblock %}</title>
+
+    <link href="/static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
+    <link href="/static/flags.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+
+    {% block head %}
+    {% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img id="brand-logo" src="/static/images/sadc-logo-small.png"> Medicine Prices Database
+        </a>
+
+        <ul class="nav navbar-nav">
+            <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
+            <li class="{% if active_nav_button == "medicine" %}active{% else %}disabled{% endif %}"><a href="/">Medicine</a></li>
+            <li class="{% if active_nav_button == "product" %}active{% else %}disabled{% endif %}"><a href="/">Product</a></li>
+            <li class="{% if active_nav_button == "supplier" %}active{% else %}disabled{% endif %}"><a href="/">Supplier</a></li>
+            <li><a href="/admin/">Admin</a></li>
+        </ul>
+
+        {% block search %}
+            <form class="navbar-form">
+                <div id="search-form-container" class="pull-right">
+                    <div class="form-group" style="display:inline;">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input id="search-box" class="form-control" name="search" placeholder="Search Here" autocomplete="off" autofocus="autofocus" type="text">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        {% endblock search %}
+    </div>
+</nav>
+
+{% block page_header %}
+    <div id="message-container" class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flashed_msg">
+                        <div class="alert alert-{{ category }} alert-dismissable">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong>{{ category | title }}: </strong> {{ message }}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+{% endblock %}
+
+<div id="page-container" class="container">
+    {% block page %}
+        <div class="row">
+            <p class="lead">Content goes here.</p>
+        </div>
+    {% endblock %}
+</div>
+
+{% block page_footer %}
+    <div id="footer">
+        <div class="col-lg-12 text-center">
+            <p id="attribution"><small>This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics - <strong>SARPAM</strong></small></p>
+        </div>
+    </div>
+{% endblock %}
+
+</body>
+<script src="/static/jquery-1.11.1.min.js" type="text/javascript"></script>
+<script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
+<script src="/static/bootstrap3-typeahead.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $(".tooltip-enabled").tooltip();
+
+        $("#search-box").typeahead({
+            minLength: 1,
+            source:function(query, process){
+                medicines = [];
+                map = {};
+                $.get('{{ API_HOST }}autocomplete/' + query + '/', function(data){
+                    for (var i = 0; i < data.length; i++)
+                    {
+                        var key = data[i].name;
+                        if (key)
+                            medicines.push(key)
+                        map[key] = data[i]
+                    }
+                    process(medicines);
+                },'json');
+            },
+            updater: function (item) {
+                window.location = '/medicine/' + map[item].medicine_id.toString() + '/';
+                return item;
+            },
+            matcher: function (item) {
+                // matching's done on the backend
+                return true
+            }
+        });
+        $("#search-box").focus()
+
+    });
+</script>
+
+{% block javascript %}
+    <script type="application/javascript">
+        $(".tooltip-enabled").tooltip({});
+    </script>
+{% endblock %}
+
+<!-- Google Analytics tracking code -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-48399585-3']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+</html>

@@ -1,1 +1,0 @@
-meddb.medicine = {};

@@ -1,9 +1,0 @@
-<uwsgi>
-    <module>meddb.wsgi:application</module>
-    <pythonpath>/var/www/meddb/virtualenv/</pythonpath>
-    <chdir>/var/www/meddb/meddb/</chdir>
-    <env>DJANGO_SETTINGS_MODULE=meddb.settings_eac</env>
-    <master/>
-    <processes>4</processes>
-    <socket>0.0.0.0:3031</socket>
-</uwsgi>

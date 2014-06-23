@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+    <div id="jumbo">
+        {{ super() }}
+        <div class="container">
+            <h1>
+                {% if medicine.name %}
+                    {{ medicine.name }}
+                {% endif %}
+                <nobr>
+                    <small class="text-muted">
+                        {{ medicine.dosage_form.name }}
+                    </small>
+                </nobr>
+            </h1>
+        </div>
+    </div>
+{% endblock %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+            {% if medicine.benchmarks %}
+                {% for benchmark in medicine.benchmarks %}
+                    <div class="alert alert-success">
+                        This medicine's {{ benchmark.name }} benchmark price for {{ benchmark.year }} is ${{ benchmark.price }}.
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Products</h2>
+
+            {% if medicine.products %}
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <th>Name</th>
+                    <th>Manufacturer</th>
+                    <th>Average price (USD)</th>
+                    </thead>
+                    <tbody>
+
+                    {% for product in medicine.products %}
+                        {% set width = (100 * (1 - (max_price - product.average_price) / max_price)) | int%}
+                        <tr>
+                            <td>
+                                <strong>
+                                    <a href="/product/{{ product.product_id }}/"
+                                       class="tooltip-enabled"
+                                       data-toggle="tooltip"
+                                       data-placement="right"
+                                       title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
+                                        {{ product.name }}
+                                    </a>
+                                </strong>
+                            </td>
+                            <td>
+                                {% if product.manufacturer %}
+                                    {%- if product.manufacturer.country -%}
+                                        {{ macros.render_flag(product.manufacturer.country) }}
+                                    {% endif -%}
+                                    {{ product.manufacturer.name }}
+                                    {%- if product.manufacturer.country -%}
+                                        , {{ product.manufacturer.country.name }}
+                                    {%- endif -%}
+                                {% else %}
+                                    Unknown Manufacturer
+                                {% endif %}
+                            </td>
+                            <td style="padding-right: 60px; min-width: 250px;">
+                                {% if product.average_price %}
+                                    <span class="pull-right" style="margin-right: -50px;">
+                                    ${{ product.average_price }}
+                                    </span>
+                                    <div class="price-bar" style="width: {{ width }}%;"></div>
+
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>We don't know of any products for this medicine.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Least expensive procurements</h2>
+
+            <form id="form-comparison" class="form form-inline" method="get" action="">
+                <div class="form-group">
+                    <p><em>Calculate cost difference:</em></p>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="compare-quantity">Quantity</label>
+                    <input name="compare-quantity" class="form-control" type="text" placeholder="Quantity" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
+                </div>
+                <div class="form-group">
+                    <label class="sr-only" for="compare-price">Price</label>
+                    <input name="compare-price" class="form-control" type="text" placeholder="Unit price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
+                </div>
+                <button class="btn btn-default" type="submit">Calculate</button>
+            </form>
+
+            {% if best_procurements | length == 0 %}
+                <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+            {% else %}
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <th>Procurement country</th>
+                    <th>Product</th>
+                    <th>Date</th>
+                    <th>Terms</th>
+                    <th>Volume</th>
+                    <th>Price</th>
+                    <th>Cost difference</th>
+                    </thead>
+                    <tbody>
+                    {% for procurement in best_procurements %}
+                        <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
+                            <td>
+                                {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                            </td>
+                            <td>
+                                {% if procurement.product %}
+                                    <strong>
+                                        <a href="/product/{{ procurement.product.product_id }}/">
+                                            {{ procurement.product.name }}
+                                        </a>
+                                    </strong>
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
+                            </td>
+                            <td>
+                                {% if procurement.incoterm %}
+                                    {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ (procurement.volume * procurement.pack_size) | add_commas }} ({{ procurement.container.quantity | int }} {{ procurement.container.unit }} {{ procurement.container.type }}s)
+                            </td>
+                            <td>
+                                ${{ procurement.price_per_unit }}
+                            </td>
+                            <td>
+                            <span>
+                                {% if procurement.cost_difference %}
+                                    {% if procurement.cost_difference < 0 %}- {% endif %}
+                                    ${{ procurement.cost_difference | abs }}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script>
+        $(document).ready(function(){
+
+        });
+    </script>
+{% endblock %}
