@@ -4,8 +4,6 @@ from sqlalchemy.orm import backref
 import datetime
 from openexchangerates import OpenExchangeRates
 
-UNIT_CONTAINERS = ["vial", "ampoule", "injection", "tube"]
-
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True)
@@ -146,6 +144,9 @@ class Ingredient(db.Model):
     ingredient_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128))
 
+    def __unicode__(self):
+        return u'%s' % self.name
+
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)
 
@@ -176,6 +177,7 @@ class BenchmarkPrice(db.Model):
     benchmark_price_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))  # this should be restricted by a select field in the Admin interface
     price = db.Column(db.Float)  # The benchmark price for the medicine.
+    unit_of_measure = db.Column(db.String(50))
     year = db.Column(db.Integer, nullable=False)
 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
@@ -287,11 +289,11 @@ class Product(db.Model):
         sum = 0
         tot = 0
         for p in self.procurements:
-            if p.price_usd and p.volume:
-                sum += p.price_usd * p.volume
-                num_units = p.volume
-                if p.container.quantity and not p.container.type in UNIT_CONTAINERS:
-                    num_units *= p.container.quantity
+            if p.pack_price_usd and p.quantity:
+                sum += p.pack_price_usd * p.quantity
+                num_units = p.quantity
+                if p.pack_size:
+                    num_units *= p.pack_size
                 tot += num_units
         if tot > 0:
             self.average_price = sum/tot
@@ -323,20 +325,24 @@ class Product(db.Model):
         return serializers.product_to_dict(self, include_related)
 
 
-class Container(db.Model):
+class AvailableContainers(db.Model):
 
-    __tablename__ = "container"
-    __table_args__ = (db.UniqueConstraint('type', 'unit', 'quantity'), {})
+    __tablename__ = "available_containers"
     container_id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(32))  # eg. bottle, blister pack, tube
-    unit = db.Column(db.String(32))  # The basic unit of measure for this container eg. ml (for a bottled suspension), g (for a tube of ointment) or tablet/capsule (for a bottle of tablets/capsules).
-    quantity = db.Column(db.Float)  # Container size eg. 100 (for a 100ml bottle), 50 (for a bottle of 50 tablets) or 3.5 (for a 3.5g tube of ointment).
+    value = db.Column(db.String(50))
 
     def __unicode__(self):
-        return u'%.7g %s %s' % (self.quantity, self.unit, self.type)
+        return u'%s' % self.value
 
-    def to_dict(self, include_related=False):
-        return serializers.model_to_dict(self)
+
+class AvailableUnits(db.Model):
+
+    __tablename__ = "available_units"
+    unit_id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(32))
+
+    def __unicode__(self):
+        return u'%s' % self.value
 
 
 class Registration(db.Model):
@@ -366,10 +372,13 @@ class Procurement(db.Model):
 
     __tablename__ = "procurement"
     procurement_id = db.Column(db.Integer, primary_key=True)
-    pack_size = db.Column(db.Integer) # Enter the number of containers in the standard packaging eg. 100 bottles of paracetamol suspension per box.
-    price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
-    price_usd = db.Column(db.Float, nullable=False) # per container
-    volume = db.Column(db.Integer, nullable=False) # The number of packages contracted at the specified unit price. Volume is calculated as # of packages * containers in pack', default=1)
+    container = db.Column(db.String(50))
+    pack_size = db.Column(db.Integer) # the number of basic units per pack, for which the price is quoted.
+    unit_of_measure = db.Column(db.String(50))
+    pack_price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
+    pack_price_usd = db.Column(db.Float, nullable=False) # per container
+    unit_price_usd = db.Column(db.Float) # this is always in USD
+    quantity = db.Column(db.Integer, nullable=False) # The number of packages contracted at the specified unit price.
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.
     start_date = db.Column(db.Date, nullable=False) # This is the first day that the procurement price is valid for (may be left blank).
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
@@ -387,44 +396,12 @@ class Procurement(db.Model):
     country = db.relationship('Country')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
     supplier = db.relationship('Supplier', backref='procurements')
-    container_id = db.Column(db.Integer, db.ForeignKey('container.container_id'), nullable=False)
-    container = db.relationship('Container', backref='procurements')  # Indicate the container that the medication is distributed in eg. 100 ml bottle for a paracetamol suspension.
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
     added_by = db.relationship('User', foreign_keys=added_by_id, backref='procurements_added')
     approved_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
     approved_by = db.relationship('User', foreign_keys=approved_by_id, backref='procurements_approved')
-
-    def calculate_price_usd(self):
-        if self.currency_code == 'USD':
-            self.price_usd = self.price
-            return
-        e = OpenExchangeRates()
-        try:
-            rate = e.convert_to_usd(currency=self.currency_code, date=self.start_date)
-            self.price_usd = self.price/rate
-        except IOError as e:
-            logger.error("Cannot connect to OpenExchangeRates API: " + str(e))
-            raise
-        except Exception as e:
-            logger.error("Error converting between currencies: " + str(e))
-            raise
-        return
-
-    @property
-    def price_per_unit(self):
-        if self.container.quantity and self.price_usd:
-            # some containers are priced per container
-            if self.container.type in UNIT_CONTAINERS:
-                tmp_price = self.price_usd
-                tmp_unit = self.container.type
-            else:
-                # others are priced per unit (e.g. ml or grammes)
-                tmp_price = self.price_usd / self.container.quantity
-                tmp_unit = self.container.unit
-            return '%.3g/%s' % (tmp_price, tmp_unit)
-        return None
 
     def __unicode__(self):
         if self.volume:

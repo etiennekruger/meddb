@@ -144,9 +144,6 @@ def procurement_to_dict(obj, include_related=False):
     tmp_dict['URI'] = API_HOST + 'procurement/' + str(obj.procurement_id) + '/'
     # product
     tmp_dict['product'] = obj.product.to_dict()
-    # container
-    tmp_dict['container'] = obj.container.to_dict() if obj.container else None
-    tmp_dict.pop('container_id')
     # country
     tmp_dict['country'] = obj.country.to_dict() if obj.country else None
     tmp_dict.pop('country_id')
@@ -174,10 +171,11 @@ def procurement_to_dict(obj, include_related=False):
     tmp_dict.pop('added_by_id')
     tmp_dict.pop('approved_by_id')
     # round the price
-    if tmp_dict['price_usd']:
-        tmp_dict['price_usd'] = float('%.3g' % tmp_dict['price_usd'])
-    price = obj.price_per_unit
-    tmp_dict['price_per_unit'] = price
+    if tmp_dict['pack_price_usd']:
+        tmp_dict['pack_price_usd'] = float('%.3g' % tmp_dict['pack_price_usd'])
+    if tmp_dict['unit_price_usd']:
+        tmp_dict['unit_price_usd'] = float('%.3g' % tmp_dict['unit_price_usd'])
+
     if include_related:
         # supplier
         tmp_supplier = None
