@@ -82,7 +82,7 @@ def medicine(medicine_id):
             max_price = product['average_price']
 
     # find the best procurements
-    best_procurements = sort_list(medicine['procurements'], 'price_per_unit')
+    best_procurements = sort_list(medicine['procurements'], 'unit_price_usd')
     if len(best_procurements) > 5:
         best_procurements = best_procurements[0:5]
 
@@ -96,7 +96,7 @@ def medicine(medicine_id):
             total_expected = compare_price * compare_quantity
 
             for procurement in best_procurements:
-                unit_price = float(procurement['price_per_unit'].split("/")[0])
+                unit_price = float(procurement['unit_price_usd'].split("/")[0])
                 procurement['cost_difference'] = (unit_price - compare_price) * compare_quantity
         except Exception as e:
             flash("There was a problem with your input.", "alert-error")

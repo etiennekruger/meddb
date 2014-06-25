@@ -102,10 +102,10 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {{ (procurement.volume * procurement.pack_size) | add_commas }} ({{ procurement.container.quantity | int }} {{ procurement.container.unit }} {{ procurement.container.type }}s)
+                                {{ procurement.quantity | add_commas }} ({{ procurement.pack_size }} {{ procurement.unit_of_measure }} {{ procurement.container }}s)
                             </td>
                             <td>
-                                ${{ procurement.price_per_unit }}
+                                ${{ procurement.unit_price_usd }}
                             </td>
                         </tr>
                     {% endfor %}
