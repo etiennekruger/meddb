@@ -269,7 +269,6 @@ admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint=
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Product Records'))
 admin.add_view(SiteView(models.Site, db.session, name="Site", endpoint='site', category='Product Records'))
 admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine', category='Product Records'))
-admin.add_view(ContainerView(models.Container, db.session, name="Container", endpoint='container', category='Product Records'))
 
 admin.add_view(IngredientView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient', category='Product Records'))
 admin.add_view(ComponentView(models.Component, db.session, name="Component", endpoint='component', category='Product Records'))
