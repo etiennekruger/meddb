@@ -132,22 +132,6 @@ class BenchmarkView(MyModelView):
         return login.current_user.is_authenticated() and login.current_user.is_admin
 
 
-class ProductView(MyModelView):
-    column_exclude_list = [
-        'added_by',
-        ]
-    form_excluded_columns = [
-        'added_by',
-        ]
-
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-    def after_model_change(self, form, model, is_created):
-        if is_created:
-            model.added_by = login.current_user
-
-
 class ManufacturerView(MyModelView):
     column_exclude_list = [
         'added_by',
@@ -155,18 +139,13 @@ class ManufacturerView(MyModelView):
     form_excluded_columns = [
         'added_by',
         ]
+
     def is_accessible(self):
         return login.current_user.is_authenticated() and login.current_user.is_admin
 
     def after_model_change(self, form, model, is_created):
         if is_created:
             model.added_by = login.current_user
-
-
-class SiteView(MyModelView):
-    # inline_models = (models.Manufacturer,)
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
 
 
 class ContainerView(MyModelView):
@@ -265,11 +244,9 @@ admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_mast
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 admin.add_view(BenchmarkView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
 
-admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Product Records'))
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Product Records'))
-admin.add_view(SiteView(models.Site, db.session, name="Site", endpoint='site', category='Product Records'))
-admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine', category='Product Records'))
 
+admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine', category='Product Records'))
 admin.add_view(IngredientView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient', category='Product Records'))
 admin.add_view(ComponentView(models.Component, db.session, name="Component", endpoint='component', category='Product Records'))
 
