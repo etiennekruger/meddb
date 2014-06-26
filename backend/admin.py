@@ -69,6 +69,12 @@ class MyModelView(ModelView):
         return login.current_user.is_authenticated()
 
 
+class MyRestrictedModelView(MyModelView):
+
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
+
+
 class UserView(MyModelView):
     can_create = False
     column_list = ['country', 'email', 'is_admin', 'activated']
@@ -83,10 +89,11 @@ class ProcurementView(MyModelView):
     column_list = [
         'country',
         'product',
-        'supplier',
-        'price_usd',
-        'volume',
         'pack_size',
+        'unit_of_measure',
+        'pack_price_usd',
+        'quantity',
+        'supplier',
         'start_date',
         'end_date',
         'container',
@@ -101,6 +108,10 @@ class ProcurementView(MyModelView):
         'added_on',
         ]
     column_formatters = dict(
+        country=macro('render_country'),
+        pack_price_usd=macro('render_price'),
+        start_date=macro('render_date'),
+        end_date=macro('render_date'),
         approved=macro('render_approve'),
     )
 
@@ -110,7 +121,7 @@ class ProcurementView(MyModelView):
             model.added_by = login.current_user
 
 
-class MedicineView(MyModelView):
+class MedicineView(MyRestrictedModelView):
     column_list = [
         'name',
         'dosage_form',
@@ -127,11 +138,6 @@ class MedicineView(MyModelView):
             model.added_by = login.current_user
 
 
-class BenchmarkView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
 class ManufacturerView(MyModelView):
     column_exclude_list = [
         'added_by',
@@ -140,27 +146,9 @@ class ManufacturerView(MyModelView):
         'added_by',
         ]
 
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
     def after_model_change(self, form, model, is_created):
         if is_created:
             model.added_by = login.current_user
-
-
-class ContainerView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class IngredientView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class ComponentView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
 
 
 # Customized index view that handles login & registration
@@ -242,14 +230,17 @@ init_login()
 admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'))
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
-admin.add_view(BenchmarkView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
 
-admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Product Records'))
+admin.add_view(MyRestrictedModelView(models.DosageForm, db.session, name="Dosage Forms", endpoint='dosage_form', category='Medicines'))
+admin.add_view(MyRestrictedModelView(models.Ingredient, db.session, name="Medicine Components", endpoint='ingredient', category='Medicines'))
+admin.add_view(MedicineView(models.Medicine, db.session, name="Available Medicines", endpoint='medicine', category='Medicines'))
+admin.add_view(MyRestrictedModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
 
-admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine', category='Product Records'))
-admin.add_view(IngredientView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient', category='Product Records'))
-admin.add_view(ComponentView(models.Component, db.session, name="Component", endpoint='component', category='Product Records'))
+admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterms", endpoint='incoterm', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableUnits, db.session, name="Units of Measure", endpoint='units', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 
-admin.add_view(MyModelView(models.Source, db.session, name="Source of info", endpoint='source', category='Procurement Records'))
-admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Procurement Records'))
-admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement', category='Procurement Records'))
+admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer'))
+admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))

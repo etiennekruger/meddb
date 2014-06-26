@@ -326,26 +326,6 @@ class Product(db.Model):
         return serializers.product_to_dict(self, include_related)
 
 
-class AvailableContainers(db.Model):
-
-    __tablename__ = "available_containers"
-    container_id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(50))
-
-    def __unicode__(self):
-        return u'%s' % self.value
-
-
-class AvailableUnits(db.Model):
-
-    __tablename__ = "available_units"
-    unit_id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(32))
-
-    def __unicode__(self):
-        return u'%s' % self.value
-
-
 class Registration(db.Model):
 
     __tablename__ = "registration"
@@ -411,3 +391,33 @@ class Procurement(db.Model):
 
     def to_dict(self, include_related=False):
         return serializers.procurement_to_dict(self, include_related)
+
+
+class AvailableContainers(db.Model):
+
+    __tablename__ = "available_containers"
+    available_constraint_id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(50))
+
+    def __unicode__(self):
+        return u'%s' % self.value
+
+
+class AvailableUnits(db.Model):
+
+    __tablename__ = "available_units"
+    available_unit_id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(32))
+
+    def __unicode__(self):
+        return u'%s' % self.value
+
+
+class AvailableProcurementMethods(db.Model):
+
+    __tablename__ = "available_procurement_methods"
+    available_procurement_id = db.Column(db.Integer, primary_key=True)
+    value = db.Column(db.String(50))
+
+    def __unicode__(self):
+        return u'%s' % self.value

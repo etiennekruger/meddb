@@ -1,7 +1,15 @@
 {% extends 'admin/model/list.html' %}
 
 {% macro render_country(model, column) %}
-    <span class="flag flag-{{ model.code_short | lower }}" alt="{{ model.name }}"></span>
+    <span class="flag flag-{{ model.country.code_short | lower }}"></span> <nobr>{{ model.country.name }}</nobr>
+{% endmacro %}
+
+{% macro render_date(model, column) %}
+    <nobr>{{ model[column] }}</nobr>
+{% endmacro %}
+
+{% macro render_price(model, column) %}
+    <nobr>{{ model[column] | round(2) }}</nobr>
 {% endmacro %}
 
 {% macro render_approve(model, column) %}

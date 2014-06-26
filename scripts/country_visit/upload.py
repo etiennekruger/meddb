@@ -175,8 +175,8 @@ if __name__ == "__main__":
 
     date_from = datetime.strptime("2012-08-01", "%Y-%m-%d")
     date_to = datetime.strptime("2014-08-31", "%Y-%m-%d")
-    upload_csv('comparison_zambia.csv', 'Framework contract extension, 2012 to 2014', "2014-06-12", 'ZMB', date_from, date_to)
+    upload_csv('comparison_zambia.csv', 'Zambia - Framework contract extension, 2012 to 2014', "2014-06-12", 'ZMB', date_from, date_to)
 
     date_from = datetime.strptime("2013-01-01", "%Y-%m-%d")
     date_to = datetime.strptime("2014-12-31", "%Y-%m-%d")
-    upload_csv('comparison_tanzania.csv', 'TENDER 30 ILS 59 ITEMS 15.07.2013', "2014-06-09", 'TZA', date_from, date_to)
+    upload_csv('comparison_tanzania.csv', 'Tanzania - TENDER 30 ILS 59 ITEMS 15.07.2013', "2014-06-09", 'TZA', date_from, date_to)
