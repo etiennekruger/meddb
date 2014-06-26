@@ -106,6 +106,7 @@ class Medicine(db.Model):
 
     __tablename__ = "medicine"
     medicine_id = db.Column(db.Integer, primary_key=True)
+    alternative_names = db.Column(db.String(100), default=None)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm')
 
