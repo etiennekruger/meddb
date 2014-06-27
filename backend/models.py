@@ -196,7 +196,6 @@ class Manufacturer(db.Model):
     __tablename__ = "manufacturer"
     manufacturer_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    website = db.Column(db.String(250))  # e.g. http://www.example.com, ensure that the leading http:// is included")
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
