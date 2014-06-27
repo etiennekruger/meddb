@@ -127,6 +127,16 @@ class ProcurementView(MyModelView):
         date=macro('render_procurement_date'),
         approved=macro('render_approve'),
     )
+    column_sortable_list = [
+        ('country', models.Country.name),
+        ('medicine', models.Medicine.name),
+        'pack_size',
+        'unit_of_measure',
+        'container',
+        'pack_price_usd',
+        'quantity',
+        ('source', models.Source.name),
+        ]
 
     def on_model_change(self, form, model, is_created):
         if is_created:
