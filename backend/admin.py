@@ -14,6 +14,16 @@ HOST = app.config['HOST']
 def inject_paths():
     return dict(HOST=HOST)
 
+@app.template_filter('add_commas')
+def jinja2_filter_add_commas(quantity):
+    out = ""
+    quantity_str = str(quantity)
+    while len(quantity_str) > 3:
+        tmp = quantity_str[-3::]
+        out = "," + tmp + out
+        quantity_str = quantity_str[0:-3]
+    return quantity_str + out
+
 
 country_choices = [
     ("BWA", "Botswana"),
@@ -88,16 +98,16 @@ class UserView(MyModelView):
 class ProcurementView(MyModelView):
     column_list = [
         'country',
-        'product',
+        'medicine',
         'pack_size',
         'unit_of_measure',
+        'container',
         'pack_price_usd',
         'quantity',
         'supplier',
-        'start_date',
-        'end_date',
-        'container',
-        'approved_by',
+        'manufacturer',
+        'date',
+        'source',
         'approved'
     ]
     form_excluded_columns = [
@@ -109,9 +119,12 @@ class ProcurementView(MyModelView):
         ]
     column_formatters = dict(
         country=macro('render_country'),
+        medicine=macro('render_procurement_medicine'),
+        manufacturer=macro('render_procurement_manufacturer'),
         pack_price_usd=macro('render_price'),
         start_date=macro('render_date'),
-        end_date=macro('render_date'),
+        quantity=macro('render_quantity'),
+        date=macro('render_procurement_date'),
         approved=macro('render_approve'),
     )
 
