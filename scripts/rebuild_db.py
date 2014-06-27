@@ -311,7 +311,7 @@ for medicine in medicines:
 
         procurement_obj.start_date = datetime.strptime(procurement["start_date"], "%Y-%m-%d")
         procurement_obj.added_on = datetime.strptime("2014-05-15", "%Y-%m-%d")
-        procurement_obj.approved_on = datetime.strptime("2014-05-15", "%Y-%m-%d")
+        procurement_obj.approved = True
         if procurement.get("end_date"):
             procurement_obj.end_date = datetime.strptime(procurement["end_date"], "%Y-%m-%d")
 

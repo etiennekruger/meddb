@@ -157,7 +157,7 @@ def upload_csv(filename, source_name, source_date, country_code, date_from, date
         procurement_obj.incoterm = incoterm_obj
         procurement_obj.country = procurement_country
         procurement_obj.added_on = datetime.strptime("2014-06-23", "%Y-%m-%d")
-        procurement_obj.approved_on = datetime.strptime("2014-06-23", "%Y-%m-%d")
+        procurement_obj.approved = True
         procurement_obj.start_date = date_from
         procurement_obj.end_date = date_to
         db.session.add(procurement_obj)

@@ -113,7 +113,6 @@ class ProcurementView(MyModelView):
     form_excluded_columns = [
         'country',
         'approved_by',
-        'approved_on',
         'added_by',
         'added_on',
         ]
@@ -136,6 +135,7 @@ class ProcurementView(MyModelView):
         'pack_price_usd',
         'quantity',
         ('source', models.Source.name),
+        'approved',
         ]
 
     def on_model_change(self, form, model, is_created):

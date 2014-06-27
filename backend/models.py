@@ -364,7 +364,7 @@ class Procurement(db.Model):
     end_date = db.Column(db.Date, nullable=True) # This is the last day that the procurement price is valid for (may be left blank).
     incoterm = db.Column(db.String(3), nullable=True)  # The international trade term applicable to the contracted price. Ideally this should be standardised as FOB or EXW to allow comparability.
     added_on = db.Column(db.Date, default=datetime.datetime.today())
-    approved_on = db.Column(db.Date, nullable=True)
+    approved = db.Column(db.Boolean, default=False)
 
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=False)
     currency = db.relationship('Currency', backref='procurements')

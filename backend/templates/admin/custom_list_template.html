@@ -40,7 +40,7 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {% endif %}
 
-            <input type="checkbox" {% if model.approved_by %}
+            <input type="checkbox" {% if model.approved %}
                    class="tooltip-enabled" data-toggle="tooltip" title="Approved by {{ model.approved_by }}" checked="True"
             {% endif %}>
         </form>
