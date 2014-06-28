@@ -108,7 +108,7 @@ class Medicine(db.Model):
     medicine_id = db.Column(db.Integer, primary_key=True)
     alternative_names = db.Column(db.String(100), default=None)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
-    dosage_form = db.relationship('DosageForm')
+    dosage_form = db.relationship('DosageForm', lazy='joined')
 
     @property
     def name(self):
@@ -159,9 +159,9 @@ class Component(db.Model):
     strength = db.Column(db.String(16))
 
     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.ingredient_id'), nullable=True)
-    ingredient = db.relationship('Ingredient')
+    ingredient = db.relationship('Ingredient', lazy='joined')
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
-    medicine = db.relationship('Medicine', backref=backref("components"))
+    medicine = db.relationship('Medicine', backref=backref("components", lazy='joined'))
 
     def __unicode__(self):
         return u'%s %s' % (self.ingredient.name, self.strength)
@@ -198,7 +198,7 @@ class Manufacturer(db.Model):
     name = db.Column(db.String(64))
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
-    country = db.relationship('Country')
+    country = db.relationship('Country', lazy='joined')
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
     added_by = db.relationship('User', foreign_keys=added_by_id, backref='manufacturers_added')
 
@@ -223,7 +223,7 @@ class Site(db.Model):
     street_address = db.Column(db.String(250))
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
-    country = db.relationship('Country')
+    country = db.relationship('Country', lazy='joined')
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
     manufacturer = db.relationship('Manufacturer', backref='sites')
 
@@ -277,9 +277,9 @@ class Product(db.Model):
     shelf_life = db.Column(db.String, nullable=True)
 
     medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
-    medicine = db.relationship('Medicine', backref='products')
+    medicine = db.relationship('Medicine', backref='products', lazy='joined')
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
-    manufacturer = db.relationship('Manufacturer')
+    manufacturer = db.relationship('Manufacturer', lazy='joined')
     site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
     site = db.relationship('Site')
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
@@ -337,7 +337,7 @@ class Registration(db.Model):
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
     product = db.relationship('Product', backref='registrations')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
-    country = db.relationship('Country')
+    country = db.relationship('Country', lazy='joined')
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
     source = db.relationship('Source')
 
@@ -369,11 +369,11 @@ class Procurement(db.Model):
     currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=False)
     currency = db.relationship('Currency', backref='procurements')
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=False)
-    product = db.relationship('Product', backref='procurements')
+    product = db.relationship('Product', backref='procurements', lazy='joined')
     incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
     incoterm = db.relationship('Incoterm')
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
-    country = db.relationship('Country')
+    country = db.relationship('Country', lazy='joined')
     supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
     supplier = db.relationship('Supplier', backref='procurements')
     source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)

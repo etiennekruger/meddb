@@ -129,13 +129,14 @@ class ProcurementView(MyModelView):
     column_sortable_list = [
         ('country', models.Country.name),
         ('medicine', models.Medicine.name),
-        'pack_size',
-        'unit_of_measure',
-        'container',
-        'pack_price_usd',
-        'quantity',
+        ('pack_size', models.Procurement.pack_size),
+        ('unit_of_measure', models.Procurement.unit_of_measure),
+        ('container', models.Procurement.container),
+        ('pack_price_usd', models.Procurement.pack_price_usd),
+        ('quantity', models.Procurement.quantity),
         ('source', models.Source.name),
-        'approved',
+        ('approved', models.Procurement.approved),
+        ('supplier', models.Supplier.name),
         ]
 
     def on_model_change(self, form, model, is_created):
@@ -144,9 +145,8 @@ class ProcurementView(MyModelView):
             model.added_by = login.current_user
 
     def get_list(self, page, sort_column, sort_desc, search, filters, execute=True):
-
+        # Todo: add some custom logic here?
         count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
-        # query.filter(models.Procurement.quantity==500000)
         query = query.all()
         return count, query
 
@@ -156,7 +156,10 @@ class MedicineView(MyRestrictedModelView):
         'name',
         'dosage_form',
     ]
-    column_sortable_list = ['name', 'dosage_form', ]
+    column_sortable_list = [
+        'name',
+        ('dosage_form', models.DosageForm.name),
+        ]
     form_excluded_columns = [
         'benchmarks',
         'products',
