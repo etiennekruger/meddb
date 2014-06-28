@@ -71,7 +71,7 @@ class MyModelView(ModelView):
     can_create = True
     can_edit = True
     can_delete = True
-    page_size = 50
+    page_size = app.config['RESULTS_PER_PAGE']
     list_template = "admin/custom_list_template.html"
     column_exclude_list = []
 
@@ -142,6 +142,13 @@ class ProcurementView(MyModelView):
         if is_created:
             model.country_id = login.current_user.country.country_id if login.current_user.country else None
             model.added_by = login.current_user
+
+    def get_list(self, page, sort_column, sort_desc, search, filters, execute=True):
+
+        count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
+        # query.filter(models.Procurement.quantity==500000)
+        query = query.all()
+        return count, query
 
 
 class MedicineView(MyRestrictedModelView):
