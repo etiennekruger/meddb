@@ -78,7 +78,7 @@ product_sites = {}
 for medicine in medicines:
     for product in medicine['products']:
         manufacturer =  product['manufacturer']
-        if manufacturer.get('site') and not manufacturer['site'] in ["Uknown", "Unknown", "Unknown - Unknown"]:
+        if manufacturer.get('site') and not manufacturer['site'] in [None, "Uknown", "Unknown", "Unknown - Unknown"]:
             # capture site
             tmp_id = product['id']
             product_sites[tmp_id] = product['manufacturer']['site']
@@ -204,7 +204,7 @@ for medicine in medicines:
             .filter(models.Site.manufacturer_id==manufacturer_obj.manufacturer_id) \
             .filter(models.Site.name==tmp_site_name) \
             .first()
-        if site_obj is None:
+        if site_obj is None and tmp_site_name is not None:
             site_obj = models.Site()
             site_obj.name = tmp_site_name
             site_obj.manufacturer = manufacturer_obj
@@ -215,7 +215,7 @@ for medicine in medicines:
         tmp_name = procurement["product"]["name"]
         if tmp_name == "":
             tmp_name = None
-        product_obj = models.Product.query.filter(models.Product.name==tmp_name) \
+        product_obj = models.Product.query.filter(models.Product.name==maps.map_product_name(tmp_name)) \
             .filter(models.Product.medicine==medicine_obj) \
             .filter(models.Product.manufacturer==manufacturer_obj) \
             .filter(models.Product.site==site_obj) \
