@@ -98,15 +98,14 @@ def upload_csv(filename, source_name, source_date, country_code, date_from, date
         else:
             medicine_obj = Medicine()
             medicine_obj.dosage_form = dosage_form_obj
-            medicine_obj.set_name()
             db.session.add(medicine_obj)
-            db.session.commit()
 
             component_obj = Component()
             component_obj.ingredient = ingredient_obj
             component_obj.strength = tmp_strength
             component_obj.medicine = medicine_obj
             db.session.add(component_obj)
+            medicine_obj.set_name()
             db.session.commit()
 
         # product

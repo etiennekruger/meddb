@@ -10,7 +10,7 @@ class User(db.Model):
     __tablename__ = "user"
 
     user_id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True)
+    email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(64))
     activated = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
@@ -40,7 +40,7 @@ class Source(db.Model):
     __table_args__ = (UniqueConstraint('name', 'date', 'url', name='source_name_date_url'), {})
 
     source_id = db.Column(db.Integer, primary_key=True)
-    name = name = db.Column(db.String(250))
+    name = name = db.Column(db.String(250), nullable=False)
     date = db.Column(db.Date, nullable=True)
     url = db.Column(db.String(250), nullable=True)  # Provide a link to the source document for reference purposes. Ideally, load the document into the Infohub CKAN installation at data.medicinesinfohub.net and add the link to the source of the document as an additional
 
@@ -57,7 +57,7 @@ class Country(db.Model):
     __tablename__ = "country"
 
     country_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(3), unique=True)
     code_short = db.Column(db.String(2), unique=True)
 
@@ -73,7 +73,7 @@ class Currency(db.Model):
     __tablename__ = "currency"
 
     currency_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
+    name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(3), unique=True)
 
     def __unicode__(self):
@@ -88,7 +88,7 @@ class Incoterm(db.Model):
     __tablename__ = "incoterm"
 
     incoterm_id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(100))
+    description = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(3), unique=True)
 
     def __unicode__(self):
@@ -103,7 +103,7 @@ class DosageForm(db.Model):
     __tablename__ = "dosage_form"
 
     dosage_form_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(100), unique=True, nullable=False)
 
     def __unicode__(self):
         return u'%s' % (self.name)
@@ -115,9 +115,10 @@ class DosageForm(db.Model):
 class Medicine(db.Model):
 
     __tablename__ = "medicine"
+    __table_args__ = (UniqueConstraint('name', 'dosage_form_id', name='medicine_name_dosage_form'), {})
 
     medicine_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(100), nullable=False)
     alternative_names = db.Column(db.String(100), default=None)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm', lazy='joined')
@@ -154,7 +155,7 @@ class Ingredient(db.Model):
     __tablename__ = "ingredient"
 
     ingredient_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), unique=True)
+    name = db.Column(db.String(128), unique=True, nullable=False)
 
     def __unicode__(self):
         return u'%s' % self.name
@@ -169,11 +170,11 @@ class Component(db.Model):
     __table_args__ = (UniqueConstraint('ingredient_id', 'medicine_id', name='component_ingredient_medicine'), {})
 
     component_id = db.Column(db.Integer, primary_key=True)
-    strength = db.Column(db.String(16))
+    strength = db.Column(db.String(16), nullable=True)
 
-    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.ingredient_id'), nullable=True)
+    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.ingredient_id'), nullable=False)
     ingredient = db.relationship('Ingredient', lazy='joined')
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
+    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=False)
     medicine = db.relationship('Medicine', backref=backref("components", lazy='joined'))
 
 
@@ -190,8 +191,8 @@ class BenchmarkPrice(db.Model):
     __table_args__ = (db.UniqueConstraint('medicine_id', 'year', 'name', name='benchmark_price_medicine_year_name'), {})
 
     benchmark_price_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))  # this should be restricted by a select field in the Admin interface
-    price = db.Column(db.Float)  # The benchmark price for the medicine.
+    name = db.Column(db.String(100), nullable=False)  # this should be restricted by a select field in the Admin interface
+    price = db.Column(db.Float, nullable=False)  # The benchmark price for the medicine.
     unit_of_measure = db.Column(db.String(50))
     year = db.Column(db.Integer, nullable=False)
 
@@ -211,7 +212,7 @@ class Manufacturer(db.Model):
     __table_args__ = (db.UniqueConstraint('name', 'country_id', name='manufacturer_name_country'), {})
 
     manufacturer_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(64), nullable=False)
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country', lazy='joined')
@@ -256,7 +257,7 @@ class Supplier(db.Model):
     __tablename__ = "supplier"
 
     supplier_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True)
+    name = db.Column(db.String(64), unique=True, nullable=False)
     street_address = db.Column(db.String(500))
     website = db.Column(db.String(250))
     contact = db.Column(db.String(64))
@@ -419,7 +420,7 @@ class AvailableContainers(db.Model):
     __tablename__ = "available_containers"
 
     available_constraint_id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(50), unique=True)
+    value = db.Column(db.String(50), unique=True, nullable=False)
 
     def __unicode__(self):
         return u'%s' % self.value
@@ -430,7 +431,7 @@ class AvailableUnits(db.Model):
     __tablename__ = "available_units"
 
     available_unit_id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(32), unique=True)
+    value = db.Column(db.String(32), unique=True, nullable=False)
 
     def __unicode__(self):
         return u'%s' % self.value
@@ -441,7 +442,7 @@ class AvailableProcurementMethods(db.Model):
     __tablename__ = "available_procurement_methods"
 
     available_procurement_id = db.Column(db.Integer, primary_key=True)
-    value = db.Column(db.String(50), unique=True)
+    value = db.Column(db.String(50), unique=True, nullable=False)
 
     def __unicode__(self):
         return u'%s' % self.value

@@ -85,68 +85,177 @@ for medicine in medicines:
 
 procurement_ids = []
 
+dupe_records = [
+    "Benzyl penicillin 5.0 mu vial ",
+    "Ceftriaxone injection 500mg powder for injec",
+    "Ciprofloxacin 250mg ",
+    "Co-trimoxazole 480mg 400mg + 80mg ",
+    "Efivarenz 600mg ",
+    "Lamivudine 150mg ",
+    "Lopinavir + ritonavir 80mg + 20mg ",
+    "Metronidazole 400-500mg ",
+    "Stavudine 30mg ",
+]
+
 for medicine in medicines:
 
     medicine_obj = models.Medicine()
 
-    # capture components
-    for component in medicine["ingredients"]:
-        ingredient_obj = models.Ingredient.query.filter(models.Ingredient.name==component["inn"]).first()
-        if ingredient_obj is None:
-            ingredient_obj = models.Ingredient()
-            ingredient_obj.name = component["inn"]
-            db.session.add(ingredient_obj)
-            db.session.commit()
-
-        component_obj = models.Component()
-        component_obj.ingredient = ingredient_obj
-        tmp_strength = component["strength"]
-        if tmp_strength:
-            tmp_strength = tmp_strength.replace('miu', 'MIU').replace('iu', "IU")
-        if tmp_strength == "n/a":
-            tmp_strength = None
-        component_obj.strength = tmp_strength
-        component_obj.medicine = medicine_obj
-        db.session.add(component_obj)
-        db.session.commit()
-
-    # capture MSH benchmark price
-    if medicine['mshprice']:
-        benchmark_obj = models.BenchmarkPrice()
-        benchmark_obj.name = "MSH"
-        benchmark_obj.year = 2012
-        benchmark_obj.price = medicine['mshprice']
-        benchmark_obj.medicine = medicine_obj
-        db.session.add(benchmark_obj)
-        db.session.commit()
-    else:
-        tmp = "this medicine has no benchmark price: "
-        if medicine.get('name'):
-            tmp += medicine['name']
+    if not medicine["ingredients"]:
+        if medicine['name'] == dupe_records[0]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Benzyl penicillin",
+                    "strength": "5mu",
+                    "id": 10
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Benzyl penicillin (5mu)").first()
+        elif medicine['name'] == dupe_records[1]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Ceftriaxone injection",
+                    "strength": "500mg",
+                    "id": 13
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Ceftriaxone injection (500mg)").first()
+        elif medicine['name'] == dupe_records[2]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Ciprofloxacin",
+                    "strength": "250mg",
+                    "id": 17
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Ciprofloxacin (250mg)").first()
+        elif medicine['name'] == dupe_records[3]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Sulfamethoxazole",
+                    "strength": "400mg",
+                    "id": 79
+                },
+                {
+                    "inn": "Trimethoprim",
+                    "strength": "80mg",
+                    "id": 78
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Sulfamethoxazole (400mg), Trimethoprim (80mg)").first()
+        elif medicine['name'] == dupe_records[4]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Efivarenz",
+                    "strength": "600mg",
+                    "id": 92
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Efivarenz (600mg)").first()
+        elif medicine['name'] == dupe_records[5]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Lamivudine",
+                    "strength": "150mg",
+                    "id": 77
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Lamivudine (150mg)").first()
+        elif medicine['name'] == dupe_records[6]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Lopinavir",
+                    "strength": "80mg",
+                    "id": 60
+                },
+                {
+                    "inn": "Ritonavir",
+                    "strength": "20mg",
+                    "id": 81
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Lopinavir (80mg), Ritonavir (20mg)").first()
+        elif medicine['name'] == dupe_records[7]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Metronidazole",
+                    "strength": "400-500mg",
+                    "id": 29
+                },
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Metronidazole (400-500mg)").first()
+        elif medicine['name'] == dupe_records[8]:
+            medicine["ingredients"] = [
+                {
+                    "inn": "Stavudine",
+                    "strength": "30mg"
+                }
+            ]
+            medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Stavudine (30mg)").first()
+            print "DISASTER AVERTED"
         else:
-            tmp += str(medicine['id'])
-        print tmp
+            print "SOOPER DOOPER ERROR"
 
-    # capture dosage form
-    if medicine['dosageform'] and not medicine['dosageform'] == "N/A":
-        dosage_form_name = maps.map_dosage_form(medicine['dosageform'])
-        dosage_form_obj = models.DosageForm.query.filter(models.DosageForm.name==dosage_form_name).first()
-        if dosage_form_obj is None:
-            dosage_form_obj = models.DosageForm()
-            dosage_form_obj.name = dosage_form_name
-            db.session.add(dosage_form_obj)
-            db.session.commit()
-        medicine_obj.dosage_form = dosage_form_obj
-    else:
-        tmp = "this medicine has no dosage form: "
-        if medicine.get('name'):
-            tmp += medicine['name']
+    if medicine.get('name') not in dupe_records:
+        # capture components
+        for component in medicine["ingredients"]:
+            ingredient_obj = models.Ingredient.query.filter(models.Ingredient.name==component["inn"]).first()
+            if ingredient_obj is None:
+                ingredient_obj = models.Ingredient()
+                ingredient_obj.name = component["inn"]
+                db.session.add(ingredient_obj)
+
+            component_obj = models.Component()
+            component_obj.ingredient = ingredient_obj
+            tmp_strength = component["strength"]
+            if tmp_strength:
+                tmp_strength = tmp_strength.replace('miu', 'MIU').replace('iu', "IU")
+            if tmp_strength == "n/a":
+                tmp_strength = None
+            component_obj.strength = tmp_strength
+            component_obj.medicine = medicine_obj
+            db.session.add(component_obj)
+
+        # capture MSH benchmark price
+        if medicine['mshprice']:
+            benchmark_obj = models.BenchmarkPrice()
+            benchmark_obj.name = "MSH"
+            benchmark_obj.year = 2012
+            benchmark_obj.price = medicine['mshprice']
+            benchmark_obj.medicine = medicine_obj
+            db.session.add(benchmark_obj)
         else:
-            tmp += str(medicine['id'])
-        print tmp
+            tmp = "this medicine has no benchmark price: "
+            if medicine.get('name'):
+                tmp += medicine['name']
+            else:
+                tmp += str(medicine['id'])
+            print tmp
 
-    db.session.add(medicine_obj)
-    db.session.commit()
+        # capture dosage form
+        if medicine['dosageform'] and not medicine['dosageform'] == "N/A":
+            dosage_form_name = maps.map_dosage_form(medicine['dosageform'])
+            dosage_form_obj = models.DosageForm.query.filter(models.DosageForm.name==dosage_form_name).first()
+            if dosage_form_obj is None:
+                dosage_form_obj = models.DosageForm()
+                dosage_form_obj.name = dosage_form_name
+                db.session.add(dosage_form_obj)
+            medicine_obj.dosage_form = dosage_form_obj
+        else:
+            tmp = "this medicine has no dosage form: "
+            if medicine.get('name'):
+                tmp += medicine['name']
+            else:
+                tmp += str(medicine['id'])
+            print tmp
+
+        medicine_obj.set_name()
+        db.session.add(medicine_obj)
+        try:
+            db.session.commit()
+        except Exception:
+            print component_obj.ingredient.name
+            raise
 
     # capture procurements
     for procurement in medicine["procurements"]:
@@ -187,7 +296,7 @@ for medicine in medicines:
             .filter(models.Manufacturer.name==tmp_manufacturer_name) \
             .filter(models.Manufacturer.country==tmp_country) \
             .first()
-        if manufacturer_obj is None:
+        if manufacturer_obj is None and tmp_manufacturer_name is not None:
             manufacturer_obj = models.Manufacturer()
             if tmp_manufacturer_name or tmp_country:
                 manufacturer_obj.name = tmp_manufacturer_name
@@ -196,20 +305,21 @@ for medicine in medicines:
             db.session.commit()
 
         # capture manufacturer site
-        tmp_site_name = None
-        tmp_product_id = procurement["product"]["id"]
-        if product_sites.get(tmp_product_id):
-            tmp_site_name = product_sites[tmp_product_id]
-        site_obj = models.Site.query \
-            .filter(models.Site.manufacturer_id==manufacturer_obj.manufacturer_id) \
-            .filter(models.Site.name==tmp_site_name) \
-            .first()
-        if site_obj is None and tmp_site_name is not None:
-            site_obj = models.Site()
-            site_obj.name = tmp_site_name
-            site_obj.manufacturer = manufacturer_obj
-            db.session.add(site_obj)
-            db.session.commit()
+        if manufacturer_obj is not None:
+            tmp_site_name = None
+            tmp_product_id = procurement["product"]["id"]
+            if product_sites.get(tmp_product_id):
+                tmp_site_name = product_sites[tmp_product_id]
+            site_obj = models.Site.query \
+                .filter(models.Site.manufacturer_id==manufacturer_obj.manufacturer_id) \
+                .filter(models.Site.name==tmp_site_name) \
+                .first()
+            if site_obj is None and tmp_site_name is not None:
+                site_obj = models.Site()
+                site_obj.name = tmp_site_name
+                site_obj.manufacturer = manufacturer_obj
+                db.session.add(site_obj)
+                db.session.commit()
 
         # capture product
         tmp_name = procurement["product"]["name"]
@@ -240,7 +350,7 @@ for medicine in medicines:
             if tmp_name == "Unknown":
                 tmp_name = None
             supplier_obj = models.Supplier.query.filter(models.Supplier.name==tmp_name).first()
-            if not supplier_obj:
+            if not supplier_obj and tmp_name is not None:
                 supplier_obj = models.Supplier()
                 supplier_obj.name = tmp_name
                 db.session.add(supplier_obj)
@@ -319,8 +429,6 @@ for medicine in medicines:
 
         db.session.add(procurement_obj)
         pass
-    medicine_obj.set_name()
-    db.session.add(medicine_obj)
 
 db.session.commit()
 
