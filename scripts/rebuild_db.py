@@ -319,7 +319,7 @@ for medicine in medicines:
 
         db.session.add(procurement_obj)
         pass
-
+    medicine_obj.set_name()
     db.session.add(medicine_obj)
 
 db.session.commit()

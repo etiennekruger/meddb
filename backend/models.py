@@ -106,13 +106,12 @@ class Medicine(db.Model):
 
     __tablename__ = "medicine"
     medicine_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True)
     alternative_names = db.Column(db.String(100), default=None)
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm', lazy='joined')
 
-    @property
-    def name(self):
-        out = "Unnamed Medicine"
+    def set_name(self):
         if len(self.components) > 0:
             component_names = []
             for component in self.components:
@@ -121,7 +120,7 @@ class Medicine(db.Model):
                     tmp += " (" + str(component.strength) + ")"
                 component_names.append(tmp)
             out = ", ".join(component_names)
-        return out
+            self.name = out
 
     @property
     def procurements(self):
