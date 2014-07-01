@@ -157,7 +157,7 @@ class MedicineView(MyRestrictedModelView):
         'dosage_form',
     ]
     column_sortable_list = [
-        'name',
+        ('name', models.Medicine.name),
         ('dosage_form', models.DosageForm.name),
         ]
     form_excluded_columns = [
