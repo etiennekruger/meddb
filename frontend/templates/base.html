@@ -77,6 +77,25 @@
     </div>
 {% endblock %}
 
+{% block modal %}
+    <div class="modal fade" id="page-modal" tabindex="-1" role="dialog" aria-labelledby="page-modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="page-modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body" id="page-modal-body">
+                    ...
+                </div>
+                <div class="modal-footer" id="page-modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 </body>
 <script src="/static/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
