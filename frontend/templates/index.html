@@ -3,27 +3,18 @@
 {% endblock search %}
 
 {% block page_header %}
-    <div id="jumbo">
-        {{ super() }}
-        <div id="search-banner">
-            <h1>Search for a medicine</h1>
-            <form class="form" role="search">
-                <div class="input-group input-group-lg">
-                    <input id="search-box" autocomplete="off" data-provide="typeahead" type="text" class="form-control" placeholder="e.g. Abacavir">
+    <div id="search-banner">
+        <h1>Search for a medicine</h1>
+        <form class="form" role="search">
+            <div class="input-group input-group-lg">
+                <input id="search-box" autocomplete="off" data-provide="typeahead" type="text" class="form-control" placeholder="e.g. Abacavir">
                         <span class="input-group-btn">
                         <button class="btn btn-primary" type="button">Search</button>
                         </span>
-                </div>
-            </form>
-            <p id="search-caption">
-                {#                {% if recent_products %}#}
-                {#                    Recent:#}
-                {#                    {% for product in recent_products %}#}
-                {#                        <a href="/product/{{ product.id }}/">{{ product.name }}</a>{% if not loop.last %}, {% endif %}#}
-                {#                    {% endfor %}#}
-                {#                {% endif %}#}
-            </p>
-        </div>
+            </div>
+        </form>
+        <p id="search-caption">
+        </p>
     </div>
 {% endblock %}
 

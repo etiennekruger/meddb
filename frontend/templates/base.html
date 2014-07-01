@@ -44,7 +44,7 @@
     </div>
 </nav>
 
-{% block page_header %}
+<div id="jumbo">
     <div id="message-container" class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -59,7 +59,9 @@
             {% endif %}
         {% endwith %}
     </div>
-{% endblock %}
+    {% block page_header %}
+    {% endblock %}
+</div>
 
 <div id="page-container" class="container">
     {% block page %}

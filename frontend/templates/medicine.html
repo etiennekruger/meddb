@@ -1,20 +1,17 @@
 {% extends "base.html" %}
 
 {% block page_header %}
-    <div id="jumbo">
-        {{ super() }}
-        <div class="container">
-            <h1>
-                {% if medicine.name %}
-                    {{ medicine.name }}
-                {% endif %}
-                <nobr>
-                    <small class="text-muted">
-                        {{ medicine.dosage_form.name }}
-                    </small>
-                </nobr>
-            </h1>
-        </div>
+    <div class="container">
+        <h1>
+            {% if medicine.name %}
+                {{ medicine.name }}
+            {% endif %}
+            <nobr>
+                <small class="text-muted">
+                    {{ medicine.dosage_form.name }}
+                </small>
+            </nobr>
+        </h1>
     </div>
 {% endblock %}
 
