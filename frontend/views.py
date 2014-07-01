@@ -59,17 +59,6 @@ def landing():
         recent_updates=recent_updates
     )
 
-@app.route('/product/<product_id>/')
-def product(product_id):
-
-    response = requests.get(API_HOST + 'product/' + str(product_id) + "/")
-    product = response.json()
-    return render_template(
-        'product.html',
-        API_HOST=API_HOST,
-        product=product,
-        active_nav_button="product"
-    )
 
 @app.route('/medicine/<medicine_id>/')
 def medicine(medicine_id):
@@ -107,22 +96,22 @@ def medicine(medicine_id):
         'medicine.html',
         API_HOST=API_HOST,
         medicine=medicine,
-        active_nav_button="medicine",
+        active_nav_button="medicines",
         max_price = max_price,
         best_procurements = best_procurements,
         form_args = form_args,
     )
 
-@app.route('/supplier/<supplier_id>/')
-def supplier(supplier_id):
+@app.route('/procurement/<procurement_id>/')
+def procurement(procurement_id):
 
-    response = requests.get(API_HOST + 'supplier/' + str(supplier_id) + "/")
-    supplier = response.json()
+    response = requests.get(API_HOST + 'procurement/' + str(procurement_id) + "/")
+    procurement = response.json()
     return render_template(
-        'supplier.html',
+        'procurement.html',
         API_HOST=API_HOST,
-        supplier=supplier,
-        active_nav_button="supplier"
+        procurement=procurement,
+        active_nav_button="procurement"
     )
 
 @app.route('/admin/')
