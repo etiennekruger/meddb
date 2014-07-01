@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+        <div class="container">
+            <h1>
+                Procurement #{{ procurement.procurement_id }}
+                <nobr>
+                    <small class="text-muted">
+                        {{ procurement.country.name }}
+                    </small>
+                </nobr>
+            </h1>
+        </div>
+{% endblock %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>Procurement #{{ procurement.procurement_id }}</h2>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script>
+        $(document).ready(function(){
+
+        });
+    </script>
+{% endblock %}
