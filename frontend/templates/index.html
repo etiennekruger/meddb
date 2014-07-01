@@ -31,8 +31,8 @@
                         <td>
                             {% if procurement.product %}
                                 <strong>
-                                    <a href="/product/{{ procurement.product.product_id }}/">
-                                        {{ procurement.product.name }}
+                                    <a href="/medicine/{{ procurement.product.medicine.medicine_id }}/">
+                                        {{ procurement.product.medicine.name }}
                                     </a>
                                 </strong>
                             {% else %}

@@ -79,6 +79,15 @@ body{
     line-height: 1.33;
 }
 
+.price-bar-container{
+    padding-right: 60px!important;
+    min-width: 300px;
+}
+
+.price-bar-container span{
+    margin-right: -50px;
+}
+
 .price-bar{
     height: 24px;
     margin-top: -2px;

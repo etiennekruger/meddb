@@ -67,11 +67,11 @@ def medicine(medicine_id):
     medicine = response.json()
 
     # sort products by average price
-    medicine['products'] = sort_list(medicine['products'], 'average_price')
-    max_price = medicine['products'][-1]['average_price']
+    max_avg_price = medicine['products'][-1]['average_price']
+    max_price = medicine['procurements'][-1]['unit_price_usd']
 
     # find the best procurements
-    best_procurements = sort_list(medicine['procurements'], 'unit_price_usd')
+    best_procurements = medicine['procurements']
     if len(best_procurements) > 5:
         best_procurements = best_procurements[0:5]
 
@@ -85,7 +85,7 @@ def medicine(medicine_id):
             total_expected = compare_price * compare_quantity
 
             for procurement in best_procurements:
-                unit_price = float(procurement['unit_price_usd'].split("/")[0])
+                unit_price = float(procurement['unit_price_usd'])
                 procurement['cost_difference'] = (unit_price - compare_price) * compare_quantity
         except Exception as e:
             flash("There was a problem with your input.", "warning")
@@ -98,6 +98,7 @@ def medicine(medicine_id):
         medicine=medicine,
         active_nav_button="medicines",
         max_price = max_price,
+        max_avg_price = max_avg_price,
         best_procurements = best_procurements,
         form_args = form_args,
     )
