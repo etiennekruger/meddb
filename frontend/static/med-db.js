@@ -105,32 +105,32 @@ $(document).ready(function(){
     // enable tooltips
     $(".tooltip-enabled").tooltip({});
 
+    function medicine_matcher(){
+        return function findMatches(query, callback) {
+            medicines = [];
+            $.get(API_HOST + 'autocomplete/' + query + '/', function(data){
+                callback(data);
+            },'json');
+        };
+    }
+
     // handle search
     $("#search-box").typeahead({
-        minLength: 1,
-        source:function(query, process){
-            medicines = [];
-            map = {};
-            $.get(API_HOST + 'autocomplete/' + query + '/', function(data){
-                for (var i = 0; i < data.length; i++)
-                {
-                    var key = data[i].name;
-                    if (key)
-                        medicines.push(key)
-                    map[key] = data[i]
-                }
-                process(medicines);
-            },'json');
+            hint: true,
+            highlight: true,
+            minLength: 1
         },
-        updater: function (item) {
-            window.location = '/medicine/' + map[item].medicine_id.toString() + '/';
-            return item;
-        },
-        matcher: function (item) {
-            // matching's done on the backend
-            return true
+        {
+            name: 'medicines',
+            displayKey: 'name',
+            source: medicine_matcher()
+        })
+        .on('typeahead:selected', function(e, datum){
+            window.location = '/medicine/' + (datum["medicine_id"]) + '/';
         }
-    });
+    );
+    $('#search-box.input-lg').siblings('input.tt-hint').addClass('hint-large');
+
     $("#search-box").focus()
 
 });
