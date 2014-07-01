@@ -94,3 +94,8 @@ body{
     margin-top: 10px;
     margin-right: 15px;
 }
+
+.modal-link:hover{
+    cursor: pointer;
+    text-decoration:none
+}

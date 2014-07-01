@@ -74,6 +74,7 @@ def medicine_to_dict(obj, include_related=False):
         products = []
         for product in obj.products:
             product_dict = product.to_dict()
+            product_dict.pop('medicine')
             products.append(product_dict)
         tmp_dict['products'] = products
         # related procurements

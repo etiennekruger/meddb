@@ -46,8 +46,9 @@
                     {% if medicine.products %}
                         <table class="table table-bordered table-striped">
                             <thead>
-                            <th>Name</th>
+                            <th>Product Name</th>
                             <th>Manufacturer</th>
+                            <th>Generic/Originator</th>
                             <th>Average price (USD)</th>
                             </thead>
                             <tbody>
@@ -57,13 +58,13 @@
                                 <tr>
                                     <td>
                                         <strong>
-                                            <a href="/product/{{ product.product_id }}/"
-                                               class="tooltip-enabled"
-                                               data-toggle="tooltip"
-                                               data-placement="right"
-                                               title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
+                                            <span
+                                                    class="tooltip-enabled"
+                                                    data-toggle="tooltip"
+                                                    data-placement="right"
+                                                    title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
                                                 {{ product.name }}
-                                            </a>
+                                            </span>
                                         </strong>
                                     </td>
                                     <td>
@@ -71,13 +72,19 @@
                                             {%- if product.manufacturer.country -%}
                                                 {{ macros.render_flag(product.manufacturer.country) }}
                                             {% endif -%}
+                                            <a class="manufacturer modal-link" onclick="show_manufacturer_modal({{ product.manufacturer.manufacturer_id }})"><strong>
                                             {{ product.manufacturer.name }}
                                             {%- if product.manufacturer.country -%}
                                                 , {{ product.manufacturer.country.name }}
                                             {%- endif -%}
+                                            </strong>
+                                            </a>
                                         {% else %}
                                             Unknown Manufacturer
                                         {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if product.is_generic %}Generic{% else %}Originator{% endif %}
                                     </td>
                                     <td style="padding-right: 60px; min-width: 250px;">
                                         {% if product.average_price %}
@@ -191,11 +198,6 @@
         </div>
     </div>
 
-
-
-    <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#page-modal">
-        open modal window
-    </button>
 
 {% endblock %}
 

@@ -65,10 +65,10 @@ def medicine(medicine_id):
 
     response = requests.get(API_HOST + 'medicine/' + str(medicine_id) + "/")
     medicine = response.json()
-    max_price = 0
-    for product in medicine['products']:
-        if product['average_price'] > max_price:
-            max_price = product['average_price']
+
+    # sort products by average price
+    medicine['products'] = sort_list(medicine['products'], 'average_price')
+    max_price = medicine['products'][-1]['average_price']
 
     # find the best procurements
     best_procurements = sort_list(medicine['procurements'], 'unit_price_usd')
@@ -88,7 +88,7 @@ def medicine(medicine_id):
                 unit_price = float(procurement['unit_price_usd'].split("/")[0])
                 procurement['cost_difference'] = (unit_price - compare_price) * compare_quantity
         except Exception as e:
-            flash("There was a problem with your input.", "alert-error")
+            flash("There was a problem with your input.", "warning")
             logger.debug(e)
             pass
 

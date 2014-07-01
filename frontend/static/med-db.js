@@ -87,11 +87,15 @@ function show_manufacturer_modal(manufacturer_id)
 {
     var attrs = [
         'name',
-        'country_name'
     ]
     get_api_record('manufacturer', manufacturer_id, function(manufacturer){
         // flatten record
-        manufacturer['country_name'] = manufacturer.country.name
+        if(manufacturer.country)
+        {
+            console.log(manufacturer.country)
+            attrs.push('country_name')
+            manufacturer['country_name'] = manufacturer.country.name
+        }
         map_model_to_modal(manufacturer, 'name', attrs)
     })
 }
