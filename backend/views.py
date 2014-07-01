@@ -8,6 +8,7 @@ from sqlalchemy import func, or_, distinct
 import datetime
 import events
 import cache
+from operator import itemgetter
 
 API_HOST = app.config["API_HOST"]
 
@@ -111,7 +112,7 @@ def calculate_autocomplete():
     """
 
     logger.debug("Calculating autocomplete")
-    medicines = models.Medicine.query.all()
+    medicines = models.Medicine.query.order_by(models.Medicine.name).all()
     out = []
     for medicine in medicines:
         out.append(medicine.to_dict())
@@ -211,17 +212,16 @@ def autocomplete(query):
         cache.store('medicine_list', json.dumps(medicine_list, cls=serializers.CustomEncoder))
     i = 0
     for medicine in medicine_list:
-
         tmp = {}
-        component_names = ""
-        for component in medicine['components']:
-            if component['ingredient']['name']:
-                component_names += ", " + component['ingredient']['name']
-        if i < 10 and (query in component_names.lower()):
-            i += 1
+        query_index = medicine['name'].lower().find(query.lower())
+        if query_index > -1:
             tmp['medicine_id'] = medicine['medicine_id']
             tmp['name'] = medicine['name']
+            tmp['index'] = query_index
             out.append(tmp)
+    out = sorted(out, key=itemgetter('index'))
+    if len(out) > 10:
+        out = out[0:10]
     return send_api_response(json.dumps(out))
 
 

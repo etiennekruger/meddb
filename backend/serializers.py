@@ -74,14 +74,15 @@ def medicine_to_dict(obj, include_related=False):
         products = []
         for product in obj.products:
             product_dict = product.to_dict()
+            product_dict.pop('medicine')
             products.append(product_dict)
-        tmp_dict['products'] = products
+        tmp_dict['products'] = sorted(products, key=itemgetter('average_price'))
         # related procurements
         procurements = []
         for procurement in obj.procurements:
             procurement_dict = procurement.to_dict()
             procurements.append(procurement_dict)
-        tmp_dict['procurements'] = procurements
+        tmp_dict['procurements'] = sorted(procurements, key=itemgetter('unit_price_usd'))
     return tmp_dict
 
 

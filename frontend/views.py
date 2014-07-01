@@ -59,30 +59,19 @@ def landing():
         recent_updates=recent_updates
     )
 
-@app.route('/product/<product_id>/')
-def product(product_id):
-
-    response = requests.get(API_HOST + 'product/' + str(product_id) + "/")
-    product = response.json()
-    return render_template(
-        'product.html',
-        API_HOST=API_HOST,
-        product=product,
-        active_nav_button="product"
-    )
 
 @app.route('/medicine/<medicine_id>/')
 def medicine(medicine_id):
 
     response = requests.get(API_HOST + 'medicine/' + str(medicine_id) + "/")
     medicine = response.json()
-    max_price = 0
-    for product in medicine['products']:
-        if product['average_price'] > max_price:
-            max_price = product['average_price']
+
+    # sort products by average price
+    max_avg_price = medicine['products'][-1]['average_price']
+    max_price = medicine['procurements'][-1]['unit_price_usd']
 
     # find the best procurements
-    best_procurements = sort_list(medicine['procurements'], 'unit_price_usd')
+    best_procurements = medicine['procurements']
     if len(best_procurements) > 5:
         best_procurements = best_procurements[0:5]
 
@@ -96,10 +85,10 @@ def medicine(medicine_id):
             total_expected = compare_price * compare_quantity
 
             for procurement in best_procurements:
-                unit_price = float(procurement['unit_price_usd'].split("/")[0])
+                unit_price = float(procurement['unit_price_usd'])
                 procurement['cost_difference'] = (unit_price - compare_price) * compare_quantity
         except Exception as e:
-            flash("There was a problem with your input.", "alert-error")
+            flash("There was a problem with your input.", "warning")
             logger.debug(e)
             pass
 
@@ -107,22 +96,23 @@ def medicine(medicine_id):
         'medicine.html',
         API_HOST=API_HOST,
         medicine=medicine,
-        active_nav_button="medicine",
+        active_nav_button="medicines",
         max_price = max_price,
+        max_avg_price = max_avg_price,
         best_procurements = best_procurements,
         form_args = form_args,
     )
 
-@app.route('/supplier/<supplier_id>/')
-def supplier(supplier_id):
+@app.route('/procurement/<procurement_id>/')
+def procurement(procurement_id):
 
-    response = requests.get(API_HOST + 'supplier/' + str(supplier_id) + "/")
-    supplier = response.json()
+    response = requests.get(API_HOST + 'procurement/' + str(procurement_id) + "/")
+    procurement = response.json()
     return render_template(
-        'supplier.html',
+        'procurement.html',
         API_HOST=API_HOST,
-        supplier=supplier,
-        active_nav_button="supplier"
+        procurement=procurement,
+        active_nav_button="procurement"
     )
 
 @app.route('/admin/')

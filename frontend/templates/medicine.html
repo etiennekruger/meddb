@@ -1,24 +1,22 @@
 {% extends "base.html" %}
 
 {% block page_header %}
-    <div id="jumbo">
-        {{ super() }}
-        <div class="container">
-            <h1>
-                {% if medicine.name %}
-                    {{ medicine.name }}
-                {% endif %}
-                <nobr>
-                    <small class="text-muted">
-                        {{ medicine.dosage_form.name }}
-                    </small>
-                </nobr>
-            </h1>
-        </div>
+    <div class="container">
+        <h1>
+            {% if medicine.name %}
+                {{ medicine.name }}
+            {% endif %}
+            <nobr>
+                <small class="text-muted">
+                    {{ medicine.dosage_form.name }}
+                </small>
+            </nobr>
+        </h1>
     </div>
 {% endblock %}
 
 {% block page %}
+
     <div class="row">
         <div class="col-lg-12">
             {% if medicine.benchmarks %}
@@ -31,129 +29,201 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <h2>Products</h2>
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="active"><a href="#procurements" role="tab" data-toggle="tab">Procurements</a></li>
+        <li><a href="#comparison" role="tab" data-toggle="tab">Manufacturer Comparison</a></li>
+        <li><a href="#cost-calculator" role="tab" data-toggle="tab">Cost Calculator</a></li>
+    </ul>
 
-            {% if medicine.products %}
-                <table class="table table-bordered table-striped">
-                    <thead>
-                    <th>Name</th>
-                    <th>Manufacturer</th>
-                    <th>Average price (USD)</th>
-                    </thead>
-                    <tbody>
+    <!-- Tab panes -->
+    <div class="tab-content">
 
-                    {% for product in medicine.products %}
-                        {% set width = (100 * (1 - (max_price - product.average_price) / max_price)) | int%}
-                        <tr>
-                            <td>
-                                <strong>
-                                    <a href="/product/{{ product.product_id }}/"
-                                       class="tooltip-enabled"
-                                       data-toggle="tooltip"
-                                       data-placement="right"
-                                       title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
-                                        {{ product.name }}
-                                    </a>
-                                </strong>
-                            </td>
-                            <td>
-                                {% if product.manufacturer %}
-                                    {%- if product.manufacturer.country -%}
-                                        {{ macros.render_flag(product.manufacturer.country) }}
-                                    {% endif -%}
-                                    {{ product.manufacturer.name }}
-                                    {%- if product.manufacturer.country -%}
-                                        , {{ product.manufacturer.country.name }}
-                                    {%- endif -%}
-                                {% else %}
-                                    Unknown Manufacturer
-                                {% endif %}
-                            </td>
-                            <td style="padding-right: 60px; min-width: 250px;">
-                                {% if product.average_price %}
-                                    <span class="pull-right" style="margin-right: -50px;">
-                                    ${{ product.average_price }}
+    <div class="tab-pane active" id="procurements">
+        <div class="row">
+            <div class="col-lg-12">
+                {% if medicine.procurements | length == 0 %}
+                    <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+                {% else %}
+                    <p></p>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <th>Procurement country</th>
+                        <th>Product Name</th>
+                        <th>Date</th>
+                        <th>Terms</th>
+                        <th>Volume</th>
+                        <th>Price</th>
+                        </thead>
+                        <tbody>
+                        {% for procurement in medicine.procurements %}
+                            {% set width = (100 * (1 - (max_price - procurement.unit_price_usd) / max_price)) | int%}
+                            <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
+                                <td>
+                                    {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                                </td>
+                                <td>
+                                    {% if procurement.product %}
+                                        {{ procurement.product.name }}
+                                    {% else %}
+                                        Unknown
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
+                                </td>
+                                <td>
+                                    {% if procurement.incoterm %}
+                                        {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ procurement.quantity | add_commas }} ({{ procurement.pack_size }} {{ procurement.unit_of_measure }} {{ procurement.container }}s)
+                                </td>
+                                <td class="price-bar-container">
+                                            <span class="pull-right">
+                                    ${{ procurement.unit_price_usd }}
                                     </span>
                                     <div class="price-bar" style="width: {{ width }}%;"></div>
-
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>We don't know of any products for this medicine.</p>
-            {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <h2>Least expensive procurements</h2>
+    <div class="tab-pane" id="comparison">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Products</h2>
 
-            <form id="form-comparison" class="form form-inline" method="get" action="">
-                <div class="form-group">
-                    <p><em>Calculate cost difference:</em></p>
-                </div>
-                <div class="form-group">
-                    <label class="sr-only" for="compare-quantity">Quantity</label>
-                    <input name="compare-quantity" class="form-control" type="text" placeholder="Quantity" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
-                </div>
-                <div class="form-group">
-                    <label class="sr-only" for="compare-price">Price</label>
-                    <input name="compare-price" class="form-control" type="text" placeholder="Unit price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
-                </div>
-                <button class="btn btn-default" type="submit">Calculate</button>
-            </form>
+                {% if medicine.products %}
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <th>Product Name</th>
+                        <th>Manufacturer</th>
+                        <th>Generic/Originator</th>
+                        <th>Average price (USD)</th>
+                        </thead>
+                        <tbody>
 
-            {% if best_procurements | length == 0 %}
-                <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
-            {% else %}
-                <table class="table table-bordered table-striped">
-                    <thead>
-                    <th>Procurement country</th>
-                    <th>Product</th>
-                    <th>Date</th>
-                    <th>Terms</th>
-                    <th>Volume</th>
-                    <th>Price</th>
-                    <th>Cost difference</th>
-                    </thead>
-                    <tbody>
-                    {% for procurement in best_procurements %}
-                        <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
-                            <td>
-                                {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
-                            </td>
-                            <td>
-                                {% if procurement.product %}
+                        {% for product in medicine.products %}
+                            {% set width = (100 * (1 - (max_avg_price - product.average_price) / max_avg_price)) | int%}
+                            <tr>
+                                <td>
                                     <strong>
-                                        <a href="/product/{{ procurement.product.product_id }}/">
-                                            {{ procurement.product.name }}
-                                        </a>
+                                            <span
+                                                    class="tooltip-enabled"
+                                                    data-toggle="tooltip"
+                                                    data-placement="right"
+                                                    title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
+                                                {{ product.name }}
+                                            </span>
                                     </strong>
-                                {% else %}
-                                    Unknown
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
-                            </td>
-                            <td>
-                                {% if procurement.incoterm %}
-                                    {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
-                                {% endif %}
-                            </td>
-                            <td>
-                                {{ procurement.quantity | add_commas }} ({{ procurement.pack_size }} {{ procurement.unit_of_measure }} {{ procurement.container }}s)
-                            </td>
-                            <td>
-                                ${{ procurement.unit_price_usd }}
-                            </td>
-                            <td>
+                                </td>
+                                <td>
+                                    {% if product.manufacturer %}
+                                        {%- if product.manufacturer.country -%}
+                                            {{ macros.render_flag(product.manufacturer.country) }}
+                                        {% endif -%}
+                                        <a class="manufacturer modal-link" onclick="show_manufacturer_modal({{ product.manufacturer.manufacturer_id }})"><strong>
+                                            {{ product.manufacturer.name }}
+                                            {%- if product.manufacturer.country -%}
+                                                , {{ product.manufacturer.country.name }}
+                                            {%- endif -%}
+                                        </strong>
+                                        </a>
+                                    {% else %}
+                                        Unknown Manufacturer
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if product.is_generic %}Generic{% else %}Originator{% endif %}
+                                </td>
+                                <td class="price-bar-container">
+                                    {% if product.average_price %}
+                                        <span class="pull-right">
+                                    ${{ product.average_price }}
+                                    </span>
+                                        <div class="price-bar" style="width: {{ width }}%;"></div>
+
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>We don't know of any products for this medicine.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane" id="cost-calculator">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2>Least expensive procurements</h2>
+
+                <form id="form-comparison" class="form form-inline" method="get" action="">
+                    <div class="form-group">
+                        <p><em>Calculate cost difference:</em></p>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="compare-quantity">Quantity</label>
+                        <input name="compare-quantity" class="form-control" type="text" placeholder="Quantity" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="compare-price">Price</label>
+                        <input name="compare-price" class="form-control" type="text" placeholder="Unit price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
+                    </div>
+                    <button class="btn btn-default" type="submit">Calculate</button>
+                </form>
+                {% if medicine.procurements | length == 0 %}
+                    <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+                {% else %}
+                    <p></p>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <th>Procurement country</th>
+                        <th>Product Name</th>
+                        <th>Date</th>
+                        <th>Terms</th>
+                        <th>Volume</th>
+                        <th>Price</th>
+                        <th>Cost difference</th>
+                        </thead>
+                        <tbody>
+                        {% for procurement in best_procurements %}
+                            <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
+                                <td>
+                                    {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                                </td>
+                                <td>
+                                    {% if procurement.product %}
+                                        {{ procurement.product.name }}
+                                    {% else %}
+                                        Unknown
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
+                                </td>
+                                <td>
+                                    {% if procurement.incoterm %}
+                                        {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {{ procurement.quantity | add_commas }} ({{ procurement.pack_size }} {{ procurement.unit_of_measure }} {{ procurement.container }}s)
+                                </td>
+                                <td>
+                                    ${{ procurement.unit_price_usd }}
+                                </td>
+                                <td>
                             <span>
                                 {% if procurement.cost_difference %}
                                     {% if procurement.cost_difference < 0 %}- {% endif %}
@@ -162,14 +232,17 @@
                                     N/A
                                 {% endif %}
                             </span>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+            </div>
         </div>
     </div>
+    </div>
+
 
 {% endblock %}
 
