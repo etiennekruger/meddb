@@ -87,26 +87,32 @@ def upload_csv(filename, source_name, source_date, country_code, date_from, date
             db.session.add(ingredient_obj)
             db.session.commit()
 
-        # component
+        tmp_medicine_name = ingredient_obj.name
         tmp_strength = None
         if extra_fields.get('strength'):
             tmp_strength = extra_fields['strength'].lower().replace("and", "+").replace(" ", "")
-        component_obj = Component.query.filter(Component.ingredient==ingredient_obj) \
-            .filter(Component.strength==tmp_strength).first()
-        if component_obj and component_obj.medicine.dosage_form == dosage_form_obj:
-            medicine_obj = component_obj.medicine
-        else:
-            medicine_obj = Medicine()
-            medicine_obj.dosage_form = dosage_form_obj
-            db.session.add(medicine_obj)
+        if tmp_strength:
+            tmp_medicine_name += " (" + tmp_strength + ")"
+        medicine_obj = Medicine.query.filter(Medicine.name == tmp_medicine_name).first()
 
-            component_obj = Component()
-            component_obj.ingredient = ingredient_obj
-            component_obj.strength = tmp_strength
-            component_obj.medicine = medicine_obj
-            db.session.add(component_obj)
-            medicine_obj.set_name()
-            db.session.commit()
+        if not medicine_obj:
+            # component
+            component_obj = Component.query.filter(Component.ingredient==ingredient_obj) \
+                .filter(Component.strength==tmp_strength).first()
+            if component_obj and component_obj.medicine.dosage_form == dosage_form_obj:
+                medicine_obj = component_obj.medicine
+            else:
+                medicine_obj = Medicine()
+                medicine_obj.dosage_form = dosage_form_obj
+                db.session.add(medicine_obj)
+
+                component_obj = Component()
+                component_obj.ingredient = ingredient_obj
+                component_obj.strength = tmp_strength
+                component_obj.medicine = medicine_obj
+                db.session.add(component_obj)
+                medicine_obj.set_name()
+                db.session.commit()
 
         # product
         product_obj = Product.query.filter(Product.medicine==medicine_obj) \
