@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 
-def upload_csv(filename, country_code, date_from, date_to):
+def upload_csv(filename, source_name, source_date, country_code, date_from, date_to):
 
     reader = utils.get_reader(filename)
     recs = utils.map_data(headings, reader)
@@ -87,26 +87,32 @@ def upload_csv(filename, country_code, date_from, date_to):
             db.session.add(ingredient_obj)
             db.session.commit()
 
-        # component
+        tmp_medicine_name = ingredient_obj.name
         tmp_strength = None
         if extra_fields.get('strength'):
-            tmp_strength = extra_fields['strength'].lower().replace(" ", "")
-        component_obj = Component.query.filter(Component.ingredient==ingredient_obj) \
-            .filter(Component.strength==tmp_strength).first()
-        if component_obj and component_obj.medicine.dosage_form == dosage_form_obj:
-            medicine_obj = component_obj.medicine
-        else:
-            medicine_obj = Medicine()
-            medicine_obj.dosage_form = dosage_form_obj
-            db.session.add(medicine_obj)
-            db.session.commit()
+            tmp_strength = extra_fields['strength'].lower().replace("and", "+").replace(" ", "")
+        if tmp_strength:
+            tmp_medicine_name += " (" + tmp_strength + ")"
+        medicine_obj = Medicine.query.filter(Medicine.name == tmp_medicine_name).first()
 
-            component_obj = Component()
-            component_obj.ingredient = ingredient_obj
-            component_obj.strength = tmp_strength
-            component_obj.medicine = medicine_obj
-            db.session.add(component_obj)
-            db.session.commit()
+        if not medicine_obj:
+            # component
+            component_obj = Component.query.filter(Component.ingredient==ingredient_obj) \
+                .filter(Component.strength==tmp_strength).first()
+            if component_obj and component_obj.medicine.dosage_form == dosage_form_obj:
+                medicine_obj = component_obj.medicine
+            else:
+                medicine_obj = Medicine()
+                medicine_obj.dosage_form = dosage_form_obj
+                db.session.add(medicine_obj)
+
+                component_obj = Component()
+                component_obj.ingredient = ingredient_obj
+                component_obj.strength = tmp_strength
+                component_obj.medicine = medicine_obj
+                db.session.add(component_obj)
+                medicine_obj.set_name()
+                db.session.commit()
 
         # product
         product_obj = Product.query.filter(Product.medicine==medicine_obj) \
@@ -120,41 +126,44 @@ def upload_csv(filename, country_code, date_from, date_to):
             db.session.commit()
 
         # container
-        tmp_type = None
+        tmp_container_type = None
         if rec["Unit of Measure"] in ['ampoule', 'syringe', 'item', 'vial',]:
-            tmp_type = rec["Unit of Measure"]
+            tmp_container_type = rec["Unit of Measure"]
         elif rec["Unit of Measure"] in ['cap/tab',]:
-            tmp_type = "pack/tin"
+            tmp_container_type = "pack/tin"
         tmp_unit = rec["Unit of Measure"]
-        tmp_quantity = rec["Pack size"]
-        container_obj = Container.query.filter(Container.type==tmp_type) \
-            .filter(Container.unit==tmp_unit) \
-            .filter(Container.quantity==tmp_quantity).first()
-        if not container_obj:
-            container_obj = Container()
-            container_obj.type = tmp_type
-            container_obj.unit = tmp_unit
-            container_obj.quantity = tmp_quantity
-            db.session.add(container_obj)
-            db.session.commit()
+        tmp_pack_size = rec["Pack size"]
 
+        # incoterm
         incoterm_obj = Incoterm.query.filter(Incoterm.code==rec["Incoterm"]).first()
+
+        # source
+        source_obj = Source.query.filter(Source.name==source_name).first()
+        if not source_obj:
+            source_obj = Source()
+            source_obj.name = source_name
+            source_obj.date = datetime.strptime(source_date, "%Y-%m-%d")
+            db.session.add(source_obj)
+            db.session.commit()
 
         # procurement
         procurement_obj = Procurement()
+        procurement_obj.source = source_obj
         procurement_obj.product = product_obj
         product_obj.added_by = user
         procurement_obj.approved_by = admin_user
-        procurement_obj.price = rec["Quoted Pack Price"]
-        procurement_obj.price_usd = rec["Quoted Pack Price"]
-        procurement_obj.pack_size = 1
-        procurement_obj.container = container_obj
-        procurement_obj.volume = rec["Qty"]
+        procurement_obj.pack_price = rec["Quoted Pack Price"]
+        procurement_obj.pack_price_usd = rec["Quoted Pack Price"]
+        procurement_obj.pack_size = tmp_pack_size
+        procurement_obj.unit_price_usd = float(procurement_obj.pack_price_usd)/tmp_pack_size
+        procurement_obj.container = tmp_container_type
+        procurement_obj.unit_of_measure = tmp_unit
+        procurement_obj.quantity = rec["Qty"]
         procurement_obj.currency = USD
         procurement_obj.incoterm = incoterm_obj
         procurement_obj.country = procurement_country
         procurement_obj.added_on = datetime.strptime("2014-06-23", "%Y-%m-%d")
-        procurement_obj.approved_on = datetime.strptime("2014-06-23", "%Y-%m-%d")
+        procurement_obj.approved = True
         procurement_obj.start_date = date_from
         procurement_obj.end_date = date_to
         db.session.add(procurement_obj)
@@ -172,8 +181,8 @@ if __name__ == "__main__":
 
     date_from = datetime.strptime("2012-08-01", "%Y-%m-%d")
     date_to = datetime.strptime("2014-08-31", "%Y-%m-%d")
-    upload_csv('comparison_zambia.csv', 'ZMB', date_from, date_to)
+    upload_csv('comparison_zambia.csv', 'Zambia - Framework contract extension, 2012 to 2014', "2014-06-12", 'ZMB', date_from, date_to)
 
     date_from = datetime.strptime("2013-01-01", "%Y-%m-%d")
     date_to = datetime.strptime("2014-12-31", "%Y-%m-%d")
-    upload_csv('comparison_tanzania.csv', 'TZA', date_from, date_to)
+    upload_csv('comparison_tanzania.csv', 'Tanzania - TENDER 30 ILS 59 ITEMS 15.07.2013', "2014-06-09", 'TZA', date_from, date_to)

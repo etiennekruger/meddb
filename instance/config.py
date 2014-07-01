@@ -9,7 +9,8 @@ LOGGER_NAME = "med-db-logger"  # make sure this is not the same as the name of t
 DEBUG = True
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:////Users/petrus/Desktop/code4sa/med-db/instance/med-db.db'
+# SQLALCHEMY_ECHO = True
 
-RESULTS_PER_PAGE = 50
+RESULTS_PER_PAGE = 100
 
 ADMIN_USER = "admin@code4sa.org"

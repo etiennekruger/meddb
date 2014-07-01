@@ -14,6 +14,16 @@ HOST = app.config['HOST']
 def inject_paths():
     return dict(HOST=HOST)
 
+@app.template_filter('add_commas')
+def jinja2_filter_add_commas(quantity):
+    out = ""
+    quantity_str = str(quantity)
+    while len(quantity_str) > 3:
+        tmp = quantity_str[-3::]
+        out = "," + tmp + out
+        quantity_str = quantity_str[0:-3]
+    return quantity_str + out
+
 
 country_choices = [
     ("BWA", "Botswana"),
@@ -61,12 +71,18 @@ class MyModelView(ModelView):
     can_create = True
     can_edit = True
     can_delete = True
-    page_size = 50
+    page_size = app.config['RESULTS_PER_PAGE']
     list_template = "admin/custom_list_template.html"
     column_exclude_list = []
 
     def is_accessible(self):
         return login.current_user.is_authenticated()
+
+
+class MyRestrictedModelView(MyModelView):
+
+    def is_accessible(self):
+        return login.current_user.is_authenticated() and login.current_user.is_admin
 
 
 class UserView(MyModelView):
@@ -82,66 +98,73 @@ class UserView(MyModelView):
 class ProcurementView(MyModelView):
     column_list = [
         'country',
-        'product',
-        'supplier',
-        'price_usd',
-        'volume',
+        'medicine',
         'pack_size',
-        'start_date',
-        'end_date',
+        'unit_of_measure',
         'container',
-        'approved_by',
+        'pack_price_usd',
+        'quantity',
+        'supplier',
+        'manufacturer',
+        'date',
+        'source',
         'approved'
     ]
     form_excluded_columns = [
         'country',
         'approved_by',
-        'approved_on',
         'added_by',
         'added_on',
         ]
     column_formatters = dict(
+        country=macro('render_country'),
+        medicine=macro('render_procurement_medicine'),
+        manufacturer=macro('render_procurement_manufacturer'),
+        pack_price_usd=macro('render_price'),
+        start_date=macro('render_date'),
+        quantity=macro('render_quantity'),
+        date=macro('render_procurement_date'),
         approved=macro('render_approve'),
     )
+    column_sortable_list = [
+        ('country', models.Country.name),
+        ('medicine', models.Medicine.name),
+        ('pack_size', models.Procurement.pack_size),
+        ('unit_of_measure', models.Procurement.unit_of_measure),
+        ('container', models.Procurement.container),
+        ('pack_price_usd', models.Procurement.pack_price_usd),
+        ('quantity', models.Procurement.quantity),
+        ('source', models.Source.name),
+        ('approved', models.Procurement.approved),
+        ('supplier', models.Supplier.name),
+        ]
 
     def on_model_change(self, form, model, is_created):
         if is_created:
             model.country_id = login.current_user.country.country_id if login.current_user.country else None
             model.added_by = login.current_user
 
+    def get_list(self, page, sort_column, sort_desc, search, filters, execute=True):
+        # Todo: add some custom logic here?
+        count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
+        query = query.all()
+        return count, query
 
-class MedicineView(MyModelView):
+
+class MedicineView(MyRestrictedModelView):
     column_list = [
         'name',
         'dosage_form',
     ]
-    column_sortable_list = ['name', 'dosage_form', ]
+    column_sortable_list = [
+        ('name', models.Medicine.name),
+        ('dosage_form', models.DosageForm.name),
+        ]
     form_excluded_columns = [
         'benchmarks',
         'products',
         'added_by',
         ]
-
-    def after_model_change(self, form, model, is_created):
-        if is_created:
-            model.added_by = login.current_user
-
-
-class BenchmarkView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class ProductView(MyModelView):
-    column_exclude_list = [
-        'added_by',
-        ]
-    form_excluded_columns = [
-        'added_by',
-        ]
-
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
 
     def after_model_change(self, form, model, is_created):
         if is_created:
@@ -155,33 +178,10 @@ class ManufacturerView(MyModelView):
     form_excluded_columns = [
         'added_by',
         ]
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
 
     def after_model_change(self, form, model, is_created):
         if is_created:
             model.added_by = login.current_user
-
-
-class SiteView(MyModelView):
-    # inline_models = (models.Manufacturer,)
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class ContainerView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class IngredientView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class ComponentView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
 
 
 # Customized index view that handles login & registration
@@ -263,17 +263,17 @@ init_login()
 admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'))
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
-admin.add_view(BenchmarkView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
 
-admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Product Records'))
-admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Product Records'))
-admin.add_view(SiteView(models.Site, db.session, name="Site", endpoint='site', category='Product Records'))
-admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine', category='Product Records'))
-admin.add_view(ContainerView(models.Container, db.session, name="Container", endpoint='container', category='Product Records'))
+admin.add_view(MyRestrictedModelView(models.DosageForm, db.session, name="Dosage Forms", endpoint='dosage_form', category='Medicines'))
+admin.add_view(MyRestrictedModelView(models.Ingredient, db.session, name="Medicine Components", endpoint='ingredient', category='Medicines'))
+admin.add_view(MedicineView(models.Medicine, db.session, name="Available Medicines", endpoint='medicine', category='Medicines'))
+admin.add_view(MyRestrictedModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
 
-admin.add_view(IngredientView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient', category='Product Records'))
-admin.add_view(ComponentView(models.Component, db.session, name="Component", endpoint='component', category='Product Records'))
+admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterms", endpoint='incoterm', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableUnits, db.session, name="Units of Measure", endpoint='units', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 
-admin.add_view(MyModelView(models.Source, db.session, name="Source of info", endpoint='source', category='Procurement Records'))
-admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Procurement Records'))
-admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement', category='Procurement Records'))
+admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer'))
+admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))

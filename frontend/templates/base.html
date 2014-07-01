@@ -23,9 +23,7 @@
 
         <ul class="nav navbar-nav">
             <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
-            <li class="{% if active_nav_button == "medicine" %}active{% else %}disabled{% endif %}"><a href="/">Medicine</a></li>
-            <li class="{% if active_nav_button == "product" %}active{% else %}disabled{% endif %}"><a href="/">Product</a></li>
-            <li class="{% if active_nav_button == "supplier" %}active{% else %}disabled{% endif %}"><a href="/">Supplier</a></li>
+            <li class="{% if active_nav_button == "medicines" %}active{% else %}disabled{% endif %}"><a href="/">Medicines</a></li>
             <li><a href="/admin/">Admin</a></li>
         </ul>
 
@@ -34,8 +32,8 @@
                 <div id="search-form-container" class="pull-right">
                     <div class="form-group" style="display:inline;">
                         <div class="input-group">
-                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
                             <input id="search-box" class="form-control" name="search" placeholder="Search Here" autocomplete="off" autofocus="autofocus" type="text">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
                         </div>
                     </div>
                 </div>
@@ -44,13 +42,13 @@
     </div>
 </nav>
 
-{% block page_header %}
+<div id="jumbo">
     <div id="message-container" class="container">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
                     <div class="flashed_msg">
-                        <div class="alert alert-{{ category }} alert-dismissable">
+                        <div class="alert alert-{{ category }} alert-dismissable fade in">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                             <strong>{{ category | title }}: </strong> {{ message }}
                         </div>
@@ -59,7 +57,9 @@
             {% endif %}
         {% endwith %}
     </div>
-{% endblock %}
+    {% block page_header %}
+    {% endblock %}
+</div>
 
 <div id="page-container" class="container">
     {% block page %}
@@ -77,49 +77,40 @@
     </div>
 {% endblock %}
 
+{% block modal %}
+    <div class="modal fade" id="page-modal" tabindex="-1" role="dialog" aria-labelledby="page-modal-title" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="page-modal-title">Modal title</h4>
+                </div>
+                <div class="modal-body" id="page-modal-body">
+                    ...
+                </div>
+                <div class="modal-footer" id="page-modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
 </body>
 <script src="/static/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
-<script src="/static/bootstrap3-typeahead.js"></script>
+{#<script src="/static/bootstrap3-typeahead.js"></script>#}
+<script src="/static/typeahead.jquery.js"></script>
+<script src="/static/med-db.js"></script>
 
-<script>
-    $(document).ready(function(){
-        $(".tooltip-enabled").tooltip();
+<script type="application/javascript">
+    var API_HOST = "{{ API_HOST }}";
 
-        $("#search-box").typeahead({
-            minLength: 1,
-            source:function(query, process){
-                medicines = [];
-                map = {};
-                $.get('{{ API_HOST }}autocomplete/' + query + '/', function(data){
-                    for (var i = 0; i < data.length; i++)
-                    {
-                        var key = data[i].name;
-                        if (key)
-                            medicines.push(key)
-                        map[key] = data[i]
-                    }
-                    process(medicines);
-                },'json');
-            },
-            updater: function (item) {
-                window.location = '/medicine/' + map[item].medicine_id.toString() + '/';
-                return item;
-            },
-            matcher: function (item) {
-                // matching's done on the backend
-                return true
-            }
-        });
-        $("#search-box").focus()
 
-    });
 </script>
 
 {% block javascript %}
-    <script type="application/javascript">
-        $(".tooltip-enabled").tooltip({});
-    </script>
+
 {% endblock %}
 
 <!-- Google Analytics tracking code -->
