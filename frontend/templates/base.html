@@ -100,45 +100,14 @@
 <script src="/static/jquery-1.11.1.min.js" type="text/javascript"></script>
 <script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
 <script src="/static/bootstrap3-typeahead.js"></script>
+<script src="/static/med-db.js"></script>
 
-<script>
-    $(document).ready(function(){
-        $(".tooltip-enabled").tooltip();
-
-        $("#search-box").typeahead({
-            minLength: 1,
-            source:function(query, process){
-                medicines = [];
-                map = {};
-                $.get('{{ API_HOST }}autocomplete/' + query + '/', function(data){
-                    for (var i = 0; i < data.length; i++)
-                    {
-                        var key = data[i].name;
-                        if (key)
-                            medicines.push(key)
-                        map[key] = data[i]
-                    }
-                    process(medicines);
-                },'json');
-            },
-            updater: function (item) {
-                window.location = '/medicine/' + map[item].medicine_id.toString() + '/';
-                return item;
-            },
-            matcher: function (item) {
-                // matching's done on the backend
-                return true
-            }
-        });
-        $("#search-box").focus()
-
-    });
+<script type="application/javascript">
+    var API_HOST = "{{ API_HOST }}";
 </script>
 
 {% block javascript %}
-    <script type="application/javascript">
-        $(".tooltip-enabled").tooltip({});
-    </script>
+
 {% endblock %}
 
 <!-- Google Analytics tracking code -->
