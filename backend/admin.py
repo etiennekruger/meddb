@@ -184,6 +184,26 @@ class ManufacturerView(MyModelView):
             model.added_by = login.current_user
 
 
+class SupplierView(MyModelView):
+    column_list = [
+        'name',
+        'street_address',
+        'website',
+        'contact',
+    ]
+    column_sortable_list = [
+        ('name', models.Supplier.name),
+        ('contact', models.Supplier.contact),
+        ('street_address', models.Supplier.street_address),
+        ('website', models.Supplier.website),
+        ]
+    form_excluded_columns = [
+        'added_by',
+        'authorized',
+        'procurements',
+        ]
+
+
 # Customized index view that handles login & registration
 class HomeView(AdminIndexView):
 
@@ -275,5 +295,5 @@ admin.add_view(MyRestrictedModelView(models.AvailableUnits, db.session, name="Un
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer'))
-admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
+admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
 admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
