@@ -46,7 +46,7 @@
                     <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
                 {% else %}
                     <p></p>
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped table-hover">
                         <thead>
                         <th>Procurement country</th>
                         <th>Product Name</th>
@@ -58,7 +58,7 @@
                         <tbody>
                         {% for procurement in medicine.procurements %}
                             {% set width = (100 * (1 - (max_price - procurement.unit_price_usd) / max_price)) | int%}
-                            <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
+                            <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
                                 <td>
                                     {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                                 </td>
@@ -198,7 +198,7 @@
                         </thead>
                         <tbody>
                         {% for procurement in best_procurements %}
-                            <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.id }}">
+                            <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
                                 <td>
                                     {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                                 </td>
@@ -250,7 +250,11 @@
     {{ super() }}
     <script>
         $(document).ready(function(){
-
+            $(".procurement-entry").on('click', function(){
+                tmp = this
+                var procurement_id = $(this).attr('data-procurement-id');
+                window.location = '/procurement/' + procurement_id + '/';
+            })
         });
     </script>
 {% endblock %}

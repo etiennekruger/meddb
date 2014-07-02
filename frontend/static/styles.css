@@ -79,6 +79,10 @@ body{
     line-height: 1.33;
 }
 
+.clickable:hover{
+    cursor: pointer;
+}
+
 .price-bar-container{
     padding-right: 60px!important;
     min-width: 300px;
