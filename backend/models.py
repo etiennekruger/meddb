@@ -407,8 +407,8 @@ class Procurement(db.Model):
     approved_by = db.relationship('User', foreign_keys=approved_by_id, backref='procurements_approved')
 
     def __unicode__(self):
-        if self.volume:
-            return u'%d x %s' % (self.volume, self.product.__unicode__())
+        if self.quantity:
+            return u'%d x %s' % (self.quantity, self.product.__unicode__())
         return u'unknown quantity x %s' % (self.product.__unicode__())
 
     def to_dict(self, include_related=False):
