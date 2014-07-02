@@ -90,7 +90,7 @@ def upload_csv(filename, source_name, source_date, country_code, date_from, date
         tmp_medicine_name = ingredient_obj.name
         tmp_strength = None
         if extra_fields.get('strength'):
-            tmp_strength = extra_fields['strength'].lower().replace("and", "+").replace(" ", "")
+            tmp_strength = extra_fields['strength'].lower().replace("and", "+").replace(" ", "").replace('miu', 'MIU').replace('iu', "IU")
         if tmp_strength:
             tmp_medicine_name += " (" + tmp_strength + ")"
         medicine_obj = Medicine.query.filter(Medicine.name == tmp_medicine_name).first()

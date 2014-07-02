@@ -207,7 +207,7 @@ for medicine in medicines:
 
             component_obj = models.Component()
             component_obj.ingredient = ingredient_obj
-            tmp_strength = component["strength"]
+            tmp_strength = component["strength"].replace(" ", "")
             if tmp_strength:
                 tmp_strength = tmp_strength.replace('miu', 'MIU').replace('iu', "IU")
             if tmp_strength == "n/a":
