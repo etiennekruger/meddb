@@ -100,19 +100,19 @@ function show_manufacturer_modal(manufacturer_id)
     })
 }
 
+function medicine_matcher(){
+    return function findMatches(query, callback) {
+        medicines = [];
+        $.get(API_HOST + 'autocomplete/' + query + '/', function(data){
+            callback(data);
+        },'json');
+    };
+}
+
 $(document).ready(function(){
 
     // enable tooltips
     $(".tooltip-enabled").tooltip({});
-
-    function medicine_matcher(){
-        return function findMatches(query, callback) {
-            medicines = [];
-            $.get(API_HOST + 'autocomplete/' + query + '/', function(data){
-                callback(data);
-            },'json');
-        };
-    }
 
     // handle search
     $("#search-box").typeahead({
