@@ -4,6 +4,7 @@ from flask import Flask, flash, redirect, url_for, request, render_template
 from flask.ext.admin import Admin, expose, AdminIndexView, helpers
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
+from flask.ext.admin.contrib.sqla.filters import FilterEqual
 from flask.ext import login
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
@@ -32,7 +33,7 @@ country_choices = [
     ("ZAF", "South Africa"),
     ("TZA", "Tanzania"),
     ("ZMB", "Zambia"),
-]
+    ]
 
 # Define login and registration forms (for flask-login)
 class LoginForm(form.Form):
@@ -116,6 +117,7 @@ class ProcurementView(MyModelView):
         'added_by',
         'added_on',
         ]
+
     column_formatters = dict(
         country=macro('render_country'),
         medicine=macro('render_procurement_medicine'),
@@ -125,7 +127,7 @@ class ProcurementView(MyModelView):
         quantity=macro('render_quantity'),
         date=macro('render_procurement_date'),
         approved=macro('render_approve'),
-    )
+        )
     column_sortable_list = [
         ('country', models.Country.name),
         ('medicine', models.Medicine.name),
@@ -155,7 +157,7 @@ class MedicineView(MyRestrictedModelView):
     column_list = [
         'name',
         'dosage_form',
-    ]
+        ]
     column_sortable_list = [
         ('name', models.Medicine.name),
         ('dosage_form', models.DosageForm.name),
@@ -178,6 +180,15 @@ class ManufacturerView(MyModelView):
     form_excluded_columns = [
         'added_by',
         ]
+    column_sortable_list = [
+        ('country', models.Country.name),
+        ]
+    column_searchable_list = [
+        'name',
+        ]
+    column_formatters = dict(
+        country=macro('render_country'),
+        )
 
     def after_model_change(self, form, model, is_created):
         if is_created:
@@ -190,7 +201,7 @@ class SupplierView(MyModelView):
         'street_address',
         'website',
         'contact',
-    ]
+        ]
     column_sortable_list = [
         ('name', models.Supplier.name),
         ('contact', models.Supplier.contact),
@@ -201,6 +212,12 @@ class SupplierView(MyModelView):
         'added_by',
         'authorized',
         'procurements',
+        ]
+    column_searchable_list = [
+        'name',
+        'street_address',
+        'website',
+        'contact',
         ]
 
 
