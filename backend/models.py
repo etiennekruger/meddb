@@ -289,11 +289,11 @@ class Supplier(db.Model):
 class Product(db.Model):
 
     __tablename__ = "product"
-    __table_args__ = (db.UniqueConstraint('name', 'medicine_id', 'manufacturer_id', 'site_id', name='product_name_medicine_manufacturer_site'), {})
+    __table_args__ = (db.UniqueConstraint('description', 'medicine_id', 'manufacturer_id', 'site_id', name='product_name_medicine_manufacturer_site'), {})
 
     product_id = db.Column(db.Integer, primary_key=True)
     average_price = db.Column(db.Float, nullable=True)
-    name = db.Column(db.String(64), nullable=True)
+    description = db.Column(db.String(64), nullable=True)
     is_generic = db.Column(db.Boolean, default=True)
     shelf_life = db.Column(db.String, nullable=True)
 
@@ -332,8 +332,8 @@ class Product(db.Model):
         return out
 
     def __unicode__(self):
-        if self.name:
-            return u'%s (%s), %s' % (self.name, self.medicine, self.manufacturer)
+        if self.description:
+            return u'%s (%s), %s' % (self.medicine, self.description, self.manufacturer)
         return u'%s, %s' % (self.medicine, self.manufacturer)
 
     def to_dict(self, include_related=False):
@@ -358,7 +358,7 @@ class Registration(db.Model):
     source = db.relationship('Source')
 
     def __unicode__(self):
-        return u'%s - %s (%s)' % (self.number, self.product.name, self.country.code)
+        return u'%s - %s (%s)' % (self.number, self.product.medicine, self.country.code)
 
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)

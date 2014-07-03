@@ -71,8 +71,8 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {% if procurement.product.name %}
-                                        {{ procurement.product.name }}
+                                    {% if procurement.product.description %}
+                                        {{ procurement.product.description }}
                                     {% else %}
                                         <span class="text-muted">Unknown</span>
                                     {% endif %}
@@ -111,7 +111,8 @@
                 {% if medicine.products %}
                     <table class="table table-bordered table-striped">
                         <thead>
-                        <th>Product Name</th>
+                        <th>Generic Name</th>
+                        <th>Description/Brand</th>
                         <th>Manufacturer</th>
                         <th>Generic/Originator</th>
                         <th>Average price (USD)</th>
@@ -128,8 +129,13 @@
                                                     data-toggle="tooltip"
                                                     data-placement="right"
                                                     title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
-                                                {{ product.name }}
+                                                {{ medicine.name }}
                                             </span>
+                                    </strong>
+                                </td>
+                            <td>
+                                    <strong>
+                                           {% if product.description %}{{ product.description }}{% endif %}
                                     </strong>
                                 </td>
                                 <td>
@@ -197,7 +203,8 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                         <th>Procurement country</th>
-                        <th>Product Name</th>
+                        <th>Generic Name</th>
+                        <th>Description/Brand</th>
                         <th>Date</th>
                         <th>Terms</th>
                         <th>Volume</th>
@@ -211,8 +218,15 @@
                                     {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                                 </td>
                                 <td>
-                                    {% if procurement.product.name %}
-                                        {{ procurement.product.name }}
+                                    {% if procurement.product.medicine %}
+                                        {{ procurement.product.medicine.name }}
+                                    {% else %}
+                                        <span class="text-muted">Unknown</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if procurement.product.description %}
+                                        {{ procurement.product.description }}
                                     {% else %}
                                         <span class="text-muted">Unknown</span>
                                     {% endif %}

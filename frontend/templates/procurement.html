@@ -48,8 +48,8 @@
                 <tr>
                     <th>Description/Brand</th>
                     <td>
-                        {% if procurement.product.name %}
-                            {{ procurement.product.name }}
+                        {% if procurement.product.description %}
+                            {{ procurement.product.description }}
                         {% else %}
                             <span class="text-muted">Unknown</span>
                         {% endif %}
@@ -162,9 +162,9 @@
                         <th>Email</th>
                         <td>
                             {% if supplier.email %}
-                                <a href="mailto:{{ supplier.email }}?subject=Medicine pricing enquiry - {{ procurement.product.name }}" target="_blank">{{ supplier.email }}</a>
+                                <a href="mailto:{{ supplier.email }}?subject=Medicine pricing enquiry - {{ procurement.product.medicine.name }}" target="_blank">{{ supplier.email }}</a>
                                 {% if supplier.alt_email %}
-                                    , <a href="mailto:{{ supplier.alt_email }}?subject=Medicine pricing enquiry - {{ procurement.product.name }}" target="_blank">{{ supplier.alt_email }}</a>
+                                    , <a href="mailto:{{ supplier.alt_email }}?subject=Medicine pricing enquiry - {{ procurement.product.medicine.name }}" target="_blank">{{ supplier.alt_email }}</a>
                                 {% endif %}
                             {% else %}
                                 <span class="text-muted">Unknown</span>

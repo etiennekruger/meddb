@@ -325,14 +325,14 @@ for medicine in medicines:
         tmp_name = procurement["product"]["name"]
         if tmp_name == "":
             tmp_name = None
-        product_obj = models.Product.query.filter(models.Product.name==maps.map_product_name(tmp_name)) \
+        product_obj = models.Product.query.filter(models.Product.description==maps.map_product_name(tmp_name)) \
             .filter(models.Product.medicine==medicine_obj) \
             .filter(models.Product.manufacturer==manufacturer_obj) \
             .filter(models.Product.site==site_obj) \
             .first()
         if product_obj is None:
             product_obj = models.Product()
-            product_obj.name = maps.map_product_name(tmp_name)
+            product_obj.description = maps.map_product_name(tmp_name)
             product_obj.medicine = medicine_obj
             product_obj.manufacturer = manufacturer_obj
             product_obj.site = site_obj
