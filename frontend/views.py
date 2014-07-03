@@ -118,3 +118,8 @@ def procurement(procurement_id):
 @app.route('/admin/')
 def admin_redirect():
     return redirect(API_HOST + "admin/")
+
+
+@app.route('/meddb/')
+def legacy_redirect():
+    return redirect("/", 301)
