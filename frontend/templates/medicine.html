@@ -49,7 +49,8 @@
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                         <th>Procurement country</th>
-                        <th>Product Name</th>
+                        <th>Generic Name</th>
+                        <th>Description/Brand</th>
                         <th>Date</th>
                         <th>Terms</th>
                         <th>Volume</th>
@@ -63,10 +64,17 @@
                                     {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                                 </td>
                                 <td>
-                                    {% if procurement.product %}
+                                    {% if procurement.product.medicine %}
+                                        {{ procurement.product.medicine.name }}
+                                    {% else %}
+                                        <span class="text-muted">Unknown</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if procurement.product.name %}
                                         {{ procurement.product.name }}
                                     {% else %}
-                                        Unknown
+                                        <span class="text-muted">Unknown</span>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -137,7 +145,7 @@
                                         </strong>
                                         </a>
                                     {% else %}
-                                        Unknown Manufacturer
+                                        <span class="text-muted">Unknown</span>
                                     {% endif %}
                                 </td>
                                 <td>
@@ -203,10 +211,10 @@
                                     {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                                 </td>
                                 <td>
-                                    {% if procurement.product %}
+                                    {% if procurement.product.name %}
                                         {{ procurement.product.name }}
                                     {% else %}
-                                        Unknown
+                                        <span class="text-muted">Unknown</span>
                                     {% endif %}
                                 </td>
                                 <td>

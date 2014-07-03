@@ -320,12 +320,6 @@ class Product(db.Model):
             self.average_price = sum/tot
         return
 
-    def get_name(self):
-        if self.name:
-            tmp = self.name
-        else:
-            tmp = self.medicine.name
-        return tmp
 
     @property
     def alternative_products(self):

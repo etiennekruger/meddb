@@ -40,12 +40,18 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Product Name</th>
+                    <th>Generic Name</th>
                     <td>
-                        {% if procurement.product %}
+                        {{ procurement.product.medicine.name }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Description/Brand</th>
+                    <td>
+                        {% if procurement.product.name %}
                             {{ procurement.product.name }}
                         {% else %}
-                            Unknown
+                            <span class="text-muted">Unknown</span>
                         {% endif %}
                     </td>
                 </tr>

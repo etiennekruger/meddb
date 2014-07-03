@@ -101,8 +101,6 @@ def component_to_dict(obj, include_related=False):
 def product_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
-    # product name
-    tmp_dict['name'] = obj.get_name()
     # resource URI
     tmp_dict['URI'] = API_HOST + 'product/' + str(obj.product_id) + '/'
     # average price, as calculated from procurement info
