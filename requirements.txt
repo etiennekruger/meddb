@@ -1,3 +1,4 @@
+fabric
 python-dateutil
 Flask==0.10.1
 SQLAlchemy==0.9.6

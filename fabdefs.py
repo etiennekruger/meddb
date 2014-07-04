@@ -9,7 +9,7 @@ def production():
     env.host_string = '83.143.26.51'
     env.user = 'ubuntu'
     env.project_dir = '/var/www/med-db'
-    env.config_dir = 'config/staging'
+    env.config_dir = 'config/production'
     env.activate = 'source %s/env/bin/activate' % env.project_dir
     print("PRODUCTION ENVIRONMENT\n")
     return
