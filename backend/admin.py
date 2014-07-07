@@ -246,7 +246,7 @@ class HomeView(AdminIndexView):
             user = form.get_user()
             if user:
                 if not user.is_active():
-                    flash('Your account has not been activated. Please contact the site administrator.' , 'error')
+                    flash('Your account has not been activated. Please contact the site administrator.', 'error')
                     return redirect(url_for('.login_view'))
                 else:
                     login.login_user(user)

@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, request
 from frontend import app, logger
 import requests
 import operator
-import dateutil
+import dateutil.parser
 import datetime
 
 API_HOST = app.config['API_HOST']

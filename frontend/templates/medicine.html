@@ -78,7 +78,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
+                                    {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
                                 </td>
                                 <td>
                                     {% if procurement.incoterm %}
@@ -232,7 +232,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ procurement.start_date }} {% if procurement.start_date != procurement.end_date %}to {{ procurement.end_date }}{% endif %}
+                                {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
                                 </td>
                                 <td>
                                     {% if procurement.incoterm %}

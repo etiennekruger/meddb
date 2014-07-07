@@ -1,3 +1,16 @@
+{% macro with_errors(field) %}
+    <div class="form_field">
+    {% if field.errors %}
+        {% set css_class = 'has_error ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <ul class="errors">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+    {% else %}
+        {{ field(**kwargs) }}
+    {% endif %}
+    </div>
+{% endmacro %}
+
+
 {% macro render_date_range(start_date, end_date) -%}
     {% if start_date | format_date == end_date | format_date %}
         <nobr>{{ start_date | format_date }}</nobr>
@@ -6,43 +19,7 @@
     {% endif %}
 {%- endmacro %}
 
+
 {% macro render_flag(country) -%}
     <span class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}"></span>
-{%- endmacro %}
-
-{% macro render_medicine_strength(medicine) -%}
-    {% for ingredient in medicine.ingredients %}
-        {% if loop.index > 1 %} + {% endif %}
-        {{ ingredient.strength }}
-    {% endfor %}
-{%- endmacro %}
-
-{% macro render_supplier(supplier) -%}
-    <strong>{{ supplier.name }}</strong>
-{%- endmacro %}
-
-{% macro render_pack_size(container, packsize=1) -%}
-    {% if not packsize == 1 %}{{ packsize }} x {% endif %}{{ container.quantity | round | int }} {{ container.unit }} {{ container.type }}
-{%- endmacro %}
-
-{% macro render_url(url) -%}
-    <a href="{{ url }}" target="_blank">{{ url }}</a>
-{%- endmacro %}
-
-{% macro render_incoterm(incoterm) -%}
-    <span class="tooltip-enabled" title="{{ incoterm.description }}" data-toggle="tooltip">
-       {{ incoterm.name }}
-    </span>
-{%- endmacro %}
-
-{% macro render_source(source) -%}
-    {% if source %}
-        {% if source.url %}<a href="{{ source.url }}">{{ source.name }}</a>
-        {% else %}
-            {{ source.name }}
-        {% endif %}
-        <span class="label label-default pull-right">{{ source.date }}</span>
-    {% else %}
-        N/A
-    {% endif %}
 {%- endmacro %}
