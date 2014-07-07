@@ -3,6 +3,7 @@ body{
 }
 
 #page-container{
+    min-height: 450px;
 }
 
 #jumbo{

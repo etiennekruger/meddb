@@ -1,9 +1,9 @@
-from flask import render_template, flash, redirect, request
+from flask import render_template, flash, redirect, request, url_for
 from frontend import app, logger
 import requests
 import operator
 import dateutil.parser
-import datetime
+import forms
 
 API_HOST = app.config['API_HOST']
 
@@ -113,6 +113,30 @@ def procurement(procurement_id):
         API_HOST=API_HOST,
         procurement=procurement,
         active_nav_button="procurement"
+    )
+
+@app.route('/login/', methods=['GET', 'POST'])
+def login():
+
+    login_form = forms.LoginForm(request.form)
+    if request.method == 'POST' and login_form.validate():
+        # TODO: login via API
+        return redirect(url_for('landing'))
+    return render_template(
+        'login.html',
+        form=login_form
+    )
+
+@app.route('/register/', methods=['GET', 'POST'])
+def register():
+
+    register_form = forms.RegistrationForm(request.form)
+    if request.method == 'POST' and register_form.validate():
+        # TODO: register via API
+        return redirect(url_for('landing'))
+    return render_template(
+        'register.html',
+        form=register_form
     )
 
 @app.route('/admin/')
