@@ -2,7 +2,7 @@ from backend import logger, app, db
 import models
 from models import *
 import flask
-from flask import g, request, abort, redirect, url_for
+from flask import g, request, abort, redirect, url_for, session
 from functools import wraps
 import json
 import serializers
@@ -65,9 +65,15 @@ def login_required(f):
 def load_user():
 
     user = None
+    # handle authentication via Auth Header
     if request.headers.get('Authorization') and request.headers['Authorization'].split(":")[0]=="ApiKey":
         key_value = request.headers['Authorization'].split(":")[1]
         api_key = ApiKey.query.filter_by(key=key_value).first()
+        if api_key:
+            user = api_key.user
+    # handle authentication via session cookie (for admin)
+    if session and session.get('api_key'):
+        api_key = ApiKey.query.filter_by(key=session.get('api_key')).first()
         if api_key:
             user = api_key.user
     g.user = user

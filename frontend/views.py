@@ -5,21 +5,9 @@ from requests import ConnectionError
 import operator
 import dateutil.parser
 import forms
-from flask.ext.login import LoginManager
 import json
 
-
-# use flask-login
-login_manager = LoginManager()
-login_manager.init_app(app)
-
 API_HOST = app.config['API_HOST']
-
-
-@login_manager.user_loader
-def load_user(user_id):
-
-    return User.get(userid)
 
 
 @app.template_filter('format_date')

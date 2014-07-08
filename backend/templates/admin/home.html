@@ -11,7 +11,7 @@
         <hr>
         <div class="span1"></div>
         <div class="span9">
-            {% if current_user.is_authenticated() %}
+            {% if g.user != None %}
                 {#                <div class="row-fluid">#}
                 {#                    <div class="span9">#}
                 {#                        <p>#}

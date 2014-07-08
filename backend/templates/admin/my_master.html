@@ -12,13 +12,13 @@
 {% endblock %}
 
 {% block access_control %}
-    {% if current_user.is_authenticated() %}
+    {% if g.user != None %}
         <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-                <i class="icon-user"></i> {{ current_user.email }} <span class="caret"></span>
+                <i class="icon-user"></i> {{ g.user.email }} <span class="caret"></span>
             </a>
             <ul class="dropdown-menu">
-                <li><a href="{{ url_for('admin.logout_view') }}">Log out</a></li>
+{#                <li><a href="{{ url_for('admin.logout_view') }}">Log out</a></li>#}
             </ul>
         </div>
     {% endif %}
