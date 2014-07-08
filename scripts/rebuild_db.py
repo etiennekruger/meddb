@@ -4,6 +4,7 @@ import json
 from datetime import date, datetime
 import scrape_bechmarks
 import maps
+from passlib.apps import custom_app_context as pwd_context
 
 
 db.drop_all()
@@ -13,21 +14,22 @@ db.create_all()
 user_obj = models.User()
 user_obj.email = 'adi@sarpam.net'
 password = raw_input("Please enter a password:")
-user_obj.password = password
+password_hash = pwd_context.encrypt(password)
+user_obj.password_hash = password_hash
 user_obj.activated = True
 user_obj.is_admin = True
 db.session.add(user_obj)
 
 admin_user_obj = models.User()
 admin_user_obj.email = 'admin@sarpam.net'
-admin_user_obj.password = password
+admin_user_obj.password_hash = password_hash
 admin_user_obj.activated = True
 admin_user_obj.is_admin = True
 db.session.add(admin_user_obj)
 
 user2__obj = models.User()
 user2__obj.email = 'petrus@code4sa.org'
-user2__obj.password = password
+user2__obj.password_hash = password_hash
 user2__obj.activated = True
 db.session.add(user2__obj)
 

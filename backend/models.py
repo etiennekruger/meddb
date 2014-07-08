@@ -3,6 +3,32 @@ import serializers
 from sqlalchemy.orm import backref
 from sqlalchemy import UniqueConstraint
 import datetime
+from passlib.apps import custom_app_context as pwd_context
+import string
+import random
+
+
+class ApiKey(db.Model):
+
+    __tablename__ = "api_key"
+
+    api_key_id = db.Column(db.Integer, primary_key=True)
+    key = db.Column(db.String(128), unique=True, nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), unique=True, nullable=False)
+    user = db.relationship('User')
+
+    def generate_key(self):
+        self.key=''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(128))
+        return
+
+    def __unicode__(self):
+        s = u'%s' % self.key
+        return s
+
+    def to_dict(self, include_related=False):
+        return {'user_id': self.user_id, 'key': self.key}
+
 
 
 class User(db.Model):
@@ -11,27 +37,28 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(64))
+    password_hash = db.Column(db.String(128), nullable=False)
     activated = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')
 
+    def hash_password(self, password):
+        self.password_hash = pwd_context.encrypt(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password_hash)
+
     def is_active(self):
         return self.activated
 
-    def is_authenticated(self):
-        return True
-
-    def get_id(self):
-        return unicode(self.user_id)
-
-    def __repr__(self):
-        return self.email
+    def __unicode__(self):
+        s = u'%s' % self.email
+        return s
 
     def to_dict(self, include_related=False):
-        return {'user_id': self.user_id, 'email': self.email}
+        return serializers.user_to_dict(self)
 
 
 class Source(db.Model):

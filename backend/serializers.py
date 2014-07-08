@@ -215,6 +215,15 @@ def supplier_to_dict(obj, include_related=False):
     return tmp_dict
 
 
+def user_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    tmp_dict.pop('password_hash')
+    # resource URI
+    tmp_dict['URI'] = API_HOST + 'user/' + str(obj.user_id) + '/'
+    return tmp_dict
+
+
 def site_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)

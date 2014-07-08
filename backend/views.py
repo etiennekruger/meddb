@@ -1,14 +1,15 @@
 from backend import logger, app, db
 import models
+from models import *
 import flask
+from flask import request, abort, redirect, url_for
 import json
 import serializers
-from flask.ext import login
 from sqlalchemy import func, or_, distinct
 import datetime
-import events
 import cache
 from operator import itemgetter
+import re
 
 API_HOST = app.config["API_HOST"]
 
@@ -65,15 +66,15 @@ def calculate_db_overview():
     overview = {}
 
     # number of recent products & medicines
-    count_procurements, count_products, count_medicines = models.Procurement.query.join(models.Product).filter(
+    count_procurements, count_products, count_medicines = Procurement.query.join(Product).filter(
         or_(
-            models.Procurement.start_date > cutoff,
-            models.Procurement.end_date > cutoff
+            Procurement.start_date > cutoff,
+            Procurement.end_date > cutoff
         )
     ).with_entities(
-        func.count(models.Procurement.procurement_id),
-        func.count(distinct(models.Procurement.product_id)),
-        func.count(distinct(models.Product.medicine_id))
+        func.count(Procurement.procurement_id),
+        func.count(distinct(Procurement.product_id)),
+        func.count(distinct(Product.medicine_id))
     ).first()
     overview['count_procurements'] = count_procurements
     overview['count_products'] = count_products
@@ -81,20 +82,20 @@ def calculate_db_overview():
 
     # number of recent procurements logged per country
     top_sources = []
-    sources = db.session.query(models.Procurement.country_id,
-                               func.count(models.Procurement.procurement_id)) \
+    sources = db.session.query(Procurement.country_id,
+                               func.count(Procurement.procurement_id)) \
         .filter(
         or_(
-            models.Procurement.start_date > cutoff,
-            models.Procurement.end_date > cutoff
+            Procurement.start_date > cutoff,
+            Procurement.end_date > cutoff
         )
     ) \
-        .group_by(models.Procurement.country_id) \
-        .order_by(func.count(models.Procurement.procurement_id).desc()).all()
+        .group_by(Procurement.country_id) \
+        .order_by(func.count(Procurement.procurement_id).desc()).all()
 
     for country_id, count in sources[0:5]:
         print 'Country ID %d: %d' % (country_id, count)
-        country = models.Country.query.get(country_id)
+        country = Country.query.get(country_id)
         top_sources.append(
             {
                 'country': country.to_dict(),
@@ -112,7 +113,7 @@ def calculate_autocomplete():
     """
 
     logger.debug("Calculating autocomplete")
-    medicines = models.Medicine.query.order_by(models.Medicine.name).all()
+    medicines = Medicine.query.order_by(Medicine.name).all()
     out = []
     for medicine in medicines:
         out.append(medicine.to_dict())
@@ -121,6 +122,69 @@ def calculate_autocomplete():
 # -------------------------------------------------------------------
 # API endpoints:
 #
+
+@app.route('/login/', methods=['POST',])
+def login():
+
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    # find user in database
+    user = User.query.filter_by(email=email).first()
+
+    if user is not None and user.verify_password(password):
+        # find api key
+        api_key = ApiKey.query.filter_by(user_id=user.user_id).first()
+        if not api_key:
+            api_key = ApiKey(user=user)
+            db.session.add(api_key)
+        # re-generate key
+        api_key.generate_key()
+        # return user & api key details
+        db.session.commit()
+        out = user.to_dict()
+        out['api_key'] = api_key.key
+        return send_api_response(json.dumps(out))
+    else:
+        raise ApiException(400, "The email address or password is incorrect.")
+
+
+@app.route('/register/', methods=['POST',])
+def register():
+
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    # validation
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        raise ApiException(400, "Please supply a valid email address.")
+    if email is None or password is None:
+        raise ApiException(400, "Missing arguments. Specify both 'email' and 'password'.")
+    if User.query.filter_by(email=email).first() is not None:
+        raise ApiException(400, "This user already exists.")
+
+    # create new user
+    user = User(email=email)
+    user.hash_password(password)
+    db.session.add(user)
+    # create an api key for this user
+    api_key = ApiKey(user=user)
+    api_key.generate_key()
+    db.session.add(api_key)
+    db.session.commit()
+    out = user.to_dict()
+    out['api_key'] = api_key.key
+
+    return send_api_response(json.dumps(out))
+
+
+@app.route('/user/<int:user_id>/')
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        raise ApiException(404, "The specified User record doesn't exist.")
+    return send_api_response(json.dumps(user.to_dict()))
+
 
 @app.route('/overview/')
 def overview():
@@ -139,11 +203,11 @@ def overview():
 
 
 api_resources = {
-    'medicine': (models.Medicine, models.Medicine.medicine_id),
-    'product': (models.Product, models.Product.product_id),
-    'procurement': (models.Procurement, models.Procurement.procurement_id),
-    'manufacturer': (models.Manufacturer, models.Manufacturer.manufacturer_id),
-    'supplier': (models.Supplier, models.Supplier.supplier_id),
+    'medicine': (Medicine, Medicine.medicine_id),
+    'product': (Product, Product.product_id),
+    'procurement': (Procurement, Procurement.procurement_id),
+    'manufacturer': (Manufacturer, Manufacturer.manufacturer_id),
+    'supplier': (Supplier, Supplier.supplier_id),
     }
 
 @app.route('/')
@@ -231,5 +295,5 @@ def recent_updates():
     Return a list of purchases that have recently been added
     """
 
-    procurements = models.Procurement.query.order_by(models.Procurement.added_on.desc()).limit(20).all()
+    procurements = Procurement.query.order_by(Procurement.added_on.desc()).limit(20).all()
     return serializers.queryset_to_json(procurements)
