@@ -27,6 +27,29 @@
             <li><a href="/admin/">Admin</a></li>
         </ul>
 
+        {% block access_control %}
+            <div class="btn-group navbar-btn pull-right" style="padding-left: 20px;">
+
+                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+                    <i class="fa fa-user"></i>
+                    {%- if session.email %}
+                        {{ session.email }}
+                    {%- else %}
+                        Guest user
+                    {% endif -%}
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    {%- if session.email %}
+                    <li><a href="/logout/">Log out</a></li>
+                    {%- else %}
+                    <li><a href="/signup/">Signup</a></li>
+                    <li><a href="/login/">Login</a></li>
+                    {% endif -%}
+                </ul>
+            </div>
+        {% endblock %}
+
         {% block search %}
             <form class="navbar-form">
                 <div id="search-form-container" class="pull-right">

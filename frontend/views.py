@@ -134,13 +134,22 @@ def login():
         headers = {"Content-Type": "application/json"}
         response = requests.post(API_HOST + 'login/', data=data, headers=headers)
         response.raise_for_status()
-        api_key = response.json().get('api_key')
+        user_dict = response.json()
+        api_key = user_dict.get('api_key')
+        email = user_dict.get('email')
         session['api_key'] = api_key
+        session['email'] = email
         return redirect(url_for('landing'))
     return render_template(
         'login.html',
         form=login_form
     )
+
+@app.route('/logout/', methods=['GET', 'POST'])
+def logout():
+
+    session.clear()
+    return redirect(url_for('landing'))
 
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
@@ -151,8 +160,11 @@ def register():
         headers = {"Content-Type": "application/json"}
         response = requests.post(API_HOST + 'register/', data=data, headers=headers)
         response.raise_for_status()
-        api_key = response.json().get('api_key')
+        user_dict = response.json()
+        api_key = user_dict.get('api_key')
+        email = user_dict.get('email')
         session['api_key'] = api_key
+        session['email'] = email
         return redirect(url_for('landing'))
     return render_template(
         'register.html',
