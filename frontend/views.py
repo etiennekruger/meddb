@@ -37,21 +37,57 @@ def sort_list(unsorted_list, key):
     return sorted(unsorted_list, key=operator.itemgetter(key))
 
 
+class ApiException(Exception):
+    """
+    Class for handling all of our expected API errors.
+    """
+
+    def __init__(self, status_code, message):
+        Exception.__init__(self)
+        self.message = message
+        self.status_code = status_code
+
+    def to_dict(self):
+        rv = {
+            "code": self.status_code,
+            "message": self.message
+        }
+        return rv
+
+@app.errorhandler(ApiException)
+def handle_api_exception(error):
+    """
+    Error handler, used by flask to pass the error on to the user, rather than catching it and throwing a HTTP 500.
+    """
+
+    logger.debug(error)
+    flash(error.message + " (" + str(error.status_code) + ")", "danger")
+    if error.status_code == 401:
+        return redirect(url_for(login))
+    return "OK"
+
+
 def load_from_api(resource_name, resource_id=None):
 
     query_str = resource_name + "/"
     if resource_id:
         query_str += str(resource_id) + "/"
+
+    headers = {}
+    if session and session.get('api_key'):
+        headers = {'Authorization': 'ApiKey:' + session.get('api_key')}
+
     try:
-        headers = {}
-        if session and session.get('api_key'):
-            headers = {'Authorization': 'ApiKey:' + session.get('api_key')}
         response = requests.get(API_HOST + query_str, headers=headers)
+        return response.json()
+
     except ConnectionError:
-        flash('Error connecting to backend service.')
+        flash('Error connecting to backend service.', 'danger')
         pass
-    response.raise_for_status()
-    return response.json()
+
+    if response.status_code != 200:
+        raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+    return
 
 
 @app.route('/')
@@ -132,14 +168,20 @@ def login():
     if request.method == 'POST' and login_form.validate():
         data = json.dumps(request.form)
         headers = {"Content-Type": "application/json"}
-        response = requests.post(API_HOST + 'login/', data=data, headers=headers)
-        response.raise_for_status()
-        user_dict = response.json()
-        api_key = user_dict.get('api_key')
-        email = user_dict.get('email')
-        session['api_key'] = api_key
-        session['email'] = email
-        return redirect(url_for('landing'))
+        try:
+            response = requests.post(API_HOST + 'login/', data=data, headers=headers)
+            if response.status_code != 200:
+                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+            user_dict = response.json()
+            api_key = user_dict.get('api_key')
+            email = user_dict.get('email')
+            session['api_key'] = api_key
+            session['email'] = email
+            return redirect(url_for('landing'))
+        except ConnectionError:
+            flash('Error connecting to backend service.', 'danger')
+            pass
+
     return render_template(
         'login.html',
         form=login_form
@@ -158,14 +200,20 @@ def register():
     if request.method == 'POST' and register_form.validate():
         data = json.dumps(request.form)
         headers = {"Content-Type": "application/json"}
-        response = requests.post(API_HOST + 'register/', data=data, headers=headers)
-        response.raise_for_status()
-        user_dict = response.json()
-        api_key = user_dict.get('api_key')
-        email = user_dict.get('email')
-        session['api_key'] = api_key
-        session['email'] = email
-        return redirect(url_for('landing'))
+        try:
+            response = requests.post(API_HOST + 'register/', data=data, headers=headers)
+            if response.status_code != 200:
+                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+            user_dict = response.json()
+            api_key = user_dict.get('api_key')
+            email = user_dict.get('email')
+            session['api_key'] = api_key
+            session['email'] = email
+            return redirect(url_for('landing'))
+        except ConnectionError:
+            flash('Error connecting to backend service.', 'danger')
+            pass
+
     return render_template(
         'register.html',
         form=register_form

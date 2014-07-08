@@ -43,7 +43,7 @@
                     {%- if session.email %}
                     <li><a href="/logout/">Log out</a></li>
                     {%- else %}
-                    <li><a href="/signup/">Signup</a></li>
+                    <li><a href="/register/">Register</a></li>
                     <li><a href="/login/">Login</a></li>
                     {% endif -%}
                 </ul>
@@ -73,7 +73,12 @@
                     <div class="flashed_msg">
                         <div class="alert alert-{{ category }} alert-dismissable fade in">
                             <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <strong>{{ category | title }}: </strong> {{ message }}
+                            <strong>
+                                {% if category in ["success", "info"] %}
+                                    {{ category | title }}
+                                {% else %}
+                                    Error
+                                {% endif %}: </strong> {{ message }}
                         </div>
                     </div>
                 {% endfor %}
