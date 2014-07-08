@@ -2,7 +2,8 @@ from backend import logger, app, db
 import models
 from models import *
 import flask
-from flask import request, abort, redirect, url_for
+from flask import g, request, abort, redirect, url_for
+from functools import wraps
 import json
 import serializers
 from sqlalchemy import func, or_, distinct
@@ -49,6 +50,29 @@ def send_api_response(data_json):
     response.headers['Access-Control-Allow-Origin'] = "*"
     response.headers['Content-Type'] = "application/json"
     return response
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            raise ApiException(401, "You need to be logged-in in order to access this resource.")
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+@app.before_request
+def load_user():
+
+    user = None
+    if request.headers.get('Authorization') and request.headers['Authorization'].split(":")[0]=="ApiKey":
+        key_value = request.headers['Authorization'].split(":")[1]
+        api_key = ApiKey.query.filter_by(key=key_value).first()
+        if api_key:
+            user = api_key.user
+    g.user = user
+    return
+
 
 # -------------------------------------------------------------------
 # Expensive functions, that only needs to be run from time to time:
@@ -224,6 +248,7 @@ def index():
 
 @app.route('/<string:resource>/')
 @app.route('/<string:resource>/<int:resource_id>/')
+@login_required
 def resource(resource, resource_id=None):
     """
     Generic endpoint for resources. If an ID is specified, a single record is returned,
