@@ -1,10 +1,13 @@
-from flask import render_template, flash, redirect, request, url_for
+from flask import render_template, flash, redirect, request, url_for, session
 from frontend import app, logger
 import requests
+from requests import ConnectionError
 import operator
 import dateutil.parser
 import forms
 from flask.ext.login import LoginManager
+import json
+
 
 # use flask-login
 login_manager = LoginManager()
@@ -46,36 +49,45 @@ def sort_list(unsorted_list, key):
     return sorted(unsorted_list, key=operator.itemgetter(key))
 
 
+def load_from_api(resource_name, resource_id=None):
+
+    query_str = resource_name + "/"
+    if resource_id:
+        query_str += str(resource_id) + "/"
+    try:
+        headers = {}
+        if session and session.get('api_key'):
+            headers = {'Authorization': 'ApiKey:' + session.get('api_key')}
+        response = requests.get(API_HOST + query_str, headers=headers)
+    except ConnectionError:
+        flash('Error connecting to backend service.')
+        pass
+    response.raise_for_status()
+    return response.json()
+
+
 @app.route('/')
 def landing():
 
-    recent_products = [
-        {"name": "Herpex-Acyclovir 200mg", "id": 1},
-        {"name": "Lovire", "id": 3},
-        {"name": "Benkil 400", "id": 8}
-    ]
+    recent_updates = load_from_api('recent_updates')
+    if recent_updates:
+        recent_updates = recent_updates.get('results')
 
-    tmp_response = requests.get(API_HOST + 'recent_updates/')
-    recent_updates = tmp_response.json()['results']
-
-    tmp_response = requests.get(API_HOST + 'overview/')
-    overview = tmp_response.json()
+    overview = load_from_api('overview')
 
     return render_template(
         'index.html',
         API_HOST=API_HOST,
         active_nav_button="home",
         overview=overview,
-        recent_products=recent_products,
         recent_updates=recent_updates
     )
 
 
-@app.route('/medicine/<medicine_id>/')
+@app.route('/medicine/<int:medicine_id>/')
 def medicine(medicine_id):
 
-    response = requests.get(API_HOST + 'medicine/' + str(medicine_id) + "/")
-    medicine = response.json()
+    medicine = load_from_api('medicine', medicine_id)
 
     # sort products by average price
     max_avg_price = medicine['products'][-1]['average_price']
@@ -114,11 +126,10 @@ def medicine(medicine_id):
         form_args = form_args,
     )
 
-@app.route('/procurement/<procurement_id>/')
+@app.route('/procurement/<int:procurement_id>/')
 def procurement(procurement_id):
 
-    response = requests.get(API_HOST + 'procurement/' + str(procurement_id) + "/")
-    procurement = response.json()
+    procurement = load_from_api('procurement', procurement_id)
     return render_template(
         'procurement.html',
         API_HOST=API_HOST,
@@ -131,7 +142,12 @@ def login():
 
     login_form = forms.LoginForm(request.form)
     if request.method == 'POST' and login_form.validate():
-        # TODO: login via API
+        data = json.dumps(request.form)
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(API_HOST + 'login/', data=data, headers=headers)
+        response.raise_for_status()
+        api_key = response.json().get('api_key')
+        session['api_key'] = api_key
         return redirect(url_for('landing'))
     return render_template(
         'login.html',
@@ -143,7 +159,12 @@ def register():
 
     register_form = forms.RegistrationForm(request.form)
     if request.method == 'POST' and register_form.validate():
-        # TODO: register via API
+        data = json.dumps(request.form)
+        headers = {"Content-Type": "application/json"}
+        response = requests.post(API_HOST + 'register/', data=data, headers=headers)
+        response.raise_for_status()
+        api_key = response.json().get('api_key')
+        session['api_key'] = api_key
         return redirect(url_for('landing'))
     return render_template(
         'register.html',
