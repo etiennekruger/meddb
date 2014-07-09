@@ -63,7 +63,7 @@ def handle_api_exception(error):
     logger.debug(error)
     flash(error.message + " (" + str(error.status_code) + ")", "danger")
     if error.status_code == 401:
-        return redirect(url_for(login))
+        return redirect(url_for('login'))
     return "OK"
 
 
@@ -79,14 +79,13 @@ def load_from_api(resource_name, resource_id=None):
 
     try:
         response = requests.get(API_HOST + query_str, headers=headers)
+        if response.status_code != 200:
+            raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
         return response.json()
 
     except ConnectionError:
         flash('Error connecting to backend service.', 'danger')
         pass
-
-    if response.status_code != 200:
-        raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
     return
 
 

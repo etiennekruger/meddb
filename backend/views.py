@@ -55,7 +55,7 @@ def send_api_response(data_json):
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if g.user is None:
+        if g.user is None or not g.user.is_active():
             raise ApiException(401, "You need to be logged-in in order to access this resource.")
         return f(*args, **kwargs)
     return decorated_function
@@ -254,7 +254,6 @@ def index():
 
 @app.route('/<string:resource>/')
 @app.route('/<string:resource>/<int:resource_id>/')
-@login_required
 def resource(resource, resource_id=None):
     """
     Generic endpoint for resources. If an ID is specified, a single record is returned,
@@ -263,6 +262,10 @@ def resource(resource, resource_id=None):
 
     if not api_resources.get(resource):
         raise ApiException(400, "The specified resource type does not exist.")
+
+    if resource == "procurement":
+        if g.user is None or not g.user.is_active():
+            raise ApiException(401, "You need to be logged-in in order to access this resource.")
 
     model = api_resources[resource][0]
     model_id = api_resources[resource][1]
