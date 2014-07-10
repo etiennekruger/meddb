@@ -154,7 +154,9 @@ for medicine in medicines:
                         "id": 92
                     }
                 ]
-                medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Efivarenz (600mg)").first()
+                medicine_obj = models.Medicine(name="Efivarenz (600mg)")
+                db.session.add(medicine_obj)
+                # medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Efivarenz (600mg)").first()
             elif medicine['name'] == dupe_records[5]:
                 medicine["ingredients"] = [
                     {
@@ -194,71 +196,75 @@ for medicine in medicines:
                         "strength": "30mg"
                     }
                 ]
-                medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Stavudine (30mg)").first()
+                medicine_obj = models.Medicine(name="Stavudine (30mg)")
+                db.session.add(medicine_obj)
+                # medicine_obj = models.Medicine.query.filter(models.Medicine.name=="Stavudine (30mg)").first()
                 print "DISASTER AVERTED"
             else:
                 print "SOOPER DOOPER ERROR"
 
-        if medicine.get('name') not in dupe_records:
-            # capture components
-            for component in medicine["ingredients"]:
-                ingredient_obj = models.Ingredient.query.filter(models.Ingredient.name==component["inn"]).first()
-                if ingredient_obj is None:
-                    ingredient_obj = models.Ingredient()
-                    ingredient_obj.name = component["inn"]
-                    db.session.add(ingredient_obj)
+        # if medicine.get('name') not in dupe_records:
+        # capture components
+        for component in medicine["ingredients"]:
+            ingredient_obj = models.Ingredient.query.filter(models.Ingredient.name==component["inn"]).first()
+            if ingredient_obj is None:
+                ingredient_obj = models.Ingredient()
+                ingredient_obj.name = component["inn"]
+                db.session.add(ingredient_obj)
 
+            tmp_strength = component["strength"].replace(" ", "")
+            if tmp_strength:
+                tmp_strength = tmp_strength.replace('miu', 'MIU').replace('iu', "IU")
+            if tmp_strength == "n/a":
+                tmp_strength = None
+            component_obj = models.Component.query.filter(models.Component.medicine==medicine_obj)\
+                .filter(models.Component.ingredient==ingredient_obj)\
+                .filter(models.Component.strength==tmp_strength).first()
+            if component_obj is None:
                 component_obj = models.Component()
                 component_obj.ingredient = ingredient_obj
-                tmp_strength = component["strength"].replace(" ", "")
-                if tmp_strength:
-                    tmp_strength = tmp_strength.replace('miu', 'MIU').replace('iu', "IU")
-                if tmp_strength == "n/a":
-                    tmp_strength = None
                 component_obj.strength = tmp_strength
                 component_obj.medicine = medicine_obj
                 db.session.add(component_obj)
 
-            # capture MSH benchmark price
-            if medicine['mshprice']:
-                benchmark_obj = models.BenchmarkPrice()
-                benchmark_obj.name = "MSH"
-                benchmark_obj.year = 2012
-                benchmark_obj.price = medicine['mshprice']
-                benchmark_obj.medicine = medicine_obj
-                db.session.add(benchmark_obj)
+        # capture MSH benchmark price
+        if medicine['mshprice']:
+            benchmark_obj = models.BenchmarkPrice()
+            benchmark_obj.name = "MSH"
+            benchmark_obj.year = 2012
+            benchmark_obj.price = medicine['mshprice']
+            benchmark_obj.medicine = medicine_obj
+            db.session.add(benchmark_obj)
+        else:
+            tmp = "this medicine has no benchmark price: "
+            if medicine.get('name'):
+                tmp += medicine['name']
             else:
-                tmp = "this medicine has no benchmark price: "
-                if medicine.get('name'):
-                    tmp += medicine['name']
-                else:
-                    tmp += str(medicine['id'])
-                print tmp
+                tmp += str(medicine['id'])
+            print tmp
 
-            # capture dosage form
-            if medicine['dosageform'] and not medicine['dosageform'] == "N/A":
-                dosage_form_name = maps.map_dosage_form(medicine['dosageform'])
-                dosage_form_obj = models.DosageForm.query.filter(models.DosageForm.name==dosage_form_name).first()
-                if dosage_form_obj is None:
-                    dosage_form_obj = models.DosageForm()
-                    dosage_form_obj.name = dosage_form_name
-                    db.session.add(dosage_form_obj)
-                medicine_obj.dosage_form = dosage_form_obj
+        # capture dosage form
+        if medicine['dosageform'] and not medicine['dosageform'] == "N/A":
+            dosage_form_name = maps.map_dosage_form(medicine['dosageform'])
+            dosage_form_obj = models.DosageForm.query.filter(models.DosageForm.name==dosage_form_name).first()
+            if dosage_form_obj is None:
+                dosage_form_obj = models.DosageForm()
+                dosage_form_obj.name = dosage_form_name
+                db.session.add(dosage_form_obj)
+            medicine_obj.dosage_form = dosage_form_obj
+        else:
+            tmp = "this medicine has no dosage form: "
+            if medicine.get('name'):
+                tmp += medicine['name']
             else:
-                tmp = "this medicine has no dosage form: "
-                if medicine.get('name'):
-                    tmp += medicine['name']
-                else:
-                    tmp += str(medicine['id'])
-                print tmp
+                tmp += str(medicine['id'])
+            print tmp
 
-            medicine_obj.set_name()
-            db.session.add(medicine_obj)
-            try:
-                db.session.commit()
-            except Exception:
-                print component_obj.ingredient.name
-                raise
+        medicine_obj.set_name()
+        print medicine_obj.name
+        db.session.add(medicine_obj)
+        db.session.commit()
+
 
         # capture procurements
         for procurement in medicine["procurements"]:
