@@ -440,7 +440,7 @@ class AvailableContainers(db.Model):
 
     __tablename__ = "available_containers"
 
-    available_constraint_id = db.Column(db.Integer, primary_key=True)
+    available_container_id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(50), unique=True, nullable=False)
 
     def __unicode__(self):
