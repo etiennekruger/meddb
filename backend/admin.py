@@ -132,10 +132,12 @@ class MedicineView(MyRestrictedModelView):
     column_list = [
         'name',
         'dosage_form',
+        'unit_of_measure',
         ]
     column_sortable_list = [
         ('name', models.Medicine.name),
         ('dosage_form', models.DosageForm.name),
+        ('unit_of_measure', models.UnitOfMeasure.value),
         ]
     form_excluded_columns = [
         'benchmarks',
@@ -223,7 +225,6 @@ admin.add_view(MyRestrictedModelView(models.BenchmarkPrice, db.session, name="Be
 
 admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterms", endpoint='incoterm', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
-admin.add_view(MyRestrictedModelView(models.AvailableUnits, db.session, name="Units of Measure", endpoint='units', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer'))

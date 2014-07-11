@@ -147,6 +147,9 @@ class Medicine(db.Model):
     medicine_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     alternative_names = db.Column(db.String(100), default=None)
+
+    unit_of_measure_id = db.Column(db.Integer, db.ForeignKey('unit_of_measure.unit_of_measure_id'), nullable=True)
+    unit_of_measure = db.relationship('UnitOfMeasure', lazy='joined')
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm', lazy='joined', backref=backref("medicines", lazy='joined'))
 
@@ -447,11 +450,11 @@ class AvailableContainers(db.Model):
         return u'%s' % self.value
 
 
-class AvailableUnits(db.Model):
+class UnitOfMeasure(db.Model):
 
-    __tablename__ = "available_units"
+    __tablename__ = "unit_of_measure"
 
-    available_unit_id = db.Column(db.Integer, primary_key=True)
+    unit_of_measure_id = db.Column(db.Integer, primary_key=True)
     value = db.Column(db.String(32), unique=True, nullable=False)
 
     def __unicode__(self):
