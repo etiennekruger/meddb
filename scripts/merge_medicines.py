@@ -1,16 +1,37 @@
 from backend import db
 from backend.models import *
 
-# medicines_for_removal = [
-#     177,
-#     147,
-#     162,
-#     160,
-#     ]
-#
-# for medicine_id in medicines_for_removal:
-#     medicine = Medicine.query.get(medicine_id)
-#     print "Removing: " + medicine.name
+medicines_for_removal = [
+    177,
+    147,
+    162,
+    160,
+    ]
+
+for medicine_id in medicines_for_removal:
+    medicine = Medicine.query.get(medicine_id)
+    print "Removing: " + medicine.name
+    # remove procurements
+    products = Product.query.filter(Product.medicine==medicine).all()
+    for product in products:
+
+        procurements = Procurement.query.filter(Procurement.product==product).all()
+        for procurement in procurements:
+            db.session.delete(procurement)
+            print "deleting procurement " + str(procurement.procurement_id)
+        # remove product
+        db.session.delete(product)
+
+    # remove benchmarks
+    benchmarks = BenchmarkPrice.query.filter(BenchmarkPrice.medicine==medicine).all()
+    for benchmark in benchmarks:
+        db.session.delete(benchmark)
+        print "deleting benchmark " + str(benchmark.benchmark_price_id)
+
+    # remove medicine
+    db.session.delete(medicine)
+    db.session.commit()
+
 
 
 def transfer_medicine(target_id, redundant_id):
