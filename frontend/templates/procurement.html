@@ -111,6 +111,14 @@
                         ${{ procurement.unit_price_usd }}
                     </td>
                 </tr>
+                <tr>
+                    <th>Source</th>
+                    <td>
+                        {{ procurement.source.name }}
+                        {% if procurement.source.url %} {{ procurement.source.url }}{% endif %}
+                        {% if procurement.source.date %} [{{ procurement.source.date }}]{% endif %}
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>

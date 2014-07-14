@@ -79,8 +79,9 @@ def medicine_to_dict(obj, include_related=False):
         # related procurements
         procurements = []
         for procurement in obj.procurements:
-            procurement_dict = procurement.to_dict()
-            procurements.append(procurement_dict)
+            if procurement.approved:
+                procurement_dict = procurement.to_dict()
+                procurements.append(procurement_dict)
         tmp_dict['procurements'] = sorted(procurements, key=itemgetter('unit_price_usd'))
     return tmp_dict
 
