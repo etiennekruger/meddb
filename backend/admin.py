@@ -76,7 +76,6 @@ class ProcurementView(MyModelView):
         'country',
         'medicine',
         'pack_size',
-        'unit_of_measure',
         'container',
         'pack_price_usd',
         'quantity',
@@ -107,7 +106,6 @@ class ProcurementView(MyModelView):
         ('country', models.Country.name),
         ('medicine', models.Medicine.name),
         ('pack_size', models.Procurement.pack_size),
-        ('unit_of_measure', models.Procurement.unit_of_measure),
         ('container', models.Procurement.container),
         ('pack_price_usd', models.Procurement.pack_price_usd),
         ('quantity', models.Procurement.quantity),
@@ -223,6 +221,7 @@ admin.add_view(MedicineView(models.Medicine, db.session, name="Available Medicin
 admin.add_view(MyRestrictedModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
 
 admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterms", endpoint='incoterm', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 

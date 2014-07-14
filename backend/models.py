@@ -354,7 +354,6 @@ class Procurement(db.Model):
     procurement_id = db.Column(db.Integer, primary_key=True)
     container = db.Column(db.String(50))
     pack_size = db.Column(db.Integer) # the number of basic units per pack, for which the price is quoted.
-    unit_of_measure = db.Column(db.String(50))
     pack_price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
     pack_price_usd = db.Column(db.Float, nullable=False) # per container
     unit_price_usd = db.Column(db.Float) # this is always in USD

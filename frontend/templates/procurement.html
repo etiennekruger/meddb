@@ -46,6 +46,12 @@
                     </td>
                 </tr>
                 <tr>
+                    <th>Dosage form</th>
+                    <td>
+                        {{ procurement.product.medicine.dosage_form.name }}
+                    </td>
+                </tr>
+                <tr>
                     <th>Description/Brand</th>
                     <td>
                         {% if procurement.product.description %}
@@ -84,7 +90,7 @@
                 <tr>
                     <th>Unit of Measure</th>
                     <td>
-                        {{ procurement.unit_of_measure }}
+                        {{ procurement.product.medicine.unit_of_measure }}
                     </td>
                 </tr>
                 <tr>

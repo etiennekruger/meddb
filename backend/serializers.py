@@ -55,6 +55,12 @@ def medicine_to_dict(obj, include_related=False):
         dosage_form = obj.dosage_form.to_dict()
     tmp_dict['dosage_form'] = dosage_form
     tmp_dict.pop('dosage_form_id')
+    # unit_of_measure
+    unit_of_measure = None
+    if obj.unit_of_measure:
+        unit_of_measure = obj.unit_of_measure.value
+    tmp_dict['unit_of_measure'] = unit_of_measure
+    tmp_dict.pop('unit_of_measure_id')
     # benchmark prices
     benchmarks = []
     for benchmark in obj.benchmarks:
