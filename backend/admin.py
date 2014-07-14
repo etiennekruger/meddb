@@ -219,7 +219,6 @@ admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_mast
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 
 admin.add_view(MyRestrictedModelView(models.DosageForm, db.session, name="Dosage Forms", endpoint='dosage_form', category='Medicines'))
-admin.add_view(MyRestrictedModelView(models.Ingredient, db.session, name="Medicine Components", endpoint='ingredient', category='Medicines'))
 admin.add_view(MedicineView(models.Medicine, db.session, name="Available Medicines", endpoint='medicine', category='Medicines'))
 admin.add_view(MyRestrictedModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
 

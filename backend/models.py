@@ -153,17 +153,6 @@ class Medicine(db.Model):
     dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
     dosage_form = db.relationship('DosageForm', lazy='joined', backref=backref("medicines", lazy='joined'))
 
-    def set_name(self):
-        if len(self.components) > 0:
-            component_names = []
-            for component in self.components:
-                tmp = component.ingredient.name.capitalize()
-                if component.strength:
-                    tmp += " (" + str(component.strength) + ")"
-                component_names.append(tmp)
-            out = ", ".join(component_names)
-            self.name = out
-
     @property
     def procurements(self):
         out = []
@@ -178,41 +167,6 @@ class Medicine(db.Model):
 
     def to_dict(self, include_related=False):
         return serializers.medicine_to_dict(self, include_related)
-
-
-class Ingredient(db.Model):
-
-    __tablename__ = "ingredient"
-
-    ingredient_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), unique=True, nullable=False)
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    def to_dict(self, include_related=False):
-        return serializers.model_to_dict(self)
-
-
-class Component(db.Model):
-
-    __tablename__ = "component"
-    __table_args__ = (UniqueConstraint('ingredient_id', 'medicine_id', name='component_ingredient_medicine'), {})
-
-    component_id = db.Column(db.Integer, primary_key=True)
-    strength = db.Column(db.String(16), nullable=True)
-
-    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.ingredient_id'), nullable=False)
-    ingredient = db.relationship('Ingredient', lazy='joined')
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=False)
-    medicine = db.relationship('Medicine', backref=backref("components", lazy='joined'))
-
-
-    def __unicode__(self):
-        return u'%s %s' % (self.ingredient.name, self.strength)
-
-    def to_dict(self, include_related=False):
-        return serializers.component_to_dict(self, include_related)
 
 
 class BenchmarkPrice(db.Model):
