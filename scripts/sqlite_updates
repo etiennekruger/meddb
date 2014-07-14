@@ -1,0 +1,20 @@
+drop table ingredient;
+drop table component;
+
+BEGIN TRANSACTION;
+CREATE TEMPORARY TABLE medicine_backup(medicine_id, name, unit_of_measure_id, dosage_form_id);
+INSERT INTO medicine_backup SELECT medicine_id, name, unit_of_measure_id, dosage_form_id FROM medicine;
+DROP TABLE medicine;
+CREATE TABLE medicine (
+	medicine_id INTEGER NOT NULL,
+	name VARCHAR(100) NOT NULL,
+	unit_of_measure_id INTEGER NOT NULL,
+	dosage_form_id INTEGER NOT NULL,
+	PRIMARY KEY (medicine_id),
+	CONSTRAINT medicine_name_dosage_form UNIQUE (name, dosage_form_id),
+	FOREIGN KEY(unit_of_measure_id) REFERENCES unit_of_measure (unit_of_measure_id),
+	FOREIGN KEY(dosage_form_id) REFERENCES dosage_form (dosage_form_id)
+);
+INSERT INTO medicine SELECT medicine_id, name, unit_of_measure_id, dosage_form_id FROM medicine_backup;
+DROP TABLE medicine_backup;
+COMMIT;

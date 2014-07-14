@@ -146,11 +146,10 @@ class Medicine(db.Model):
 
     medicine_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    alternative_names = db.Column(db.String(100), default=None)
 
-    unit_of_measure_id = db.Column(db.Integer, db.ForeignKey('unit_of_measure.unit_of_measure_id'), nullable=True)
+    unit_of_measure_id = db.Column(db.Integer, db.ForeignKey('unit_of_measure.unit_of_measure_id'), nullable=False)
     unit_of_measure = db.relationship('UnitOfMeasure', lazy='joined')
-    dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
+    dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=False)
     dosage_form = db.relationship('DosageForm', lazy='joined', backref=backref("medicines", lazy='joined'))
 
     @property
