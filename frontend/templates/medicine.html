@@ -86,7 +86,7 @@
                                     {% endif %}
                                 </td>
                                 <td>
-                                    {{ procurement.quantity | add_commas }} ({{ procurement.pack_size }} {{ procurement.unit_of_measure }} {{ procurement.container }}s)
+                                    {{ procurement.quantity | add_commas }} <br>({{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s)
                                 </td>
                                 <td class="price-bar-container">
                                             <span class="pull-right">

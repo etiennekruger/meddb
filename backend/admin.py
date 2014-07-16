@@ -76,7 +76,6 @@ class ProcurementView(MyModelView):
         'country',
         'medicine',
         'pack_size',
-        'unit_of_measure',
         'container',
         'pack_price_usd',
         'quantity',
@@ -107,7 +106,6 @@ class ProcurementView(MyModelView):
         ('country', models.Country.name),
         ('medicine', models.Medicine.name),
         ('pack_size', models.Procurement.pack_size),
-        ('unit_of_measure', models.Procurement.unit_of_measure),
         ('container', models.Procurement.container),
         ('pack_price_usd', models.Procurement.pack_price_usd),
         ('quantity', models.Procurement.quantity),
@@ -219,11 +217,11 @@ admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_mast
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 
 admin.add_view(MyRestrictedModelView(models.DosageForm, db.session, name="Dosage Forms", endpoint='dosage_form', category='Medicines'))
-admin.add_view(MyRestrictedModelView(models.Ingredient, db.session, name="Medicine Components", endpoint='ingredient', category='Medicines'))
 admin.add_view(MedicineView(models.Medicine, db.session, name="Available Medicines", endpoint='medicine', category='Medicines'))
 admin.add_view(MyRestrictedModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
 
 admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterms", endpoint='incoterm', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 

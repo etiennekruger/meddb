@@ -47,7 +47,7 @@ def medicine_to_dict(obj, include_related=False):
     tmp_dict = model_to_dict(obj)
     # resource URI
     tmp_dict['URI'] = API_HOST + 'medicine/' + str(obj.medicine_id) + '/'
-    # name, as calculated form component names
+    # name
     tmp_dict['name'] = obj.name
     # dosage form
     dosage_form = None
@@ -55,13 +55,12 @@ def medicine_to_dict(obj, include_related=False):
         dosage_form = obj.dosage_form.to_dict()
     tmp_dict['dosage_form'] = dosage_form
     tmp_dict.pop('dosage_form_id')
-    # components
-    tmp_components = []
-    for component in obj.components:
-        component_dict = component.to_dict()
-        component_dict.pop('medicine_id')
-        tmp_components.append(component_dict)
-    tmp_dict['components'] = tmp_components
+    # unit_of_measure
+    unit_of_measure = None
+    if obj.unit_of_measure:
+        unit_of_measure = obj.unit_of_measure.value
+    tmp_dict['unit_of_measure'] = unit_of_measure
+    tmp_dict.pop('unit_of_measure_id')
     # benchmark prices
     benchmarks = []
     for benchmark in obj.benchmarks:
@@ -80,21 +79,10 @@ def medicine_to_dict(obj, include_related=False):
         # related procurements
         procurements = []
         for procurement in obj.procurements:
-            procurement_dict = procurement.to_dict()
-            procurements.append(procurement_dict)
+            if procurement.approved:
+                procurement_dict = procurement.to_dict()
+                procurements.append(procurement_dict)
         tmp_dict['procurements'] = sorted(procurements, key=itemgetter('unit_price_usd'))
-    return tmp_dict
-
-
-def component_to_dict(obj, include_related=False):
-
-    tmp_dict = model_to_dict(obj)
-    # country
-    tmp_ingredient = None
-    if obj.ingredient:
-        tmp_ingredient = obj.ingredient.to_dict()
-    tmp_dict['ingredient'] = tmp_ingredient
-    tmp_dict.pop('ingredient_id')
     return tmp_dict
 
 

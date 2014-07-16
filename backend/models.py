@@ -146,23 +146,11 @@ class Medicine(db.Model):
 
     medicine_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    alternative_names = db.Column(db.String(100), default=None)
 
-    unit_of_measure_id = db.Column(db.Integer, db.ForeignKey('unit_of_measure.unit_of_measure_id'), nullable=True)
+    unit_of_measure_id = db.Column(db.Integer, db.ForeignKey('unit_of_measure.unit_of_measure_id'), nullable=False)
     unit_of_measure = db.relationship('UnitOfMeasure', lazy='joined')
-    dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=True)
+    dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=False)
     dosage_form = db.relationship('DosageForm', lazy='joined', backref=backref("medicines", lazy='joined'))
-
-    def set_name(self):
-        if len(self.components) > 0:
-            component_names = []
-            for component in self.components:
-                tmp = component.ingredient.name.capitalize()
-                if component.strength:
-                    tmp += " (" + str(component.strength) + ")"
-                component_names.append(tmp)
-            out = ", ".join(component_names)
-            self.name = out
 
     @property
     def procurements(self):
@@ -178,41 +166,6 @@ class Medicine(db.Model):
 
     def to_dict(self, include_related=False):
         return serializers.medicine_to_dict(self, include_related)
-
-
-class Ingredient(db.Model):
-
-    __tablename__ = "ingredient"
-
-    ingredient_id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(128), unique=True, nullable=False)
-
-    def __unicode__(self):
-        return u'%s' % self.name
-
-    def to_dict(self, include_related=False):
-        return serializers.model_to_dict(self)
-
-
-class Component(db.Model):
-
-    __tablename__ = "component"
-    __table_args__ = (UniqueConstraint('ingredient_id', 'medicine_id', name='component_ingredient_medicine'), {})
-
-    component_id = db.Column(db.Integer, primary_key=True)
-    strength = db.Column(db.String(16), nullable=True)
-
-    ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredient.ingredient_id'), nullable=False)
-    ingredient = db.relationship('Ingredient', lazy='joined')
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=False)
-    medicine = db.relationship('Medicine', backref=backref("components", lazy='joined'))
-
-
-    def __unicode__(self):
-        return u'%s %s' % (self.ingredient.name, self.strength)
-
-    def to_dict(self, include_related=False):
-        return serializers.component_to_dict(self, include_related)
 
 
 class BenchmarkPrice(db.Model):
@@ -401,7 +354,6 @@ class Procurement(db.Model):
     procurement_id = db.Column(db.Integer, primary_key=True)
     container = db.Column(db.String(50))
     pack_size = db.Column(db.Integer) # the number of basic units per pack, for which the price is quoted.
-    unit_of_measure = db.Column(db.String(50))
     pack_price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
     pack_price_usd = db.Column(db.Float, nullable=False) # per container
     unit_price_usd = db.Column(db.Float) # this is always in USD
