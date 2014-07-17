@@ -49,7 +49,6 @@
                             <thead>
                             <th>Procurement country</th>
                             <th>Generic Name & Strength</th>
-                            <th>Description/Brand</th>
                             <th>Date</th>
                             <th>Terms</th>
                             <th>Volume</th>
@@ -63,18 +62,12 @@
                                         {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                                     </td>
                                     <td>
-                                        {% if procurement.product.medicine %}
-                                            {{ procurement.product.medicine.name }}
-                                        {% else %}
-                                            <span class="text-muted">Unknown</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if procurement.product.description %}
-                                            {{ procurement.product.description }}
-                                        {% else %}
-                                            <span class="text-muted">Unknown</span>
-                                        {% endif %}
+                                        <span
+                                                    class="tooltip-enabled"
+                                                    data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                                            {{ procurement.product.medicine.name }}</span>
                                     </td>
                                     <td>
                                         {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
@@ -141,7 +134,6 @@
                             <thead>
                             <th>Procurement country</th>
                             <th>Generic Name & Strength</th>
-                            <th>Description/Brand</th>
                             <th>Date</th>
                             <th>Terms</th>
                             <th>Volume</th>
@@ -155,18 +147,12 @@
                                         {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
                                     </td>
                                     <td>
-                                        {% if procurement.product.medicine %}
-                                            {{ procurement.product.medicine.name }}
-                                        {% else %}
-                                            <span class="text-muted">Unknown</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if procurement.product.description %}
-                                            {{ procurement.product.description }}
-                                        {% else %}
-                                            <span class="text-muted">Unknown</span>
-                                        {% endif %}
+                                        <span
+                                                    class="tooltip-enabled"
+                                                    data-toggle="tooltip"
+                                                    data-placement="top"
+                                                    title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                                            {{ procurement.product.medicine.name }}</span>
                                     </td>
                                     <td>
                                         {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
