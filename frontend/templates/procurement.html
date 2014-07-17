@@ -40,7 +40,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Generic Name (Strength)</th>
+                    <th>Generic Name & Strength</th>
                     <td>
                         {{ procurement.product.medicine.name }}
                     </td>
@@ -106,7 +106,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>Unit price</th>
+                    <th>Unit price (per {{ procurement.product.medicine.unit_of_measure }})</th>
                     <td>
                         ${{ procurement.unit_price_usd }}
                     </td>

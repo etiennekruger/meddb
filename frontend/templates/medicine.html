@@ -48,12 +48,12 @@
                     <table class="table table-bordered table-striped table-hover">
                         <thead>
                         <th>Procurement country</th>
-                        <th>Generic Name</th>
+                        <th>Generic Name & Strength</th>
                         <th>Description/Brand</th>
                         <th>Date</th>
                         <th>Terms</th>
                         <th>Volume</th>
-                        <th>Price</th>
+                        <th>Price per {{ medicine.unit_of_measure }}</th>
                         </thead>
                         <tbody>
                         {% for procurement in medicine.procurements %}
@@ -128,12 +128,12 @@
                     <table class="table table-bordered table-striped">
                         <thead>
                         <th>Procurement country</th>
-                        <th>Generic Name (Strength)</th>
+                        <th>Generic Name & Strength</th>
                         <th>Description/Brand</th>
                         <th>Date</th>
                         <th>Terms</th>
                         <th>Volume</th>
-                        <th>Price</th>
+                        <th>Price per {{ medicine.unit_of_measure }}</th>
                         <th>Cost difference</th>
                         </thead>
                         <tbody>
