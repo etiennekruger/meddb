@@ -133,7 +133,9 @@
 <script type="application/javascript">
     var API_HOST = "{{ API_HOST }}";
 
-
+    $(document).ready(function(){
+        $('.tooltip-enabled').tooltip()
+    });
 </script>
 
 {% block javascript %}
