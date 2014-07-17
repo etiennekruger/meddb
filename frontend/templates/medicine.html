@@ -32,7 +32,6 @@
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
         <li class="active"><a href="#procurements" role="tab" data-toggle="tab">Procurements</a></li>
-        <li><a href="#comparison" role="tab" data-toggle="tab">Manufacturer Comparison</a></li>
         <li><a href="#cost-calculator" role="tab" data-toggle="tab">Cost Calculator</a></li>
     </ul>
 
@@ -98,80 +97,6 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    <div class="tab-pane" id="comparison">
-        <div class="row">
-            <div class="col-lg-12">
-                <h2>Products</h2>
-
-                {% if medicine.products %}
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <th>Generic Name (Strength)</th>
-                        <th>Description/Brand</th>
-                        <th>Manufacturer</th>
-                        <th>Generic/Originator</th>
-                        <th>Average price (USD)</th>
-                        </thead>
-                        <tbody>
-
-                        {% for product in medicine.products %}
-                            {% set width = (100 * (1 - (max_avg_price - product.average_price) / max_avg_price)) | int%}
-                            <tr>
-                                <td>
-                                    <strong>
-                                            <span
-                                                    class="tooltip-enabled"
-                                                    data-toggle="tooltip"
-                                                    data-placement="right"
-                                                    title="Maximum shelf life: {% if product.shelf_life %}{{ product.shelf_life }}{% else %}unknown{% endif %}">
-                                                {{ medicine.name }}
-                                            </span>
-                                    </strong>
-                                </td>
-                            <td>
-                                    <strong>
-                                           {% if product.description %}{{ product.description }}{% endif %}
-                                    </strong>
-                                </td>
-                                <td>
-                                    {% if product.manufacturer %}
-                                        {%- if product.manufacturer.country -%}
-                                            {{ macros.render_flag(product.manufacturer.country) }}
-                                        {% endif -%}
-                                        <a class="manufacturer modal-link" onclick="show_manufacturer_modal({{ product.manufacturer.manufacturer_id }})"><strong>
-                                            {{ product.manufacturer.name }}
-                                            {%- if product.manufacturer.country -%}
-                                                , {{ product.manufacturer.country.name }}
-                                            {%- endif -%}
-                                        </strong>
-                                        </a>
-                                    {% else %}
-                                        <span class="text-muted">Unknown</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if product.is_generic %}Generic{% else %}Originator{% endif %}
-                                </td>
-                                <td class="price-bar-container">
-                                    {% if product.average_price %}
-                                        <span class="pull-right">
-                                    ${{ product.average_price }}
-                                    </span>
-                                        <div class="price-bar" style="width: {{ width }}%;"></div>
-
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    <p>We don't know of any products for this medicine.</p>
                 {% endif %}
             </div>
         </div>
