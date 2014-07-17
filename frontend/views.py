@@ -74,6 +74,7 @@ def handle_api_exception(error):
     logger.debug(urllib.quote_plus(request.path))
     flash(error.message + " (" + str(error.status_code) + ")", "danger")
     if error.status_code == 401:
+        session.clear()
         return redirect(url_for('login') + "?next=" + urllib.quote_plus(request.path))
     return "OK"
 
