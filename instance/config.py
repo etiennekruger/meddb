@@ -1,8 +1,9 @@
 import logging
 import json
 
-HOST = 'http://127.0.0.1:5000/'
-API_HOST = 'http://127.0.0.1:5001/'
+HOST = 'http://med-db.medicines.localhost:5000/'
+API_HOST = 'http://med-db-api.medicines.localhost:5001/'
+SERVER_NAME = 'medicines.localhost:5000'
 
 LOG_LEVEL = logging.DEBUG
 LOGGER_NAME = "med-db-logger"  # make sure this is not the same as the name of the package to avoid conflicts with Flask's own logger

@@ -14,6 +14,13 @@ import re
 
 API_HOST = app.config["API_HOST"]
 
+# handling static files (only relevant during development)
+app.static_folder = 'static'
+app.add_url_rule('/static/<path:filename>',
+                 endpoint='static',
+                 view_func=app.send_static_file,
+                 subdomain='api-med-db')
+
 
 class ApiException(Exception):
     """
@@ -153,7 +160,7 @@ def calculate_autocomplete():
 # API endpoints:
 #
 
-@app.route('/login/', methods=['POST',])
+@app.route('/login/', subdomain='med-db-api', methods=['POST',])
 def login():
 
     email = request.json.get('email')
@@ -179,7 +186,7 @@ def login():
         raise ApiException(400, "The email address or password is incorrect.")
 
 
-@app.route('/register/', methods=['POST',])
+@app.route('/register/', subdomain='med-db-api', methods=['POST',])
 def register():
 
     email = request.json.get('email')
@@ -208,7 +215,7 @@ def register():
     return send_api_response(json.dumps(out))
 
 
-@app.route('/user/<int:user_id>/')
+@app.route('/user/<int:user_id>/', subdomain='med-db-api')
 def get_user(user_id):
     user = User.query.get(user_id)
     if not user:
@@ -216,7 +223,7 @@ def get_user(user_id):
     return send_api_response(json.dumps(user.to_dict()))
 
 
-@app.route('/overview/')
+@app.route('/overview/', subdomain='med-db-api')
 def overview():
     """
     Give a broad overview of the size of -, and recent activity related to, the database.
@@ -240,7 +247,7 @@ api_resources = {
     'supplier': (Supplier, Supplier.supplier_id),
     }
 
-@app.route('/')
+@app.route('/', subdomain='med-db-api')
 def index():
     """
     Landing page. Return links to available endpoints.
@@ -252,8 +259,8 @@ def index():
     return send_api_response(json.dumps(endpoints))
 
 
-@app.route('/<string:resource>/')
-@app.route('/<string:resource>/<int:resource_id>/')
+@app.route('/<string:resource>/', subdomain='med-db-api')
+@app.route('/<string:resource>/<int:resource_id>/', subdomain='med-db-api')
 def resource(resource, resource_id=None):
     """
     Generic endpoint for resources. If an ID is specified, a single record is returned,
@@ -294,7 +301,7 @@ def resource(resource, resource_id=None):
     return send_api_response(out)
 
 
-@app.route('/autocomplete/<query>/')
+@app.route('/autocomplete/<query>/', subdomain='med-db-api')
 def autocomplete(query):
     """
     Return the name and medicine_id of each medicine that matches the given query.
@@ -323,7 +330,7 @@ def autocomplete(query):
     return send_api_response(json.dumps(out))
 
 
-@app.route('/recent_updates/')
+@app.route('/recent_updates/', subdomain='med-db-api')
 def recent_updates():
     """
     Return a list of purchases that have recently been added

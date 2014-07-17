@@ -212,7 +212,7 @@ class HomeView(AdminIndexView):
     #     return redirect(url_for('.index'))
 
 
-admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'))
+admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api')
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 

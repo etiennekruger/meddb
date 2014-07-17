@@ -11,6 +11,14 @@ import urllib
 API_HOST = app.config['API_HOST']
 
 
+# handling static files (only relevant during development)
+app.static_folder = 'static'
+app.add_url_rule('/static/<path:filename>',
+                 endpoint='static',
+                 view_func=app.send_static_file,
+                 subdomain='med-db')
+
+
 @app.template_filter('format_date')
 def jinja2_filter_format_date(date_str):
     date = dateutil.parser.parse(date_str)
@@ -92,7 +100,7 @@ def load_from_api(resource_name, resource_id=None):
     return
 
 
-@app.route('/')
+@app.route('/', subdomain='med-db')
 def landing():
 
     recent_updates = load_from_api('recent_updates')
@@ -110,7 +118,7 @@ def landing():
     )
 
 
-@app.route('/medicine/<int:medicine_id>/')
+@app.route('/medicine/<int:medicine_id>/', subdomain='med-db')
 def medicine(medicine_id):
 
     medicine = load_from_api('medicine', medicine_id)
@@ -153,7 +161,7 @@ def medicine(medicine_id):
         form_args = form_args,
     )
 
-@app.route('/procurement/<int:procurement_id>/')
+@app.route('/procurement/<int:procurement_id>/', subdomain='med-db')
 def procurement(procurement_id):
 
     procurement = load_from_api('procurement', procurement_id)
@@ -164,7 +172,7 @@ def procurement(procurement_id):
         active_nav_button="procurement"
     )
 
-@app.route('/login/', methods=['GET', 'POST'])
+@app.route('/login/', subdomain='med-db', methods=['GET', 'POST'])
 def login():
 
     next = request.args.get('next', None)
@@ -194,13 +202,13 @@ def login():
         form=login_form
     )
 
-@app.route('/logout/', methods=['GET', 'POST'])
+@app.route('/logout/', subdomain='med-db', methods=['GET', 'POST'])
 def logout():
 
     session.clear()
     return redirect(url_for('landing'))
 
-@app.route('/register/', methods=['GET', 'POST'])
+@app.route('/register/', subdomain='med-db', methods=['GET', 'POST'])
 def register():
 
     register_form = forms.RegistrationForm(request.form)
@@ -226,11 +234,11 @@ def register():
         form=register_form
     )
 
-@app.route('/admin/')
+@app.route('/admin/', subdomain='med-db')
 def admin_redirect():
     return redirect(API_HOST + "admin/")
 
 
-@app.route('/meddb/')
+@app.route('/meddb/', subdomain='med-db')
 def legacy_redirect():
     return redirect("/", 301)
