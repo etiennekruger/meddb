@@ -44,7 +44,7 @@
                     {% if medicine.procurements | length == 0 %}
                         <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
                     {% else %}
-                        <p></p>
+                        <p style="padding: 10px 10px 0px 10px;" class="lead">Recent procurements by Member States.</p>
                         <table class="table table-bordered table-striped table-hover">
                             <thead>
                             <th>Procurement country</th>
@@ -88,10 +88,18 @@
                                                     title="{{ procurement.incoterm.description }}">
                                                 {{ procurement.incoterm.code }}
                                             </span>
+                                        {% else %}
+                                            <span class="text-muted">Unknown</span>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {{ procurement.quantity | add_commas }} <br>({{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s)
+                                        <span
+                                                class="tooltip-enabled"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                                            {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
+                                            </span>
                                     </td>
                                     <td class="price-bar-container">
                                             <span class="pull-right">
@@ -111,18 +119,16 @@
         <div class="tab-pane" id="cost-calculator">
             <div class="row">
                 <div class="col-lg-12">
-                    <h2>Least expensive procurements</h2>
+
+                    <p style="padding: 10px 10px 0px 10px;" class="lead"class="lead">Find potential savings by entering your own price.</p>
 
                     <form id="form-comparison" class="form form-inline" method="get" action="">
                         <div class="form-group">
-                            <p><em>Calculate cost difference:</em></p>
-                        </div>
-                        <div class="form-group">
-                            <label class="sr-only" for="compare-quantity">Quantity</label>
+                            <label for="compare-quantity">Quantity</label>
                             <input name="compare-quantity" class="form-control" type="text" placeholder="Quantity" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
                         </div>
                         <div class="form-group">
-                            <label class="sr-only" for="compare-price">Price</label>
+                            <label for="compare-price">Price</label>
                             <input name="compare-price" class="form-control" type="text" placeholder="Unit price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
                         </div>
                         <button class="btn btn-default" type="submit">Calculate</button>
@@ -174,10 +180,18 @@
                                                     title="{{ procurement.incoterm.description }}">
                                                 {{ procurement.incoterm.code }}
                                             </span>
+                                        {% else %}
+                                            <span class="text-muted">Unknown</span>
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {{ procurement.quantity | add_commas }} ({{ procurement.pack_size }} {{ procurement.unit_of_measure }} {{ procurement.container }}s)
+                                        <span
+                                                class="tooltip-enabled"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                                            {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
+                                            </span>
                                     </td>
                                     <td>
                                         ${{ procurement.unit_price_usd }}
@@ -185,8 +199,8 @@
                                     <td>
                             <span>
                                 {% if procurement.cost_difference %}
-                                    {% if procurement.cost_difference < 0 %}- {% endif %}
-                                    ${{ procurement.cost_difference | abs }}
+                                    <nobr>{% if procurement.cost_difference < 0 %}- {% endif %}
+                                        ${{ procurement.cost_difference | int | abs | add_commas}}</nobr>
                                 {% else %}
                                     N/A
                                 {% endif %}

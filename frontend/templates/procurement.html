@@ -72,6 +72,8 @@
                     <td>
                         {% if procurement.incoterm %}
                             {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+                        {% else %}
+                            <span class="text-muted">Unknown</span>
                         {% endif %}
                     </td>
                 </tr>
