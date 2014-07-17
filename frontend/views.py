@@ -126,16 +126,17 @@ def medicine(medicine_id):
 
     # calculate potential cost difference
     form_args = []
-    if request.args.get("compare-quantity") and request.args.get("compare-price"):
+    if request.args.get("compare-quantity") and request.args.get("compare-pack-size") and request.args.get("compare-price"):
         form_args = request.args
         try:
             compare_quantity = int(form_args['compare-quantity'])
+            compare_pack_size = int(form_args['compare-pack-size'])
             compare_price = float(form_args['compare-price'])
-            total_expected = compare_price * compare_quantity
+            compare_unit_price = float(compare_price/compare_pack_size)
 
             for procurement in best_procurements:
                 unit_price = float(procurement['unit_price_usd'])
-                procurement['cost_difference'] = (unit_price - compare_price) * compare_quantity
+                procurement['cost_difference'] = (unit_price - compare_unit_price) * compare_quantity * compare_pack_size
         except Exception as e:
             flash("There was a problem with your input.", "warning")
             logger.debug(e)

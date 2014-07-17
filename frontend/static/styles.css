@@ -194,3 +194,7 @@ body{
     border-radius: 6px;
     line-height: 1.33;
 }
+
+.form-inline label{
+    padding-left: 10px;
+}

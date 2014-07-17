@@ -63,10 +63,10 @@
                                     </td>
                                     <td>
                                         <span
-                                                    class="tooltip-enabled"
-                                                    data-toggle="tooltip"
-                                                    data-placement="top"
-                                                    title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                                                class="tooltip-enabled"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
                                             {{ procurement.product.medicine.name }}</span>
                                     </td>
                                     <td>
@@ -98,7 +98,13 @@
                                             <span class="pull-right">
                                     ${{ procurement.unit_price_usd }}
                                     </span>
-                                        <div class="price-bar" style="width: {{ width }}%;"></div>
+                                        <div
+                                                class="price-bar tooltip-enabled"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}"
+                                                style="width: {{ width }}%;"></div>
+
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -118,11 +124,15 @@
                     <form id="form-comparison" class="form form-inline" method="get" action="">
                         <div class="form-group">
                             <label for="compare-quantity">Quantity</label>
-                            <input name="compare-quantity" class="form-control" type="text" placeholder="Quantity" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
+                            <input name="compare-quantity" class="form-control" type="text" placeholder="Number of packs" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
                         </div>
                         <div class="form-group">
-                            <label for="compare-price">Price</label>
-                            <input name="compare-price" class="form-control" type="text" placeholder="Unit price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
+                            <label for="compare-pack-size">Pack size (in {{ medicine.unit_of_measure }}s)</label>
+                            <input name="compare-pack-size" class="form-control" type="text" placeholder="Units per pack" {% if form_args['compare-pack-size'] %}value="{{ form_args['compare-pack-size'] }}"{% endif %}/>
+                        </div>
+                        <div class="form-group">
+                            <label for="compare-price">Pack price</label>
+                            <input name="compare-price" class="form-control" type="text" placeholder="Pack price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
                         </div>
                         <button class="btn btn-default" type="submit">Calculate</button>
                     </form>
@@ -148,10 +158,10 @@
                                     </td>
                                     <td>
                                         <span
-                                                    class="tooltip-enabled"
-                                                    data-toggle="tooltip"
-                                                    data-placement="top"
-                                                    title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                                                class="tooltip-enabled"
+                                                data-toggle="tooltip"
+                                                data-placement="top"
+                                                title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
                                             {{ procurement.product.medicine.name }}</span>
                                     </td>
                                     <td>
@@ -182,16 +192,17 @@
                                     <td>
                                         ${{ procurement.unit_price_usd }}
                                     </td>
-                                    <td>
-                            <span>
-                                {% if procurement.cost_difference %}
-                                    <nobr>{% if procurement.cost_difference < 0 %}- {% endif %}
-                                        ${{ procurement.cost_difference | int | abs | add_commas}}</nobr>
-                                {% else %}
-                                    N/A
-                                {% endif %}
-                            </span>
-                                    </td>
+                                    {% if procurement.cost_difference is defined and procurement.cost_difference!= None %}
+                                        <td class="
+                                    {% if procurement.cost_difference <= 0 %}success{% else %}danger{% endif %}">
+
+                                            <nobr>{% if procurement.cost_difference < 0 %}- {% endif %}
+                                                ${{ procurement.cost_difference | round | int | abs | add_commas}}</nobr>
+                                        </td>
+                                    {% else %}
+                                        <td>N/A</td>
+                                    {% endif %}
+
                                 </tr>
                             {% endfor %}
                             </tbody>
