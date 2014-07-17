@@ -6,6 +6,7 @@ import operator
 import dateutil.parser
 import forms
 import json
+import urllib
 
 API_HOST = app.config['API_HOST']
 
@@ -61,9 +62,11 @@ def handle_api_exception(error):
     """
 
     logger.debug(error)
+    logger.debug(request.path)
+    logger.debug(urllib.quote_plus(request.path))
     flash(error.message + " (" + str(error.status_code) + ")", "danger")
     if error.status_code == 401:
-        return redirect(url_for('login'))
+        return redirect(url_for('login') + "?next=" + urllib.quote_plus(request.path))
     return "OK"
 
 
@@ -163,6 +166,8 @@ def procurement(procurement_id):
 @app.route('/login/', methods=['GET', 'POST'])
 def login():
 
+    next = request.args.get('next', None)
+    logger.debug(next)
     login_form = forms.LoginForm(request.form)
     if request.method == 'POST' and login_form.validate():
         data = json.dumps(request.form)
@@ -176,6 +181,8 @@ def login():
             email = user_dict.get('email')
             session['api_key'] = api_key
             session['email'] = email
+            if next:
+                return redirect(next)
             return redirect(url_for('landing'))
         except ConnectionError:
             flash('Error connecting to backend service.', 'danger')
