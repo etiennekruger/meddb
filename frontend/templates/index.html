@@ -3,18 +3,22 @@
 {% endblock search %}
 
 {% block page_header %}
-    <div id="search-banner">
-        <h1>Search for a medicine</h1>
-        <form class="form" role="search">
-            <div class="input-group input-group-lg">
-                <input id="search-box" autocomplete="off" type="text" class="input-lg form-control" placeholder="e.g. Abacavir">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12">
+            <div id="search-banner">
+                <h1>Search for a medicine</h1>
+                <form class="form" role="search">
+                    <div class="input-group input-group-lg">
+                        <input id="search-box" autocomplete="off" type="text" class="input-lg form-control" placeholder="e.g. Abacavir">
                         <span class="input-group-btn">
                         <button class="btn btn-primary" type="button">Search</button>
                         </span>
+                    </div>
+                </form>
+                <p id="search-caption">
+                </p>
             </div>
-        </form>
-        <p id="search-caption">
-        </p>
+        </div>
     </div>
 {% endblock %}
 

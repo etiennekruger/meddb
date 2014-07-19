@@ -1,8 +1,9 @@
 {% import 'macros.html' as macros %}
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <title>{% block title %}Medicine Prices Database{% endblock %}</title>
+    <meta name=viewport content="width=device-width, initial-scale=1">
 
     <link href="/static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
     <link href="/static/flags.css" rel="stylesheet">
@@ -16,7 +17,7 @@
 </head>
 <body>
 <nav class="navbar navbar-default navbar-static-top" role="navigation">
-    <div class="container">
+    <div class="container-fluid">
         <a class="navbar-brand" href="/">
             <img id="brand-logo" src="/static/images/sadc-logo-small.png"> Medicine Prices Database
         </a>
@@ -66,7 +67,7 @@
 </nav>
 
 <div id="jumbo">
-    <div id="message-container" class="container">
+    <div id="message-container" class="container-fluid">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
@@ -89,7 +90,7 @@
     {% endblock %}
 </div>
 
-<div id="page-container" class="container">
+<div id="page-container" class="container-fluid">
     {% block page %}
         <div class="row">
             <p class="lead">Content goes here.</p>
