@@ -10,11 +10,36 @@
 
 {% block page %}
     <div class="row">
-        <div class="col-md-6">
-            {% for medicine in report['medicines'] %}
-            <p>{{ medicine['name'] }}</p>
-            {% endfor %}
-        </div>
+        {% if report.medicines %}
+            <div class="col-md-12">
+                <p class="lead text-center">These numbers are based on recent procurements (past twelve months).</p>
+            </div>
+            <div class="col-md-10 col-md-offset-1">
+                <table class="table table-bordered table-striped table-hover">
+                    <thead>
+                    <th></th>
+                    <th>Medicine</th>
+                    <th>Overall spend</th>
+                    <th colspan="2">Savings potential</th>
+                    </thead>
+                    <tbody>
+                    {% for medicine in report.medicines %}
+                        <tr class="medicine-entry clickable" data-medicine-id="{{ medicine.medicine_id }}">
+                            <td>{{ loop.index }}</td>
+                            <td>{{ medicine.name }}</td>
+                            <td>${{ medicine.overall_spend | int | add_commas }}</td>
+                            <td>${{ medicine.potential_savings | int | add_commas }}</td>
+                            <td>{{ (100 * (1 - medicine.score)) | int }}%</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="col-md-12">
+                <p class="lead text-center">There are no recent procurements for this country.</p>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -22,7 +47,11 @@
     {{ super() }}
     <script>
         $(document).ready(function(){
-
+            $(".medicine-entry").on('click', function(){
+                tmp = this
+                var medicine_id = $(this).attr('data-medicine-id');
+                window.location = '/medicine/' + medicine_id + '/';
+            })
         });
     </script>
 {% endblock %}

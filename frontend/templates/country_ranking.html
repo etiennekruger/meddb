@@ -11,7 +11,7 @@
 {% block page %}
     <div class="row">
         <div class="col-md-12">
-            <p class="lead">These rankings are based on recent procurements (past twelve months), and are based on estimates.</p>
+            <p class="lead text-center">These rankings are based on recent procurements (past twelve months).</p>
         </div>
         <div class="col-md-10 col-md-offset-1">
             <table class="table table-bordered table-striped table-hover">
@@ -23,7 +23,7 @@
                 </thead>
                 <tbody>
                 {% for entry in country_ranking %}
-                    <tr class="country-entry" data-country-code="{{ entry.country.code }}">
+                    <tr class="country-entry clickable" data-country-code="{{ entry.country.code }}">
                         <td>{{ loop.index }}</td>
                         <td>{{ macros.render_flag(entry.country) }} {{ entry.country.name }}</td>
                         <td>${{ entry.overall_spend | int | add_commas }}</td>
@@ -33,7 +33,6 @@
                 {% endfor %}
                 </tbody>
             </table>
-
         </div>
     </div>
 {% endblock %}

@@ -186,6 +186,48 @@ def calculate_autocomplete():
     return out
 
 
+def calculate_country_overview(country):
+    """
+    THIS IS COMPUTATIONALLY EXPENSIVE
+    """
+
+    logger.debug("Calculating country overview")
+
+    # iterate through all medicines in the db
+    medicines = Medicine.query.order_by(Medicine.name).all()
+    medicines_out = []
+    for medicine in medicines:
+        tmp = {
+            'score': 0,
+            'overall_spend': 0,
+            'potential_savings': 0,
+        }
+        # serialize medicine, so that procurements may be ordered
+        medicine_dict = medicine.to_dict(include_related=True)
+        procurements = medicine_dict['procurements']
+        if not procurements:
+            continue
+        # calculate the total spend and potential savings for each transaction
+        best_price = procurements[0]['unit_price_usd']
+        for procurement in procurements:
+            if procurement['country']['code']==country.code:
+                total = procurement['quantity'] * procurement['pack_price_usd']
+                tmp_diff = procurement['unit_price_usd'] - best_price
+                potential_saving = procurement['quantity'] * procurement['pack_size'] * tmp_diff
+                tmp['overall_spend'] += total
+                tmp['potential_savings'] += potential_saving
+        if tmp['overall_spend']:
+            tmp['name'] = medicine.name
+            tmp['medicine_id'] = medicine.medicine_id
+            tmp['score'] = 1 - (tmp['potential_savings']/float(tmp['overall_spend']))
+            medicines_out.append(tmp)
+
+    # score medicines by how close their spend is to the theoretical best
+    medicines_out = sorted(medicines_out, key=itemgetter("potential_savings"))
+    medicines_out.reverse()
+    return medicines_out
+
+
 def calculate_country_rankings():
     """
     THIS IS COMPUTATIONALLY EXPENSIVE
@@ -415,29 +457,17 @@ def country_report(country_code):
     if not available_countries.get(country_code):
         raise ApiException(400, "Reports are not available for the country that you specified.")
     country = Country.query.filter_by(code=country_code).one()
-    cutoff = datetime.datetime.today() - datetime.timedelta(days=MAX_AGE)
 
-    report = {}
-    report['country'] = country.to_dict()
-
-    procurements = Procurement.query.filter_by(country=country).filter(
-        or_(
-            Procurement.start_date > cutoff,
-            Procurement.end_date > cutoff
-        )
-    )
-    report['procurement_count'] = procurements.count()
-
-    medicine_ids = []
-    medicines = []
-
-    for procurement in procurements:
-        if not procurement.product.medicine_id in medicine_ids:
-            medicines.append(procurement.product.medicine.to_dict())
-
-    report['medicines'] = medicines
-
-    return send_api_response(json.dumps(report))
+    report_json = cache.retrieve('country_overview_' + country.code)
+    if report_json:
+        logger.debug('loading country overview from cache')
+    else:
+        report = {}
+        report['country'] = country.to_dict()
+        report['medicines'] = calculate_country_overview(country)
+        report_json = json.dumps(report)
+        cache.store('country_overview_' + country.code, report_json)
+    return send_api_response(report_json)
 
 
 @app.route('/country_ranking/', subdomain='med-db-api')
@@ -445,5 +475,11 @@ def country_ranking():
     """
     """
 
-    ranking = calculate_country_rankings()
-    return send_api_response(json.dumps(ranking))
+    ranking_json = cache.retrieve('country_ranking')
+    if ranking_json:
+        logger.debug('loading country ranking from cache')
+    else:
+        ranking = calculate_country_rankings()
+        ranking_json = json.dumps(ranking)
+        cache.store('country_ranking', ranking_json)
+    return send_api_response(ranking_json)
