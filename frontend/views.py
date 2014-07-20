@@ -174,7 +174,19 @@ def procurement(procurement_id):
     )
 
 
-@app.route('/report/<string:country_code>/', subdomain='med-db')
+@app.route('/country-ranking/', subdomain='med-db')
+def country_ranking():
+
+    country_ranking = load_from_api('country_ranking')
+    return render_template(
+        'country_ranking.html',
+        API_HOST=API_HOST,
+        country_ranking=country_ranking,
+        active_nav_button="reports"
+    )
+
+
+@app.route('/country-report/<string:country_code>/', subdomain='med-db')
 def country_report(country_code):
 
     report = load_from_api('country_report', country_code)

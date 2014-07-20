@@ -222,7 +222,7 @@ def calculate_country_rankings():
     for country_code, entry in ranking.iteritems():
         if entry['overall_spend']:
             entry['score'] = 1 - (entry['potential_savings']/float(entry['overall_spend']))
-        entry['country'] = {'name': available_countries[country_code], 'code': country_code}
+        entry['country'] = Country.query.filter_by(code=country_code).one().to_dict()
         ranked_list.append(entry)
     ranked_list = sorted(ranked_list, key=itemgetter("score"))
     ranked_list.reverse()
