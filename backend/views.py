@@ -15,6 +15,30 @@ import re
 API_HOST = app.config["API_HOST"]
 MAX_AGE = app.config["MAX_AGE"]
 
+api_resources = {
+    'medicine': (Medicine, Medicine.medicine_id),
+    'product': (Product, Product.product_id),
+    'procurement': (Procurement, Procurement.procurement_id),
+    'manufacturer': (Manufacturer, Manufacturer.manufacturer_id),
+    'supplier': (Supplier, Supplier.supplier_id),
+    }
+
+available_countries = {
+    "AGO":  "Angola",
+    "BWA":  "Botswana",
+    "COD":  "Congo (DRC)",
+    "LSO":  "Lesotho",
+    "MWI":  "Malawi",
+    "MUS":  "Mauritius",
+    "MOZ":  "Mozambique",
+    "NAM":  "Namibia",
+    "SYC":  "Seychelles",
+    "ZAF":  "South Africa",
+    "SWZ":  "Swaziland",
+    "TZA":  "Tanzania",
+    "ZMB":  "Zambia",
+    }
+
 # handling static files (only relevant during development)
 app.static_folder = 'static'
 app.add_url_rule('/static/<path:filename>',
@@ -161,6 +185,50 @@ def calculate_autocomplete():
         out.append(tmp_dict)
     return out
 
+
+def calculate_country_rankings():
+    """
+    THIS IS COMPUTATIONALLY EXPENSIVE
+    """
+
+    logger.debug("Calculating country rankings")
+
+    ranking = {}
+    for country_code in available_countries.keys():
+        ranking[country_code] = {
+            'score': 0,
+            'overall_spend': 0,
+            'potential_savings': 0,
+        }
+    # iterate through all medicines in the db
+    medicines = Medicine.query.order_by(Medicine.name).all()
+    for medicine in medicines:
+        # serialize medicine, so that procurements may be ordered
+        medicine_dict = medicine.to_dict(include_related=True)
+        procurements = medicine_dict['procurements']
+        if not procurements:
+            continue
+        # calculate the total spend and potential savings for each transaction
+        best_price = procurements[0]['unit_price_usd']
+        for procurement in procurements:
+            if ranking.get(procurement['country']['code']):
+                total = procurement['quantity'] * procurement['pack_price_usd']
+                tmp_diff = procurement['unit_price_usd'] - best_price
+                potential_saving = procurement['quantity'] * procurement['pack_size'] * tmp_diff
+                ranking[procurement['country']['code']]['overall_spend'] += total
+                ranking[procurement['country']['code']]['potential_savings'] += potential_saving
+    # score countries by how close their spend is to the theoretical best
+    ranked_list = []
+    for country_code, entry in ranking.iteritems():
+        if entry['overall_spend']:
+            entry['score'] = 1 - (entry['potential_savings']/float(entry['overall_spend']))
+        entry['country'] = {'name': available_countries[country_code], 'code': country_code}
+        ranked_list.append(entry)
+    ranked_list = sorted(ranked_list, key=itemgetter("score"))
+    ranked_list.reverse()
+
+    return ranked_list
+
 # -------------------------------------------------------------------
 # API endpoints:
 #
@@ -243,14 +311,6 @@ def overview():
         cache.store('db_overview', json.dumps(tmp, cls=serializers.CustomEncoder))
         return send_api_response(json.dumps(tmp))
 
-
-api_resources = {
-    'medicine': (Medicine, Medicine.medicine_id),
-    'product': (Product, Product.product_id),
-    'procurement': (Procurement, Procurement.procurement_id),
-    'manufacturer': (Manufacturer, Manufacturer.manufacturer_id),
-    'supplier': (Supplier, Supplier.supplier_id),
-    }
 
 @app.route('/', subdomain='med-db-api')
 def index():
@@ -346,22 +406,6 @@ def recent_updates():
     return serializers.queryset_to_json(procurements)
 
 
-available_countries = {
-    "AGO":  "Angola",
-    "BWA":  "Botswana",
-    "COD":  "Congo (DRC)",
-    "LSO":  "Lesotho",
-    "MWI":  "Malawi",
-    "MUS":  "Mauritius",
-    "MOZ":  "Mozambique",
-    "NAM":  "Namibia",
-    "SYC":  "Seychelles",
-    "ZAF":  "South Africa",
-    "SWZ":  "Swaziland",
-    "TZA":  "Tanzania",
-    "ZMB":  "Zambia",
-    }
-
 @app.route('/country_report/<string:country_code>/', subdomain='med-db-api')
 def country_report(country_code):
     """
@@ -394,3 +438,12 @@ def country_report(country_code):
     report['medicines'] = medicines
 
     return send_api_response(json.dumps(report))
+
+
+@app.route('/country_ranking/', subdomain='med-db-api')
+def country_ranking():
+    """
+    """
+
+    ranking = calculate_country_rankings()
+    return send_api_response(json.dumps(ranking))
