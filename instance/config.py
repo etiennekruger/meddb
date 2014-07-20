@@ -15,3 +15,5 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:////Users/petrus/Desktop/code4sa/med-db/instan
 RESULTS_PER_PAGE = 20
 
 ADMIN_USER = "admin@code4sa.org"
+
+MAX_AGE = 365

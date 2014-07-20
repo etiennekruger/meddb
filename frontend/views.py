@@ -173,6 +173,19 @@ def procurement(procurement_id):
         active_nav_button="procurement"
     )
 
+
+@app.route('/report/<string:country_code>/', subdomain='med-db')
+def country_report(country_code):
+
+    report = load_from_api('country_report', country_code)
+    return render_template(
+        'country_report.html',
+        API_HOST=API_HOST,
+        report=report,
+        active_nav_button="reports"
+    )
+
+
 @app.route('/login/', subdomain='med-db', methods=['GET', 'POST'])
 def login():
 

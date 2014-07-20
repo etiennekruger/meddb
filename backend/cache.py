@@ -65,12 +65,15 @@ def retrieve(key):
         return redis.get(key)
     except ConnectionError:
         # fall back to filesystem, if Redis is not available
-        with open('/tmp/med-db.cache', 'r') as f:
-            try:
-                cache = json.loads(f.read())
-            except Exception:
-                cache = {}
-            if cache.get(key):
-                return cache[key]
+        try:
+            with open('/tmp/med-db.cache', 'r') as f:
+                try:
+                    cache = json.loads(f.read())
+                except Exception:
+                    cache = {}
+                if cache.get(key):
+                    return cache[key]
+        except IOError:
+            pass
         pass
     return None

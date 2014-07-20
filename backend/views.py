@@ -13,6 +13,7 @@ from operator import itemgetter
 import re
 
 API_HOST = app.config["API_HOST"]
+MAX_AGE = app.config["MAX_AGE"]
 
 # handling static files (only relevant during development)
 app.static_folder = 'static'
@@ -97,7 +98,7 @@ def calculate_db_overview():
     THIS IS COMPUTATIONALLY EXPENSIVE
     """
 
-    cutoff = datetime.datetime.today() - datetime.timedelta(days=365)
+    cutoff = datetime.datetime.today() - datetime.timedelta(days=MAX_AGE)
 
     logger.debug("Calculating DB overview")
     overview = {}
@@ -156,7 +157,7 @@ def calculate_autocomplete():
         tmp_dict = {
             'name': medicine.name,
             'medicine_id': medicine.medicine_id,
-        }
+            }
         out.append(tmp_dict)
     return out
 
@@ -343,3 +344,53 @@ def recent_updates():
 
     procurements = Procurement.query.order_by(Procurement.added_on.desc()).limit(20).all()
     return serializers.queryset_to_json(procurements)
+
+
+available_countries = {
+    "AGO":  "Angola",
+    "BWA":  "Botswana",
+    "COD":  "Congo (DRC)",
+    "LSO":  "Lesotho",
+    "MWI":  "Malawi",
+    "MUS":  "Mauritius",
+    "MOZ":  "Mozambique",
+    "NAM":  "Namibia",
+    "SYC":  "Seychelles",
+    "ZAF":  "South Africa",
+    "SWZ":  "Swaziland",
+    "TZA":  "Tanzania",
+    "ZMB":  "Zambia",
+    }
+
+@app.route('/country_report/<string:country_code>/', subdomain='med-db-api')
+def country_report(country_code):
+    """
+    """
+
+    country_code = country_code.upper()
+    if not available_countries.get(country_code):
+        raise ApiException(400, "Reports are not available for the country that you specified.")
+    country = Country.query.filter_by(code=country_code).one()
+    cutoff = datetime.datetime.today() - datetime.timedelta(days=MAX_AGE)
+
+    report = {}
+    report['country'] = country.to_dict()
+
+    procurements = Procurement.query.filter_by(country=country).filter(
+        or_(
+            Procurement.start_date > cutoff,
+            Procurement.end_date > cutoff
+        )
+    )
+    report['procurement_count'] = procurements.count()
+
+    medicine_ids = []
+    medicines = []
+
+    for procurement in procurements:
+        if not procurement.product.medicine_id in medicine_ids:
+            medicines.append(procurement.product.medicine.to_dict())
+
+    report['medicines'] = medicines
+
+    return send_api_response(json.dumps(report))

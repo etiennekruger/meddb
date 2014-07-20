@@ -7,6 +7,8 @@ from passlib.apps import custom_app_context as pwd_context
 import string
 import random
 
+MAX_AGE = app.config["MAX_AGE"]
+
 
 class ApiKey(db.Model):
 
@@ -155,10 +157,13 @@ class Medicine(db.Model):
     @property
     def procurements(self):
         out = []
+        cutoff = datetime.datetime.today() - datetime.timedelta(days=MAX_AGE)
         products = Product.query.filter(Product.medicine_id == self.medicine_id).all()
         if products:
             for product in products:
-                out += product.procurements
+                for procurement in product.procurements:
+                    if procurement.start_date > cutoff or procurement.end_date > cutoff:
+                        out.append(procurement)
         return out
 
     def __unicode__(self):

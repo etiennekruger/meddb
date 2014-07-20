@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+    <div class="container">
+        <h1>
+            Country report: {{ report.country.name }}
+        </h1>
+    </div>
+{% endblock %}
+
+{% block page %}
+    <div class="row">
+        <div class="col-md-6">
+            {% for medicine in report['medicines'] %}
+            <p>{{ medicine['name'] }}</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ super() }}
+    <script>
+        $(document).ready(function(){
+
+        });
+    </script>
+{% endblock %}

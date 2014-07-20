@@ -13,3 +13,5 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:////var/www/med-db/instance/med-db.db'
 RESULTS_PER_PAGE = 50
 
 ADMIN_USER = "admin@code4sa.org"
+
+MAX_AGE = 365
