@@ -13,7 +13,7 @@ def store(key, str_in):
     Store a record in the cache.
     """
     now = int(time.time())
-    expires = now + (5 * 60)
+    expires = now + (60 * 60 * 24 * 7)
     try:
         p = redis.pipeline()
         p.set(key, str_in)
@@ -65,7 +65,7 @@ def retrieve(key):
         return redis.get(key)
     except ConnectionError:
         # fall back to filesystem, if Redis is not available
-        with open('/tmp/med-db.cache', 'w+') as f:
+        with open('/tmp/med-db.cache', 'r') as f:
             try:
                 cache = json.loads(f.read())
             except Exception:

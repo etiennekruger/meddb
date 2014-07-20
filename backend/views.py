@@ -153,7 +153,11 @@ def calculate_autocomplete():
     medicines = Medicine.query.order_by(Medicine.name).all()
     out = []
     for medicine in medicines:
-        out.append(medicine.to_dict())
+        tmp_dict = {
+            'name': medicine.name,
+            'medicine_id': medicine.medicine_id,
+        }
+        out.append(tmp_dict)
     return out
 
 # -------------------------------------------------------------------
@@ -315,7 +319,6 @@ def autocomplete(query):
     else:
         medicine_list = calculate_autocomplete()
         cache.store('medicine_list', json.dumps(medicine_list, cls=serializers.CustomEncoder))
-    i = 0
     for medicine in medicine_list:
         tmp = {}
         query_index = medicine['name'].lower().find(query.lower())
@@ -324,6 +327,8 @@ def autocomplete(query):
             tmp['name'] = medicine['name']
             tmp['index'] = query_index
             out.append(tmp)
+        if len(out) > 20:
+            break
     out = sorted(out, key=itemgetter('index'))
     if len(out) > 10:
         out = out[0:10]
