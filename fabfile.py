@@ -196,3 +196,8 @@ def restart_redis():
         sudo('/etc/init.d/redis_6379 stop')
     sudo('/etc/init.d/redis_6379 start')
     return
+
+
+def flush_redis():
+    sudo('redis-cli flushdb')
+    return

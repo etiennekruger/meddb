@@ -268,8 +268,8 @@ def calculate_country_rankings():
         ranked_list.append(entry)
     ranked_list = sorted(ranked_list, key=itemgetter("score"))
     ranked_list.reverse()
-
-    return ranked_list
+    out = {'count': len(ranked_list), 'countries': ranked_list}
+    return out
 
 # -------------------------------------------------------------------
 # API endpoints:

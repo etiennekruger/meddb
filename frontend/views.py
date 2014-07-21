@@ -7,6 +7,7 @@ import dateutil.parser
 import forms
 import json
 import urllib
+from operator import itemgetter
 
 API_HOST = app.config['API_HOST']
 
@@ -91,9 +92,20 @@ def load_from_api(resource_name, resource_id=None):
 
     try:
         response = requests.get(API_HOST + query_str, headers=headers)
+        out = response.json()
         if response.status_code != 200:
             raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
-        return response.json()
+        i = 0
+        while i < 10:
+            i += 1
+            if response.json().get('next'):
+                response = requests.get(response.json()['next'], headers=headers)
+                if response.status_code != 200:
+                    raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+                out['results'] += response.json()['results']
+            else:
+                break
+        return out
 
     except ConnectionError:
         flash('Error connecting to backend service.', 'danger')
@@ -116,6 +128,20 @@ def landing():
         active_nav_button="home",
         overview=overview,
         recent_updates=recent_updates
+    )
+
+
+@app.route('/medicine-list/', subdomain='med-db')
+def medicine_list():
+
+    medicines = load_from_api('medicine')
+    medicine_list = medicines['results']
+    medicine_list = sorted(medicine_list, key=itemgetter('name'))
+    return render_template(
+        'medicine_list.html',
+        API_HOST=API_HOST,
+        medicine_list=medicine_list,
+        active_nav_button="medicines"
     )
 
 

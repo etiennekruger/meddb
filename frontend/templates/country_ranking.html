@@ -23,7 +23,7 @@
                 <th>Savings potential % <i class="fa fa-chevron-down"></i></th>
                 </thead>
                 <tbody>
-                {% for entry in country_ranking %}
+                {% for entry in country_ranking.countries %}
                     <tr class="country-entry clickable" data-country-code="{{ entry.country.code }}">
                         <td>{{ loop.index }}</td>
                         <td>{{ macros.render_flag(entry.country) }} {{ entry.country.name }}</td>
