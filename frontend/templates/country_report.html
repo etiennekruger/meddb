@@ -17,10 +17,11 @@
             <div class="col-md-10 col-md-offset-1">
                 <table class="table table-bordered table-striped table-hover">
                     <thead>
-                    <th></th>
+                    <th>{{ macros.render_flag(report.country) }}</th>
                     <th>Medicine</th>
-                    <th>Overall spend</th>
-                    <th colspan="2">Savings potential</th>
+                    <th>Overall spend from recent procurements</th>
+                <th>Savings potential (total) <i class="fa fa-chevron-down"></i></th>
+                <th>Savings potential %</th>
                     </thead>
                     <tbody>
                     {% for medicine in report.medicines %}
@@ -28,7 +29,7 @@
                             <td>{{ loop.index }}</td>
                             <td>{{ medicine.name }}</td>
                             <td>${{ medicine.overall_spend | int | add_commas }}</td>
-                            <td>${{ medicine.potential_savings | int | add_commas }}</td>
+                            <td><strong>${{ medicine.potential_savings | int | add_commas }}</strong></td>
                             <td>{{ (100 * (1 - medicine.score)) | int }}%</td>
                         </tr>
                     {% endfor %}

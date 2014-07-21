@@ -18,8 +18,9 @@
                 <thead>
                 <th></th>
                 <th>Country</th>
-                <th>Overall spend</th>
-                <th colspan="2">Savings potential</th>
+                <th>Overall spend from recent procurements</th>
+                <th>Savings potential (total)</th>
+                <th>Savings potential % <i class="fa fa-chevron-down"></i></th>
                 </thead>
                 <tbody>
                 {% for entry in country_ranking %}
@@ -28,7 +29,7 @@
                         <td>{{ macros.render_flag(entry.country) }} {{ entry.country.name }}</td>
                         <td>${{ entry.overall_spend | int | add_commas }}</td>
                         <td>${{ entry.potential_savings | int | add_commas }}</td>
-                        <td>{{ (100 * (1 - entry.score)) | int }}%</td>
+                        <td><strong>{{ (100 * (1 - entry.score)) | int }}%</strong></td>
                     </tr>
                 {% endfor %}
                 </tbody>
