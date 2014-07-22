@@ -1,6 +1,7 @@
 {% import 'macros.html' as macros %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>{% block title %}Medicine Prices Database{% endblock %}</title>
     <meta name=viewport content="width=device-width, initial-scale=1">
@@ -11,6 +12,12 @@
     <link rel="stylesheet" type="text/css" href="/static/styles.css">
     <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+
+    <!--[if lt IE 9]>
+        <script src="assets/js/css3-mediaqueries.js"></script>
+        <script type='text/javascript' src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
+    <![endif]-->
 
     {% block head %}
     {% endblock %}
@@ -134,6 +141,11 @@
     jQuery.support.cors = true;  // to enable calls to the API on IE
     API_HOST = "{{ API_HOST }}";
 
+    function isIE () {
+        var myNav = navigator.userAgent.toLowerCase();
+        return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+    }
+
     // thanks to http://stackoverflow.com/questions/3362474/jquery-ajax-fails-in-ie-on-cross-domain-calls
     function crossDomainAjax (url, successCallback) {
 
@@ -193,7 +205,23 @@
         };
     }
 
+    function error_message(msg, category)
+    {
+        var tmp = '<div class="flashed_msg">';
+        tmp += '<div class="alert alert-' + category + ' alert-dismissable fade in">';
+        tmp += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+        tmp += '<strong>Error: </strong>' + msg;
+        tmp += '</div>';
+        tmp += '</div>';
+        $("#message-container").append(tmp);
+    }
+
     $(document).ready(function(){
+
+        // Detecting IE
+        if (isIE() !== false && isIE() < 9) {
+            error_message("Please upgrade your browser to make use of this site. Internet Explorer 8 and below is not supported.", "danger");
+        }
 
         // enable tooltips
         $(".tooltip-enabled").tooltip({});
@@ -218,8 +246,6 @@
         $("#search-box").focus()
     });
 </script>
-
-<script src="/static/med-db-2014-07-25.js"></script>
 
 {% block javascript %}
 {% endblock %}
