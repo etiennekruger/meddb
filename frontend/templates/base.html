@@ -137,7 +137,7 @@
 <script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
 <script src="/static/typeahead.jquery.js"></script>
 
-<script type="application/javascript">
+<script>
     jQuery.support.cors = true;  // to enable calls to the API on IE
     API_HOST = "{{ API_HOST }}";
 
@@ -219,8 +219,8 @@
     $(document).ready(function(){
 
         // Detecting IE
-        if (isIE() !== false && isIE() < 9) {
-            error_message("Please upgrade your browser to make use of this site. Internet Explorer 8 and below is not supported.", "danger");
+        if (isIE() !== false && isIE() < 8) {
+            error_message("Please upgrade your browser to make use of this site. Internet Explorer 7 and below is not supported.", "danger");
         }
 
         // enable tooltips
