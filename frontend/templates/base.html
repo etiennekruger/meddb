@@ -129,15 +129,97 @@
 <script src="/static/jquery-1.11.1.min.js"></script>
 <script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
 <script src="/static/typeahead.jquery.js"></script>
-<script src="/static/med-db.js"></script>
 
 <script type="application/javascript">
-    var API_HOST = "{{ API_HOST }}";
+    jQuery.support.cors = true;  // to enable calls to the API on IE
+    API_HOST = "{{ API_HOST }}";
+
+    // thanks to http://stackoverflow.com/questions/3362474/jquery-ajax-fails-in-ie-on-cross-domain-calls
+    function crossDomainAjax (url, successCallback) {
+
+        // IE8 & 9 only Cross domain JSON GET request
+        if ('XDomainRequest' in window && window.XDomainRequest !== null) {
+
+            var xdr = new XDomainRequest(); // Use Microsoft XDR
+            xdr.open('get', url);
+            xdr.onload = function () {
+
+                var dom  = new ActiveXObject('Microsoft.XMLDOM');
+                var JSON = $.parseJSON(xdr.responseText);
+
+                dom.async = false;
+
+                if (JSON == null || typeof (JSON) == 'undefined') {
+                    JSON = $.parseJSON(data.firstChild.textContent);
+                }
+
+                successCallback(JSON); // internal function
+            };
+
+            xdr.onerror = function() {
+                _result = false;
+            };
+
+            xdr.send();
+        }
+
+        // IE7 and lower can't do cross domain
+        else if (navigator.userAgent.indexOf('MSIE') != -1 &&
+                parseInt(navigator.userAgent.match(/MSIE ([\d.]+)/)[1], 10) < 8) {
+            return false;
+        }
+
+        // Do normal jQuery AJAX for everything else
+        else {
+            $.ajax({
+                url: url,
+                cache: false,
+                dataType: 'json',
+                type: 'GET',
+                async: false, // must be set to false
+                success: function (data, success) {
+                    successCallback(data);
+                }
+            });
+        }
+    }
+
+    function medicine_matcher(){
+        return function findMatches(query, callback) {
+            medicines = [];
+            crossDomainAjax(API_HOST + 'autocomplete/' + query + '/', function(data){
+                callback(data);
+            });
+        };
+    }
 
     $(document).ready(function(){
-        $('.tooltip-enabled').tooltip()
+
+        // enable tooltips
+        $(".tooltip-enabled").tooltip({});
+
+        // handle search
+        $("#search-box").typeahead({
+                    hint: true,
+                    highlight: true,
+                    minLength: 1
+                },
+                {
+                    name: 'medicines',
+                    displayKey: 'name',
+                    source: medicine_matcher()
+                })
+                .on('typeahead:selected', function(e, datum){
+                    window.location = '/medicine/' + (datum["medicine_id"]) + '/';
+                }
+        );
+        $('#search-box.input-lg').siblings('input.tt-hint').addClass('hint-large');
+
+        $("#search-box").focus()
     });
 </script>
+
+<script src="/static/med-db-2014-07-25.js"></script>
 
 {% block javascript %}
 {% endblock %}

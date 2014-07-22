@@ -251,6 +251,7 @@ def login():
 
     return render_template(
         'login.html',
+        API_HOST=API_HOST,
         form=login_form
     )
 
@@ -283,6 +284,7 @@ def register():
 
     return render_template(
         'register.html',
+        API_HOST=API_HOST,
         form=register_form
     )
 
