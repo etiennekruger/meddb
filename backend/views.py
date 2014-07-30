@@ -464,7 +464,7 @@ def country_report(country_code):
     else:
         report = {}
         procurement_list = []
-        procurements = Procurement.query.filter_by(country=country).order_by(Procurement.start_date, Procurement.end_date).all()
+        procurements = Procurement.query.filter_by(country=country).order_by(Procurement.start_date.desc(), Procurement.end_date.desc()).all()
         for procurement in procurements:
             procurement_list.append(procurement.to_dict())
         report['country'] = country.to_dict()
