@@ -22,9 +22,12 @@ app.add_url_rule('/static/<path:filename>',
 
 @app.template_filter('format_date')
 def jinja2_filter_format_date(date_str):
-    date = dateutil.parser.parse(date_str)
-    native = date.replace(tzinfo=None)
-    format='%b %Y'
+    if date_str:
+        date = dateutil.parser.parse(date_str)
+        native = date.replace(tzinfo=None)
+        format='%b %Y'
+    else:
+        return ""
     return native.strftime(format)
 
 
