@@ -134,11 +134,19 @@
   {{ super() }}
   <script>
     $(document).ready(function(){
+
       $(".medicine-entry").on('click', function(){
         tmp = this
         var medicine_id = $(this).attr('data-medicine-id');
         window.location = '/medicine/' + medicine_id + '/';
       })
+
+      $(".procurement-entry").on('click', function(){
+        tmp = this
+        var procurement_id = $(this).attr('data-procurement-id');
+        window.location = '/procurement/' + procurement_id + '/';
+      })
+
     });
   </script>
 {% endblock %}
