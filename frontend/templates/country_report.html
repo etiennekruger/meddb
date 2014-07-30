@@ -72,6 +72,7 @@
                 <th>Date</th>
                 <th>Terms</th>
                 <th>Volume</th>
+                <th>Pack Price</th>
                 <th>Price per unit</th>
                 </thead>
                 <tbody>
@@ -112,6 +113,9 @@
                                             title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
                                             {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
                                             </span>
+                    </td>
+                    <td>
+                      ${{ procurement.pack_price_usd }}
                     </td>
                     <td>
                       ${{ procurement.unit_price_usd }}
