@@ -59,7 +59,12 @@
             {% if report.procurements | length == 0 %}
               <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
             {% else %}
-              <p style="padding: 10px 10px 0px 10px;" class="lead">All {{ report.procurements | length }} known procurements:</p>
+              <a class="btn btn-primary pull-right" style="margin: 10px 10px 0px 10px;" href="{{ url_for('download_procurements', country_code=report.country.code) }}">Download as CSV</a>
+              <p style="padding: 10px 10px 0px 10px;" class="lead">
+                All {{ report.procurements | length }} known procurements:
+              </p>
+
+
               <table class="table table-bordered table-striped table-hover">
                 <thead>
                 <th>Procurement country</th>
