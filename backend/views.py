@@ -463,9 +463,14 @@ def country_report(country_code):
         logger.debug('loading country overview from cache')
     else:
         report = {}
+        procurement_list = []
+        procurements = Procurement.query.filter_by(country=country).order_by(Procurement.start_date, Procurement.end_date).all()
+        for procurement in procurements:
+            procurement_list.append(procurement.to_dict())
         report['country'] = country.to_dict()
         report['medicines'] = calculate_country_overview(country)
-        report_json = json.dumps(report)
+        report['procurements'] = procurement_list
+        report_json = json.dumps(report, cls=serializers.CustomEncoder)
         cache.store('country_overview_' + country.code, report_json)
     return send_api_response(report_json)
 
