@@ -156,12 +156,6 @@ def procurement_to_dict(obj, include_related=False):
     tmp_dict['approved_by'] = tmp_approved_by
     tmp_dict.pop('added_by_id')
     tmp_dict.pop('approved_by_id')
-    # round the price
-    if tmp_dict['pack_price_usd']:
-        tmp_dict['pack_price_usd'] = float('%.3g' % tmp_dict['pack_price_usd'])
-    if tmp_dict['unit_price_usd']:
-        tmp_dict['unit_price_usd'] = float('%.3g' % tmp_dict['unit_price_usd'])
-
     if include_related:
         # supplier
         tmp_supplier = None
@@ -169,6 +163,18 @@ def procurement_to_dict(obj, include_related=False):
             tmp_supplier = obj.supplier.to_dict()
         tmp_dict['supplier'] = tmp_supplier
         tmp_dict.pop('supplier_id')
+        # currency
+        tmp_currency = None
+        if obj.currency:
+            tmp_currency = obj.currency.to_dict()
+            tmp_currency['rate'] = float('%.3g' % (tmp_dict['pack_price'] / tmp_dict['pack_price_usd']))
+        tmp_dict['currency'] = tmp_currency
+        tmp_dict.pop('currency_id')
+    # round the price
+    if tmp_dict['pack_price_usd']:
+        tmp_dict['pack_price_usd'] = float('%.3g' % tmp_dict['pack_price_usd'])
+    if tmp_dict['unit_price_usd']:
+        tmp_dict['unit_price_usd'] = float('%.3g' % tmp_dict['unit_price_usd'])
     return tmp_dict
 
 
