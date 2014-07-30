@@ -3,134 +3,134 @@
 <html lang="en">
 
 <head>
-    <title>{% block title %}Medicine Prices Database{% endblock %}</title>
-    <meta name=viewport content="width=device-width, initial-scale=1">
+  <title>{% block title %}Medicine Prices Database{% endblock %}</title>
+  <meta name=viewport content="width=device-width, initial-scale=1">
 
-    <link href="/static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
-    <link href="/static/flags.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.1.1/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/static/styles.css">
-    <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+  <link href="/static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
+  <link href="/static/flags.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/styles.css">
+  <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 
-    <!--[if lt IE 9]>
+  <!--[if lt IE 9]>
         <script src="assets/js/css3-mediaqueries.js"></script>
         <script type='text/javascript' src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
         <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
     <![endif]-->
 
-    {% block head %}
-    {% endblock %}
+  {% block head %}
+  {% endblock %}
 </head>
 <body>
 <nav class="navbar navbar-default navbar-static-top" role="navigation">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/">
-            <img id="brand-logo" src="/static/images/sadc-logo-small.png"> Medicine Prices Database
-        </a>
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img id="brand-logo" src="/static/images/sadc-logo-small.png"> Medicine Prices Database
+    </a>
 
-        <ul class="nav navbar-nav">
-            <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
-            <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">Medicines</a></li>
-            <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">Country Reports</a></li>
-            <li><a href="/admin/">Admin</a></li>
+    <ul class="nav navbar-nav">
+      <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
+      <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">Medicines</a></li>
+      <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">Country Reports</a></li>
+      <li><a href="/admin/">Admin</a></li>
+    </ul>
+
+    {% block access_control %}
+      <div class="btn-group navbar-btn pull-right" style="padding-left: 20px;">
+
+        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+          <i class="fa fa-user"></i>
+          {%- if session.email %}
+            {{ session.email }}
+          {%- else %}
+            Guest user
+          {% endif -%}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          {%- if session.email %}
+            <li><a href="/logout/">Log out</a></li>
+          {%- else %}
+            <li><a href="/register/">Register</a></li>
+            <li><a href="/login/">Login</a></li>
+          {% endif -%}
         </ul>
+      </div>
+    {% endblock %}
 
-        {% block access_control %}
-            <div class="btn-group navbar-btn pull-right" style="padding-left: 20px;">
-
-                <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
-                    <i class="fa fa-user"></i>
-                    {%- if session.email %}
-                        {{ session.email }}
-                    {%- else %}
-                        Guest user
-                    {% endif -%}
-                    <span class="caret"></span>
-                </button>
-                <ul class="dropdown-menu" role="menu">
-                    {%- if session.email %}
-                        <li><a href="/logout/">Log out</a></li>
-                    {%- else %}
-                        <li><a href="/register/">Register</a></li>
-                        <li><a href="/login/">Login</a></li>
-                    {% endif -%}
-                </ul>
+    {% block search %}
+      <form class="navbar-form">
+        <div id="search-form-container" class="pull-right">
+          <div class="form-group" style="display:inline;">
+            <div class="input-group">
+              <input id="search-box" class="form-control" name="search" placeholder="Search Here" autocomplete="off" autofocus="autofocus" type="text">
+              <span class="input-group-addon"><i class="fa fa-search"></i></span>
             </div>
-        {% endblock %}
-
-        {% block search %}
-            <form class="navbar-form">
-                <div id="search-form-container" class="pull-right">
-                    <div class="form-group" style="display:inline;">
-                        <div class="input-group">
-                            <input id="search-box" class="form-control" name="search" placeholder="Search Here" autocomplete="off" autofocus="autofocus" type="text">
-                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                        </div>
-                    </div>
-                </div>
-            </form>
-        {% endblock search %}
-    </div>
+          </div>
+        </div>
+      </form>
+    {% endblock search %}
+  </div>
 </nav>
 
 <div id="jumbo">
-    <div id="message-container" class="container-fluid">
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flashed_msg">
-                        <div class="alert alert-{{ category }} alert-dismissable fade in">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <strong>
-                                {% if category in ["success", "info"] %}
-                                    {{ category | title }}
-                                {% else %}
-                                    Error
-                                {% endif %}: </strong> {{ message }}
-                        </div>
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-    </div>
-    {% block page_header %}
-    {% endblock %}
+  <div id="message-container" class="container-fluid">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flashed_msg">
+            <div class="alert alert-{{ category }} alert-dismissable fade in">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong>
+                {% if category in ["success", "info"] %}
+                  {{ category | title }}
+                {% else %}
+                  Error
+                {% endif %}: </strong> {{ message }}
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+  {% block page_header %}
+  {% endblock %}
 </div>
 
 <div id="page-container" class="container-fluid">
-    {% block page %}
-        <div class="row">
-            <p class="lead">Content goes here.</p>
-        </div>
-    {% endblock %}
+  {% block page %}
+    <div class="row">
+      <p class="lead">Content goes here.</p>
+    </div>
+  {% endblock %}
 </div>
 
 {% block page_footer %}
-    <div id="footer">
-        <div class="col-lg-12 text-center">
-            <p id="attribution"><small>This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics - <strong>SARPAM</strong></small></p>
-        </div>
+  <div id="footer">
+    <div class="col-lg-12 text-center">
+      <p id="attribution"><small>This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics - <strong>SARPAM</strong></small></p>
     </div>
+  </div>
 {% endblock %}
 
 {% block modal %}
-    <div class="modal fade" id="page-modal" tabindex="-1" role="dialog" aria-labelledby="page-modal-title" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="page-modal-title">Modal title</h4>
-                </div>
-                <div class="modal-body" id="page-modal-body">
-                    ...
-                </div>
-                <div class="modal-footer" id="page-modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
+  <div class="modal fade" id="page-modal" tabindex="-1" role="dialog" aria-labelledby="page-modal-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title" id="page-modal-title">Modal title</h4>
         </div>
+        <div class="modal-body" id="page-modal-body">
+          ...
+        </div>
+        <div class="modal-footer" id="page-modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
     </div>
+  </div>
 {% endblock %}
 
 <script src="/static/jquery-1.11.1.min.js"></script>
@@ -138,113 +138,137 @@
 <script src="/static/typeahead.jquery.js"></script>
 
 <script>
-    jQuery.support.cors = true;  // to enable calls to the API on IE
-    API_HOST = "{{ API_HOST }}";
+  jQuery.support.cors = true;  // to enable calls to the API on IE
+  API_HOST = "{{ API_HOST }}";
 
-    function isIE () {
-        var myNav = navigator.userAgent.toLowerCase();
-        return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
-    }
+  function isIE () {
+    var myNav = navigator.userAgent.toLowerCase();
+    return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+  }
 
-    // thanks to http://stackoverflow.com/questions/3362474/jquery-ajax-fails-in-ie-on-cross-domain-calls
-    function crossDomainAjax (url, successCallback) {
+  // thanks to http://stackoverflow.com/questions/3362474/jquery-ajax-fails-in-ie-on-cross-domain-calls
+  function crossDomainAjax (url, successCallback) {
 
-        // IE8 & 9 only Cross domain JSON GET request
-        if ('XDomainRequest' in window && window.XDomainRequest !== null) {
+    // IE8 & 9 only Cross domain JSON GET request
+    if ('XDomainRequest' in window && window.XDomainRequest !== null) {
 
-            var xdr = new XDomainRequest(); // Use Microsoft XDR
-            xdr.open('get', url);
-            xdr.onload = function () {
+      var xdr = new XDomainRequest(); // Use Microsoft XDR
+      xdr.open('get', url);
+      xdr.onload = function () {
 
-                var dom  = new ActiveXObject('Microsoft.XMLDOM');
-                var JSON = $.parseJSON(xdr.responseText);
+        var dom  = new ActiveXObject('Microsoft.XMLDOM');
+        var JSON = $.parseJSON(xdr.responseText);
 
-                dom.async = false;
+        dom.async = false;
 
-                if (JSON == null || typeof (JSON) == 'undefined') {
-                    JSON = $.parseJSON(data.firstChild.textContent);
-                }
-
-                successCallback(JSON); // internal function
-            };
-
-            xdr.onerror = function() {
-                _result = false;
-            };
-
-            xdr.send();
+        if (JSON == null || typeof (JSON) == 'undefined') {
+          JSON = $.parseJSON(data.firstChild.textContent);
         }
 
-        // IE7 and lower can't do cross domain
-        else if (navigator.userAgent.indexOf('MSIE') != -1 &&
-                parseInt(navigator.userAgent.match(/MSIE ([\d.]+)/)[1], 10) < 8) {
-            return false;
-        }
+        successCallback(JSON); // internal function
+      };
 
-        // Do normal jQuery AJAX for everything else
-        else {
-            $.ajax({
-                url: url,
-                cache: false,
-                dataType: 'json',
-                type: 'GET',
-                async: false, // must be set to false
-                success: function (data, success) {
-                    successCallback(data);
-                }
-            });
-        }
+      xdr.onerror = function() {
+        _result = false;
+      };
+
+      xdr.send();
     }
 
-    function medicine_matcher(){
-        return function findMatches(query, callback) {
-            medicines = [];
-            crossDomainAjax(API_HOST + 'autocomplete/' + query + '/', function(data){
-                callback(data);
-            });
-        };
+    // IE7 and lower can't do cross domain
+    else if (navigator.userAgent.indexOf('MSIE') != -1 &&
+        parseInt(navigator.userAgent.match(/MSIE ([\d.]+)/)[1], 10) < 8) {
+      return false;
     }
 
-    function error_message(msg, category)
-    {
-        var tmp = '<div class="flashed_msg">';
-        tmp += '<div class="alert alert-' + category + ' alert-dismissable fade in">';
-        tmp += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
-        tmp += '<strong>Error: </strong>' + msg;
-        tmp += '</div>';
-        tmp += '</div>';
-        $("#message-container").append(tmp);
-    }
-
-    $(document).ready(function(){
-
-        // Detecting IE
-        if (isIE() !== false && isIE() < 8) {
-            error_message("Please upgrade your browser to make use of this site. Internet Explorer 7 and below is not supported.", "danger");
+    // Do normal jQuery AJAX for everything else
+    else {
+      $.ajax({
+        url: url,
+        cache: false,
+        dataType: 'json',
+        type: 'GET',
+        async: false, // must be set to false
+        success: function (data, success) {
+          successCallback(data);
         }
+      });
+    }
+  }
 
-        // enable tooltips
-        $(".tooltip-enabled").tooltip({});
+  function medicine_matcher(){
+    return function findMatches(query, callback) {
+      medicines = [];
+      crossDomainAjax(API_HOST + 'autocomplete/' + query + '/', function(data){
+        callback(data);
+      });
+    };
+  }
 
-        // handle search
-        $("#search-box").typeahead({
-                    hint: true,
-                    highlight: true,
-                    minLength: 1
-                },
-                {
-                    name: 'medicines',
-                    displayKey: 'name',
-                    source: medicine_matcher()
-                })
-                .on('typeahead:selected', function(e, datum){
-                    window.location = '/medicine/' + (datum["medicine_id"]) + '/';
-                }
-        );
-        $('#search-box.input-lg').siblings('input.tt-hint').addClass('hint-large');
+  function error_message(msg, category)
+  {
+    var tmp = '<div class="flashed_msg">';
+    tmp += '<div class="alert alert-' + category + ' alert-dismissable fade in">';
+    tmp += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+    tmp += '<strong>Error: </strong>' + msg;
+    tmp += '</div>';
+    tmp += '</div>';
+    $("#message-container").append(tmp);
+  }
 
-        $("#search-box").focus()
-    });
+  $(document).ready(function(){
+
+    // Detecting IE
+    if (isIE() !== false && isIE() < 8) {
+      error_message("Please upgrade your browser to make use of this site. Internet Explorer 7 and below is not supported.", "danger");
+    }
+
+    // enable tooltips
+    $(".tooltip-enabled").tooltip({});
+
+    // handle search
+    $("#search-box").typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1
+        },
+        {
+          name: 'medicines',
+          displayKey: 'name',
+          source: medicine_matcher()
+        })
+        .on('typeahead:selected', function(e, datum){
+          window.location = '/medicine/' + (datum["medicine_id"]) + '/';
+        }
+    );
+    $('#search-box.input-lg').siblings('input.tt-hint').addClass('hint-large');
+
+    $("#search-box").focus()
+
+    // force the tabs to bookmark, so the user doesn't get redirected all the time
+    bootstrap_tab_bookmark()
+
+    // thanks to https://julien.danjou.info/blog/2012/twitter-bootstrap-tabs-bookmark
+    function bootstrap_tab_bookmark (selector) { if (selector == undefined) {
+      selector = ""; }
+
+      /* Automagically jump on good tab based on anchor */
+      $(document).ready(function() {
+        url = document.location.href.split('#');
+        if(url[1] != undefined) {
+          $(selector + '[href=#'+url[1]+']').tab('show');
+        }
+      });
+
+      var update_location = function (event) {
+        document.location.hash = this.getAttribute("href");
+      }
+
+      /* Update hash based on tab */
+      $(selector + "[data-toggle=pill]").click(update_location);
+      $(selector + "[data-toggle=tab]").click(update_location);
+    }
+  });
 </script>
 
 {% block javascript %}
@@ -252,13 +276,13 @@
 
 <!-- Google Analytics tracking code -->
 <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-48399585-3', 'auto');
-    ga('send', 'pageview');
+  ga('create', 'UA-48399585-3', 'auto');
+  ga('send', 'pageview');
 </script>
 
 </body>
