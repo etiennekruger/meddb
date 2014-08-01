@@ -44,6 +44,8 @@ def set_permissions():
 
 def setup():
 
+    sudo('apt-get update')
+
     # install packages
     sudo('apt-get install build-essential python-dev sqlite3 libsqlite3-dev')
     sudo('apt-get install python-pip supervisor')
@@ -83,11 +85,11 @@ def configure():
 
     # upload nginx server blocks
     put(env.config_dir + '/nginx.conf', '/tmp/nginx.conf')
-    sudo('mv /tmp/nginx.conf %s/nginx_med-db.conf' % env.project_dir)
+    sudo('mv /tmp/nginx.conf /etc/nginx/sites-available/med-db.medicines.sadc.int')
 
     # link server blocks to Nginx config
     with settings(warn_only=True):
-        sudo('ln -s %s/nginx_med-db.conf /etc/nginx/sites-enabled/' % env.project_dir)
+        sudo('ln -s /etc/nginx/sites-available/med-db.medicines.sadc.int /etc/nginx/sites-enabled/')
 
     # upload supervisor config
     put(env.config_dir + '/supervisor.conf', '/tmp/supervisor.conf')
