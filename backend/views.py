@@ -201,7 +201,7 @@ def calculate_country_overview(country):
             'score': 0,
             'overall_spend': 0,
             'potential_savings': 0,
-        }
+            }
         # serialize medicine, so that procurements may be ordered
         medicine_dict = medicine.to_dict(include_related=True)
         procurements = medicine_dict['procurements']
@@ -241,7 +241,7 @@ def calculate_country_rankings():
             'score': 0,
             'overall_spend': 0,
             'potential_savings': 0,
-        }
+            }
     # iterate through all medicines in the db
     medicines = Medicine.query.order_by(Medicine.name).all()
     for medicine in medicines:
@@ -488,3 +488,29 @@ def country_ranking():
         ranking_json = json.dumps(ranking)
         cache.store('country_ranking', ranking_json)
     return send_api_response(ranking_json)
+
+
+@app.route('/active_medicines/', subdomain='med-db-api')
+def active_medicines():
+    """
+    Return a list of medicines for which we have recent procurement records.
+    """
+
+    cutoff = datetime.datetime.today() - datetime.timedelta(days=MAX_AGE)
+
+    tmp = db.session.query(Medicine.medicine_id, Medicine.name, func.count(Procurement.procurement_id)) \
+        .join(Medicine.products) \
+        .join(Product.procurements) \
+        .filter(
+            or_(
+                Procurement.start_date > cutoff,
+                Procurement.end_date > cutoff
+            )
+        ) \
+        .group_by(Medicine.medicine_id) \
+        .having(func.count(Procurement.procurement_id) > 0) \
+        .all()
+    result = [{"medicine_id": medicine_id, "name": name, "procurement_count": count} for medicine_id, name, count in tmp]
+    out = {"next": None, "result": result}
+    out = json.dumps(out)
+    return send_api_response(out)

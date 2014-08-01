@@ -137,8 +137,8 @@ def landing():
 @app.route('/medicine-list/', subdomain='med-db')
 def medicine_list():
 
-    medicines = load_from_api('medicine')
-    medicine_list = medicines['results']
+    tmp = load_from_api('active_medicines')
+    medicine_list = tmp["result"]
     medicine_list = sorted(medicine_list, key=itemgetter('name'))
     return render_template(
         'medicine_list.html',
