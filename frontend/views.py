@@ -1,4 +1,4 @@
-from flask import render_template, make_response, flash, redirect, request, url_for, session
+from flask import render_template, flash, redirect, request, url_for, session
 from frontend import app, logger
 import requests
 from requests import ConnectionError
@@ -225,69 +225,6 @@ def country_report(country_code):
         report=report,
         active_nav_button="reports"
     )
-
-
-
-def procurements_to_csv(procurements, delimiter=", "):
-
-    headings = [
-        "Medicine",
-        "Dosage Form",
-        "Description",
-        "Start Date",
-        "End Date",
-        "Pack Size",
-        "Unit of Measure",
-        "Container",
-        "Quantity",
-        "Pack Price",
-        "Unit Price",
-        "Incoterm",
-        "Manufacturer",
-        "Supplier",
-        ]
-
-    str_out = delimiter.join(headings) + "\r\n"
-    for procurement in procurements:
-        cells = []
-        cells.append(str(procurement['product']['medicine']['name']))
-        cells.append(str(procurement['product']['medicine']['dosage_form']['name']))
-        cells.append(str(procurement['product']['description']))
-        cells.append(str(procurement['start_date']))
-        cells.append(str(procurement['end_date']))
-        cells.append(str(procurement['pack_size']))
-        cells.append(str(procurement['product']['medicine']['unit_of_measure']))
-        cells.append(str(procurement['container']))
-        cells.append(str(procurement['quantity']))
-        cells.append(str(procurement['pack_price_usd']))
-        cells.append(str(procurement['unit_price_usd']))
-        if procurement.get('incoterm'):
-            cells.append(procurement['incoterm']['code'])
-        else:
-            cells.append("")
-        if procurement.get('supplier'):
-            cells.append(str(procurement['supplier']['name']))
-        else:
-            cells.append("")
-        if procurement['product'].get('manufacturer'):
-            cells.append(str(procurement['product']['manufacturer']['name']))
-        else:
-            cells.append("")
-        str_out += delimiter.join(cells) + "\r\n"
-
-    return str_out
-
-
-@app.route('/download/procurements/<string:country_code>/', subdomain='med-db')
-def download_procurements(country_code):
-
-    report = load_from_api('country_report', country_code)
-    out = procurements_to_csv(report['procurements'], delimiter='\t')
-    resp = make_response(out)
-    resp.headers['Content-Type'] = 'text/csv'
-    filename = "procurements-" + report['country']['name'].lower().replace(" ", "_") + ".csv"
-    resp.headers['Content-Disposition'] = "attachment;filename=" + filename
-    return resp
 
 
 @app.route('/login/', subdomain='med-db', methods=['GET', 'POST'])

@@ -62,8 +62,8 @@
               <a
                   class="btn btn-primary pull-right"
                   style="margin: 10px 10px 0px 10px;"
-                  href="{{ url_for('download_procurements', country_code=report.country.code) }}">
-                <i class="fa fa-download"></i> Download as CSV
+                  href="{{ API_HOST }}xlxs/{{ report.country.code }}/">
+                <i class="fa fa-download"></i> Download .xlxs
               </a>
               <p style="padding: 10px 10px 0px 10px;" class="lead">
                 All {{ report.procurements | length }} known procurements:

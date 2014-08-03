@@ -2,7 +2,7 @@ from backend import logger, app, db
 import models
 from models import *
 import flask
-from flask import g, request, abort, redirect, url_for, session
+from flask import g, request, abort, redirect, url_for, session, make_response
 from functools import wraps
 import json
 import serializers
@@ -448,14 +448,12 @@ def recent_updates():
     return serializers.queryset_to_json(procurements)
 
 
-@app.route('/country_report/<string:country_code>/', subdomain='med-db-api')
-def country_report(country_code):
-    """
-    """
+def get_country_report(country_code):
 
     country_code = country_code.upper()
     if not available_countries.get(country_code):
         raise ApiException(400, "Reports are not available for the country that you specified.")
+
     country = Country.query.filter_by(code=country_code).one()
 
     report_json = cache.retrieve('country_overview_' + country.code)
@@ -472,6 +470,15 @@ def country_report(country_code):
         report['procurements'] = procurement_list
         report_json = json.dumps(report, cls=serializers.CustomEncoder)
         cache.store('country_overview_' + country.code, report_json)
+    return report_json
+
+
+@app.route('/country_report/<string:country_code>/', subdomain='med-db-api')
+def country_report(country_code):
+    """
+    """
+
+    report_json = get_country_report(country_code)
     return send_api_response(report_json)
 
 
@@ -514,3 +521,66 @@ def active_medicines():
     out = {"next": None, "result": result}
     out = json.dumps(out)
     return send_api_response(out)
+
+
+def procurements_to_csv(procurements, delimiter=", "):
+
+    headings = [
+        "Medicine",
+        "Dosage Form",
+        "Description",
+        "Start Date",
+        "End Date",
+        "Pack Size",
+        "Unit of Measure",
+        "Container",
+        "Quantity",
+        "Pack Price",
+        "Unit Price",
+        "Incoterm",
+        "Manufacturer",
+        "Supplier",
+        ]
+
+    str_out = delimiter.join(headings) + "\r\n"
+    for procurement in procurements:
+        cells = []
+        cells.append(str(procurement['product']['medicine']['name']))
+        cells.append(str(procurement['product']['medicine']['dosage_form']['name']))
+        cells.append(str(procurement['product']['description']))
+        cells.append(str(procurement['start_date']))
+        cells.append(str(procurement['end_date']))
+        cells.append(str(procurement['pack_size']))
+        cells.append(str(procurement['product']['medicine']['unit_of_measure']))
+        cells.append(str(procurement['container']))
+        cells.append(str(procurement['quantity']))
+        cells.append(str(procurement['pack_price_usd']))
+        cells.append(str(procurement['unit_price_usd']))
+        if procurement.get('incoterm'):
+            cells.append(procurement['incoterm']['code'])
+        else:
+            cells.append("")
+        if procurement.get('supplier'):
+            cells.append(str(procurement['supplier']['name']))
+        else:
+            cells.append("")
+        if procurement['product'].get('manufacturer'):
+            cells.append(str(procurement['product']['manufacturer']['name']))
+        else:
+            cells.append("")
+        str_out += delimiter.join(cells) + "\r\n"
+
+    return str_out
+
+
+@app.route('/xlxs/<string:country_code>/', subdomain='med-db-api')
+def download_procurements(country_code):
+
+    report_json = get_country_report(country_code)
+    report = json.loads(report_json)
+    out = procurements_to_csv(report['procurements'], delimiter='\t')
+    resp = make_response(out)
+    resp.headers['Content-Type'] = 'text/csv'
+    filename = "procurements-" + report['country']['name'].lower().replace(" ", "_") + ".csv"
+    resp.headers['Content-Disposition'] = "attachment;filename=" + filename
+    return resp
