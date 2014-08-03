@@ -11,3 +11,4 @@ redis==2.8.0
 beautifulsoup4
 WTForms==1.0.3
 passlib==1.6.2
+xlsxwriter==0.5.6
