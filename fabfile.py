@@ -3,6 +3,8 @@ import sys
 from fabric.api import *
 from contextlib import contextmanager
 from fabric.contrib.console import confirm
+# import backend
+import requests
 
 try:
     from fabdefs import *
@@ -199,7 +201,43 @@ def restart_redis():
     sudo('/etc/init.d/redis_6379 start')
     return
 
+available_countries = {
+    "AGO":  "Angola",
+    "BWA":  "Botswana",
+    "COD":  "Congo (DRC)",
+    "LSO":  "Lesotho",
+    "MWI":  "Malawi",
+    "MUS":  "Mauritius",
+    "MOZ":  "Mozambique",
+    "NAM":  "Namibia",
+    "SYC":  "Seychelles",
+    "ZAF":  "South Africa",
+    "SWZ":  "Swaziland",
+    "TZA":  "Tanzania",
+    "ZMB":  "Zambia",
+    }
+
+def seed_production_cache():
+
+    # list of endpoints to hit
+    endpoints = [
+        "",
+        "country-ranking/",
+    ]
+
+    for code, name in available_countries.iteritems():
+        endpoints.append("country-report/" + code + "/")
+
+    # hit each endpoint
+    for endpoint in endpoints:
+        url = "http://med-db.medicines.sadc.int/" + endpoint
+        print "hitting " + url
+        response = requests.get(url)
+    return
+
 
 def flush_redis():
+
     sudo('redis-cli flushdb')
+    seed_production_cache()
     return
