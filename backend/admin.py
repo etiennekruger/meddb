@@ -67,8 +67,18 @@ class MyRestrictedModelView(MyModelView):
 class UserView(MyRestrictedModelView):
     can_create = False
     column_list = ['country', 'email', 'is_admin', 'activated']
-    column_exclude_list = ['password']
-    form_excluded_columns = ['password', 'procurements_added', 'procurements_approved']
+    column_exclude_list = ['password_hash']
+    form_excluded_columns = [
+        'password_hash',
+        'procurements_added',
+        'procurements_approved',
+        'manufacturers_added',
+        'manufacturers_approved',
+        'suppliers_added',
+        'suppliers_approved',
+        'products_added',
+        'products_approved',
+    ]
 
 
 class ProcurementView(MyModelView):
@@ -196,6 +206,33 @@ class SupplierView(MyModelView):
             model.added_by = g.user
 
 
+class ProductView(MyModelView):
+
+    column_list = [
+        'medicine',
+        'description',
+        'manufacturer',
+        'site',
+        'is_generic',
+        ]
+
+    column_exclude_list = [
+        'added_by',
+        'average_price',
+    ]
+
+    form_excluded_columns = [
+        'added_by',
+        'procurements',
+        'average_price',
+        'shelf_life',
+        ]
+
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = g.user
+
+
 # Index view
 class HomeView(AdminIndexView):
 
@@ -218,6 +255,9 @@ admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Uni
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 
-admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer'))
-admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier'))
+admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Manufacturers/Suppliers'))
+admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site', category='Manufacturers/Suppliers'))
+admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Manufacturers/Suppliers'))
+admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Manufacturers/Suppliers'))
+
 admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
