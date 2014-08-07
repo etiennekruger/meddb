@@ -38,7 +38,7 @@ country_choices = [
 class MyModelView(ModelView):
     can_create = True
     can_edit = True
-    can_delete = True
+    can_delete = False
     page_size = app.config['RESULTS_PER_PAGE']
     list_template = "admin/custom_list_template.html"
     column_exclude_list = []
@@ -127,6 +127,7 @@ class ProcurementView(MyModelView):
 
 
 class MedicineView(MyRestrictedModelView):
+    column_default_sort = 'name'
     column_list = [
         'name',
         'dosage_form',
