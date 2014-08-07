@@ -28,6 +28,14 @@ def upload_db():
     return
 
 
+def download_db():
+    tmp = get('%s/instance/med-db.db' % env.project_dir, '/tmp/med-db.db')
+    if tmp.succeeded:
+        print "Success"
+        local('mv /tmp/med-db.db instance/med-db.db')
+    return
+
+
 def restart():
     sudo("supervisorctl restart frontend")
     sudo("supervisorctl restart backend")
