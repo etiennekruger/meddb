@@ -141,12 +141,7 @@ class MedicineView(MyRestrictedModelView):
     form_excluded_columns = [
         'benchmarks',
         'products',
-        'added_by',
         ]
-
-    def after_model_change(self, form, model, is_created):
-        if is_created:
-            model.added_by = g.user
 
 
 class ManufacturerView(MyModelView):
@@ -196,21 +191,18 @@ class SupplierView(MyModelView):
         'contact',
         ]
 
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = g.user
 
-# Customized index view that handles login & registration
+
+# Index view
 class HomeView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        # if not g.user.is_authenticated():
-        #     return redirect(HOST + "login/")
         return self.render('admin/home.html')
-        # return render_template('admin/home.html')
 
-    # @expose('/logout/')
-    # def logout_view(self):
-    #     login.logout_user()
-    #     return redirect(url_for('.index'))
 
 
 admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api')
