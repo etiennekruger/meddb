@@ -96,7 +96,7 @@ class ProcurementView(MyModelView):
         'approved'
     ]
     form_excluded_columns = [
-        'country',
+        # 'country',
         'approved_by',
         'added_by',
         'added_on',
@@ -220,6 +220,11 @@ class ProductView(MyModelView):
         'added_by',
         'average_price',
     ]
+
+    column_sortable_list = [
+        ('medicine', models.Medicine.name),
+        ('manufacturer', models.Manufacturer.name),
+        ]
 
     form_excluded_columns = [
         'added_by',
