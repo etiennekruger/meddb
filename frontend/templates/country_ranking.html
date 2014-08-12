@@ -27,9 +27,13 @@
           <tr class="country-entry clickable" data-country-code="{{ entry.country.code }}">
             <td>{{ loop.index }}</td>
             <td>{{ macros.render_flag(entry.country) }} {{ entry.country.name }}</td>
+            {% if entry.overall_spend > 1000 %}
             <td>${{ entry.overall_spend | int | add_commas }}</td>
             <td>${{ entry.potential_savings | int | add_commas }}</td>
             <td><strong>{{ (100 * (1 - entry.score)) | int }}%</strong></td>
+            {% else %}
+            <td class="text-muted">No data available</td><td class="text-center">-</td><td class="text-center">-</td>
+            {% endif %}
           </tr>
         {% endfor %}
         </tbody>

@@ -224,7 +224,7 @@ def calculate_country_overview(country):
                 potential_saving = procurement['quantity'] * procurement['pack_size'] * tmp_diff
                 tmp['overall_spend'] += total
                 tmp['potential_savings'] += potential_saving
-        if tmp['overall_spend']:
+        if tmp['overall_spend'] and tmp['overall_spend'] > 1000:
             tmp['name'] = medicine.name
             tmp['medicine_id'] = medicine.medicine_id
             tmp['score'] = 1 - (tmp['potential_savings']/float(tmp['overall_spend']))
