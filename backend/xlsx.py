@@ -36,7 +36,10 @@ def procurements_to_excel(procurements):
         cells.append(str(procurement['pack_size']))
         cells.append(str(procurement['product']['medicine']['unit_of_measure']))
         cells.append(str(procurement['container']))
-        cells.append(str(procurement['quantity']))
+        if procurement['quantity'] > 1:
+            cells.append(str(procurement['quantity']))
+        else:
+            cells.append("unknown")
         cells.append(str(procurement['pack_price_usd']))
         cells.append(str(procurement['unit_price_usd']))
         if procurement.get('incoterm'):
