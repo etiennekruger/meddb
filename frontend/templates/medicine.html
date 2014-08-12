@@ -1,234 +1,243 @@
 {% extends "base.html" %}
 
 {% block page_header %}
-    <div class="container">
-        <h1>
-            {% if medicine.name %}
-                {{ medicine.name }}
-            {% endif %}
-            <nobr>
-                <small class="text-muted">
-                    {{ medicine.dosage_form.name }}
-                </small>
-            </nobr>
-        </h1>
-    </div>
+  <div class="container">
+    <h1>
+      {% if medicine.name %}
+        {{ medicine.name }}
+      {% endif %}
+      <nobr>
+        <small class="text-muted">
+          {{ medicine.dosage_form.name }}
+        </small>
+      </nobr>
+    </h1>
+  </div>
 {% endblock %}
 
 {% block page %}
 
-    <div class="row">
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li class="active"><a href="#procurements" role="tab" data-toggle="tab">Procurements</a></li>
+    <li><a href="#cost-calculator" role="tab" data-toggle="tab">Cost Calculator</a></li>
+  </ul>
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+
+    <div class="tab-pane active" id="procurements">
+      <div class="row">
         <div class="col-lg-12">
-            {% if medicine.benchmarks %}
+          {% if medicine.procurements | length == 0 %}
+            <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+          {% else %}
+            <p style="padding: 10px 10px 0px 10px;" class="lead">Recent procurements by Member States.</p>
+            <table class="table table-bordered table-hover">
+              <thead>
+              <th>Procurement country</th>
+              <th>Generic Name & Strength</th>
+              <th>Date</th>
+              <th>Terms</th>
+              <th>Volume</th>
+              <th>Price per {{ medicine.unit_of_measure }}</th>
+              </thead>
+              <tbody>
+
+              {% if medicine.benchmarks %}
                 {% for benchmark in medicine.benchmarks %}
-                    <div class="alert alert-success">
-                        This medicine's {{ benchmark.name }} benchmark price for {{ benchmark.year }} is ${{ benchmark.price }}.
-                    </div>
+                  {% set width = (100 * (1 - (max_price - benchmark.price) / max_price)) | int%}
+                  <tr class="benchmark-entry active">
+                    <td colspan="5">
+                      {{ benchmark.name }} benchmark price for {{ benchmark.year }}
+                    </td>
+                    <td class="price-bar-container">
+                      <span class="pull-right">
+                      ${{ benchmark.price }}
+                      </span>
+                      <div
+                          class="price-bar"
+                          style="width: {{ width }}%;">
+                      </div>
+                    </td>
+                  </tr>
                 {% endfor %}
-            {% endif %}
+              {% endif %}
+
+              {% for procurement in medicine.procurements %}
+                {% set width = (100 * (1 - (max_price - procurement.unit_price_usd) / max_price)) | int%}
+                <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
+                  <td>
+                    {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                  </td>
+                  <td>
+                    <span
+                        class="tooltip-enabled"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                        {{ procurement.product.medicine.name }}
+                    </span>
+                  </td>
+                  <td>
+                    {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
+                  </td>
+                  <td>
+                    {% if procurement.incoterm %}
+                      <span
+                          class="tooltip-enabled"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="{{ procurement.incoterm.description }}">
+                        {{ procurement.incoterm.code }}
+                        </span>
+                    {% else %}
+                      <span class="text-muted">Unknown</span>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <span
+                        class="tooltip-enabled"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                        {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
+                    </span>
+                  </td>
+                  <td class="price-bar-container">
+                    <span class="pull-right">
+                    ${{ procurement.unit_price_usd }}
+                    </span>
+                    <div
+                        class="price-bar tooltip-enabled"
+                        data-toggle="tooltip"
+                        data-placement="top"
+                        title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}"
+                        style="width: {{ width }}%;"></div>
+                  </td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
         </div>
+      </div>
     </div>
 
-    <!-- Nav tabs -->
-    <ul class="nav nav-tabs" role="tablist">
-        <li class="active"><a href="#procurements" role="tab" data-toggle="tab">Procurements</a></li>
-        <li><a href="#cost-calculator" role="tab" data-toggle="tab">Cost Calculator</a></li>
-    </ul>
+    <div class="tab-pane" id="cost-calculator">
+      <div class="row">
+        <div class="col-lg-12">
 
-    <!-- Tab panes -->
-    <div class="tab-content">
+          <p style="padding: 10px 10px 0px 10px;" class="lead"class="lead">Find potential savings by entering your own price.</p>
 
-        <div class="tab-pane active" id="procurements">
-            <div class="row">
-                <div class="col-lg-12">
-                    {% if medicine.procurements | length == 0 %}
-                        <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
-                    {% else %}
-                        <p style="padding: 10px 10px 0px 10px;" class="lead">Recent procurements by Member States.</p>
-                        <table class="table table-bordered table-striped table-hover">
-                            <thead>
-                            <th>Procurement country</th>
-                            <th>Generic Name & Strength</th>
-                            <th>Date</th>
-                            <th>Terms</th>
-                            <th>Volume</th>
-                            <th>Price per {{ medicine.unit_of_measure }}</th>
-                            </thead>
-                            <tbody>
-                            {% for procurement in medicine.procurements %}
-                                {% set width = (100 * (1 - (max_price - procurement.unit_price_usd) / max_price)) | int%}
-                                <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
-                                    <td>
-                                        {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
-                                    </td>
-                                    <td>
-                                        <span
-                                                class="tooltip-enabled"
-                                                data-toggle="tooltip"
-                                                data-placement="top"
-                                                title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
-                                            {{ procurement.product.medicine.name }}</span>
-                                    </td>
-                                    <td>
-                                        {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
-                                    </td>
-                                    <td>
-                                        {% if procurement.incoterm %}
-                                            <span
-                                                    class="tooltip-enabled"
-                                                    data-toggle="tooltip"
-                                                    data-placement="top"
-                                                    title="{{ procurement.incoterm.description }}">
-                                                {{ procurement.incoterm.code }}
-                                            </span>
-                                        {% else %}
-                                            <span class="text-muted">Unknown</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <span
-                                                class="tooltip-enabled"
-                                                data-toggle="tooltip"
-                                                data-placement="top"
-                                                title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
-                                            {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
-                                            </span>
-                                    </td>
-                                    <td class="price-bar-container">
-                                            <span class="pull-right">
-                                    ${{ procurement.unit_price_usd }}
-                                    </span>
-                                        <div
-                                                class="price-bar tooltip-enabled"
-                                                data-toggle="tooltip"
-                                                data-placement="top"
-                                                title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}"
-                                                style="width: {{ width }}%;"></div>
-
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    {% endif %}
-                </div>
+          <form id="form-comparison" class="form form-inline" method="get" action="">
+            <div class="form-group">
+              <label for="compare-quantity">Number of packs</label>
+              <input name="compare-quantity" class="form-control" type="text" placeholder="Number of packs" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
             </div>
-        </div>
-
-        <div class="tab-pane" id="cost-calculator">
-            <div class="row">
-                <div class="col-lg-12">
-
-                    <p style="padding: 10px 10px 0px 10px;" class="lead"class="lead">Find potential savings by entering your own price.</p>
-
-                    <form id="form-comparison" class="form form-inline" method="get" action="">
-                        <div class="form-group">
-                            <label for="compare-quantity">Number of packs</label>
-                            <input name="compare-quantity" class="form-control" type="text" placeholder="Number of packs" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
-                        </div>
-                        <div class="form-group">
-                            <label for="compare-pack-size">Pack size (in {{ medicine.unit_of_measure }}s)</label>
-                            <input name="compare-pack-size" class="form-control" type="text" placeholder="Units per pack" {% if form_args['compare-pack-size'] %}value="{{ form_args['compare-pack-size'] }}"{% endif %}/>
-                        </div>
-                        <div class="form-group">
-                            <label for="compare-price">Pack price</label>
-                            <input name="compare-price" class="form-control" type="text" placeholder="Pack price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
-                        </div>
-                        <button class="btn btn-default" type="submit">Calculate</button>
-                    </form>
-                    {% if medicine.procurements | length == 0 %}
-                        <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
-                    {% else %}
-                        <p></p>
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                            <th>Procurement country</th>
-                            <th>Generic Name & Strength</th>
-                            <th>Date</th>
-                            <th>Terms</th>
-                            <th>Volume</th>
-                            <th>Price per {{ medicine.unit_of_measure }}</th>
-                            <th>Cost difference</th>
-                            </thead>
-                            <tbody>
-                            {% for procurement in best_procurements %}
-                                <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
-                                    <td>
-                                        {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
-                                    </td>
-                                    <td>
+            <div class="form-group">
+              <label for="compare-pack-size">Pack size (in {{ medicine.unit_of_measure }}s)</label>
+              <input name="compare-pack-size" class="form-control" type="text" placeholder="Units per pack" {% if form_args['compare-pack-size'] %}value="{{ form_args['compare-pack-size'] }}"{% endif %}/>
+            </div>
+            <div class="form-group">
+              <label for="compare-price">Pack price</label>
+              <input name="compare-price" class="form-control" type="text" placeholder="Pack price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
+            </div>
+            <button class="btn btn-default" type="submit">Calculate</button>
+          </form>
+          {% if medicine.procurements | length == 0 %}
+            <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+          {% else %}
+            <p></p>
+            <table class="table table-bordered table-striped">
+              <thead>
+              <th>Procurement country</th>
+              <th>Generic Name & Strength</th>
+              <th>Date</th>
+              <th>Terms</th>
+              <th>Volume</th>
+              <th>Price per {{ medicine.unit_of_measure }}</th>
+              <th>Cost difference</th>
+              </thead>
+              <tbody>
+              {% for procurement in best_procurements %}
+                <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
+                  <td>
+                    {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                  </td>
+                  <td>
                                         <span
-                                                class="tooltip-enabled"
-                                                data-toggle="tooltip"
-                                                data-placement="top"
-                                                title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                                            class="tooltip-enabled"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
                                             {{ procurement.product.medicine.name }}</span>
-                                    </td>
-                                    <td>
-                                        {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
-                                    </td>
-                                    <td>
-                                        {% if procurement.incoterm %}
-                                            <span
-                                                    class="tooltip-enabled"
-                                                    data-toggle="tooltip"
-                                                    data-placement="top"
-                                                    title="{{ procurement.incoterm.description }}">
+                  </td>
+                  <td>
+                    {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
+                  </td>
+                  <td>
+                    {% if procurement.incoterm %}
+                      <span
+                          class="tooltip-enabled"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="{{ procurement.incoterm.description }}">
                                                 {{ procurement.incoterm.code }}
                                             </span>
-                                        {% else %}
-                                            <span class="text-muted">Unknown</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
+                    {% else %}
+                      <span class="text-muted">Unknown</span>
+                    {% endif %}
+                  </td>
+                  <td>
                                         <span
-                                                class="tooltip-enabled"
-                                                data-toggle="tooltip"
-                                                data-placement="top"
-                                                title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                                            class="tooltip-enabled"
+                                            data-toggle="tooltip"
+                                            data-placement="top"
+                                            title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
                                             {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
                                             </span>
-                                    </td>
-                                    <td>
-                                        ${{ procurement.unit_price_usd }}
-                                    </td>
-                                    {% if procurement.cost_difference is defined and procurement.cost_difference!= None %}
-                                        <td class="
+                  </td>
+                  <td>
+                    ${{ procurement.unit_price_usd }}
+                  </td>
+                  {% if procurement.cost_difference is defined and procurement.cost_difference!= None %}
+                    <td class="
                                     {% if procurement.cost_difference <= 0 %}success{% else %}danger{% endif %}">
 
-                                            <nobr>{% if procurement.cost_difference < 0 %}- {% endif %}
-                                                ${{ procurement.cost_difference | round | int | abs | add_commas}}</nobr>
-                                        </td>
-                                    {% else %}
-                                        <td>N/A</td>
-                                    {% endif %}
+                      <nobr>{% if procurement.cost_difference < 0 %}- {% endif %}
+                        ${{ procurement.cost_difference | round | int | abs | add_commas}}</nobr>
+                    </td>
+                  {% else %}
+                    <td>N/A</td>
+                  {% endif %}
 
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    {% endif %}
-                </div>
-            </div>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
         </div>
+      </div>
     </div>
+  </div>
 
 
 {% endblock %}
 
 {% block javascript %}
-    {{ super() }}
-    <script>
-        $(document).ready(function(){
-            $(".procurement-entry").on('click', function(){
-                tmp = this
-                var procurement_id = $(this).attr('data-procurement-id');
-                window.location = '/procurement/' + procurement_id + '/';
-            })
-        });
+  {{ super() }}
+  <script>
+    $(document).ready(function(){
+      $(".procurement-entry").on('click', function(){
+        tmp = this
+        var procurement_id = $(this).attr('data-procurement-id');
+        window.location = '/procurement/' + procurement_id + '/';
+      })
+    });
 
 
-    </script>
+  </script>
 
 
 {% endblock %}

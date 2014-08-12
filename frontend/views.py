@@ -153,9 +153,12 @@ def medicine(medicine_id):
 
     medicine = load_from_api('medicine', medicine_id)
 
-    # sort products by average price
-    max_avg_price = medicine['products'][-1]['average_price']
+    # find the maximum price, for making comparisons
     max_price = medicine['procurements'][-1]['unit_price_usd']
+    if medicine.get('benchmarks'):
+        for benchmark in medicine['benchmarks']:
+            if benchmark['price'] > max_price:
+                max_price = benchmark['price']
 
     # find the best procurements
     best_procurements = medicine['procurements']
@@ -186,7 +189,6 @@ def medicine(medicine_id):
         medicine=medicine,
         active_nav_button="medicines",
         max_price = max_price,
-        max_avg_price = max_avg_price,
         best_procurements = best_procurements,
         form_args = form_args,
     )
