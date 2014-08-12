@@ -178,8 +178,22 @@ def calculate_autocomplete():
     THIS IS slightly COMPUTATIONALLY EXPENSIVE
     """
 
+    cutoff = datetime.datetime.today() - datetime.timedelta(days=MAX_AGE)
+
     logger.debug("Calculating autocomplete")
-    medicines = Medicine.query.order_by(Medicine.name).all()
+    # medicines = Medicine.query.order_by(Medicine.name).all()
+    procurements = Procurement.query.join(Product).filter(
+        or_(
+            Procurement.start_date > cutoff,
+            Procurement.end_date > cutoff
+        )
+    ).filter(
+        Procurement.approved != False
+    ).all()
+    medicines = []
+    for procurement in procurements:
+        if not procurement.product.medicine in medicines:
+            medicines.append(procurement.product.medicine)
     out = []
     for medicine in medicines:
         tmp_dict = {
