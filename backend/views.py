@@ -134,6 +134,8 @@ def calculate_db_overview():
             Procurement.start_date > cutoff,
             Procurement.end_date > cutoff
         )
+    ).filter(
+        Procurement.approved != False
     ).with_entities(
         func.count(Procurement.procurement_id),
         func.count(distinct(Procurement.product_id)),
@@ -152,8 +154,9 @@ def calculate_db_overview():
             Procurement.start_date > cutoff,
             Procurement.end_date > cutoff
         )
-    ) \
-        .group_by(Procurement.country_id) \
+    ).filter(
+        Procurement.approved != False
+    ).group_by(Procurement.country_id) \
         .order_by(func.count(Procurement.procurement_id).desc()).all()
 
     for country_id, count in sources[0:5]:
@@ -505,11 +508,11 @@ def active_medicines():
         .join(Medicine.products) \
         .join(Product.procurements) \
         .filter(
-            or_(
-                Procurement.start_date > cutoff,
-                Procurement.end_date > cutoff
-            )
-        ) \
+        or_(
+            Procurement.start_date > cutoff,
+            Procurement.end_date > cutoff
+        )
+    ) \
         .group_by(Medicine.medicine_id) \
         .having(func.count(Procurement.procurement_id) > 0) \
         .all()
