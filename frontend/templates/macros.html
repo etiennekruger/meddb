@@ -1,28 +1,28 @@
 {% macro render_field(field) %}
-    <div class="form-group{% if field.errors %} has-error{% endif %}">
-        <label class="col-md-4 control-label">{{ field.label }}</label>
-        <div class="col-md-4">
-            {% if field.errors %}
-                {% set css_class = 'has-error ' + kwargs.pop('class', '') %}
-                {{ field(class=css_class, **kwargs) }}
-                <ul class="list-unstyled help-block">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
-            {% else %}
-                {{ field(**kwargs) }}
-            {% endif %}
-        </div>
+  <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <label class="col-md-4 control-label">{{ field.label }}</label>
+    <div class="col-md-4">
+      {% if field.errors %}
+        {% set css_class = 'has-error ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <ul class="list-unstyled help-block">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+      {% else %}
+        {{ field(**kwargs) }}
+      {% endif %}
     </div>
+  </div>
 {% endmacro %}
 
 
 {% macro render_date_range(start_date, end_date) -%}
-    {% if start_date | format_date == end_date | format_date %}
-        <nobr>{{ start_date | format_date }}</nobr>
-    {% else %}
-        <nobr>{{ start_date | format_date }}</nobr> to <nobr>{{ end_date | format_date }}</nobr>
-    {% endif %}
+  {% if start_date | format_date == end_date | format_date %}
+    <nobr>{{ start_date | format_date }}</nobr>
+  {% else %}
+    <nobr>{{ start_date | format_date }}</nobr> to <nobr>{{ end_date | format_date }}</nobr>
+  {% endif %}
 {%- endmacro %}
 
 
 {% macro render_flag(country) -%}
-    <span class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}"></span>
+  <span class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}"></span>
 {%- endmacro %}
