@@ -78,7 +78,7 @@ class UserView(MyRestrictedModelView):
         'suppliers_approved',
         'products_added',
         'products_approved',
-    ]
+        ]
 
 
 class ProcurementView(MyModelView):
@@ -154,6 +154,24 @@ class MedicineView(MyRestrictedModelView):
         ]
 
 
+class BenchmarkView(MyRestrictedModelView):
+    column_list = [
+        'medicine',
+        'name',
+        'year',
+        'price',
+        ]
+    column_sortable_list = [
+        ('medicine', models.Medicine.name),
+        ('name', models.BenchmarkPrice.name),
+        ('price', models.BenchmarkPrice.price),
+        ('year', models.BenchmarkPrice.year),
+        ]
+    form_excluded_columns = [
+        'unit_of_measure',
+        ]
+
+
 class ManufacturerView(MyModelView):
     column_exclude_list = [
         'added_by',
@@ -219,7 +237,7 @@ class ProductView(MyModelView):
     column_exclude_list = [
         'added_by',
         'average_price',
-    ]
+        ]
 
     column_sortable_list = [
         ('medicine', models.Medicine.name),
@@ -253,7 +271,7 @@ admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 
 admin.add_view(MyRestrictedModelView(models.DosageForm, db.session, name="Dosage Forms", endpoint='dosage_form', category='Medicines'))
 admin.add_view(MedicineView(models.Medicine, db.session, name="Available Medicines", endpoint='medicine', category='Medicines'))
-admin.add_view(MyRestrictedModelView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
+admin.add_view(BenchmarkView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
 
 admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterms", endpoint='incoterm', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
