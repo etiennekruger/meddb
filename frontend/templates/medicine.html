@@ -33,7 +33,7 @@
             <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
           {% else %}
             <p style="padding: 10px 10px 0px 10px;" class="lead">Recent procurements by Member States.</p>
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered">
               <thead>
               <th>Procurement country</th>
               <th>Generic Name & Strength</th>
@@ -48,13 +48,13 @@
                 {% set width = (100 * (1 - (max_price - item.unit_price_usd) / max_price)) | int%}
                 {% if item.name is defined %} {# this is a benchmark #}
                   {% set benchmark = item %}
-                  <tr class="benchmark-entry active">
+                  <tr class="benchmark-entry success">
                     <td colspan="5">
-                      {{ benchmark.name }} benchmark price for {{ benchmark.year }}
+                      <strong>{{ benchmark.name }} benchmark price for {{ benchmark.year }}</strong>
                     </td>
                     <td class="price-bar-container">
                       <span class="pull-right">
-                      ${{ benchmark.price }}
+                      <strong>${{ benchmark.price }}</strong>
                       </span>
                       <div
                           class="price-bar"

@@ -101,10 +101,10 @@ body{
 }
 
 .benchmark-entry .price-bar{
-    background-color: indianred;
+    background-color: rgba(145, 145, 145, 0.25);
 }
 
-tbody tr.benchmark-entry:hover td{
+tbody tr.procurement-entry:hover td{
   background-color: rgb(245, 245, 245)!important;
 }
 
