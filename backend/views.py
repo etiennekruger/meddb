@@ -213,6 +213,10 @@ def calculate_country_overview(country):
             continue
         # calculate the total spend and potential savings for each transaction
         best_price = procurements[0]['unit_price_usd']
+        benchmarks = medicine_dict['benchmarks']
+        for benchmark in benchmarks:
+            if benchmark['price'] < best_price:
+                best_price = benchmark['price']
         for procurement in procurements:
             if procurement['country']['code']==country.code:
                 total = procurement['quantity'] * procurement['pack_price_usd']
@@ -256,6 +260,10 @@ def calculate_country_rankings():
             continue
         # calculate the total spend and potential savings for each transaction
         best_price = procurements[0]['unit_price_usd']
+        benchmarks = medicine_dict['benchmarks']
+        for benchmark in benchmarks:
+            if benchmark['price'] < best_price:
+                best_price = benchmark['price']
         for procurement in procurements:
             if ranking.get(procurement['country']['code']):
                 total = procurement['quantity'] * procurement['pack_price_usd']
