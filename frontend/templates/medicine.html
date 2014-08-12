@@ -44,9 +44,10 @@
               </thead>
               <tbody>
 
-              {% if medicine.benchmarks %}
-                {% for benchmark in medicine.benchmarks %}
-                  {% set width = (100 * (1 - (max_price - benchmark.price) / max_price)) | int%}
+              {% for item in procurements_and_benchmarks %}
+                {% set width = (100 * (1 - (max_price - item.unit_price_usd) / max_price)) | int%}
+                {% if item.name is defined %} {# this is a benchmark #}
+                  {% set benchmark = item %}
                   <tr class="benchmark-entry active">
                     <td colspan="5">
                       {{ benchmark.name }} benchmark price for {{ benchmark.year }}
@@ -61,16 +62,15 @@
                       </div>
                     </td>
                   </tr>
-                {% endfor %}
-              {% endif %}
 
-              {% for procurement in medicine.procurements %}
-                {% set width = (100 * (1 - (max_price - procurement.unit_price_usd) / max_price)) | int%}
-                <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
-                  <td>
-                    {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
-                  </td>
-                  <td>
+                {% else %}
+                  {% set procurement = item %}
+
+                  <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
+                    <td>
+                      {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                    </td>
+                    <td>
                     <span
                         class="tooltip-enabled"
                         data-toggle="tooltip"
@@ -78,24 +78,24 @@
                         title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
                         {{ procurement.product.medicine.name }}
                     </span>
-                  </td>
-                  <td>
-                    {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
-                  </td>
-                  <td>
-                    {% if procurement.incoterm %}
-                      <span
-                          class="tooltip-enabled"
-                          data-toggle="tooltip"
-                          data-placement="top"
-                          title="{{ procurement.incoterm.description }}">
+                    </td>
+                    <td>
+                      {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
+                    </td>
+                    <td>
+                      {% if procurement.incoterm %}
+                        <span
+                            class="tooltip-enabled"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="{{ procurement.incoterm.description }}">
                         {{ procurement.incoterm.code }}
                         </span>
-                    {% else %}
-                      <span class="text-muted">Unknown</span>
-                    {% endif %}
-                  </td>
-                  <td>
+                      {% else %}
+                        <span class="text-muted">Unknown</span>
+                      {% endif %}
+                    </td>
+                    <td>
                     <span
                         class="tooltip-enabled"
                         data-toggle="tooltip"
@@ -103,19 +103,20 @@
                         title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
                         {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
                     </span>
-                  </td>
-                  <td class="price-bar-container">
+                    </td>
+                    <td class="price-bar-container">
                     <span class="pull-right">
                     ${{ procurement.unit_price_usd }}
                     </span>
-                    <div
-                        class="price-bar tooltip-enabled"
-                        data-toggle="tooltip"
-                        data-placement="top"
-                        title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}"
-                        style="width: {{ width }}%;"></div>
-                  </td>
-                </tr>
+                      <div
+                          class="price-bar tooltip-enabled"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}"
+                          style="width: {{ width }}%;"></div>
+                    </td>
+                  </tr>
+                {% endif %}
               {% endfor %}
               </tbody>
             </table>

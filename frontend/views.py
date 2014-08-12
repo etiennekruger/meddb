@@ -160,6 +160,14 @@ def medicine(medicine_id):
             if benchmark['price'] > max_price:
                 max_price = benchmark['price']
 
+    # add procurements and benchmarks to the same list, and sort
+    tmp = list(medicine['procurements'])
+    if medicine.get('benchmarks'):
+        for benchmark in medicine['benchmarks']:
+            benchmark['unit_price_usd'] = benchmark['price']
+            tmp.append(benchmark)
+    procurements_and_benchmarks = sort_list(tmp, 'unit_price_usd')
+
     # find the best procurements
     best_procurements = medicine['procurements']
     if len(best_procurements) > 5:
@@ -190,6 +198,7 @@ def medicine(medicine_id):
         active_nav_button="medicines",
         max_price = max_price,
         best_procurements = best_procurements,
+        procurements_and_benchmarks = procurements_and_benchmarks,
         form_args = form_args,
     )
 
