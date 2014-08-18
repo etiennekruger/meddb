@@ -29,6 +29,7 @@ available_countries = {
     "BWA":  "Botswana",
     "COD":  "Congo (DRC)",
     "LSO":  "Lesotho",
+    "MDG":  "Madagascar",
     "MWI":  "Malawi",
     "MUS":  "Mauritius",
     "MOZ":  "Mozambique",
@@ -38,6 +39,7 @@ available_countries = {
     "SWZ":  "Swaziland",
     "TZA":  "Tanzania",
     "ZMB":  "Zambia",
+    "ZWE":  "Zimbabwe",
     }
 
 # handling static files (only relevant during development)
