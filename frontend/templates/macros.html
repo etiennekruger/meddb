@@ -24,5 +24,5 @@
 
 
 {% macro render_flag(country) -%}
-  <span class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}"></span>
+  <img src="blank.gif" class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}" />
 {%- endmacro %}
