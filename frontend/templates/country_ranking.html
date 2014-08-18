@@ -30,7 +30,7 @@
             {% if entry.overall_spend > 1000 %}
             <td>${{ entry.overall_spend | int | add_commas }}</td>
             <td>${{ entry.potential_savings | int | add_commas }}</td>
-            <td><strong>{{ (100 * (1 - entry.score)) | int }}%</strong></td>
+            <td><strong>{{ (100 * (1 - entry.score)) | round | int }}%</strong></td>
             {% else %}
             <td class="text-muted">No data available</td><td class="text-center">-</td><td class="text-center">-</td>
             {% endif %}

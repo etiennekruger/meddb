@@ -40,7 +40,7 @@
                   <td>{{ medicine.name }}</td>
                   <td>${{ medicine.overall_spend | int | add_commas }}</td>
                   <td><strong>${{ medicine.potential_savings | int | add_commas }}</strong></td>
-                  <td>{{ (100 * (1 - medicine.score)) | int }}%</td>
+                  <td>{{ (100 * (1 - medicine.score)) | round | int }}%</td>
                 </tr>
               {% endfor %}
               </tbody>
