@@ -25,16 +25,6 @@ def jinja2_filter_add_commas(quantity):
     return quantity_str + out
 
 
-country_choices = [
-    ("BWA", "Botswana"),
-    ("MWI", "Malawi"),
-    ("SYC", "Seychelles"),
-    ("ZAF", "South Africa"),
-    ("TZA", "Tanzania"),
-    ("ZMB", "Zambia"),
-    ]
-
-
 class MyModelView(ModelView):
     can_create = True
     can_edit = True
