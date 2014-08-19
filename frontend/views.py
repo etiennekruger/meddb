@@ -294,6 +294,7 @@ def register():
             email = user_dict.get('email')
             session['api_key'] = api_key
             session['email'] = email
+            flash("Thank you. You have been registered successfully.", "success")
             return redirect(url_for('landing'))
         except ConnectionError:
             flash('Error connecting to backend service.', 'danger')
@@ -304,6 +305,40 @@ def register():
         API_HOST=API_HOST,
         form=register_form
     )
+
+
+@app.route('/change-login/', subdomain='med-db', methods=['GET', 'POST'])
+def change_login():
+
+    change_login_form = forms.ChangeLoginForm(request.form)
+    if not change_login_form.email.data:
+        change_login_form.email.data = session['email']
+    if request.method == 'POST' and change_login_form.validate():
+        data = json.dumps(request.form)
+        headers = {}
+        headers['Authorization'] = 'ApiKey:' + session.get('api_key')
+        headers["Content-Type"] = "application/json"
+        try:
+            response = requests.post(API_HOST + 'change-login/', data=data, headers=headers)
+            if response.status_code != 200:
+                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+            user_dict = response.json()
+            api_key = user_dict.get('api_key')
+            email = user_dict.get('email')
+            session['api_key'] = api_key
+            session['email'] = email
+            flash("Your details have been updated successfully.", "success")
+            return redirect(url_for('landing'))
+        except ConnectionError:
+            flash('Error connecting to backend service.', 'danger')
+            pass
+
+    return render_template(
+        'change_login.html',
+        API_HOST=API_HOST,
+        form=change_login_form
+    )
+
 
 @app.route('/admin/', subdomain='med-db')
 def admin_redirect():

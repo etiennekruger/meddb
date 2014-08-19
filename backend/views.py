@@ -358,6 +358,33 @@ def register():
     return send_api_response(json.dumps(out))
 
 
+@login_required
+@app.route('/change-login/', subdomain='med-db-api', methods=['POST',])
+def change_login():
+
+    email = request.json.get('email')
+    password = request.json.get('password')
+
+    user = g.user
+    user.email = email
+
+    user.hash_password(password)
+    db.session.add(user)
+
+    # find api key
+    api_key = ApiKey.query.filter_by(user_id=user.user_id).first()
+    if not api_key:
+        api_key = ApiKey(user=user)
+        db.session.add(api_key)
+    # re-generate key
+    api_key.generate_key()
+    # return user & api key details
+    db.session.commit()
+    out = user.to_dict()
+    out['api_key'] = api_key.key
+    return send_api_response(json.dumps(out))
+
+
 @app.route('/user/<int:user_id>/', subdomain='med-db-api')
 def get_user(user_id):
     user = User.query.get(user_id)
