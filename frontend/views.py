@@ -80,7 +80,7 @@ def handle_api_exception(error):
     if error.status_code == 401:
         session.clear()
         return redirect(url_for('login') + "?next=" + urllib.quote_plus(request.path))
-    return "OK"
+    return redirect(url_for('landing'))
 
 
 def load_from_api(resource_name, resource_id=None):
@@ -242,27 +242,29 @@ def country_report(country_code):
 def login():
 
     next = request.args.get('next', None)
-    logger.debug(next)
     login_form = forms.LoginForm(request.form)
     if request.method == 'POST' and login_form.validate():
         data = json.dumps(request.form)
         headers = {"Content-Type": "application/json"}
         try:
             response = requests.post(API_HOST + 'login/', data=data, headers=headers)
-            if response.status_code != 200:
+            if response.status_code == 200:
+                user_dict = response.json()
+                api_key = user_dict.get('api_key')
+                email = user_dict.get('email')
+                session['api_key'] = api_key
+                session['email'] = email
+                if next:
+                    return redirect(next)
+                return redirect(url_for('landing'))
+            elif response.status_code != 400:
                 raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
-            user_dict = response.json()
-            api_key = user_dict.get('api_key')
-            email = user_dict.get('email')
-            session['api_key'] = api_key
-            session['email'] = email
-            if next:
-                return redirect(next)
-            return redirect(url_for('landing'))
+            else:
+                # incorrect login / password
+                flash(response.json()["message"], "danger")
         except ConnectionError:
             flash('Error connecting to backend service.', 'danger')
             pass
-
     return render_template(
         'login.html',
         API_HOST=API_HOST,
@@ -273,6 +275,7 @@ def login():
 def logout():
 
     session.clear()
+    flash("You have been logged out successfully.", "success")
     return redirect(url_for('landing'))
 
 @app.route('/register/', subdomain='med-db', methods=['GET', 'POST'])
