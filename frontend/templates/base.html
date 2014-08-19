@@ -33,7 +33,9 @@
       <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
       <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">Medicines</a></li>
       <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">Country Reports</a></li>
-      <li><a href="/admin/">Admin</a></li>
+      {%- if session.email %}
+        <li><a href="/admin/">Admin</a></li>
+      {% endif -%}
     </ul>
 
     {% block access_control %}

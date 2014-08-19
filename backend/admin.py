@@ -7,6 +7,7 @@ from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.filters import FilterEqual
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
+import urllib
 
 HOST = app.config['HOST']
 
@@ -43,7 +44,7 @@ class MyModelView(ModelView):
         Override builtin _handle_view in order to redirect users when a view is not accessible.
         """
         if not self.is_accessible():
-            return redirect('/admin/login/', code=302)
+            return redirect(HOST + 'login/?next=' + urllib.quote_plus(request.url), code=302)
 
 
 class MyRestrictedModelView(MyModelView):
