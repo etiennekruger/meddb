@@ -8,6 +8,10 @@ class LoginForm(Form):
     email = StringField('Email', [validators.InputRequired()])
     password = PasswordField('Password', [validators.InputRequired()])
 
+class ChangeLoginForm(Form):
+    email = StringField('Email', [validators.InputRequired()])
+    password = PasswordField('New password', [validators.InputRequired()])
+
 available_countries = {
     "AGO":  "Angola",
     "BWA":  "Botswana",
