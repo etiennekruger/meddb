@@ -2,6 +2,7 @@ from backend import logger, app, db
 import models
 from flask import Flask, flash, redirect, url_for, request, render_template, g
 from flask.ext.admin import Admin, expose, AdminIndexView, helpers
+from flask.ext.admin.form import rules
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.filters import FilterEqual
@@ -57,8 +58,13 @@ class MyRestrictedModelView(MyModelView):
 
 class UserView(MyRestrictedModelView):
     can_create = False
-    column_list = ['country', 'email', 'is_admin', 'activated']
+    column_list = ['name', 'country', 'email', 'is_admin', 'activated']
     column_exclude_list = ['password_hash']
+
+    column_formatters = dict(
+        name=macro('render_user_name'),
+        )
+
     form_excluded_columns = [
         'password_hash',
         'procurements_added',
@@ -70,6 +76,77 @@ class UserView(MyRestrictedModelView):
         'products_added',
         'products_approved',
         ]
+
+    form_args = dict(
+        cv_url={'label': 'Link to CV (e.g. Linked-In profile)'},
+        technical_forecasting={'label': 'Forecasting/quantification'},
+        technical_planning={'label': 'Procurement planning'},
+        technical_logistics={'label': 'Procurement (technical aspects)'},
+        technical_handling={'label': 'Clearing and handling'},
+        technical_inventory={'label': 'Warehouse management (Inventory control)'},
+        technical_distribution={'label': 'Distribution and transport'},
+        technical_information_systems={'label': 'Information systems for the above'},
+        technical_monitoring={'label': 'Monitoring and evaluation'},
+        technical_training={'label': 'Training in the above'},
+        regional_east_africa={'label': 'Eastern Africa & Indian Ocean'},
+        regional_west_central_africa={'label': 'West and Central Africa'},
+        regional_southern_africa={'label': 'Southern Africa'},
+        regional_north_africa={'label': 'Middle East and North Africa'},
+        regional_eastern_europe={'label': 'Eastern Europe and Central Asia'},
+        regional_south_asia={'label': 'South and West Asia'},
+        regional_east_asia={'label': 'East Asia and the Pacific'},
+        regional_latin_america={'label': 'Latin America and the Caribbean'},
+        language_english={'label': 'English'},
+        language_french={'label': 'French'},
+        language_spanish={'label': 'Spanish'},
+        language_portuguese={'label': 'Portuguese'},
+        language_russian={'label': 'Russian'},
+    )
+
+    form_edit_rules = (
+        'activated',
+        'is_admin',
+        'email',
+        'title',
+        'first_name',
+        'last_name',
+        'country',
+        'cv_url',
+        rules.FieldSet([
+                           'technical_forecasting',
+                           'technical_planning',
+                           'technical_logistics',
+                           'technical_handling',
+                           'technical_inventory',
+                           'technical_distribution',
+                           'technical_information_systems',
+                           'technical_monitoring',
+                           'technical_training',
+                           ],
+                       header='Technical experience'
+        ),
+        rules.FieldSet([
+                           'regional_east_africa',
+                           'regional_west_central_africa',
+                           'regional_southern_africa',
+                           'regional_north_africa',
+                           'regional_eastern_europe',
+                           'regional_south_asia',
+                           'regional_east_asia',
+                           'regional_latin_america',
+                           ],
+                       header='Regional experience'
+        ),
+        rules.FieldSet([
+                           'language_english',
+                           'language_french',
+                           'language_spanish',
+                           'language_portuguese',
+                           'language_russian',
+                           ],
+                       header='Language proficiency'
+        ),
+    )
 
 
 class ProcurementView(MyModelView):

@@ -334,6 +334,10 @@ def register():
 
     email = request.json.get('email')
     password = request.json.get('password')
+    title = request.json.get('title')
+    first_name = request.json.get('first_name')
+    last_name = request.json.get('last_name')
+    country_code = request.json.get('country')
 
     # validation
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
@@ -346,6 +350,12 @@ def register():
     # create new user
     user = User(email=email)
     user.hash_password(password)
+    user.title = title
+    user.first_name = first_name
+    user.last_name = last_name
+    if country_code:
+        country = Country.query.filter_by(code=country_code).one()
+        user.country = country
     db.session.add(user)
     # create an api key for this user
     api_key = ApiKey(user=user)
@@ -568,6 +578,33 @@ def active_medicines():
         .having(func.count(Procurement.procurement_id) > 0) \
         .all()
     result = [{"medicine_id": medicine_id, "name": name, "procurement_count": count} for medicine_id, name, count in tmp]
+    out = {"next": None, "result": result}
+    out = json.dumps(out)
+    return send_api_response(out)
+
+
+@app.route('/ppsm_experts/', subdomain='med-db-api')
+def ppsm_experts():
+    """
+    Return a list of regional PPSM Experts.
+    """
+
+    tmp = db.session.query(User) \
+        .filter(User.activated == True) \
+        .filter(
+        User.technical_distribution |
+        User.technical_forecasting |
+        User.technical_handling |
+        User.technical_information_systems |
+        User.technical_inventory |
+        User.technical_logistics |
+        User.technical_monitoring |
+        User.technical_planning |
+        User.technical_training
+    ) \
+        .all()
+    logger.debug(tmp)
+    result = [user.to_dict() for user in tmp]
     out = {"next": None, "result": result}
     out = json.dumps(out)
     return send_api_response(out)

@@ -238,6 +238,32 @@ def country_report(country_code):
     )
 
 
+@app.route('/expert-list/', subdomain='med-db')
+def expert_list():
+
+    tmp = load_from_api('ppsm_experts')
+    expert_list = tmp["result"]
+    # expert_list = sorted(expert_list, key=itemgetter('name'))
+    return render_template(
+        'expert_list.html',
+        API_HOST=API_HOST,
+        expert_list=expert_list,
+        active_nav_button="ppsm-experts"
+    )
+
+
+@app.route('/expert/<int:user_id>/', subdomain='med-db')
+def expert_detail(user_id):
+
+    user = load_from_api('user', user_id)
+    return render_template(
+        'expert_profile.html',
+        API_HOST=API_HOST,
+        expert=user,
+        active_nav_button="ppsm-experts"
+    )
+
+
 @app.route('/login/', subdomain='med-db', methods=['GET', 'POST'])
 def login():
 
