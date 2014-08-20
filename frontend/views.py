@@ -243,7 +243,7 @@ def expert_list():
 
     tmp = load_from_api('ppsm_experts')
     expert_list = tmp["result"]
-    # expert_list = sorted(expert_list, key=itemgetter('name'))
+    expert_list = sorted(expert_list, key=itemgetter('first_name'))
     return render_template(
         'expert_list.html',
         API_HOST=API_HOST,
