@@ -1,18 +1,33 @@
-from flask import render_template, flash, redirect, request
+from flask import render_template, flash, redirect, request, url_for, session
 from frontend import app, logger
 import requests
+from requests import ConnectionError
 import operator
-import dateutil
-import datetime
+import dateutil.parser
+import forms
+import json
+import urllib
+from operator import itemgetter
 
 API_HOST = app.config['API_HOST']
 
 
+# handling static files (only relevant during development)
+app.static_folder = 'static'
+app.add_url_rule('/static/<path:filename>',
+                 endpoint='static',
+                 view_func=app.send_static_file,
+                 subdomain='med-db')
+
+
 @app.template_filter('format_date')
 def jinja2_filter_format_date(date_str):
-    date = dateutil.parser.parse(date_str)
-    native = date.replace(tzinfo=None)
-    format='%b %Y'
+    if date_str:
+        date = dateutil.parser.parse(date_str)
+        native = date.replace(tzinfo=None)
+        format='%b %Y'
+    else:
+        return ""
     return native.strftime(format)
 
 
@@ -35,71 +50,144 @@ def sort_list(unsorted_list, key):
     return sorted(unsorted_list, key=operator.itemgetter(key))
 
 
-@app.route('/')
+class ApiException(Exception):
+    """
+    Class for handling all of our expected API errors.
+    """
+
+    def __init__(self, status_code, message):
+        Exception.__init__(self)
+        self.message = message
+        self.status_code = status_code
+
+    def to_dict(self):
+        rv = {
+            "code": self.status_code,
+            "message": self.message
+        }
+        return rv
+
+@app.errorhandler(ApiException)
+def handle_api_exception(error):
+    """
+    Error handler, used by flask to pass the error on to the user, rather than catching it and throwing a HTTP 500.
+    """
+
+    logger.debug(error)
+    logger.debug(request.path)
+    logger.debug(urllib.quote_plus(request.path))
+    flash(error.message + " (" + str(error.status_code) + ")", "danger")
+    if error.status_code == 401:
+        session.clear()
+        return redirect(url_for('login') + "?next=" + urllib.quote_plus(request.path))
+    return redirect(url_for('landing'))
+
+
+def load_from_api(resource_name, resource_id=None):
+
+    query_str = resource_name + "/"
+    if resource_id:
+        query_str += str(resource_id) + "/"
+
+    headers = {}
+    if session and session.get('api_key'):
+        headers = {'Authorization': 'ApiKey:' + session.get('api_key')}
+
+    try:
+        response = requests.get(API_HOST + query_str, headers=headers)
+        out = response.json()
+        if response.status_code != 200:
+            raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+        i = 0
+        while i < 10:
+            i += 1
+            if response.json().get('next'):
+                response = requests.get(response.json()['next'], headers=headers)
+                if response.status_code != 200:
+                    raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+                out['results'] += response.json()['results']
+            else:
+                break
+        return out
+
+    except ConnectionError:
+        flash('Error connecting to backend service.', 'danger')
+        pass
+    return
+
+
+@app.route('/', subdomain='med-db')
 def landing():
 
-    recent_products = [
-        {"name": "Herpex-Acyclovir 200mg", "id": 1},
-        {"name": "Lovire", "id": 3},
-        {"name": "Benkil 400", "id": 8}
-    ]
+    recent_updates = load_from_api('recent_updates')
+    if recent_updates:
+        recent_updates = recent_updates.get('results')
 
-    tmp_response = requests.get(API_HOST + 'recent_updates/')
-    recent_updates = tmp_response.json()['results']
-
-    tmp_response = requests.get(API_HOST + 'overview/')
-    overview = tmp_response.json()
+    overview = load_from_api('overview')
 
     return render_template(
         'index.html',
         API_HOST=API_HOST,
         active_nav_button="home",
         overview=overview,
-        recent_products=recent_products,
         recent_updates=recent_updates
     )
 
-@app.route('/product/<product_id>/')
-def product(product_id):
 
-    response = requests.get(API_HOST + 'product/' + str(product_id) + "/")
-    product = response.json()
+@app.route('/medicine-list/', subdomain='med-db')
+def medicine_list():
+
+    tmp = load_from_api('active_medicines')
+    medicine_list = tmp["result"]
+    medicine_list = sorted(medicine_list, key=itemgetter('name'))
     return render_template(
-        'product.html',
+        'medicine_list.html',
         API_HOST=API_HOST,
-        product=product,
-        active_nav_button="product"
+        medicine_list=medicine_list,
+        active_nav_button="medicines"
     )
 
-@app.route('/medicine/<medicine_id>/')
+
+@app.route('/medicine/<int:medicine_id>/', subdomain='med-db')
 def medicine(medicine_id):
 
-    response = requests.get(API_HOST + 'medicine/' + str(medicine_id) + "/")
-    medicine = response.json()
-    max_price = 0
-    for product in medicine['products']:
-        if product['average_price'] > max_price:
-            max_price = product['average_price']
+    medicine = load_from_api('medicine', medicine_id)
+
+    # find the maximum price, for making comparisons
+    max_price = medicine['procurements'][-1]['unit_price_usd']
+    if medicine.get('benchmarks'):
+        for benchmark in medicine['benchmarks']:
+            if benchmark['price'] > max_price:
+                max_price = benchmark['price']
+
+    # add procurements and benchmarks to the same list, and sort
+    tmp = list(medicine['procurements'])
+    if medicine.get('benchmarks'):
+        for benchmark in medicine['benchmarks']:
+            benchmark['unit_price_usd'] = benchmark['price']
+            tmp.append(benchmark)
+    procurements_and_benchmarks = sort_list(tmp, 'unit_price_usd')
 
     # find the best procurements
-    best_procurements = sort_list(medicine['procurements'], 'price_per_unit')
+    best_procurements = medicine['procurements']
     if len(best_procurements) > 5:
         best_procurements = best_procurements[0:5]
 
     # calculate potential cost difference
     form_args = []
-    if request.args.get("compare-quantity") and request.args.get("compare-price"):
+    if request.args.get("compare-quantity") and request.args.get("compare-pack-size") and request.args.get("compare-price"):
         form_args = request.args
         try:
             compare_quantity = int(form_args['compare-quantity'])
+            compare_pack_size = int(form_args['compare-pack-size'])
             compare_price = float(form_args['compare-price'])
-            total_expected = compare_price * compare_quantity
+            compare_unit_price = float(compare_price/compare_pack_size)
 
             for procurement in best_procurements:
-                unit_price = float(procurement['price_per_unit'].split("/")[0])
-                procurement['cost_difference'] = (unit_price - compare_price) * compare_quantity
+                unit_price = float(procurement['unit_price_usd'])
+                procurement['cost_difference'] = (unit_price - compare_unit_price) * compare_quantity * compare_pack_size
         except Exception as e:
-            flash("There was a problem with your input.", "alert-error")
+            flash("There was a problem with your input.", "warning")
             logger.debug(e)
             pass
 
@@ -107,24 +195,156 @@ def medicine(medicine_id):
         'medicine.html',
         API_HOST=API_HOST,
         medicine=medicine,
-        active_nav_button="medicine",
+        active_nav_button="medicines",
         max_price = max_price,
         best_procurements = best_procurements,
+        procurements_and_benchmarks = procurements_and_benchmarks,
         form_args = form_args,
     )
 
-@app.route('/supplier/<supplier_id>/')
-def supplier(supplier_id):
+@app.route('/procurement/<int:procurement_id>/', subdomain='med-db')
+def procurement(procurement_id):
 
-    response = requests.get(API_HOST + 'supplier/' + str(supplier_id) + "/")
-    supplier = response.json()
+    procurement = load_from_api('procurement', procurement_id)
     return render_template(
-        'supplier.html',
+        'procurement.html',
         API_HOST=API_HOST,
-        supplier=supplier,
-        active_nav_button="supplier"
+        procurement=procurement,
+        active_nav_button="procurement"
     )
 
-@app.route('/admin/')
+
+@app.route('/country-ranking/', subdomain='med-db')
+def country_ranking():
+
+    country_ranking = load_from_api('country_ranking')
+    return render_template(
+        'country_ranking.html',
+        API_HOST=API_HOST,
+        country_ranking=country_ranking,
+        active_nav_button="reports"
+    )
+
+
+@app.route('/country-report/<string:country_code>/', subdomain='med-db')
+def country_report(country_code):
+
+    report = load_from_api('country_report', country_code)
+    return render_template(
+        'country_report.html',
+        API_HOST=API_HOST,
+        report=report,
+        active_nav_button="reports"
+    )
+
+
+@app.route('/login/', subdomain='med-db', methods=['GET', 'POST'])
+def login():
+
+    next = request.args.get('next', None)
+    login_form = forms.LoginForm(request.form)
+    if request.method == 'POST' and login_form.validate():
+        data = json.dumps(request.form)
+        headers = {"Content-Type": "application/json"}
+        try:
+            response = requests.post(API_HOST + 'login/', data=data, headers=headers)
+            if response.status_code == 200:
+                user_dict = response.json()
+                api_key = user_dict.get('api_key')
+                email = user_dict.get('email')
+                session['api_key'] = api_key
+                session['email'] = email
+                if next:
+                    return redirect(next)
+                return redirect(url_for('landing'))
+            elif response.status_code != 400:
+                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+            else:
+                # incorrect login / password
+                flash(response.json()["message"], "danger")
+        except ConnectionError:
+            flash('Error connecting to backend service.', 'danger')
+            pass
+    return render_template(
+        'login.html',
+        API_HOST=API_HOST,
+        form=login_form
+    )
+
+@app.route('/logout/', subdomain='med-db', methods=['GET', 'POST'])
+def logout():
+
+    session.clear()
+    flash("You have been logged out successfully.", "success")
+    return redirect(url_for('landing'))
+
+@app.route('/register/', subdomain='med-db', methods=['GET', 'POST'])
+def register():
+
+    register_form = forms.RegistrationForm(request.form)
+    if request.method == 'POST' and register_form.validate():
+        data = json.dumps(request.form)
+        headers = {"Content-Type": "application/json"}
+        try:
+            response = requests.post(API_HOST + 'register/', data=data, headers=headers)
+            if response.status_code != 200:
+                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+            user_dict = response.json()
+            api_key = user_dict.get('api_key')
+            email = user_dict.get('email')
+            session['api_key'] = api_key
+            session['email'] = email
+            flash("Thank you. You have been registered successfully.", "success")
+            return redirect(url_for('landing'))
+        except ConnectionError:
+            flash('Error connecting to backend service.', 'danger')
+            pass
+
+    return render_template(
+        'register.html',
+        API_HOST=API_HOST,
+        form=register_form
+    )
+
+
+@app.route('/change-login/', subdomain='med-db', methods=['GET', 'POST'])
+def change_login():
+
+    change_login_form = forms.ChangeLoginForm(request.form)
+    if not change_login_form.email.data:
+        change_login_form.email.data = session['email']
+    if request.method == 'POST' and change_login_form.validate():
+        data = json.dumps(request.form)
+        headers = {}
+        headers['Authorization'] = 'ApiKey:' + session.get('api_key')
+        headers["Content-Type"] = "application/json"
+        try:
+            response = requests.post(API_HOST + 'change-login/', data=data, headers=headers)
+            if response.status_code != 200:
+                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+            user_dict = response.json()
+            api_key = user_dict.get('api_key')
+            email = user_dict.get('email')
+            session['api_key'] = api_key
+            session['email'] = email
+            flash("Your details have been updated successfully.", "success")
+            return redirect(url_for('landing'))
+        except ConnectionError:
+            flash('Error connecting to backend service.', 'danger')
+            pass
+
+    return render_template(
+        'change_login.html',
+        API_HOST=API_HOST,
+        form=change_login_form
+    )
+
+
+@app.route('/admin/', subdomain='med-db')
 def admin_redirect():
     return redirect(API_HOST + "admin/")
+
+
+@app.route('/meddb/', subdomain='med-db')
+def legacy_redirect():
+    return redirect("/", 301)

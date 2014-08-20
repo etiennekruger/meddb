@@ -3,6 +3,8 @@ import sys
 from fabric.api import *
 from contextlib import contextmanager
 from fabric.contrib.console import confirm
+# import backend
+import requests
 
 try:
     from fabdefs import *
@@ -26,6 +28,14 @@ def upload_db():
     return
 
 
+def download_db():
+    tmp = get('%s/instance/med-db.db' % env.project_dir, '/tmp/med-db.db')
+    if tmp.succeeded:
+        print "Success"
+        local('mv /tmp/med-db.db instance/med-db.db')
+    return
+
+
 def restart():
     sudo("supervisorctl restart frontend")
     sudo("supervisorctl restart backend")
@@ -43,6 +53,8 @@ def set_permissions():
 
 
 def setup():
+
+    sudo('apt-get update')
 
     # install packages
     sudo('apt-get install build-essential python-dev sqlite3 libsqlite3-dev')
@@ -83,11 +95,11 @@ def configure():
 
     # upload nginx server blocks
     put(env.config_dir + '/nginx.conf', '/tmp/nginx.conf')
-    sudo('mv /tmp/nginx.conf %s/nginx_med-db.conf' % env.project_dir)
+    sudo('mv /tmp/nginx.conf /etc/nginx/sites-available/med-db.medicines.sadc.int')
 
     # link server blocks to Nginx config
     with settings(warn_only=True):
-        sudo('ln -s %s/nginx_med-db.conf /etc/nginx/sites-enabled/' % env.project_dir)
+        sudo('ln -s /etc/nginx/sites-available/med-db.medicines.sadc.int /etc/nginx/sites-enabled/')
 
     # upload supervisor config
     put(env.config_dir + '/supervisor.conf', '/tmp/supervisor.conf')
@@ -195,4 +207,45 @@ def restart_redis():
     with settings(warn_only=True):
         sudo('/etc/init.d/redis_6379 stop')
     sudo('/etc/init.d/redis_6379 start')
+    return
+
+available_countries = {
+    "AGO":  "Angola",
+    "BWA":  "Botswana",
+    "COD":  "Congo (DRC)",
+    "LSO":  "Lesotho",
+    "MWI":  "Malawi",
+    "MUS":  "Mauritius",
+    "MOZ":  "Mozambique",
+    "NAM":  "Namibia",
+    "SYC":  "Seychelles",
+    "ZAF":  "South Africa",
+    "SWZ":  "Swaziland",
+    "TZA":  "Tanzania",
+    "ZMB":  "Zambia",
+    }
+
+def seed_production_cache():
+
+    # list of endpoints to hit
+    endpoints = [
+        "",
+        "country-ranking/",
+    ]
+
+    for code, name in available_countries.iteritems():
+        endpoints.append("country-report/" + code + "/")
+
+    # hit each endpoint
+    for endpoint in endpoints:
+        url = "http://med-db.medicines.sadc.int/" + endpoint
+        print "hitting " + url
+        response = requests.get(url)
+    return
+
+
+def flush_redis():
+
+    sudo('redis-cli flushdb')
+    seed_production_cache()
     return

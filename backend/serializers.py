@@ -47,7 +47,7 @@ def medicine_to_dict(obj, include_related=False):
     tmp_dict = model_to_dict(obj)
     # resource URI
     tmp_dict['URI'] = API_HOST + 'medicine/' + str(obj.medicine_id) + '/'
-    # name, as calculated form component names
+    # name
     tmp_dict['name'] = obj.name
     # dosage form
     dosage_form = None
@@ -55,13 +55,12 @@ def medicine_to_dict(obj, include_related=False):
         dosage_form = obj.dosage_form.to_dict()
     tmp_dict['dosage_form'] = dosage_form
     tmp_dict.pop('dosage_form_id')
-    # components
-    tmp_components = []
-    for component in obj.components:
-        component_dict = component.to_dict()
-        component_dict.pop('medicine_id')
-        tmp_components.append(component_dict)
-    tmp_dict['components'] = tmp_components
+    # unit_of_measure
+    unit_of_measure = None
+    if obj.unit_of_measure:
+        unit_of_measure = obj.unit_of_measure.value
+    tmp_dict['unit_of_measure'] = unit_of_measure
+    tmp_dict.pop('unit_of_measure_id')
     # benchmark prices
     benchmarks = []
     for benchmark in obj.benchmarks:
@@ -74,34 +73,21 @@ def medicine_to_dict(obj, include_related=False):
         products = []
         for product in obj.products:
             product_dict = product.to_dict()
+            product_dict.pop('medicine')
             products.append(product_dict)
-        tmp_dict['products'] = products
+        tmp_dict['products'] = sorted(products, key=itemgetter('average_price'))
         # related procurements
         procurements = []
         for procurement in obj.procurements:
             procurement_dict = procurement.to_dict()
             procurements.append(procurement_dict)
-        tmp_dict['procurements'] = procurements
-    return tmp_dict
-
-
-def component_to_dict(obj, include_related=False):
-
-    tmp_dict = model_to_dict(obj)
-    # country
-    tmp_ingredient = None
-    if obj.ingredient:
-        tmp_ingredient = obj.ingredient.to_dict()
-    tmp_dict['ingredient'] = tmp_ingredient
-    tmp_dict.pop('ingredient_id')
+        tmp_dict['procurements'] = sorted(procurements, key=itemgetter('unit_price_usd'))
     return tmp_dict
 
 
 def product_to_dict(obj, include_related=False):
 
     tmp_dict = model_to_dict(obj)
-    # product name
-    tmp_dict['name'] = obj.get_name()
     # resource URI
     tmp_dict['URI'] = API_HOST + 'product/' + str(obj.product_id) + '/'
     # average price, as calculated from procurement info
@@ -144,9 +130,6 @@ def procurement_to_dict(obj, include_related=False):
     tmp_dict['URI'] = API_HOST + 'procurement/' + str(obj.procurement_id) + '/'
     # product
     tmp_dict['product'] = obj.product.to_dict()
-    # container
-    tmp_dict['container'] = obj.container.to_dict() if obj.container else None
-    tmp_dict.pop('container_id')
     # country
     tmp_dict['country'] = obj.country.to_dict() if obj.country else None
     tmp_dict.pop('country_id')
@@ -173,11 +156,6 @@ def procurement_to_dict(obj, include_related=False):
     tmp_dict['approved_by'] = tmp_approved_by
     tmp_dict.pop('added_by_id')
     tmp_dict.pop('approved_by_id')
-    # round the price
-    if tmp_dict['price_usd']:
-        tmp_dict['price_usd'] = float('%.3g' % tmp_dict['price_usd'])
-    price = obj.price_per_unit
-    tmp_dict['price_per_unit'] = price
     if include_related:
         # supplier
         tmp_supplier = None
@@ -185,6 +163,18 @@ def procurement_to_dict(obj, include_related=False):
             tmp_supplier = obj.supplier.to_dict()
         tmp_dict['supplier'] = tmp_supplier
         tmp_dict.pop('supplier_id')
+        # currency
+        tmp_currency = None
+        if obj.currency:
+            tmp_currency = obj.currency.to_dict()
+            tmp_currency['rate'] = float('%.3g' % (tmp_dict['pack_price'] / tmp_dict['pack_price_usd']))
+        tmp_dict['currency'] = tmp_currency
+        tmp_dict.pop('currency_id')
+    # round the price
+    if tmp_dict['pack_price_usd']:
+        tmp_dict['pack_price_usd'] = float('%.3g' % tmp_dict['pack_price_usd'])
+    if tmp_dict['unit_price_usd']:
+        tmp_dict['unit_price_usd'] = float('%.3g' % tmp_dict['unit_price_usd'])
     return tmp_dict
 
 
@@ -215,6 +205,15 @@ def supplier_to_dict(obj, include_related=False):
         for product in obj.products:
             products.append(product.to_dict())
         tmp_dict['products'] = products
+    return tmp_dict
+
+
+def user_to_dict(obj, include_related=False):
+
+    tmp_dict = model_to_dict(obj)
+    tmp_dict.pop('password_hash')
+    # resource URI
+    tmp_dict['URI'] = API_HOST + 'user/' + str(obj.user_id) + '/'
     return tmp_dict
 
 

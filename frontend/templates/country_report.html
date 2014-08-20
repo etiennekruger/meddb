@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="container">
+    <h1>
+      Country report: {{ report.country.name }}
+    </h1>
+  </div>
+{% endblock %}
+
+{% block page %}
+  <div class="row-fluid">
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="active"><a href="#overview" role="tab" data-toggle="tab">Overview</a></li>
+      <li><a href="#procurements" role="tab" data-toggle="tab">Procurements</a></li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+      <div class="tab-pane active" id="overview">
+        {% if report.medicines %}
+          <div class="col-md-12">
+            <p class="lead text-center">These numbers are based on recent procurements (past twelve months).</p>
+          </div>
+          <div class="col-md-10 col-md-offset-1">
+            <table class="table table-bordered table-striped table-hover">
+              <thead>
+              <th>{{ macros.render_flag(report.country) }}</th>
+              <th>Medicine</th>
+              <th>Overall spend from recent procurements</th>
+              <th>Savings potential (total) <i class="fa fa-chevron-down"></i></th>
+              <th>Savings potential %</th>
+              </thead>
+              <tbody>
+              {% for medicine in report.medicines %}
+                <tr class="medicine-entry clickable" data-medicine-id="{{ medicine.medicine_id }}">
+                  <td>{{ loop.index }}</td>
+                  <td>{{ medicine.name }}</td>
+                  <td>${{ medicine.overall_spend | int | add_commas }}</td>
+                  <td><strong>${{ medicine.potential_savings | int | add_commas }}</strong></td>
+                  <td>{{ (100 * (1 - medicine.score)) | round | int }}%</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="col-md-12">
+            <p class="lead text-center">There are no recent procurements for this country.</p>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="tab-pane" id="procurements">
+        <div class="row">
+          <div class="col-lg-12">
+            {% if report.procurements | length == 0 %}
+              <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+            {% else %}
+              <a
+                  class="btn btn-primary pull-right"
+                  style="margin: 10px 10px 0px 10px;"
+                  href="{{ API_HOST }}xlsx/{{ report.country.code }}/">
+                <i class="fa fa-download"></i> Download .xlsx
+              </a>
+              <p style="padding: 10px 10px 0px 10px;" class="lead">
+                All {{ report.procurements | length }} known procurements:
+              </p>
+
+
+              <table class="table table-bordered table-striped table-hover">
+                <thead>
+                <th>Procurement country</th>
+                <th>Generic Name & Strength</th>
+                <th>Date</th>
+                <th>Terms</th>
+                <th>Volume</th>
+                <th>Pack Price</th>
+                <th>Price per unit</th>
+                </thead>
+                <tbody>
+                {% for procurement in report.procurements %}
+                  <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
+                    <td>
+                      {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                    </td>
+                    <td>
+                      <span
+                          class="tooltip-enabled"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                          {{ procurement.product.medicine.name }}
+                      </span>
+                    </td>
+                    <td>
+                      {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
+                    </td>
+                    <td>
+                      {% if procurement.incoterm %}
+                        <span
+                            class="tooltip-enabled"
+                            data-toggle="tooltip"
+                            data-placement="top"
+                            title="{{ procurement.incoterm.description }}">
+                              {{ procurement.incoterm.code }}
+                        </span>
+                      {% else %}
+                        <span class="text-muted">Unknown</span>
+                      {% endif %}
+                    </td>
+                    <td>
+                      <span
+                          class="tooltip-enabled"
+                          data-toggle="tooltip"
+                          data-placement="top"
+                          title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                          {% if procurement.quantity > 1 %}
+                            {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
+                          {% else %}
+                            <span class="text-muted">Unknown quantity</span>
+                          {% endif %}
+                      </span>
+                    </td>
+                    <td>
+                      ${{ procurement.pack_price_usd }}
+                    </td>
+                    <td>
+                      ${{ procurement.unit_price_usd }}
+                    </td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ super() }}
+  <script>
+    $(document).ready(function(){
+
+      $(".medicine-entry").on('click', function(){
+        tmp = this
+        var medicine_id = $(this).attr('data-medicine-id');
+        window.location = '/medicine/' + medicine_id + '/';
+      })
+
+      $(".procurement-entry").on('click', function(){
+        tmp = this
+        var procurement_id = $(this).attr('data-procurement-id');
+        window.location = '/procurement/' + procurement_id + '/';
+      })
+
+    });
+  </script>
+{% endblock %}

@@ -3,6 +3,7 @@ body{
 }
 
 #page-container{
+    min-height: 450px;
 }
 
 #jumbo{
@@ -24,8 +25,8 @@ body{
 #search-banner{
     padding-top: 80px;
     padding-bottom: 120px;
-    padding-left: 250px;
-    padding-right: 250px;
+    margin-left: 5px;
+    margin-right: 5px;
 }
 
 #search-caption{
@@ -79,11 +80,32 @@ body{
     line-height: 1.33;
 }
 
+.clickable:hover{
+    cursor: pointer;
+}
+
+.price-bar-container{
+    padding-right: 60px!important;
+    min-width: 300px;
+}
+
+.price-bar-container span{
+    margin-right: -50px;
+}
+
 .price-bar{
     height: 24px;
     margin-top: -2px;
     margin-bottom: -2px;
     background-color: lightgreen;
+}
+
+.benchmark-entry .price-bar{
+    background-color: rgba(145, 145, 145, 0.25);
+}
+
+tbody tr.procurement-entry:hover td{
+  background-color: rgb(245, 245, 245)!important;
 }
 
 #form-comparison{
@@ -93,4 +115,94 @@ body{
 #form-comparison p{
     margin-top: 10px;
     margin-right: 15px;
+}
+
+.modal-link:hover{
+    cursor: pointer;
+    text-decoration:none
+}
+
+#search-box{
+    width:100%;
+    /*font-size: 24px;*/
+    /*line-height: 30px;*/
+}
+
+.twitter-typeahead{
+    float:left;
+    width:100%;
+}
+
+.input-group .twitter-typeahead .form-control:not(:first-child):not(:last-child) {
+    border-radius: 4px 0px 0px 4px;
+}
+
+.twitter-typeahead .tt-query,
+.twitter-typeahead .tt-hint {
+    margin-bottom: 0;
+}
+.tt-hint {
+    display: block;
+    width: 100%!important;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.428571429;
+    color: #999;
+    vertical-align: middle;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+    transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+.tt-dropdown-menu {
+    min-width: 160px;
+    margin-top: 2px;
+    padding: 5px 0;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-clip: padding-box;
+
+}
+.tt-suggestion {
+    display: block;
+    padding: 3px 20px;
+}
+.tt-suggestion.tt-cursor {
+    color: #fff;
+    background-color: #dfdfdf;
+}
+.tt-suggestion.tt-cursor a {
+    color: #fff;
+}
+.tt-suggestion p {
+    margin: 0;
+}
+
+.twitter-typeahead .hint-small
+{
+    height: 30px;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 3px;
+    line-height: 1.5;
+}
+
+.twitter-typeahead .hint-large
+{
+    height: 45px;
+    padding: 11px 16px 9px 16px;
+    font-size: 18px;
+    border-radius: 6px;
+    line-height: 1.33;
+}
+
+.form-inline label{
+    padding-left: 10px;
 }

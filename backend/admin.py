@@ -1,12 +1,13 @@
 from backend import logger, app, db
 import models
-from flask import Flask, flash, redirect, url_for, request, render_template
+from flask import Flask, flash, redirect, url_for, request, render_template, g
 from flask.ext.admin import Admin, expose, AdminIndexView, helpers
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
-from flask.ext import login
+from flask.ext.admin.contrib.sqla.filters import FilterEqual
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
+import urllib
 
 HOST = app.config['HOST']
 
@@ -14,138 +15,152 @@ HOST = app.config['HOST']
 def inject_paths():
     return dict(HOST=HOST)
 
-
-country_choices = [
-    ("BWA", "Botswana"),
-    ("MWI", "Malawi"),
-    ("SYC", "Seychelles"),
-    ("ZAF", "South Africa"),
-    ("TZA", "Tanzania"),
-    ("ZMB", "Zambia"),
-]
-
-# Define login and registration forms (for flask-login)
-class LoginForm(form.Form):
-    email = fields.TextField(validators=[validators.required()])
-    password = fields.PasswordField(validators=[validators.required()])
-
-    def validate_login(self, field):
-        user = self.get_user()
-
-        if user is None:
-            raise validators.ValidationError('Invalid user')
-
-        if user.password != hash(self.password.data):
-            raise validators.ValidationError('Invalid password')
-
-    def get_user(self):
-        return db.session.query(models.User).filter_by(email=self.email.data).first()
-
-
-class RegistrationForm(form.Form):
-    email = fields.TextField(validators=[validators.required(), validators.email()])
-    password = fields.PasswordField(
-        validators=[
-            validators.required(),
-            validators.length(min=6, message="Your password needs to have at least six characters.")
-        ]
-    )
-    country = fields.SelectField(choices=country_choices)
-
-    def validate_login(self, field):
-        if db.session.query(models.User).filter_by(email=self.email.data).count() > 0:
-            raise validators.ValidationError('Duplicate users')
+@app.template_filter('add_commas')
+def jinja2_filter_add_commas(quantity):
+    out = ""
+    quantity_str = str(quantity)
+    while len(quantity_str) > 3:
+        tmp = quantity_str[-3::]
+        out = "," + tmp + out
+        quantity_str = quantity_str[0:-3]
+    return quantity_str + out
 
 
 class MyModelView(ModelView):
     can_create = True
     can_edit = True
-    can_delete = True
-    page_size = 50
+    can_delete = False
+    page_size = app.config['RESULTS_PER_PAGE']
     list_template = "admin/custom_list_template.html"
     column_exclude_list = []
 
     def is_accessible(self):
-        return login.current_user.is_authenticated()
+        if g.user is not None:
+            return True
+        return False
+
+    def _handle_view(self, name, **kwargs):
+        """
+        Override builtin _handle_view in order to redirect users when a view is not accessible.
+        """
+        if not self.is_accessible():
+            return redirect(HOST + 'login/?next=' + urllib.quote_plus(request.url), code=302)
 
 
-class UserView(MyModelView):
-    can_create = False
-    column_list = ['country', 'email', 'is_admin', 'activated']
-    column_exclude_list = ['password']
-    form_excluded_columns = ['password', 'procurements_added', 'procurements_approved']
+class MyRestrictedModelView(MyModelView):
 
     def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
+        if g.user is not None and g.user.is_admin:
+            return True
+        return False
+
+
+class UserView(MyRestrictedModelView):
+    can_create = False
+    column_list = ['country', 'email', 'is_admin', 'activated']
+    column_exclude_list = ['password_hash']
+    form_excluded_columns = [
+        'password_hash',
+        'procurements_added',
+        'procurements_approved',
+        'manufacturers_added',
+        'manufacturers_approved',
+        'suppliers_added',
+        'suppliers_approved',
+        'products_added',
+        'products_approved',
+        ]
 
 
 class ProcurementView(MyModelView):
     column_list = [
         'country',
-        'product',
-        'supplier',
-        'price_usd',
-        'volume',
+        'medicine',
         'pack_size',
-        'start_date',
-        'end_date',
         'container',
-        'approved_by',
+        'pack_price_usd',
+        'quantity',
+        'supplier',
+        'manufacturer',
+        'date',
+        'source',
         'approved'
     ]
     form_excluded_columns = [
-        'country',
+        # 'country',
         'approved_by',
-        'approved_on',
         'added_by',
         'added_on',
         ]
+
     column_formatters = dict(
+        country=macro('render_country'),
+        medicine=macro('render_procurement_medicine'),
+        manufacturer=macro('render_procurement_manufacturer'),
+        pack_price_usd=macro('render_price'),
+        start_date=macro('render_date'),
+        quantity=macro('render_quantity'),
+        date=macro('render_procurement_date'),
         approved=macro('render_approve'),
-    )
+        )
+    column_sortable_list = [
+        ('country', models.Country.name),
+        ('medicine', models.Medicine.name),
+        ('pack_size', models.Procurement.pack_size),
+        ('container', models.Procurement.container),
+        ('pack_price_usd', models.Procurement.pack_price_usd),
+        ('quantity', models.Procurement.quantity),
+        ('source', models.Source.name),
+        ('approved', models.Procurement.approved),
+        ('supplier', models.Supplier.name),
+        ]
 
     def on_model_change(self, form, model, is_created):
         if is_created:
-            model.country_id = login.current_user.country.country_id if login.current_user.country else None
-            model.added_by = login.current_user
+            model.country_id = g.user.country.country_id if g.user.country else None
+            model.added_by = g.user
+
+    def get_list(self, page, sort_column, sort_desc, search, filters, execute=True):
+        # Todo: add some custom logic here?
+        count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
+        query = query.all()
+        return count, query
 
 
-class MedicineView(MyModelView):
+class MedicineView(MyRestrictedModelView):
+    column_default_sort = 'name'
     column_list = [
         'name',
         'dosage_form',
-    ]
-    column_sortable_list = ['name', 'dosage_form', ]
+        'unit_of_measure',
+        ]
+    column_sortable_list = [
+        ('name', models.Medicine.name),
+        ('dosage_form', models.DosageForm.name),
+        ('unit_of_measure', models.UnitOfMeasure.value),
+        ]
     form_excluded_columns = [
         'benchmarks',
         'products',
-        'added_by',
         ]
 
-    def after_model_change(self, form, model, is_created):
-        if is_created:
-            model.added_by = login.current_user
 
-
-class BenchmarkView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class ProductView(MyModelView):
-    column_exclude_list = [
-        'added_by',
+class BenchmarkView(MyRestrictedModelView):
+    column_list = [
+        'medicine',
+        'name',
+        'year',
+        'price',
+        ]
+    column_sortable_list = [
+        ('medicine', models.Medicine.name),
+        ('name', models.BenchmarkPrice.name),
+        ('price', models.BenchmarkPrice.price),
+        ('year', models.BenchmarkPrice.year),
         ]
     form_excluded_columns = [
-        'added_by',
+        'unit_of_measure',
         ]
-
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-    def after_model_change(self, form, model, is_created):
-        if is_created:
-            model.added_by = login.current_user
 
 
 class ManufacturerView(MyModelView):
@@ -155,125 +170,108 @@ class ManufacturerView(MyModelView):
     form_excluded_columns = [
         'added_by',
         ]
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
+    column_sortable_list = [
+        ('country', models.Country.name),
+        ]
+    column_searchable_list = [
+        'name',
+        ]
+    column_formatters = dict(
+        country=macro('render_country'),
+        )
 
     def after_model_change(self, form, model, is_created):
         if is_created:
-            model.added_by = login.current_user
+            model.added_by = g.user
 
 
-class SiteView(MyModelView):
-    # inline_models = (models.Manufacturer,)
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
+class SupplierView(MyModelView):
+    column_list = [
+        'name',
+        'street_address',
+        'website',
+        'contact',
+        ]
+    column_sortable_list = [
+        ('name', models.Supplier.name),
+        ('contact', models.Supplier.contact),
+        ('street_address', models.Supplier.street_address),
+        ('website', models.Supplier.website),
+        ]
+    form_excluded_columns = [
+        'added_by',
+        'authorized',
+        'procurements',
+        ]
+    column_searchable_list = [
+        'name',
+        'street_address',
+        'website',
+        'contact',
+        ]
+
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = g.user
 
 
-class ContainerView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
+class ProductView(MyModelView):
+
+    column_list = [
+        'medicine',
+        'description',
+        'manufacturer',
+        'site',
+        'is_generic',
+        ]
+
+    column_exclude_list = [
+        'added_by',
+        'average_price',
+        ]
+
+    column_sortable_list = [
+        ('medicine', models.Medicine.name),
+        ('manufacturer', models.Manufacturer.name),
+        ]
+
+    form_excluded_columns = [
+        'added_by',
+        'procurements',
+        'average_price',
+        'shelf_life',
+        ]
+
+    def after_model_change(self, form, model, is_created):
+        if is_created:
+            model.added_by = g.user
 
 
-class IngredientView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-class ComponentView(MyModelView):
-    def is_accessible(self):
-        return login.current_user.is_authenticated() and login.current_user.is_admin
-
-
-# Customized index view that handles login & registration
+# Index view
 class HomeView(AdminIndexView):
 
     @expose('/')
     def index(self):
-        if not login.current_user.is_authenticated():
-            return redirect(url_for('.login_view'))
         return self.render('admin/home.html')
-        # return render_template('admin/home.html')
-
-    @expose('/login/', methods=('GET', 'POST'))
-    def login_view(self):
-        # handle user login
-        form = LoginForm(request.form)
-        if helpers.validate_form_on_submit(form):
-            user = form.get_user()
-            if user:
-                if not user.is_active():
-                    flash('Your account has not been activated. Please contact the site administrator.' , 'error')
-                    return redirect(url_for('.login_view'))
-                else:
-                    login.login_user(user)
-            else:
-                flash('Username or Password is invalid' , 'error')
-                return redirect(url_for('.login_view'))
-
-        if login.current_user.is_authenticated():
-            return redirect(url_for('.index'))
-        link = '<p>Don\'t have an account? <a href="' + url_for('.register_view') + '">Click here to register.</a></p>'
-
-        return self.render('admin/home.html', form=form, link=link)
-
-    @expose('/register/', methods=('GET', 'POST'))
-    def register_view(self):
-        form = RegistrationForm(request.form)
-        if helpers.validate_form_on_submit(form):
-            user = models.User()
-
-            # hash password, before populating User object
-            form.password.data = hash(form.password.data)
-            country = models.Country.query.filter(models.Country.code==form.country.data).first()
-            form.country.data =country
-            form.populate_obj(user)
-
-            # activate the admin user
-            if user.email == app.config['ADMIN_USER']:
-                user.is_admin = True
-                user.activated = True
-
-            db.session.add(user)
-            db.session.commit()
-
-            flash('Please wait for your new account to be activated.', 'info')
-            return redirect(url_for('.login_view'))
-        link = '<p>Already have an account? <a href="' + url_for('.login_view') + '">Click here to sign in.</a></p>'
-        return self.render('admin/home.html', form=form, link=link, register=True)
-
-    @expose('/logout/')
-    def logout_view(self):
-        login.logout_user()
-        return redirect(url_for('.index'))
 
 
-# Initialize flask-login
-def init_login():
-    login_manager = login.LoginManager()
-    login_manager.init_app(app)
-    login_manager.login_view = ".login_view"
 
-    # Create user loader function
-    @login_manager.user_loader
-    def load_user(user_id):
-        return db.session.query(models.User).get(user_id)
-
-init_login()
-
-admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'))
+admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api')
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
-admin.add_view(BenchmarkView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price'))
 
-admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Product Records'))
-admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Product Records'))
-admin.add_view(SiteView(models.Site, db.session, name="Site", endpoint='site', category='Product Records'))
-admin.add_view(MedicineView(models.Medicine, db.session, name="Medicine", endpoint='medicine', category='Product Records'))
-admin.add_view(ContainerView(models.Container, db.session, name="Container", endpoint='container', category='Product Records'))
+admin.add_view(MyRestrictedModelView(models.DosageForm, db.session, name="Dosage Forms", endpoint='dosage_form', category='Medicines'))
+admin.add_view(MedicineView(models.Medicine, db.session, name="Available Medicines", endpoint='medicine', category='Medicines'))
+admin.add_view(BenchmarkView(models.BenchmarkPrice, db.session, name="Benchmark Prices", endpoint='benchmark_price', category='Medicines'))
 
-admin.add_view(IngredientView(models.Ingredient, db.session, name="Ingredient", endpoint='ingredient', category='Product Records'))
-admin.add_view(ComponentView(models.Component, db.session, name="Component", endpoint='component', category='Product Records'))
+admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterms", endpoint='incoterm', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
 
-admin.add_view(MyModelView(models.Source, db.session, name="Source of info", endpoint='source', category='Procurement Records'))
-admin.add_view(MyModelView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Procurement Records'))
-admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement', category='Procurement Records'))
+admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Manufacturers/Suppliers'))
+admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site', category='Manufacturers/Suppliers'))
+admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Manufacturers/Suppliers'))
+admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Manufacturers/Suppliers'))
+
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
