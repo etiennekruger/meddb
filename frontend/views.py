@@ -252,6 +252,18 @@ def expert_list():
     )
 
 
+@app.route('/expert/<int:user_id>/', subdomain='med-db')
+def expert_detail(user_id):
+
+    user = load_from_api('user', user_id)
+    return render_template(
+        'expert_profile.html',
+        API_HOST=API_HOST,
+        expert=user,
+        active_nav_button="ppsm-experts"
+    )
+
+
 @app.route('/login/', subdomain='med-db', methods=['GET', 'POST'])
 def login():
 
