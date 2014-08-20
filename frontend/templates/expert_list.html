@@ -25,7 +25,7 @@
           {% for expert in expert_list %}
             <tr class="user-entry clickable" data-user-id="{{ expert.user_id }}">
               <td>{% if expert.country %}{{ macros.render_flag(expert.country) }} {{ expert.country.name }}{% endif %}</td>
-              <td>{{ expert.email }}</td>
+              <td>{{ macros.render_user_name(expert) }}</td>
               <td>{{ macros.render_technical_expertise(expert) }}</td>
             </tr>
           {% endfor %}

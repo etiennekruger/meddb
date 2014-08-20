@@ -58,8 +58,12 @@ class MyRestrictedModelView(MyModelView):
 
 class UserView(MyRestrictedModelView):
     can_create = False
-    column_list = ['country', 'email', 'is_admin', 'activated']
+    column_list = ['name', 'country', 'email', 'is_admin', 'activated']
     column_exclude_list = ['password_hash']
+
+    column_formatters = dict(
+        name=macro('render_user_name'),
+        )
 
     form_excluded_columns = [
         'password_hash',
@@ -103,6 +107,9 @@ class UserView(MyRestrictedModelView):
         'activated',
         'is_admin',
         'email',
+        'title',
+        'first_name',
+        'last_name',
         'country',
         'cv_url',
         rules.FieldSet([

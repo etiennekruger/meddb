@@ -4,7 +4,7 @@
   <div class="container">
     <h1>
       <a href="/expert-list/">Regional experts</a> >
-      {{ expert.email }}
+      {{ macros.render_user_name(expert) }}
     </h1>
   </div>
 {% endblock %}

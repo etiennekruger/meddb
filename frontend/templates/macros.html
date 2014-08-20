@@ -28,6 +28,11 @@
 {%- endmacro %}
 
 
+{% macro render_user_name(user) %}
+  <nobr>{% if user['title'] %}{{ user['title'] }} {% endif %}{% if user['first_name'] %}{{ user['first_name'] }} {% endif %}{% if user['last_name'] %}{{ user['last_name'] }}{% endif %}</nobr>
+{% endmacro %}
+
+
 {% macro render_technical_expertise(user) -%}
   {% set labels = {
   'technical_forecasting': 'Forecasting/quantification',
