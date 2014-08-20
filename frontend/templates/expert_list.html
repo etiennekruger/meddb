@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="container">
+    <h1>
+      Regional experts
+    </h1>
+  </div>
+{% endblock %}
+
+{% block page %}
+  <div class="row">
+    {% if expert_list %}
+      <div class="col-md-12">
+        <p class="lead text-center">Pharmaceutical Procurement & Supply-chain Management (PPSM) experts in the SADC region:</p>
+      </div>
+      <div class="col-md-10 col-md-offset-1">
+        <table class="table table-bordered table-striped table-hover">
+          <thead>
+          <th>Country</th>
+          <th>Name</th>
+          <th>Professional experience</th>
+          </thead>
+          <tbody>
+          {% for expert in expert_list %}
+            <tr class="user-entry clickable" data-user-id="{{ expert.user_id }}">
+              <td>{% if expert.country %}{{ macros.render_flag(expert.country) }} {{ expert.country.name }}{% endif %}</td>
+              <td>{{ expert.email }}</td>
+              <td></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="col-md-12">
+        <p class="lead text-center">We don't currently have any information to display.</p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ super() }}
+  <script>
+    $(document).ready(function(){
+      $(".user-entry").on('click', function(){
+        tmp = this
+        var user_id = $(this).attr('data-user-id');
+        window.location = '/expert/' + user_id + '/';
+      })
+    });
+  </script>
+{% endblock %}

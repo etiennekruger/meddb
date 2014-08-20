@@ -214,6 +214,12 @@ def user_to_dict(obj, include_related=False):
     tmp_dict.pop('password_hash')
     # resource URI
     tmp_dict['URI'] = API_HOST + 'user/' + str(obj.user_id) + '/'
+    # country
+    tmp_country = None
+    if obj.country:
+        tmp_country = obj.country.to_dict()
+    tmp_dict['country'] = tmp_country
+    tmp_dict.pop('country_id')
     return tmp_dict
 
 

@@ -573,6 +573,33 @@ def active_medicines():
     return send_api_response(out)
 
 
+@app.route('/ppsm_experts/', subdomain='med-db-api')
+def ppsm_experts():
+    """
+    Return a list of regional PPSM Experts.
+    """
+
+    tmp = db.session.query(User) \
+        .filter(User.activated == True) \
+        .filter(
+        User.technical_distribution |
+        User.technical_forecasting |
+        User.technical_handling |
+        User.technical_information_systems |
+        User.technical_inventory |
+        User.technical_logistics |
+        User.technical_monitoring |
+        User.technical_planning |
+        User.technical_training
+    ) \
+        .all()
+    logger.debug(tmp)
+    result = [user.to_dict() for user in tmp]
+    out = {"next": None, "result": result}
+    out = json.dumps(out)
+    return send_api_response(out)
+
+
 @app.route('/xlsx/<string:country_code>/', subdomain='med-db-api')
 def download_procurements(country_code):
 
