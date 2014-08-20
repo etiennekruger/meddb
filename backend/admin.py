@@ -100,6 +100,8 @@ class UserView(MyRestrictedModelView):
     )
 
     form_edit_rules = (
+        'activated',
+        'is_admin',
         'email',
         'country',
         'cv_url',
