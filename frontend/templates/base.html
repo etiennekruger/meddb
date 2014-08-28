@@ -34,7 +34,6 @@
       <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">Medicines</a></li>
       <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">Country Reports</a></li>
       {%- if session.email %}
-        <li class="{% if active_nav_button == "ppsm-experts" %}active{% endif %}"><a href="/expert-list/">PPSM Experts</a></li>
         <li><a href="/admin/">Admin</a></li>
       {% endif -%}
     </ul>

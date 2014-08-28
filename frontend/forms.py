@@ -30,22 +30,9 @@ available_countries = {
     "ZWE":  "Zimbabwe",
     }
 
-available_titles = [
-    "Mr",
-    "Ms",
-    "Mrs",
-    "Dr",
-    "Prof.",
-]
-
 country_choices = [(key, value) for key, value in available_countries.iteritems()]
-title_choices = [(key, key) for key in available_titles]
-title_choices += [("", "None"), ]
 
 class RegistrationForm(Form):
-    title = SelectField('Title', [], choices=title_choices)
-    first_name = StringField('First Name', [validators.Required(message="Please enter your first name."), ])
-    last_name = StringField('Last Name', [validators.Required(message="Please enter your last name."), ])
     email = StringField('Email Address', [
         validators.Length(min=6, max=50),
         validators.Email(message="Please enter a valid email address.")

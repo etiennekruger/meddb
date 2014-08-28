@@ -40,41 +40,8 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
-    title = db.Column(db.String(16), unique=True, nullable=True)
-    first_name = db.Column(db.String(128), unique=True, nullable=True)
-    last_name = db.Column(db.String(128), unique=True, nullable=True)
     activated = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
-
-    # technical experience
-    technical_forecasting = db.Column(db.Boolean, default=False)  # Forecasting/quantification
-    technical_planning = db.Column(db.Boolean, default=False)  # Procurement planning
-    technical_logistics = db.Column(db.Boolean, default=False)  # Procurement (technical aspects)
-    technical_handling = db.Column(db.Boolean, default=False)  # Clearing and handling
-    technical_inventory = db.Column(db.Boolean, default=False)  # Warehouse management (Inventory control)
-    technical_distribution = db.Column(db.Boolean, default=False)  # Distribution and transport
-    technical_information_systems = db.Column(db.Boolean, default=False)  # Information systems for the above
-    technical_monitoring = db.Column(db.Boolean, default=False)  # Monitoring and evaluation
-    technical_training = db.Column(db.Boolean, default=False)  # Training in the above
-
-    # regional experience
-    regional_east_africa = db.Column(db.Boolean, default=False)  # Eastern Africa & Indian Ocean
-    regional_west_central_africa = db.Column(db.Boolean, default=False)  # West and Central Africa
-    regional_southern_africa = db.Column(db.Boolean, default=False)  # Southern Africa
-    regional_north_africa = db.Column(db.Boolean, default=False)  # Middle East and North Africa
-    regional_eastern_europe = db.Column(db.Boolean, default=False)  # Eastern Europe and Central Asia
-    regional_south_asia = db.Column(db.Boolean, default=False)  # South and West Asia
-    regional_east_asia = db.Column(db.Boolean, default=False)  # East Asia and the Pacific
-    regional_latin_america = db.Column(db.Boolean, default=False)  # Latin America and the Caribbean
-
-    # language proficiency
-    language_english = db.Column(db.Boolean, default=False)  # English
-    language_french = db.Column(db.Boolean, default=False)  # French
-    language_spanish = db.Column(db.Boolean, default=False)  # Spanish
-    language_portuguese = db.Column(db.Boolean, default=False)  # Portuguese
-    language_russian = db.Column(db.Boolean, default=False)  # Russian
-
-    cv_url = db.Column(db.String(128), nullable=True)
 
     country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
     country = db.relationship('Country')

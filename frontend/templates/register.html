@@ -17,12 +17,6 @@
       <form class="form-horizontal" method="POST" role="form" action="/register/">
         {{ form.csrf_token }}
 
-        {{ macros.render_field(form.title, class="form-control", placeholder="Title") }}
-
-        {{ macros.render_field(form.first_name, class="form-control", placeholder="First Name") }}
-
-        {{ macros.render_field(form.last_name, class="form-control", placeholder="Last Name") }}
-
         {{ macros.render_field(form.email, class="form-control", placeholder="Enter your email address") }}
 
         {{ macros.render_field(form.password, class="form-control", placeholder="Enter your password") }}

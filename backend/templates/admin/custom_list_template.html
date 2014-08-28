@@ -8,10 +8,6 @@
   <nobr>{{ model[column] }}</nobr>
 {% endmacro %}
 
-{% macro render_user_name(model, column) %}
-  <nobr>{% if model['title'] %}{{ model['title'] }} {% endif %}{% if model['first_name'] %}{{ model['first_name'] }} {% endif %}{% if model['last_name'] %}{{ model['last_name'] }}{% endif %}</nobr>
-{% endmacro %}
-
 {% macro render_price(model, column) %}
   <nobr>{{ model[column] | round(2) }}</nobr>
 {% endmacro %}
