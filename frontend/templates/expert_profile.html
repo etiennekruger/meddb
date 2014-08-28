@@ -23,7 +23,7 @@
           <th>CV</th>
           <td>
             {% if expert.cv_url %}
-              <a href="http://{{ expert.cv_url }}" target="_blank">{{ expert.cv_url }}</a>
+              <a href="{{ expert.cv_url }}" target="_blank">{{ expert.cv_url }}</a>
             {% else %}
               <span class="text-muted">Unknown</span>
             {% endif %}
