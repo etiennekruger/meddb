@@ -1,13 +1,14 @@
 from backend import logger, app, db
 import models
 from flask import Flask, flash, redirect, url_for, request, render_template, g
-from flask.ext.admin import Admin, expose, AdminIndexView, helpers
+from flask.ext.admin import Admin, expose, BaseView, AdminIndexView, helpers
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.filters import FilterEqual
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
 import urllib
+import forms
 
 HOST = app.config['HOST']
 
@@ -73,6 +74,11 @@ class UserView(MyRestrictedModelView):
 
 
 class ProcurementView(MyModelView):
+    form_ajax_refs = {
+        'country': {
+            'fields': (models.Country.name, )
+        },
+    }
     column_list = [
         'country',
         'medicine',
@@ -255,6 +261,22 @@ class HomeView(AdminIndexView):
         return self.render('admin/home.html')
 
 
+# Custom procurement view
+class CustomProcurementView(BaseView):
+    @expose('/')
+    def index(self):
+        return self.render('admin/procurement.html')
+
+    @expose('/add/')
+    def add_procurement(self):
+        form = forms.ProcurementForm()
+        return self.render('admin/procurement.html', form=form)
+
+    @expose('/edit/<int:procurement_id>/')
+    def edit_procurement(self, procurement_id):
+        return self.render('admin/procurement.html', procurement_id=procurement_id)
+
+
 
 admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api')
 
@@ -275,3 +297,4 @@ admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint=
 admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Manufacturers/Suppliers'))
 
 admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
+admin.add_view(CustomProcurementView(name='Procurement', endpoint='custom_procurement'))

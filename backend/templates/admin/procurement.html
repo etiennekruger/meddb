@@ -1,0 +1,31 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/form_macros.html' as macros %}
+{% block body %}
+  {{ super() }}
+  <div class="row-fluid">
+    <h1>Medicine Prices Database Admin <small>Manage procurement information</small></h1>
+
+
+    {% if form %}
+      <form class="form-horizontal" method="POST" role="form" action="/register/">
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.country, class="form-control", placeholder="Select your country") }}
+        {{ macros.render_field(form.medicine, class="form-control", placeholder="Select the medicine") }}
+        {{ macros.render_field(form.incoterm, class="form-control", placeholder="Select the incoterm") }}
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-7">
+            <button type="submit" class="btn btn-primary">Register</button>
+          </div>
+        </div>
+
+      </form>
+    {% endif %}
+  </div>
+
+  <div class="row-fluid">
+    <p>
+      <a class="btn btn-primary" href="{{ HOST }}"><i class="icon-chevron-left icon-white"></i> Back to Med-DB</a>
+    </p>
+  </div>
+{% endblock body %}
