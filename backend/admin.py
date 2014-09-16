@@ -74,6 +74,9 @@ class UserView(MyRestrictedModelView):
 
 
 class ProcurementView(MyModelView):
+    # can_edit = False
+    # can_create = False
+    list_template = 'admin/procurement_list_template.html'
     form_ajax_refs = {
         'country': {
             'fields': (models.Country.name, )
@@ -131,6 +134,23 @@ class ProcurementView(MyModelView):
         count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
         query = query.all()
         return count, query
+
+    @expose('/add/')
+    def add_view(self):
+        form = forms.ProcurementForm()
+        return self.render('admin/procurement.html', form=form)
+
+    @expose('/edit/<int:id>/', methods=('GET', 'POST'))
+    def edit_view(self, id):
+        if request.form:
+            # update product
+            # update supplier
+            # update manufacturer
+            # update procurement
+            flash("The details were updated succesfully.", "success")
+        procurement = models.Procurement.query.get(id)
+        form = forms.ProcurementForm(request.form, procurement)
+        return self.render('admin/procurement.html', procurement=procurement, form=form)
 
 
 class MedicineView(MyRestrictedModelView):
@@ -261,23 +281,6 @@ class HomeView(AdminIndexView):
         return self.render('admin/home.html')
 
 
-# Custom procurement view
-class CustomProcurementView(BaseView):
-    @expose('/')
-    def index(self):
-        return self.render('admin/procurement.html')
-
-    @expose('/add/')
-    def add_procurement(self):
-        form = forms.ProcurementForm()
-        return self.render('admin/procurement.html', form=form)
-
-    @expose('/edit/<int:procurement_id>/')
-    def edit_procurement(self, procurement_id):
-        return self.render('admin/procurement.html', procurement_id=procurement_id)
-
-
-
 admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api', template_mode='bootstrap3')
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
@@ -296,5 +299,4 @@ admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site'
 admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Manufacturers/Suppliers'))
 admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Manufacturers/Suppliers'))
 
-admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
-admin.add_view(CustomProcurementView(name='Procurement', endpoint='custom_procurement'))
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurement", endpoint='procurement'))

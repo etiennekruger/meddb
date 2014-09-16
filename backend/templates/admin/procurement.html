@@ -7,18 +7,23 @@
 
 
     {% if form %}
-      <form class="form-horizontal" method="POST" role="form" action="/register/">
+      <form class="form-horizontal" method="POST" role="form" action="">
         {{ form.csrf_token }}
         {{ macros.render_field(form.country, class="form-control", placeholder="Select your country") }}
         {{ macros.render_field(form.medicine, class="form-control", placeholder="Select the medicine") }}
+        {{ macros.render_field(form.pack_price, class="form-control") }}
+        {{ macros.render_field(form.pack_size, class="form-control") }}
+        {{ macros.render_field(form.container, class="form-control") }}
+        {{ macros.render_field(form.quantity, class="form-control") }}
+        {{ macros.render_field(form.method, class="form-control") }}
+        {{ macros.render_field(form.start_date, class="form-control") }}
+        {{ macros.render_field(form.end_date, class="form-control") }}
         {{ macros.render_field(form.incoterm, class="form-control", placeholder="Select the incoterm") }}
-
         <div class="form-group">
           <div class="col-md-offset-4 col-md-7">
-            <button type="submit" class="btn btn-primary">Register</button>
+            <button type="submit" class="btn btn-lg btn-primary">&nbspSave&nbsp</button>
           </div>
         </div>
-
       </form>
     {% endif %}
   </div>

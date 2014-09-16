@@ -137,6 +137,9 @@ class DosageForm(db.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+    def __repr__(self):
+        return self.__unicode__()
+
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)
 

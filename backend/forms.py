@@ -42,7 +42,7 @@ method_choices = [
 medicine_choices = []
 medicines = models.Medicine.query.order_by(models.Medicine.name).all()
 for medicine in medicines:
-    medicine_choices.append((medicine.medicine_id, medicine.name))
+    medicine_choices.append((medicine.medicine_id, medicine.name + " - " + str(medicine.dosage_form)))
 
 
 class ProcurementForm(Form):
