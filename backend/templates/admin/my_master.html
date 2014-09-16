@@ -8,19 +8,19 @@
 {% endblock head_css%}
 
 {% block brand %}
-  <span class="brand"><a href="{{ HOST }}">{{ admin_view.admin.name }}</a></span>
+  <a class="navbar-brand" href="{{ HOST }}">{{ admin_view.admin.name }}</a>
 {% endblock %}
 
 {% block access_control %}
+
   {% if g.user != None %}
-    <div class="btn-group pull-right">
-      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="icon-user"></i> {{ g.user.email }} <span class="caret"></span>
-      </a>
-      <ul class="dropdown-menu">
+    <ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-user"></i> {{ g.user.email }} <span class="caret"></span></a>
+      <ul class="dropdown-menu" role="menu">
         <li><a href="{{ HOST }}logout/">Log out</a></li>
       </ul>
-    </div>
+    </li>
   {% endif %}
 {% endblock %}
 
