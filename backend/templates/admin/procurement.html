@@ -1,0 +1,56 @@
+{% extends 'admin/master.html' %}
+{% import 'admin/form_macros.html' as macros %}
+{% block head_css %}
+  {{ super() }}
+  <link href="/admin/static/vendor/select2/select2.css" rel="stylesheet">
+  <link href="/admin/static/vendor/datetimepicker-bs3/bootstrap-datetimepicker.min.css" rel="stylesheet">
+{% endblock head_css%}
+
+{% block body %}
+  {{ super() }}
+  <div class="row-fluid">
+    <h1>{{ title }}</h1>
+
+    {% if form %}
+
+      <form class="form-horizontal" method="POST" role="form" action="">
+        {{ form.csrf_token }}
+        {{ macros.render_field(form.country, class="form-control", placeholder="Select your country") }}
+        {#  Related Product  #}
+        {% if procurement %}
+          {{ macros.render_related_product(form.product, procurement=procurement, include_edit_button=True, class="form-control", placeholder="Select the product") }}
+        {% else %}
+          {{ macros.render_related_product(form.product, class="form-control", placeholder="Select the product") }}
+        {% endif %}
+        {#  Related Supplier  #}
+        {% if procurement %}
+          {{ macros.render_related_supplier(form.supplier, procurement=procurement, include_edit_button=True, class="form-control", placeholder="Select the supplier") }}
+        {% else %}
+          {{ macros.render_related_supplier(form.supplier, class="form-control", placeholder="Select the supplier") }}
+        {% endif %}
+        {{ macros.render_field(form.pack_size, class="form-control") }}
+        {{ macros.render_field(form.pack_price, class="form-control") }}
+        {{ macros.render_field(form.pack_price_usd, class="form-control") }}
+        {{ macros.render_field(form.unit_price_usd, class="form-control") }}
+        {{ macros.render_field(form.container, class="form-control") }}
+        {{ macros.render_field(form.quantity, class="form-control") }}
+        {{ macros.render_field(form.method, class="form-control") }}
+        {{ macros.render_field(form.start_date, class="form-control") }}
+        {{ macros.render_field(form.end_date, class="form-control") }}
+        {{ macros.render_field(form.incoterm, class="form-control", placeholder="Select the incoterm") }}
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-7">
+            <button type="submit" class="btn btn-lg btn-primary">&nbspSave&nbsp</button>
+          </div>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+
+{% endblock body %}
+
+{% block tail_js %}
+  {{ super() }}
+  <script src="/admin/static/admin/js/form.js" type="text/javascript"></script>
+  <script src="/admin/static/vendor/datetimepicker-bs3/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+{% endblock %}

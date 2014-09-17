@@ -1,13 +1,15 @@
 from backend import logger, app, db
 import models
-from flask import Flask, flash, redirect, url_for, request, render_template, g
-from flask.ext.admin import Admin, expose, AdminIndexView, helpers
+from flask import Flask, flash, redirect, url_for, request, render_template, g, abort
+from flask.ext.admin import Admin, expose, BaseView, AdminIndexView, helpers
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.filters import FilterEqual
+from flask.ext.admin.helpers import get_redirect_target
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
 import urllib
+import forms
 
 HOST = app.config['HOST']
 
@@ -73,6 +75,14 @@ class UserView(MyRestrictedModelView):
 
 
 class ProcurementView(MyModelView):
+    # can_edit = False
+    # can_create = False
+    list_template = 'admin/procurement_list_template.html'
+    form_ajax_refs = {
+        'country': {
+            'fields': (models.Country.name, )
+        },
+        }
     column_list = [
         'country',
         'medicine',
@@ -125,6 +135,59 @@ class ProcurementView(MyModelView):
         count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
         query = query.all()
         return count, query
+
+    def populate_procurement_from_form(self, procurement, form):
+        # manually assign form values to procurement object
+        procurement.country_id = form.country.data
+        procurement.product_id = form.product.data
+        procurement.supplier_id = form.supplier.data
+        procurement.container = form.container.data
+        procurement.pack_size = form.pack_size.data
+        procurement.pack_price = form.pack_price.data
+        procurement.pack_price_usd = form.pack_price_usd.data
+        procurement.unit_price_usd = form.unit_price_usd.data
+        procurement.quantity = form.quantity.data
+        procurement.method = form.method.data
+        procurement.start_date = form.start_date.data
+        procurement.end_date = form.end_date.data
+        return procurement
+
+    @expose('/new/', methods=('GET', 'POST'))
+    def add_view(self):
+        form = forms.ProcurementForm(request.form)
+        if request.method == 'POST' and form.validate():
+            procurement = models.Procurement()
+            procurement.added_by = g.user
+            procurement = self.populate_procurement_from_form(procurement, form)
+            db.session.add(procurement)
+            db.session.commit()
+            flash("The details were updated successfully.", "success")
+        if g.user.country:
+            form.country.process_data(g.user.country.country_id)
+        return self.render('admin/procurement.html', form=form, title="Add procurement record")
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        if (not request.args) or (not request.args.get('id')):
+            return abort(404)
+        id = request.args['id']
+        procurement = models.Procurement.query.get(id)
+        form = forms.ProcurementForm(request.form, procurement)
+        if request.form:
+            # update procurement details
+            if request.method == 'POST' and form.validate():
+                procurement = self.populate_procurement_from_form(procurement, form)
+                db.session.add(procurement)
+                db.session.commit()
+                flash("The details were updated successfully.", "success")
+            if request.args.get('host_url'):
+                target = get_redirect_target(param_name="host_url")
+                return redirect(HOST + target)
+        else:
+            # set field values that weren't picked up automatically
+            form.product.process_data(procurement.product_id)
+            form.country.process_data(procurement.country_id)
+        return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
 
 
 class MedicineView(MyRestrictedModelView):
@@ -240,6 +303,7 @@ class ProductView(MyModelView):
         'procurements',
         'average_price',
         'shelf_life',
+        'registrations',
         ]
 
     def after_model_change(self, form, model, is_created):
@@ -253,7 +317,6 @@ class HomeView(AdminIndexView):
     @expose('/')
     def index(self):
         return self.render('admin/home.html')
-
 
 
 admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api', template_mode='bootstrap3')
@@ -274,4 +337,4 @@ admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site'
 admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Manufacturers/Suppliers'))
 admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Manufacturers/Suppliers'))
 
-admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurement", endpoint='procurement'))

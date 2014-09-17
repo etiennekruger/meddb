@@ -1,0 +1,60 @@
+{% macro render_field(field) %}
+  <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <label class="col-md-4 control-label">{{ field.label }}</label>
+    <div class="col-md-4">
+      {% if field.errors %}
+        {% set css_class = 'has-error ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <ul class="list-unstyled help-block">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+      {% else %}
+        {{ field(**kwargs) }}
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro render_related_product(field, procurement=None, include_edit_button=False) %}
+  <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <label class="col-md-4 control-label">{{ field.label }}</label>
+    <div class="col-md-4">
+      {% if field.errors %}
+        {% set css_class = 'has-error ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <ul class="list-unstyled help-block">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+      {% else %}
+        {{ field(**kwargs) }}
+      {% endif %}
+    </div>
+    <div class="col-md-2">
+      {% if include_edit_button %}
+        <a href="{{ url_for('product.edit_view', id=procurement.product_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Edit</a>
+        <a href="{{ url_for('product.create_view', id=procurement.product_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
+      {% else %}
+        <a href="{{ url_for('product.create_view', id=procurement.product_id, url=url_for('procurement.create_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro render_related_supplier(field, procurement=None, include_edit_button=False) %}
+  <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <label class="col-md-4 control-label">{{ field.label }}</label>
+    <div class="col-md-4">
+      {% if field.errors %}
+        {% set css_class = 'has-error ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <ul class="list-unstyled help-block">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+      {% else %}
+        {{ field(**kwargs) }}
+      {% endif %}
+    </div>
+    <div class="col-md-2">
+      {% if include_edit_button %}
+        <a href="{{ url_for('supplier.edit_view', id=procurement.supplier_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Edit</a>
+        <a href="{{ url_for('supplier.create_view', id=procurement.supplier_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
+      {% else %}
+        <a href="{{ url_for('supplier.create_view', id=procurement.supplier_id, url=url_for('procurement.add_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}

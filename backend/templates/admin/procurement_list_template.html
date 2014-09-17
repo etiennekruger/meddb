@@ -1,0 +1,43 @@
+{#{% extends 'admin/model/list.html' %}#}
+{% extends 'admin/custom_list_template.html' %}
+
+
+{#{% block model_menu_bar %}#}
+{#    <ul class="nav nav-tabs">#}
+{#        <li class="active">#}
+{#            <a href="javascript:void(0)">{{ _gettext('List') }} ({{ count }})</a>#}
+{#        </li>#}
+{#        <li>#}
+{#            <a href="{{ get_url('custom_procurement.add_procurement') }}" title="{{ _gettext('Create new record') }}">{{ _gettext('Create') }}</a>#}
+{#        </li>#}
+{##}
+{#        {% if filters %}#}
+{#        <li class="dropdown">#}
+{#            {{ model_layout.filter_options() }}#}
+{#        </li>#}
+{#        {% endif %}#}
+{##}
+{#        {% if actions %}#}
+{#        <li class="dropdown">#}
+{#            {{ actionlib.dropdown(actions) }}#}
+{#        </li>#}
+{#        {% endif %}#}
+{##}
+{#        {% if search_supported %}#}
+{#        <li>#}
+{#            {{ model_layout.search_form() }}#}
+{#        </li>#}
+{#        {% endif %}#}
+{#    </ul>#}
+{#    {% endblock %}#}
+{##}
+{##}
+{#{% block list_row_actions_column scoped %}#}
+{#  <td>#}
+{#    {% block list_row_actions scoped %}#}
+{#      <a class="icon" href="{{ get_url('custom_procurement.edit_procurement', procurement_id=get_pk_value(row)) }}" title="{{ _gettext('Edit record') }}">#}
+{#        <span class="glyphicon glyphicon-pencil"></span>#}
+{#      </a>#}
+{#    {% endblock %}#}
+{#  </td>#}
+{#{% endblock %}#}
