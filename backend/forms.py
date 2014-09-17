@@ -4,8 +4,7 @@ from wtforms import StringField, PasswordField, SelectField, IntegerField, Float
 from wtforms import validators
 from backend import app, db, logger
 import models
-import widgets
-import fields
+from flask.ext.admin.form import widgets, fields
 
 
 incoterm_choices = []
