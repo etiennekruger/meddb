@@ -13,25 +13,10 @@ incoterms = models.Incoterm.query.order_by(models.Incoterm.code).all()
 for incoterm in incoterms:
     incoterm_choices.append((incoterm.incoterm_id, incoterm.code + " (" + incoterm.description + ")"))
 
-available_countries = {
-    "AGO":  "Angola",
-    "BWA":  "Botswana",
-    "COD":  "DRC",
-    "LSO":  "Lesotho",
-    "MDG":  "Madagascar",
-    "MWI":  "Malawi",
-    "MUS":  "Mauritius",
-    "MOZ":  "Mozambique",
-    "NAM":  "Namibia",
-    "SYC":  "Seychelles",
-    "ZAF":  "South Africa",
-    "SWZ":  "Swaziland",
-    "TZA":  "Tanzania",
-    "ZMB":  "Zambia",
-    "ZWE":  "Zimbabwe",
-    }
-
-country_choices = [(key, value) for key, value in available_countries.iteritems()]
+country_choices = []
+countries = models.Country.query.all()
+for country in countries:
+    country_choices.append((country.country_id, country.name))
 
 method_choices = [
     ('tender', 'tender'),
@@ -45,10 +30,16 @@ for medicine in medicines:
     medicine_choices.append((medicine.medicine_id, medicine.name + " - " + str(medicine.dosage_form)))
 
 
+product_choices = []
+products = models.Product.query.all()
+for product in products:
+    product_choices.append((product.product_id, str(product)))
+
+
 class ProcurementForm(Form):
 
     country = fields.Select2Field('Country', [validators.InputRequired()], choices=country_choices)
-    medicine = SelectField('Medicine', [validators.InputRequired()], choices=medicine_choices)
+    product = fields.Select2Field('Product', [validators.InputRequired()], choices=product_choices)
     container = StringField('Container', [validators.Length(max=50)])
     pack_size = IntegerField('Pack size', [validators.InputRequired()])
     pack_price = FloatField('Pack price', [validators.InputRequired()])

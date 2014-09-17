@@ -16,7 +16,7 @@
       <form class="form-horizontal" method="POST" role="form" action="">
         {{ form.csrf_token }}
         {{ macros.render_field(form.country, class="form-control", placeholder="Select your country") }}
-        {{ macros.render_field(form.medicine, class="form-control", placeholder="Select the medicine") }}
+        {{ macros.render_related_product(procurement, form.product, class="form-control", placeholder="Select the product") }}
         {{ macros.render_field(form.pack_price, class="form-control") }}
         {{ macros.render_field(form.pack_size, class="form-control") }}
         {{ macros.render_field(form.container, class="form-control") }}
@@ -34,11 +34,6 @@
     {% endif %}
   </div>
 
-  <div class="row-fluid">
-    <p>
-      <a class="btn btn-primary" href="{{ HOST }}"><i class="icon-chevron-left icon-white"></i> Back to Med-DB</a>
-    </p>
-  </div>
 {% endblock body %}
 
 {% block tail_js %}

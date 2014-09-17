@@ -139,6 +139,10 @@ class ProcurementView(MyModelView):
     @expose('/new/')
     def add_view(self):
         form = forms.ProcurementForm()
+        form.medicine.choices = [(None, "Please select"),] + form.medicine.choices
+        if g.user.country:
+            form.country.default = g.user.country.country_id
+        form.process()
         return self.render('admin/procurement.html', form=form, title="Add procurement record")
 
     @expose('/edit/', methods=('GET', 'POST'))
@@ -148,16 +152,19 @@ class ProcurementView(MyModelView):
 
         id = request.args['id']
         if request.form:
-            # update product
-            # update supplier
-            # update manufacturer
-            # update procurement
+            # update procurement details
+            # update product relation
+            # update supplier relation
             flash("The details were updated successfully.", "success")
             if request.args.get('host_url'):
                 target = get_redirect_target(param_name="host_url")
                 return redirect(HOST + target)
         procurement = models.Procurement.query.get(id)
         form = forms.ProcurementForm(request.form, procurement)
+        # set field values that weren't picked up automatically
+        form.product.default = procurement.product_id
+        form.country.default = procurement.country_id
+        form.process()
         return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
 
 
