@@ -8,12 +8,10 @@ import widgets
 import fields
 
 
-available_incoterms = {}
-incoterms = models.Incoterm.query.all()
+incoterm_choices = []
+incoterms = models.Incoterm.query.order_by(models.Incoterm.code).all()
 for incoterm in incoterms:
-    available_incoterms[incoterm.incoterm_id] = incoterm.code + " (" + incoterm.description + ")"
-incoterm_choices = [(key, value) for key, value in available_incoterms.iteritems()]
-
+    incoterm_choices.append((incoterm.incoterm_id, incoterm.code + " (" + incoterm.description + ")"))
 
 available_countries = {
     "AGO":  "Angola",
@@ -38,7 +36,7 @@ country_choices = [(key, value) for key, value in available_countries.iteritems(
 method_choices = [
     ('tender', 'tender'),
     ('direct procurement', 'direct procurement'),
-    ('unknown', None)
+    (None, 'unknown')
 ]
 
 medicine_choices = []
