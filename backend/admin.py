@@ -180,9 +180,9 @@ class ProcurementView(MyModelView):
                 db.session.add(procurement)
                 db.session.commit()
                 flash("The details were updated successfully.", "success")
-            if request.args.get('host_url'):
-                target = get_redirect_target(param_name="host_url")
-                return redirect(HOST + target)
+                if request.args.get('host_url'):
+                    target = get_redirect_target(param_name="host_url")
+                    return redirect(HOST + target)
         else:
             # set field values that weren't picked up automatically
             form.product.process_data(procurement.product_id)
