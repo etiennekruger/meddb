@@ -34,11 +34,17 @@ products = models.Product.query.all()
 for product in products:
     product_choices.append((product.product_id, str(product)))
 
+supplier_choices = []
+suppliers = models.Supplier.query.all()
+for supplier in suppliers:
+    supplier_choices.append((supplier.supplier_id, str(supplier)))
+
 
 class ProcurementForm(Form):
 
     country = fields.Select2Field('Country', [validators.InputRequired()], choices=country_choices)
     product = fields.Select2Field('Product', [validators.InputRequired()], choices=product_choices)
+    supplier = fields.Select2Field('Supplier', [validators.InputRequired()], choices=supplier_choices)
     container = StringField('Container', [validators.Length(max=50)])
     pack_size = IntegerField('Pack size', [validators.InputRequired()])
     pack_price = FloatField('Pack price', [validators.InputRequired()])

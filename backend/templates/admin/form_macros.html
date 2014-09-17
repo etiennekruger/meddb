@@ -33,3 +33,24 @@
     {% endif %}
   </div>
 {% endmacro %}
+
+{% macro render_related_supplier(field, procurement=None, add_buttons=False) %}
+  <div class="form-group{% if field.errors %} has-error{% endif %}">
+    <label class="col-md-4 control-label">{{ field.label }}</label>
+    <div class="col-md-4">
+      {% if field.errors %}
+        {% set css_class = 'has-error ' + kwargs.pop('class', '') %}
+        {{ field(class=css_class, **kwargs) }}
+        <ul class="list-unstyled help-block">{% for error in field.errors %}<li>{{ error|e }}</li>{% endfor %}</ul>
+      {% else %}
+        {{ field(**kwargs) }}
+      {% endif %}
+    </div>
+    {% if add_buttons %}
+      <div class="col-md-2">
+        <a href="{{ url_for('supplier.edit_view', id=procurement.supplier_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Edit</a>
+        <a href="{{ url_for('supplier.create_view', id=procurement.supplier_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
+      </div>
+    {% endif %}
+  </div>
+{% endmacro %}
