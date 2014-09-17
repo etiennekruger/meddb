@@ -28,8 +28,10 @@
     <div class="col-md-2">
       {% if include_edit_button %}
         <a href="{{ url_for('product.edit_view', id=procurement.product_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Edit</a>
+        <a href="{{ url_for('product.create_view', id=procurement.product_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
+      {% else %}
+        <a href="{{ url_for('product.create_view', id=procurement.product_id, url=url_for('procurement.create_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
       {% endif %}
-      <a href="{{ url_for('product.create_view', id=procurement.product_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
     </div>
   </div>
 {% endmacro %}
@@ -49,8 +51,10 @@
     <div class="col-md-2">
       {% if include_edit_button %}
         <a href="{{ url_for('supplier.edit_view', id=procurement.supplier_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Edit</a>
+        <a href="{{ url_for('supplier.create_view', id=procurement.supplier_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
+      {% else %}
+        <a href="{{ url_for('supplier.create_view', id=procurement.supplier_id, url=url_for('procurement.add_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
       {% endif %}
-      <a href="{{ url_for('supplier.create_view', id=procurement.supplier_id, url=url_for('procurement.edit_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
     </div>
   </div>
 {% endmacro %}

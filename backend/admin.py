@@ -279,6 +279,7 @@ class ProductView(MyModelView):
         'procurements',
         'average_price',
         'shelf_life',
+        'registrations',
         ]
 
     def after_model_change(self, form, model, is_created):
