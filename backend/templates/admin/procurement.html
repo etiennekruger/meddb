@@ -11,12 +11,16 @@
   <div class="row-fluid">
     <h1>{{ title }}</h1>
 
-
     {% if form %}
+
       <form class="form-horizontal" method="POST" role="form" action="">
         {{ form.csrf_token }}
         {{ macros.render_field(form.country, class="form-control", placeholder="Select your country") }}
-        {{ macros.render_related_product(procurement, form.product, class="form-control", placeholder="Select the product") }}
+        {% if procurement %}
+          {{ macros.render_related_product(form.product, procurement=procurement, add_buttons=True, class="form-control", placeholder="Select the product") }}
+        {% else %}
+          {{ macros.render_related_product(form.product, class="form-control", placeholder="Select the product") }}
+        {% endif %}
         {{ macros.render_field(form.pack_price, class="form-control") }}
         {{ macros.render_field(form.pack_size, class="form-control") }}
         {{ macros.render_field(form.container, class="form-control") }}
