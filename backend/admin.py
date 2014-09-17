@@ -1,10 +1,11 @@
 from backend import logger, app, db
 import models
-from flask import Flask, flash, redirect, url_for, request, render_template, g
+from flask import Flask, flash, redirect, url_for, request, render_template, g, abort
 from flask.ext.admin import Admin, expose, BaseView, AdminIndexView, helpers
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.filters import FilterEqual
+from flask.ext.admin.helpers import get_redirect_target
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
 import urllib
@@ -140,14 +141,21 @@ class ProcurementView(MyModelView):
         form = forms.ProcurementForm()
         return self.render('admin/procurement.html', form=form, title="Add procurement record")
 
-    @expose('/edit/<int:id>/', methods=('GET', 'POST'))
-    def edit_view(self, id):
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        if (not request.args) or (not request.args.get('id')):
+            return abort(404)
+
+        id = request.args['id']
         if request.form:
             # update product
             # update supplier
             # update manufacturer
             # update procurement
-            flash("The details were updated succesfully.", "success")
+            flash("The details were updated successfully.", "success")
+            if request.args.get('host_url'):
+                target = get_redirect_target(param_name="host_url")
+                return redirect(HOST + target)
         procurement = models.Procurement.query.get(id)
         form = forms.ProcurementForm(request.form, procurement)
         return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")

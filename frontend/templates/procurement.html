@@ -19,7 +19,7 @@
         <div class="col-lg-4">
           <a
               type="button"
-              href="{{ API_HOST }}admin/procurement/edit/?id={{ procurement.procurement_id }}"
+              href="{{ API_HOST }}admin/procurement/edit/?id={{ procurement.procurement_id }}&host_url={{ ("procurement/" + procurement.procurement_id | string + "/") | urlencode }}"
               class="btn btn-info pull-right"
               style="margin-top: 20px;">
             Edit
