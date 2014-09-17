@@ -18,13 +18,13 @@
         {{ macros.render_field(form.country, class="form-control", placeholder="Select your country") }}
         {#  Related Product  #}
         {% if procurement %}
-          {{ macros.render_related_product(form.product, procurement=procurement, add_buttons=True, class="form-control", placeholder="Select the product") }}
+          {{ macros.render_related_product(form.product, procurement=procurement, include_edit_button=True, class="form-control", placeholder="Select the product") }}
         {% else %}
           {{ macros.render_related_product(form.product, class="form-control", placeholder="Select the product") }}
         {% endif %}
         {#  Related Supplier  #}
         {% if procurement %}
-          {{ macros.render_related_supplier(form.supplier, procurement=procurement, add_buttons=True, class="form-control", placeholder="Select the supplier") }}
+          {{ macros.render_related_supplier(form.supplier, procurement=procurement, include_edit_button=True, class="form-control", placeholder="Select the supplier") }}
         {% else %}
           {{ macros.render_related_supplier(form.supplier, class="form-control", placeholder="Select the supplier") }}
         {% endif %}
