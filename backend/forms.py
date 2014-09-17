@@ -54,7 +54,7 @@ class ProcurementForm(Form):
     pack_price = FloatField('Pack price', [validators.InputRequired()])
     quantity = IntegerField('Quantity', [validators.InputRequired()])
     method = SelectField('Method', choices=method_choices)
-    start_date = DateField('Start date', [validators.InputRequired()])
-    end_date = DateField('End date', [validators.InputRequired()])
+    start_date = DateField('Start date', [validators.InputRequired()], widget=widgets.DatePickerWidget())
+    end_date = DateField('End date', [validators.InputRequired()], widget=widgets.DatePickerWidget())
     incoterm = SelectField('Incoterm', [validators.InputRequired()], choices=incoterm_choices)
 
