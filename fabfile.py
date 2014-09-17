@@ -58,7 +58,7 @@ def setup():
 
     # install packages
     sudo('apt-get install build-essential python-dev sqlite3 libsqlite3-dev')
-    sudo('apt-get install python-pip supervisor')
+    sudo('apt-get install python-pip supervisor git')
     sudo('pip install virtualenv')
 
     # create application directory if it doesn't exist yet
