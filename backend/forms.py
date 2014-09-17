@@ -4,6 +4,8 @@ from wtforms import StringField, PasswordField, SelectField, IntegerField, Float
 from wtforms import validators
 from backend import app, db, logger
 import models
+import widgets
+import fields
 
 
 available_incoterms = {}
@@ -47,7 +49,7 @@ for medicine in medicines:
 
 class ProcurementForm(Form):
 
-    country = SelectField('Country', [validators.InputRequired()], choices=country_choices)
+    country = fields.Select2Field('Country', [validators.InputRequired()], choices=country_choices)
     medicine = SelectField('Medicine', [validators.InputRequired()], choices=medicine_choices)
     container = StringField('Container', [validators.Length(max=50)])
     pack_size = IntegerField('Pack size', [validators.InputRequired()])

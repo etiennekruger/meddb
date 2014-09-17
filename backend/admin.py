@@ -135,10 +135,10 @@ class ProcurementView(MyModelView):
         query = query.all()
         return count, query
 
-    @expose('/add/')
+    @expose('/new/')
     def add_view(self):
         form = forms.ProcurementForm()
-        return self.render('admin/procurement.html', form=form)
+        return self.render('admin/procurement.html', form=form, title="Add procurement record")
 
     @expose('/edit/<int:id>/', methods=('GET', 'POST'))
     def edit_view(self, id):
@@ -150,7 +150,7 @@ class ProcurementView(MyModelView):
             flash("The details were updated succesfully.", "success")
         procurement = models.Procurement.query.get(id)
         form = forms.ProcurementForm(request.form, procurement)
-        return self.render('admin/procurement.html', procurement=procurement, form=form)
+        return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
 
 
 class MedicineView(MyRestrictedModelView):
