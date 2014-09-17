@@ -82,7 +82,7 @@ class ProcurementView(MyModelView):
         'country': {
             'fields': (models.Country.name, )
         },
-    }
+        }
     column_list = [
         'country',
         'medicine',
@@ -136,33 +136,57 @@ class ProcurementView(MyModelView):
         query = query.all()
         return count, query
 
-    @expose('/new/')
+    def populate_procurement_from_form(self, procurement, form):
+        # manually assign form values to procurement object
+        procurement.country_id = form.country.data
+        procurement.product_id = form.product.data
+        procurement.supplier_id = form.supplier.data
+        procurement.container = form.container.data
+        procurement.pack_size = form.pack_size.data
+        procurement.pack_price = form.pack_price.data
+        procurement.pack_price_usd = form.pack_price_usd.data
+        procurement.unit_price_usd = form.unit_price_usd.data
+        procurement.quantity = form.quantity.data
+        procurement.method = form.method.data
+        procurement.start_date = form.start_date.data
+        procurement.end_date = form.end_date.data
+        return procurement
+
+    @expose('/new/', methods=('GET', 'POST'))
     def add_view(self):
-        form = forms.ProcurementForm()
+        form = forms.ProcurementForm(request.form)
+        if request.method == 'POST' and form.validate():
+            procurement = models.Procurement()
+            procurement.added_by = g.user
+            procurement = self.populate_procurement_from_form(procurement, form)
+            db.session.add(procurement)
+            db.session.commit()
+            flash("The details were updated successfully.", "success")
         if g.user.country:
-            form.country.default = g.user.country.country_id
-        form.process()
+            form.country.process_data(g.user.country.country_id)
         return self.render('admin/procurement.html', form=form, title="Add procurement record")
 
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
         if (not request.args) or (not request.args.get('id')):
             return abort(404)
-
         id = request.args['id']
+        procurement = models.Procurement.query.get(id)
+        form = forms.ProcurementForm(request.form, procurement)
         if request.form:
             # update procurement details
-            # update product relation
-            # update supplier relation
-            flash("The details were updated successfully.", "success")
+            if request.method == 'POST' and form.validate():
+                procurement = self.populate_procurement_from_form(procurement, form)
+                db.session.add(procurement)
+                db.session.commit()
+                flash("The details were updated successfully.", "success")
             if request.args.get('host_url'):
                 target = get_redirect_target(param_name="host_url")
                 return redirect(HOST + target)
-        procurement = models.Procurement.query.get(id)
-        form = forms.ProcurementForm(request.form, procurement)
-        # set field values that weren't picked up automatically
-        form.product.process_data(procurement.product_id)
-        form.country.process_data(procurement.country_id)
+        else:
+            # set field values that weren't picked up automatically
+            form.product.process_data(procurement.product_id)
+            form.country.process_data(procurement.country_id)
         return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
 
 
