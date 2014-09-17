@@ -139,7 +139,6 @@ class ProcurementView(MyModelView):
     @expose('/new/')
     def add_view(self):
         form = forms.ProcurementForm()
-        form.medicine.choices = [(None, "Please select"),] + form.medicine.choices
         if g.user.country:
             form.country.default = g.user.country.country_id
         form.process()
@@ -162,9 +161,8 @@ class ProcurementView(MyModelView):
         procurement = models.Procurement.query.get(id)
         form = forms.ProcurementForm(request.form, procurement)
         # set field values that weren't picked up automatically
-        form.product.default = procurement.product_id
-        form.country.default = procurement.country_id
-        form.process()
+        form.product.process_data(procurement.product_id)
+        form.country.process_data(procurement.country_id)
         return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
 
 
