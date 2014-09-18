@@ -22,21 +22,6 @@ currencies = models.Currency.query.all()
 for currency in currencies:
     currency_choices.append((currency.currency_id, unicode(currency)))
 
-medicine_choices = []
-medicines = models.Medicine.query.order_by(models.Medicine.name).all()
-for medicine in medicines:
-    medicine_choices.append((medicine.medicine_id, medicine.name + " - " + str(medicine.dosage_form)))
-
-product_choices = []
-products = models.Product.query.all()
-for product in products:
-    product_choices.append((product.product_id, str(product)))
-
-supplier_choices = []
-suppliers = models.Supplier.query.all()
-for supplier in suppliers:
-    supplier_choices.append((supplier.supplier_id, str(supplier)))
-
 container_choices = []
 containers = models.AvailableContainers.query.all()
 for container in containers:
@@ -48,11 +33,30 @@ for procurement_method in procurement_methods:
     procurement_method_choices.append((str(procurement_method), str(procurement_method)))
 
 
+def get_product_choices():
+    product_choices = []
+    products = models.Product.query.all()
+    for product in products:
+        product_choices.append((product.product_id, str(product)))
+    return product_choices
+
+
+def get_supplier_choices():
+    supplier_choices = []
+    suppliers = models.Supplier.query.all()
+    for supplier in suppliers:
+        supplier_choices.append((supplier.supplier_id, str(supplier)))
+    return supplier_choices
+
+
 class ProcurementForm(Form):
 
+    def init(self):
+        country
+
     country = fields.Select2Field('Country', [validators.InputRequired()], coerce=int, choices=country_choices)
-    product = fields.Select2Field('Product', [validators.InputRequired()], coerce=int, choices=product_choices)
-    supplier = fields.Select2Field('Supplier', [validators.InputRequired()], coerce=int, choices=supplier_choices)
+    product = fields.Select2Field('Product', [validators.InputRequired()], coerce=int)
+    supplier = fields.Select2Field('Supplier', [validators.InputRequired()], coerce=int)
     container = SelectField('Container', choices=container_choices)
     pack_size = IntegerField('Pack size', [validators.InputRequired()])
     pack_price = FloatField('Pack price', [validators.InputRequired()])

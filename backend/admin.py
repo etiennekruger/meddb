@@ -131,6 +131,9 @@ class ProcurementView(MyModelView):
     @expose('/new/', methods=('GET', 'POST'))
     def add_view(self):
         form = forms.ProcurementForm(request.form)
+        # set dynamic select choices
+        form.supplier.choices = forms.get_supplier_choices()
+        form.product.choices = forms.get_product_choices()
         if request.method == 'POST' and form.validate():
             procurement = models.Procurement()
             procurement.added_by = g.user
@@ -150,6 +153,9 @@ class ProcurementView(MyModelView):
         id = request.args['id']
         procurement = models.Procurement.query.get(id)
         form = forms.ProcurementForm(request.form, procurement)
+        # set dynamic select choices
+        form.supplier.choices = forms.get_supplier_choices()
+        form.product.choices = forms.get_product_choices()
         if request.form:
             # update procurement details
             if request.method == 'POST' and form.validate():
