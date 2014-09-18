@@ -85,6 +85,10 @@
         exchange_rate.val(tmp);
       }
 
+      pack_size.on('change', function(){
+        calculateUnitPrice();
+      })
+
       exchange_rate.on('change', function(){
         if(pack_price.val() && exchange_rate.val()) {
           var tmp = pack_price.val() / exchange_rate.val();
