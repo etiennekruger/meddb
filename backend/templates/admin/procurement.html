@@ -31,6 +31,12 @@
         {{ macros.render_field(form.pack_size, class="form-control") }}
         {{ macros.render_field(form.currency, class="form-control") }}
         {{ macros.render_field(form.pack_price, class="form-control") }}
+        <div class="form-group">
+          <label class="col-md-4 control-label">Exchange rate</label>
+          <div class="col-md-4">
+              <input class="form-control" id="exchange_rate" name="exchange_rate" type="text" value="{% if procurement and procurement.exchange_rate %}{{ procurement.exchange_rate }}{% endif %}">
+          </div>
+        </div>
         {{ macros.render_field(form.pack_price_usd, class="form-control") }}
         {{ macros.render_field(form.unit_price_usd, class="form-control") }}
         {{ macros.render_field(form.container, class="form-control") }}
@@ -54,4 +60,67 @@
   {{ super() }}
   <script src="/admin/static/admin/js/form.js" type="text/javascript"></script>
   <script src="/admin/static/vendor/datetimepicker-bs3/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+
+  <script type="text/javascript">
+    $(function() {
+      console.log( "ready!" );
+
+      var pack_price = $("#pack_price")
+      var pack_price_usd = $("#pack_price_usd")
+      var exchange_rate = $("#exchange_rate")
+      var unit_price_usd = $("#unit_price_usd")
+      var pack_size = $("#pack_size")
+      var start_date = $("#start_date")
+      var end_date = $("#end_date")
+
+      function calculateUnitPrice(){
+        if(pack_size.val() && pack_price_usd.val()){
+          var tmp = pack_price_usd.val() / pack_size.val();
+          unit_price_usd.val(tmp);
+        }
+      }
+
+      // calculate initial exchange rate
+      if(pack_price.val() && pack_price_usd.val()){
+        var tmp = pack_price.val() / pack_price_usd.val();
+        exchange_rate.val(tmp);
+      }
+
+      pack_size.on('change', function(){
+        calculateUnitPrice();
+      })
+
+      exchange_rate.on('change', function(){
+        if(pack_price.val() && exchange_rate.val()) {
+          var tmp = pack_price.val() / exchange_rate.val();
+          pack_price_usd.val(tmp);
+          calculateUnitPrice();
+        }
+      })
+
+      pack_price.on('change', function(){
+        if(pack_price.val() && exchange_rate.val()) {
+          var tmp = pack_price.val() / exchange_rate.val();
+          pack_price_usd.val(tmp);
+          calculateUnitPrice();
+        }
+      })
+
+      pack_price_usd.on('change', function(){
+        if(pack_price.val() && pack_price_usd.val()) {
+          var tmp = pack_price.val() / pack_price_usd.val();
+          exchange_rate.val(tmp);
+          calculateUnitPrice();
+        }
+      })
+
+      // set end date from start date
+      start_date.on('change', function(){
+        if(start_date.val() && !end_date.val()){
+          end_date.val(start_date.val())
+        }
+      })
+
+    });
+  </script>
 {% endblock %}
