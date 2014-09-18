@@ -75,14 +75,7 @@ class UserView(MyRestrictedModelView):
 
 
 class ProcurementView(MyModelView):
-    # can_edit = False
-    # can_create = False
     list_template = 'admin/procurement_list_template.html'
-    form_ajax_refs = {
-        'country': {
-            'fields': (models.Country.name, )
-        },
-        }
     column_list = [
         'country',
         'medicine',
@@ -96,13 +89,6 @@ class ProcurementView(MyModelView):
         'source',
         'approved'
     ]
-    form_excluded_columns = [
-        # 'country',
-        'approved_by',
-        'added_by',
-        'added_on',
-        ]
-
     column_formatters = dict(
         country=macro('render_country'),
         medicine=macro('render_procurement_medicine'),
@@ -124,17 +110,6 @@ class ProcurementView(MyModelView):
         ('approved', models.Procurement.approved),
         ('supplier', models.Supplier.name),
         ]
-
-    def on_model_change(self, form, model, is_created):
-        if is_created:
-            model.country_id = g.user.country.country_id if g.user.country else None
-            model.added_by = g.user
-
-    def get_list(self, page, sort_column, sort_desc, search, filters, execute=True):
-        # Todo: add some custom logic here?
-        count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
-        query = query.all()
-        return count, query
 
     def populate_procurement_from_form(self, procurement, form):
         # manually assign form values to procurement object
