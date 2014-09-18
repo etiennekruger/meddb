@@ -207,6 +207,9 @@ class BenchmarkView(MyRestrictedModelView):
 
 
 class ManufacturerView(MyModelView):
+    column_searchable_list = [
+        'name',
+        ]
     column_exclude_list = [
         'added_by',
         ]
@@ -229,6 +232,9 @@ class ManufacturerView(MyModelView):
 
 
 class SupplierView(MyModelView):
+    column_searchable_list = [
+        'name',
+        ]
     column_list = [
         'name',
         'street_address',
