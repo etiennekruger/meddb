@@ -28,18 +28,18 @@
         {% else %}
           {{ macros.render_related_supplier(form.supplier, class="form-control", placeholder="Select the supplier") }}
         {% endif %}
+        {{ macros.render_field(form.container, class="form-control") }}
         {{ macros.render_field(form.pack_size, class="form-control") }}
         {{ macros.render_field(form.currency, class="form-control") }}
         {{ macros.render_field(form.pack_price, class="form-control") }}
         <div class="form-group">
           <label class="col-md-4 control-label">Exchange rate</label>
           <div class="col-md-4">
-              <input class="form-control" id="exchange_rate" name="exchange_rate" type="text" value="{% if procurement and procurement.exchange_rate %}{{ procurement.exchange_rate }}{% endif %}">
+            <input class="form-control" id="exchange_rate" name="exchange_rate" type="text" value="{% if procurement and procurement.exchange_rate %}{{ procurement.exchange_rate }}{% endif %}">
           </div>
         </div>
         {{ macros.render_field(form.pack_price_usd, class="form-control") }}
         {{ macros.render_field(form.unit_price_usd, class="form-control") }}
-        {{ macros.render_field(form.container, class="form-control") }}
         {{ macros.render_field(form.quantity, class="form-control") }}
         {{ macros.render_field(form.method, class="form-control") }}
         {{ macros.render_field(form.start_date, class="form-control") }}
@@ -70,6 +70,36 @@
       var pack_size = $("#pack_size")
       var start_date = $("#start_date")
       var end_date = $("#end_date")
+      var uom_placeholder = $(".uom-placeholder")
+      var container_placeholder = $(".container-placeholder")
+      var product = $("#product")
+      var container = $("#container")
+
+      // hit our own API to find the correct UOM for the specified product, and populate help-text with the value
+      function loadUnitOfMeasure(){
+        if(product.val()){
+           $.ajax({
+          url: "/product/" + product.val() + "/"
+        }).success(function(data, status, jqXHR) {
+          uom_placeholder.html(data.medicine.unit_of_measure)
+        });
+        }
+      }
+      product.on('change', function(){
+        loadUnitOfMeasure()
+      })
+      loadUnitOfMeasure()
+
+      // populate help-text with value from container field
+      function loadContainer(){
+        if(container.val()){
+          container_placeholder.html(container.val());
+        }
+      }
+      container.on('change', function(){
+        loadContainer();
+      })
+      loadContainer()
 
       function calculateUnitPrice(){
         if(pack_size.val() && pack_price_usd.val()){

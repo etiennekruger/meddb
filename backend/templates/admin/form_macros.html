@@ -13,7 +13,7 @@
     {% if field.description %}
       <div class="row">
         <div class="col-md-4 col-md-offset-4">
-          <p class="text-muted" style="margin-left: 15px;">{{ field.description }}</p>
+          <p class="text-muted" style="margin-left: 15px;">{{ field.description | safe }}</p>
         </div>
       </div>
     {% endif %}
@@ -43,7 +43,7 @@
     {% if field.description %}
       <div class="row">
         <div class="col-md-4 col-md-offset-4">
-          <p class="text-muted" style="margin-left: 15px;">{{ field.description }}</p>
+          <p class="text-muted" style="margin-left: 15px;">{{ field.description | safe }}</p>
         </div>
       </div>
     {% endif %}
@@ -73,7 +73,7 @@
     {% if field.description %}
       <div class="row">
         <div class="col-md-4 col-md-offset-4">
-          <p class="text-muted" style="margin-left: 15px;">{{ field.description }}</p>
+          <p class="text-muted" style="margin-left: 15px;">{{ field.description | safe }}</p>
         </div>
       </div>
     {% endif %}

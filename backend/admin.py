@@ -12,6 +12,7 @@ import urllib
 import forms
 
 HOST = app.config['HOST']
+API_HOST = app.config['API_HOST']
 
 @app.context_processor
 def inject_paths():
@@ -144,7 +145,7 @@ class ProcurementView(MyModelView):
             return redirect(url_for('.index_view'))
         if g.user.country:
             form.country.process_data(g.user.country.country_id)
-        return self.render('admin/procurement.html', form=form, title="Add procurement record")
+        return self.render('admin/procurement.html', form=form, title="Add procurement record", API_HOST=API_HOST)
 
     @expose('/edit/', methods=('GET', 'POST'))
     def edit_view(self):
@@ -174,7 +175,7 @@ class ProcurementView(MyModelView):
             form.currency.process_data(procurement.currency_id)
             form.incoterm.process_data(procurement.incoterm_id)
             form.supplier.process_data(procurement.supplier_id)
-        return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
+        return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record", API_HOST=API_HOST)
 
 
 class MedicineView(MyRestrictedModelView):
