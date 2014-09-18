@@ -164,6 +164,8 @@ class ProcurementView(MyModelView):
             form.product.process_data(procurement.product_id)
             form.country.process_data(procurement.country_id)
             form.currency.process_data(procurement.currency_id)
+            form.incoterm.process_data(procurement.incoterm_id)
+            form.supplier.process_data(procurement.supplier_id)
         return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
 
 
