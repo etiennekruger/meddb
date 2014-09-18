@@ -434,6 +434,9 @@ class AvailableContainers(db.Model):
     def __unicode__(self):
         return u'%s' % self.value
 
+    def __repr__(self):
+        return self.__unicode__()
+
 
 class UnitOfMeasure(db.Model):
 
