@@ -67,6 +67,15 @@
       var pack_price = $("#pack_price")
       var pack_price_usd = $("#pack_price_usd")
       var exchange_rate = $("#exchange_rate")
+      var unit_price_usd = $("#unit_price_usd")
+      var pack_size = $("#pack_size")
+
+      function calculateUnitPrice(){
+        if(pack_size.val() && pack_price_usd.val()){
+          var tmp = pack_price_usd.val() / pack_size.val();
+          unit_price_usd.val(tmp);
+        }
+      }
 
       // calculate initial exchange rate
       if(pack_price.val() && pack_price_usd.val()){
@@ -78,6 +87,7 @@
         if(pack_price.val() && exchange_rate.val()) {
           var tmp = pack_price.val() / exchange_rate.val();
           pack_price_usd.val(tmp);
+          calculateUnitPrice();
         }
       })
 
@@ -85,6 +95,7 @@
         if(pack_price.val() && exchange_rate.val()) {
           var tmp = pack_price.val() / exchange_rate.val();
           pack_price_usd.val(tmp);
+          calculateUnitPrice();
         }
       })
 
@@ -92,6 +103,7 @@
         if(pack_price.val() && pack_price_usd.val()) {
           var tmp = pack_price.val() / pack_price_usd.val();
           exchange_rate.val(tmp);
+          calculateUnitPrice();
         }
       })
 
