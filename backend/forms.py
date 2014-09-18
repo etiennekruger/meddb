@@ -40,12 +40,12 @@ for supplier in suppliers:
 container_choices = []
 containers = models.AvailableContainers.query.all()
 for container in containers:
-    container_choices.append((container.available_container_id, str(container)))
+    container_choices.append((str(container), str(container)))
 
 procurement_method_choices = []
 procurement_methods = models.AvailableProcurementMethods.query.all()
 for procurement_method in procurement_methods:
-    procurement_method_choices.append((procurement_method.available_procurement_id, str(procurement_method)))
+    procurement_method_choices.append((str(procurement_method), str(procurement_method)))
 
 
 class ProcurementForm(Form):
