@@ -17,17 +17,10 @@ countries = models.Country.query.all()
 for country in countries:
     country_choices.append((country.country_id, country.name))
 
-method_choices = [
-    ('tender', 'tender'),
-    ('direct procurement', 'direct procurement'),
-    (None, 'unknown')
-]
-
 medicine_choices = []
 medicines = models.Medicine.query.order_by(models.Medicine.name).all()
 for medicine in medicines:
     medicine_choices.append((medicine.medicine_id, medicine.name + " - " + str(medicine.dosage_form)))
-
 
 product_choices = []
 products = models.Product.query.all()
@@ -44,6 +37,11 @@ containers = models.AvailableContainers.query.all()
 for container in containers:
     container_choices.append((container.available_container_id, str(container)))
 
+procurement_method_choices = []
+procurement_methods = models.AvailableProcurementMethods.query.all()
+for procurement_method in procurement_methods:
+    procurement_method_choices.append((procurement_method.available_procurement_id, str(procurement_method)))
+
 
 class ProcurementForm(Form):
 
@@ -56,7 +54,7 @@ class ProcurementForm(Form):
     pack_price_usd = FloatField('Pack price in USD', [validators.InputRequired()])
     unit_price_usd = FloatField('Unit price in USD', [validators.InputRequired()])
     quantity = IntegerField('Quantity', [validators.InputRequired()])
-    method = SelectField('Method', choices=method_choices)
+    method = SelectField('Method', choices=procurement_method_choices)
     start_date = DateField('Start date', [validators.InputRequired()], format="%Y-%m-%d", widget=widgets.DatePickerWidget())
     end_date = DateField('End date', [validators.InputRequired()], widget=widgets.DatePickerWidget())
     incoterm = SelectField('Incoterm', [validators.InputRequired()], coerce=int, choices=incoterm_choices)

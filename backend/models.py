@@ -448,6 +448,9 @@ class UnitOfMeasure(db.Model):
     def __unicode__(self):
         return u'%s' % self.value
 
+    def __repr__(self):
+        return self.__unicode__()
+
 
 class AvailableProcurementMethods(db.Model):
 
@@ -458,3 +461,6 @@ class AvailableProcurementMethods(db.Model):
 
     def __unicode__(self):
         return u'%s' % self.value
+
+    def __repr__(self):
+        return self.__unicode__()
