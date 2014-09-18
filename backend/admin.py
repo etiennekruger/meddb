@@ -139,6 +139,7 @@ class ProcurementView(MyModelView):
     def populate_procurement_from_form(self, procurement, form):
         # manually assign form values to procurement object
         procurement.country_id = form.country.data
+        procurement.currency_id = form.currency.data
         procurement.product_id = form.product.data
         procurement.supplier_id = form.supplier.data
         procurement.container = form.container.data
@@ -187,6 +188,7 @@ class ProcurementView(MyModelView):
             # set field values that weren't picked up automatically
             form.product.process_data(procurement.product_id)
             form.country.process_data(procurement.country_id)
+            form.currency.process_data(procurement.currency_id)
         return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record")
 
 

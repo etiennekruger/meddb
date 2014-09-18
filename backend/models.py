@@ -111,6 +111,9 @@ class Currency(db.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
 
+    def __repr__(self):
+        return self.__unicode__()
+
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)
 

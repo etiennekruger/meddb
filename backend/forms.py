@@ -15,7 +15,12 @@ for incoterm in incoterms:
 country_choices = []
 countries = models.Country.query.all()
 for country in countries:
-    country_choices.append((country.country_id, country.name))
+    country_choices.append((country.country_id, unicode(country)))
+
+currency_choices = []
+currencies = models.Currency.query.all()
+for currency in currencies:
+    currency_choices.append((currency.currency_id, unicode(currency)))
 
 medicine_choices = []
 medicines = models.Medicine.query.order_by(models.Medicine.name).all()
@@ -51,6 +56,7 @@ class ProcurementForm(Form):
     container = SelectField('Container', choices=container_choices)
     pack_size = IntegerField('Pack size', [validators.InputRequired()])
     pack_price = FloatField('Pack price', [validators.InputRequired()])
+    currency = fields.Select2Field('Currency', [validators.InputRequired()], coerce=int, choices=currency_choices)
     pack_price_usd = FloatField('Pack price in USD', [validators.InputRequired()])
     unit_price_usd = FloatField('Unit price in USD', [validators.InputRequired()])
     quantity = IntegerField('Quantity', [validators.InputRequired()])
