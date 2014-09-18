@@ -10,6 +10,13 @@
         {{ field(**kwargs) }}
       {% endif %}
     </div>
+    {% if field.description %}
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <p class="text-muted" style="margin-left: 15px;">{{ field.description }}</p>
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endmacro %}
 
@@ -33,6 +40,13 @@
         <a href="{{ url_for('product.create_view', id=procurement.product_id, url=url_for('procurement.create_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
       {% endif %}
     </div>
+    {% if field.description %}
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <p class="text-muted" style="margin-left: 15px;">{{ field.description }}</p>
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endmacro %}
 
@@ -56,5 +70,12 @@
         <a href="{{ url_for('supplier.create_view', id=procurement.supplier_id, url=url_for('procurement.add_view', id=procurement.procurement_id)) }}" type="button" class="btn btn-default btn-sm">Add new</a>
       {% endif %}
     </div>
+    {% if field.description %}
+      <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+          <p class="text-muted" style="margin-left: 15px;">{{ field.description }}</p>
+        </div>
+      </div>
+    {% endif %}
   </div>
 {% endmacro %}
