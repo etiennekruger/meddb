@@ -170,7 +170,6 @@ class ProcurementView(MyModelView):
 
 
 class MedicineView(MyRestrictedModelView):
-    column_default_sort = ('name', models.Medicine.name)
     column_searchable_list = [
         'name',
         ]
