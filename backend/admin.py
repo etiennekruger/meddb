@@ -137,7 +137,8 @@ class ProcurementView(MyModelView):
             procurement = self.populate_procurement_from_form(procurement, form)
             db.session.add(procurement)
             db.session.commit()
-            flash("The details were updated successfully.", "success")
+            flash("The procurement was added successfully.", "success")
+            return redirect(url_for('.index_view'))
         if g.user.country:
             form.country.process_data(g.user.country.country_id)
         return self.render('admin/procurement.html', form=form, title="Add procurement record")
