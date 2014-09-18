@@ -37,7 +37,13 @@
           <div class="col-md-4">
             <input class="form-control" id="exchange_rate" name="exchange_rate" type="text" value="{% if procurement and procurement.exchange_rate %}{{ procurement.exchange_rate }}{% endif %}">
           </div>
+          <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+              <p class="text-muted" style="margin-left: 15px;">Try <a href="http://www.xe.com/currencytables/" target="_blank">http://www.xe.com/currencytables/</a></p>
+            </div>
+          </div>
         </div>
+
         {{ macros.render_field(form.pack_price_usd, class="form-control") }}
         {{ macros.render_field(form.unit_price_usd, class="form-control") }}
         {{ macros.render_field(form.quantity, class="form-control") }}
@@ -78,11 +84,11 @@
       // hit our own API to find the correct UOM for the specified product, and populate help-text with the value
       function loadUnitOfMeasure(){
         if(product.val()){
-           $.ajax({
-          url: "/product/" + product.val() + "/"
-        }).success(function(data, status, jqXHR) {
-          uom_placeholder.html(data.medicine.unit_of_measure)
-        });
+          $.ajax({
+            url: "/product/" + product.val() + "/"
+          }).success(function(data, status, jqXHR) {
+            uom_placeholder.html(data.medicine.unit_of_measure)
+          });
         }
       }
       product.on('change', function(){
