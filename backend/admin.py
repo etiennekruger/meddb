@@ -127,6 +127,7 @@ class ProcurementView(MyModelView):
         procurement.method = form.method.data
         procurement.start_date = form.start_date.data
         procurement.end_date = form.end_date.data
+        procurement.incoterm_id = form.incoterm.data
         return procurement
 
     @expose('/new/', methods=('GET', 'POST'))
