@@ -43,7 +43,6 @@
             </div>
           </div>
         </div>
-
         {{ macros.render_field(form.pack_price_usd, class="form-control") }}
         {{ macros.render_field(form.unit_price_usd, class="form-control") }}
         {{ macros.render_field(form.quantity, class="form-control") }}
@@ -51,6 +50,12 @@
         {{ macros.render_field(form.start_date, class="form-control") }}
         {{ macros.render_field(form.end_date, class="form-control") }}
         {{ macros.render_field(form.incoterm, class="form-control", placeholder="Select the incoterm") }}
+        {#  Related Source  #}
+        {% if procurement %}
+          {{ macros.render_related_source(form.source, procurement=procurement, include_edit_button=True, class="form-control", placeholder="Select the source") }}
+        {% else %}
+          {{ macros.render_related_source(form.source, class="form-control", placeholder="Select the source") }}
+        {% endif %}
         <div class="form-group">
           <div class="col-md-offset-4 col-md-7">
             <button type="submit" class="btn btn-lg btn-primary">&nbspSave&nbsp</button>

@@ -128,6 +128,7 @@ class ProcurementView(MyModelView):
         procurement.start_date = form.start_date.data
         procurement.end_date = form.end_date.data
         procurement.incoterm_id = form.incoterm.data
+        procurement.source_id = form.source.data
         return procurement
 
     @expose('/new/', methods=('GET', 'POST'))
@@ -136,6 +137,7 @@ class ProcurementView(MyModelView):
         # set dynamic select choices
         form.supplier.choices = forms.get_supplier_choices()
         form.product.choices = forms.get_product_choices()
+        form.source.choices = forms.get_source_choices()
         if request.method == 'POST' and form.validate():
             procurement = models.Procurement()
             procurement.added_by = g.user
@@ -158,6 +160,7 @@ class ProcurementView(MyModelView):
         # set dynamic select choices
         form.supplier.choices = forms.get_supplier_choices()
         form.product.choices = forms.get_product_choices()
+        form.source.choices = forms.get_source_choices()
         if request.form:
             # update procurement details
             if request.method == 'POST' and form.validate():
@@ -176,6 +179,7 @@ class ProcurementView(MyModelView):
             form.currency.process_data(procurement.currency_id)
             form.incoterm.process_data(procurement.incoterm_id)
             form.supplier.process_data(procurement.supplier_id)
+            form.source.process_data(procurement.source_id)
         return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record", API_HOST=API_HOST)
 
 
@@ -328,6 +332,7 @@ admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterm
 admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.Source, db.session, name="Source", endpoint='source', category='Form Options'))
 
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Manufacturers/Suppliers'))
 admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site', category='Manufacturers/Suppliers'))

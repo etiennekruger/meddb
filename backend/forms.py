@@ -49,6 +49,15 @@ def get_supplier_choices():
     return supplier_choices
 
 
+def get_source_choices():
+    source_choices = []
+    sources = models.Source.query.all()
+    for source in sources:
+        source_choices.append((source.source_id, str(source)))
+    logger.debug(source_choices)
+    return source_choices
+
+
 class ProcurementForm(Form):
 
     country = fields.Select2Field('Country', [validators.InputRequired()], coerce=int, choices=country_choices, description="The country that made the procurement.")
@@ -59,10 +68,11 @@ class ProcurementForm(Form):
     pack_price = FloatField('Pack price', [validators.InputRequired()], description='What is the price of one <span class="container-placeholder">pack</span>?')
     currency = fields.Select2Field('Currency', [validators.InputRequired()], coerce=int, choices=currency_choices, description="Select the currency of the transaction.")
     pack_price_usd = FloatField('Pack price in USD', [validators.InputRequired()])
-    unit_price_usd = FloatField('Unit price in USD', [validators.InputRequired()], description="This is the price we use for making comparisons ($ per <span class='uom-placeholder'>unit</span>).")
+    unit_price_usd = FloatField('Unit price in USD', [validators.InputRequired()], description="$ per <span class='uom-placeholder'>unit</span>")
     quantity = IntegerField('Quantity', [validators.InputRequired()], description="How many packs were bought/contracted at this price?")
     method = SelectField('Method', choices=procurement_method_choices)
     start_date = DateField('Start date', [validators.InputRequired()], format="%Y-%m-%d", widget=widgets.DatePickerWidget(), description="From when was this price valid?")
     end_date = DateField('End date', [validators.InputRequired()], widget=widgets.DatePickerWidget(), description="Until when does the price stay valid?")
     incoterm = SelectField('Incoterm', [validators.InputRequired()], coerce=int, choices=incoterm_choices)
+    source = fields.Select2Field('Data Source', [validators.InputRequired()], coerce=int, description="Where does this data come from?")
 
