@@ -78,6 +78,7 @@ class UserView(MyRestrictedModelView):
 class ProcurementView(MyModelView):
     list_template = 'admin/procurement_list_template.html'
     column_list = [
+        'procurement_id',
         'country',
         'medicine',
         'pack_size',
@@ -101,6 +102,7 @@ class ProcurementView(MyModelView):
         approved=macro('render_approve'),
         )
     column_sortable_list = [
+        ('procurement_id', models.Procurement.procurement_id),
         ('country', models.Country.name),
         ('medicine', models.Medicine.name),
         ('pack_size', models.Procurement.pack_size),
@@ -111,6 +113,8 @@ class ProcurementView(MyModelView):
         ('approved', models.Procurement.approved),
         ('supplier', models.Supplier.name),
         ]
+    column_default_sort = ('procurement_id', True)
+    column_labels = dict(procurement_id='id')
 
     def populate_procurement_from_form(self, procurement, form):
         # manually assign form values to procurement object
