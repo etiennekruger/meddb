@@ -56,6 +56,7 @@
         {% else %}
           {{ macros.render_related_source(form.source, class="form-control", placeholder="Select the source") }}
         {% endif %}
+        {{ macros.render_field(form.approved, class="form-control") }}
         <div class="form-group">
           <div class="col-md-offset-4 col-md-7">
             <button type="submit" class="btn btn-lg btn-primary">&nbspSave&nbsp</button>

@@ -1,6 +1,6 @@
 import wtforms
 from wtforms import Form
-from wtforms import StringField, PasswordField, SelectField, IntegerField, FloatField, DateField
+from wtforms import StringField, PasswordField, SelectField, IntegerField, FloatField, DateField, BooleanField
 from wtforms import validators
 from backend import app, db, logger
 import models
@@ -75,4 +75,5 @@ class ProcurementForm(Form):
     end_date = DateField('End date', [validators.InputRequired()], widget=widgets.DatePickerWidget(), description="Until when does the price stay valid?")
     incoterm = SelectField('Incoterm', [validators.InputRequired()], coerce=int, choices=incoterm_choices)
     source = fields.Select2Field('Data Source', [validators.InputRequired()], coerce=int, description="Where does this data come from?")
+    approved = BooleanField('Approved', default=False)
 
