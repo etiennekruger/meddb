@@ -1,15 +1,18 @@
 from backend import logger, app, db
 import models
-from flask import Flask, flash, redirect, url_for, request, render_template, g
-from flask.ext.admin import Admin, expose, AdminIndexView, helpers
+from flask import Flask, flash, redirect, url_for, request, render_template, g, abort
+from flask.ext.admin import Admin, expose, BaseView, AdminIndexView, helpers
 from flask.ext.admin.model.template import macro
 from flask.ext.admin.contrib.sqla import ModelView
 from flask.ext.admin.contrib.sqla.filters import FilterEqual
+from flask.ext.admin.helpers import get_redirect_target
 from wtforms import form, fields, validators, BooleanField
 from datetime import datetime
 import urllib
+import forms
 
 HOST = app.config['HOST']
+API_HOST = app.config['API_HOST']
 
 @app.context_processor
 def inject_paths():
@@ -73,7 +76,9 @@ class UserView(MyRestrictedModelView):
 
 
 class ProcurementView(MyModelView):
+    list_template = 'admin/procurement_list_template.html'
     column_list = [
+        'procurement_id',
         'country',
         'medicine',
         'pack_size',
@@ -86,13 +91,6 @@ class ProcurementView(MyModelView):
         'source',
         'approved'
     ]
-    form_excluded_columns = [
-        # 'country',
-        'approved_by',
-        'added_by',
-        'added_on',
-        ]
-
     column_formatters = dict(
         country=macro('render_country'),
         medicine=macro('render_procurement_medicine'),
@@ -104,6 +102,7 @@ class ProcurementView(MyModelView):
         approved=macro('render_approve'),
         )
     column_sortable_list = [
+        ('procurement_id', models.Procurement.procurement_id),
         ('country', models.Country.name),
         ('medicine', models.Medicine.name),
         ('pack_size', models.Procurement.pack_size),
@@ -114,21 +113,85 @@ class ProcurementView(MyModelView):
         ('approved', models.Procurement.approved),
         ('supplier', models.Supplier.name),
         ]
+    column_default_sort = ('procurement_id', True)
+    column_labels = dict(procurement_id='id')
 
-    def on_model_change(self, form, model, is_created):
-        if is_created:
-            model.country_id = g.user.country.country_id if g.user.country else None
-            model.added_by = g.user
+    def populate_procurement_from_form(self, procurement, form):
+        # manually assign form values to procurement object
+        procurement.country_id = form.country.data
+        procurement.currency_id = form.currency.data
+        procurement.product_id = form.product.data
+        procurement.supplier_id = form.supplier.data
+        procurement.container = form.container.data
+        procurement.pack_size = form.pack_size.data
+        procurement.pack_price = form.pack_price.data
+        procurement.pack_price_usd = form.pack_price_usd.data
+        procurement.unit_price_usd = form.unit_price_usd.data
+        procurement.quantity = form.quantity.data
+        procurement.method = form.method.data
+        procurement.start_date = form.start_date.data
+        procurement.end_date = form.end_date.data
+        procurement.incoterm_id = form.incoterm.data
+        procurement.source_id = form.source.data
+        procurement.approved = form.approved.data
+        return procurement
 
-    def get_list(self, page, sort_column, sort_desc, search, filters, execute=True):
-        # Todo: add some custom logic here?
-        count, query = super(ProcurementView, self).get_list(page, sort_column, sort_desc, search, filters, execute=False)
-        query = query.all()
-        return count, query
+    @expose('/new/', methods=('GET', 'POST'))
+    def add_view(self):
+        form = forms.ProcurementForm(request.form)
+        # set dynamic select choices
+        form.supplier.choices = forms.get_supplier_choices()
+        form.product.choices = forms.get_product_choices()
+        form.source.choices = forms.get_source_choices()
+        if request.method == 'POST' and form.validate():
+            procurement = models.Procurement()
+            procurement.added_by = g.user
+            procurement = self.populate_procurement_from_form(procurement, form)
+            db.session.add(procurement)
+            db.session.commit()
+            flash("The procurement was added successfully.", "success")
+            return redirect(url_for('.index_view'))
+        if g.user.country:
+            form.country.process_data(g.user.country.country_id)
+        return self.render('admin/procurement.html', form=form, title="Add procurement record", API_HOST=API_HOST)
+
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        if (not request.args) or (not request.args.get('id')):
+            return abort(404)
+        id = request.args['id']
+        procurement = models.Procurement.query.get(id)
+        form = forms.ProcurementForm(request.form, procurement)
+        # set dynamic select choices
+        form.supplier.choices = forms.get_supplier_choices()
+        form.product.choices = forms.get_product_choices()
+        form.source.choices = forms.get_source_choices()
+        if request.form:
+            # update procurement details
+            if request.method == 'POST' and form.validate():
+                procurement = self.populate_procurement_from_form(procurement, form)
+                db.session.add(procurement)
+                db.session.commit()
+                flash("The details were updated successfully.", "success")
+                if request.args.get('host_url'):
+                    target = get_redirect_target(param_name="host_url")
+                    return redirect(HOST + target)
+                return redirect(url_for('.index_view'))
+        else:
+            # set field values that weren't picked up automatically
+            form.product.process_data(procurement.product_id)
+            form.country.process_data(procurement.country_id)
+            form.currency.process_data(procurement.currency_id)
+            form.incoterm.process_data(procurement.incoterm_id)
+            form.supplier.process_data(procurement.supplier_id)
+            form.source.process_data(procurement.source_id)
+        return self.render('admin/procurement.html', procurement=procurement, form=form, title="Edit procurement record", API_HOST=API_HOST)
 
 
 class MedicineView(MyRestrictedModelView):
-    column_default_sort = 'name'
+    column_searchable_list = [
+        'name',
+        ]
     column_list = [
         'name',
         'dosage_form',
@@ -164,6 +227,9 @@ class BenchmarkView(MyRestrictedModelView):
 
 
 class ManufacturerView(MyModelView):
+    column_searchable_list = [
+        'name',
+        ]
     column_exclude_list = [
         'added_by',
         ]
@@ -186,6 +252,9 @@ class ManufacturerView(MyModelView):
 
 
 class SupplierView(MyModelView):
+    column_searchable_list = [
+        'name',
+        ]
     column_list = [
         'name',
         'street_address',
@@ -240,6 +309,7 @@ class ProductView(MyModelView):
         'procurements',
         'average_price',
         'shelf_life',
+        'registrations',
         ]
 
     def after_model_change(self, form, model, is_created):
@@ -255,8 +325,7 @@ class HomeView(AdminIndexView):
         return self.render('admin/home.html')
 
 
-
-admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api')
+admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api', template_mode='bootstrap3')
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 
@@ -268,10 +337,11 @@ admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterm
 admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
+admin.add_view(MyRestrictedModelView(models.Source, db.session, name="Source", endpoint='source', category='Form Options'))
 
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Manufacturers/Suppliers'))
 admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site', category='Manufacturers/Suppliers'))
 admin.add_view(ProductView(models.Product, db.session, name="Product", endpoint='product', category='Manufacturers/Suppliers'))
 admin.add_view(SupplierView(models.Supplier, db.session, name="Supplier", endpoint='supplier', category='Manufacturers/Suppliers'))
 
-admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurements", endpoint='procurement'))
+admin.add_view(ProcurementView(models.Procurement, db.session, name="Procurement", endpoint='procurement'))

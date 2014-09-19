@@ -8,6 +8,7 @@ import forms
 import json
 import urllib
 from operator import itemgetter
+from markupsafe import Markup
 
 API_HOST = app.config['API_HOST']
 
@@ -40,6 +41,15 @@ def jinja2_filter_add_commas(quantity):
         out = "," + tmp + out
         quantity_str = quantity_str[0:-3]
     return quantity_str + out
+
+
+@app.template_filter('urlencode')
+def jinja2_filter_urlencode(s):
+    if type(s) == 'Markup':
+        s = s.unescape()
+    s = s.encode('utf8')
+    s = urllib.quote_plus(s)
+    return Markup(s)
 
 
 def sort_list(unsorted_list, key):

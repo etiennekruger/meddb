@@ -77,6 +77,9 @@ class Source(db.Model):
         s = u'%s @ %s' % (self.name, self.date)
         return s
 
+    def __repr__(self):
+        return self.__unicode__()
+
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)
 
@@ -93,6 +96,9 @@ class Country(db.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
 
+    def __repr__(self):
+        return self.__unicode__()
+
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)
 
@@ -107,6 +113,9 @@ class Currency(db.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
+
+    def __repr__(self):
+        return self.__unicode__()
 
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)
@@ -136,6 +145,9 @@ class DosageForm(db.Model):
 
     def __unicode__(self):
         return u'%s' % (self.name)
+
+    def __repr__(self):
+        return self.__unicode__()
 
     def to_dict(self, include_related=False):
         return serializers.model_to_dict(self)
@@ -169,6 +181,9 @@ class Medicine(db.Model):
 
     def __unicode__(self):
         return u'%s %s' % (self.name, self.dosage_form)
+
+    def __repr__(self):
+        return self.__unicode__()
 
     def to_dict(self, include_related=False):
         return serializers.medicine_to_dict(self, include_related)
@@ -216,6 +231,9 @@ class Manufacturer(db.Model):
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.country.code.upper() if self.country else "No Country")
+
+    def __repr__(self):
+        return self.__unicode__()
 
     def to_dict(self, include_related=False):
         return serializers.manufacturer_to_dict(self, include_related)
@@ -271,6 +289,9 @@ class Supplier(db.Model):
     def __unicode__(self):
         return u'%s' % (self.name)
 
+    def __repr__(self):
+        return self.__unicode__()
+
     def to_dict(self, include_related=False):
         return serializers.supplier_to_dict(self, include_related)
 
@@ -321,9 +342,21 @@ class Product(db.Model):
         return out
 
     def __unicode__(self):
-        if self.description:
-            return u'%s (%s), %s' % (self.medicine, self.description, self.manufacturer)
-        return u'%s, %s' % (self.medicine, self.manufacturer)
+        try:
+            out = u'%s' % self.medicine
+            if self.description:
+                out += u' (%s)' % self.description
+            if self.manufacturer:
+                out += u', %s' % self.manufacturer
+            else:
+                out += u', unknown manufacturer'
+        except UnicodeEncodeError:
+            out = "unnamed product"
+            pass
+        return out
+
+    def __repr__(self):
+        return self.__unicode__()
 
     def to_dict(self, include_related=False):
         return serializers.product_to_dict(self, include_related)
@@ -407,6 +440,9 @@ class AvailableContainers(db.Model):
     def __unicode__(self):
         return u'%s' % self.value
 
+    def __repr__(self):
+        return self.__unicode__()
+
 
 class UnitOfMeasure(db.Model):
 
@@ -418,6 +454,9 @@ class UnitOfMeasure(db.Model):
     def __unicode__(self):
         return u'%s' % self.value
 
+    def __repr__(self):
+        return self.__unicode__()
+
 
 class AvailableProcurementMethods(db.Model):
 
@@ -428,3 +467,6 @@ class AvailableProcurementMethods(db.Model):
 
     def __unicode__(self):
         return u'%s' % self.value
+
+    def __repr__(self):
+        return self.__unicode__()
