@@ -337,7 +337,7 @@ admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterm
 admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
-admin.add_view(MyRestrictedModelView(models.Source, db.session, name="Source", endpoint='source', category='Form Options'))
+admin.add_view(MyModelView(models.Source, db.session, name="Source", endpoint='source', category='Form Options'))
 
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Manufacturers/Suppliers'))
 admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site', category='Manufacturers/Suppliers'))
