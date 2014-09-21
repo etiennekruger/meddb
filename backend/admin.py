@@ -49,6 +49,13 @@ class MyModelView(ModelView):
         if not self.is_accessible():
             return redirect(HOST + 'login/?next=' + urllib.quote_plus(request.url), code=302)
 
+    @expose('/edit/', methods=('GET', 'POST'))
+    def edit_view(self):
+        # check that the user has permission
+        if not g.user.is_admin:
+            return abort(401)
+        return super(MyModelView, self).edit_view()
+
 
 class MyRestrictedModelView(MyModelView):
 
@@ -162,6 +169,10 @@ class ProcurementView(MyModelView):
         id = request.args['id']
         procurement = models.Procurement.query.get(id)
         form = forms.ProcurementForm(request.form, procurement)
+        # check that the user has permission
+        if not g.user.is_admin:
+            if procurement.country_id != g.user.country_id:
+                return abort(401)
         # set dynamic select choices
         form.supplier.choices = forms.get_supplier_choices()
         form.product.choices = forms.get_product_choices()
@@ -337,7 +348,7 @@ admin.add_view(MyRestrictedModelView(models.Incoterm, db.session, name="Incoterm
 admin.add_view(MyRestrictedModelView(models.UnitOfMeasure, db.session, name="Unit of Measure", endpoint='uom', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableContainers, db.session, name="Containers", endpoint='container', category='Form Options'))
 admin.add_view(MyRestrictedModelView(models.AvailableProcurementMethods, db.session, name="Procurement Methods", endpoint='procurement_method', category='Form Options'))
-admin.add_view(MyRestrictedModelView(models.Source, db.session, name="Source", endpoint='source', category='Form Options'))
+admin.add_view(MyModelView(models.Source, db.session, name="Source", endpoint='source', category='Form Options'))
 
 admin.add_view(ManufacturerView(models.Manufacturer, db.session, name="Manufacturer", endpoint='manufacturer', category='Manufacturers/Suppliers'))
 admin.add_view(MyModelView(models.Site, db.session, name="Site", endpoint='site', category='Manufacturers/Suppliers'))

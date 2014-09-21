@@ -1,10 +1,11 @@
 import wtforms
 from wtforms import Form
 from wtforms import StringField, PasswordField, SelectField, IntegerField, FloatField, DateField, BooleanField
-from wtforms import validators
+from wtforms import validators, ValidationError
 from backend import app, db, logger
 import models
 from flask.ext.admin.form import widgets, fields
+from flask import g
 
 
 incoterm_choices = []
@@ -77,3 +78,7 @@ class ProcurementForm(Form):
     source = fields.Select2Field('Data Source', [validators.InputRequired()], coerce=int, description="Where does this data come from?")
     approved = BooleanField('Approved', default=False)
 
+    def validate_country(form, field):
+        if not g.user.is_admin:
+            if field.data != g.user.country_id:
+                raise ValidationError('You can only add/edit records for your own country.')

@@ -334,6 +334,7 @@ def register():
 
     email = request.json.get('email')
     password = request.json.get('password')
+    country_code = request.json.get('country')
 
     # validation
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
@@ -343,8 +344,12 @@ def register():
     if User.query.filter_by(email=email).first() is not None:
         raise ApiException(400, "This user already exists.")
 
+    country = None
+    if country_code:
+        country = Country.query.filter_by(code=country_code).first()
+
     # create new user
-    user = User(email=email)
+    user = User(email=email, country=country)
     user.hash_password(password)
     db.session.add(user)
     # create an api key for this user
