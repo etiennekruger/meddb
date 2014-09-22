@@ -73,6 +73,16 @@
           </td>
         </tr>
         <tr>
+          <th>Procurement Method</th>
+          <td>
+            {% if procurement.method %}
+              {{ procurement.method }}
+            {% else %}
+              <span class="text-muted">Unknown</span>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
           <th>Procurement quantity (packs)</th>
           <td>
             {{ procurement.quantity | add_commas }}
