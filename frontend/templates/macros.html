@@ -18,11 +18,11 @@
   {% if start_date | format_date == end_date | format_date %}
     <nobr>{{ start_date | format_date }}</nobr>
   {% else %}
-    <nobr>{{ start_date | format_date }}</nobr> to <nobr>{{ end_date | format_date }}</nobr>
+    <nobr>{{ start_date | format_date }}</nobr> {{ _('to') }} <nobr>{{ end_date | format_date }}</nobr>
   {% endif %}
 {%- endmacro %}
 
 
 {% macro render_flag(country) -%}
-  <img src="blank.gif" class="flag flag-{{ country.code_short | lower }}" alt="{{ country.name }}" />
+  <img src="blank.gif" class="flag flag-{{ country.code_short | lower }}" alt="{{ _(country.name) }}" />
 {%- endmacro %}

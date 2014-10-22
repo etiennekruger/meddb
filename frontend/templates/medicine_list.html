@@ -3,7 +3,7 @@
 {% block page_header %}
   <div class="container">
     <h1>
-      Medicines currently supported
+      {{ _('Medicines currently tracked') }}
     </h1>
   </div>
 {% endblock %}
@@ -12,13 +12,13 @@
   <div class="row">
     {% if medicine_list %}
       <div class="col-md-12">
-        <p class="lead text-center">The following medicines are available in the database:</p>
+        <p class="lead text-center">{{ _('The following medicines are available in the database:') }}</p>
       </div>
       <div class="col-md-10 col-md-offset-1">
         <table class="table table-bordered table-striped table-hover">
           <thead>
           <th></th>
-          <th>Generic Name & Strength</th>
+          <th>{{ _('Generic Name & Strength') }}</th>
           </thead>
           <tbody>
           {% for medicine in medicine_list %}
@@ -32,7 +32,7 @@
       </div>
     {% else %}
       <div class="col-md-12">
-        <p class="lead text-center">There are no medicines to display.</p>
+        <p class="lead text-center">{{ _('There are no medicines to display.') }}</p>
       </div>
     {% endif %}
   </div>

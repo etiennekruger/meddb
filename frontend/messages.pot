@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-22 14:06+0200\n"
+"POT-Creation-Date: 2014-10-22 17:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,7 @@ msgstr ""
 msgid "Change password"
 msgstr ""
 
-#: templates/base.html:58
+#: templates/base.html:58 templates/register.html:28
 msgid "Register"
 msgstr ""
 
@@ -70,5 +70,211 @@ msgstr ""
 
 #: templates/base.html:125 templates/base.html:132
 msgid "Close"
+msgstr ""
+
+#: templates/change_login.html:7
+msgid "Update your login details"
+msgstr ""
+
+#: templates/change_login.html:16 templates/login.html:16
+msgid "Please sign in below to access the SADC Medicine Prices Database."
+msgstr ""
+
+#: templates/change_login.html:26
+msgid "Save"
+msgstr ""
+
+#: templates/country_ranking.html:6
+msgid "Country savings potential"
+msgstr ""
+
+#: templates/country_ranking.html:14
+msgid "These calculations are based on recent procurements (past twelve months)."
+msgstr ""
+
+#: templates/country_ranking.html:20
+msgid "Country"
+msgstr ""
+
+#: templates/country_ranking.html:21
+msgid "Overall spend from recent procurements"
+msgstr ""
+
+#: templates/country_ranking.html:22
+msgid "Savings potential (total)"
+msgstr ""
+
+#: templates/country_ranking.html:23
+msgid "Savings potential %"
+msgstr ""
+
+#: templates/country_ranking.html:35
+msgid "No data available"
+msgstr ""
+
+#: templates/index.html:9
+msgid "Search for a medicine"
+msgstr ""
+
+#: templates/index.html:14
+msgid "Search"
+msgstr ""
+
+#: templates/index.html:28
+msgid "Recently added procurement entries"
+msgstr ""
+
+#: templates/index.html:43
+msgid "Unknown product"
+msgstr ""
+
+#: templates/index.html:52
+msgid "Database overview"
+msgstr ""
+
+#: templates/index.html:56
+#, python-format
+msgid ""
+"Currently tracking <strong>%(procurement_count) Procurements</strong>, "
+"representing <strong>%(medicine_count) distinct Medicines</strong>."
+msgstr ""
+
+#: templates/index.html:63
+msgid "Top information contributors"
+msgstr ""
+
+#: templates/login.html:7
+msgid "User login"
+msgstr ""
+
+#: templates/login.html:26
+msgid "Sign in"
+msgstr ""
+
+#: templates/macros.html:21
+msgid "to"
+msgstr ""
+
+#: templates/medicine.html:22
+msgid "Procurements"
+msgstr ""
+
+#: templates/medicine.html:23
+msgid "Registrations"
+msgstr ""
+
+#: templates/medicine.html:24
+msgid "Cost Calculator"
+msgstr ""
+
+#: templates/medicine.html:34
+msgid "No recent procurements recorded"
+msgstr ""
+
+#: templates/medicine.html:36
+msgid "Recent procurements by Member States."
+msgstr ""
+
+#: templates/medicine.html:39 templates/medicine.html:173
+msgid "Procurement country"
+msgstr ""
+
+#: templates/medicine.html:40 templates/medicine.html:174
+#: templates/medicine_list.html:21
+msgid "Generic Name & Strength"
+msgstr ""
+
+#: templates/medicine.html:41 templates/medicine.html:175
+msgid "Date"
+msgstr ""
+
+#: templates/medicine.html:42 templates/medicine.html:176
+msgid "Terms"
+msgstr ""
+
+#: templates/medicine.html:43 templates/medicine.html:177
+msgid "Volume"
+msgstr ""
+
+#: templates/medicine.html:44
+msgid "Price per"
+msgstr ""
+
+#: templates/medicine.html:54
+msgid "benchmark"
+msgstr ""
+
+#: templates/medicine.html:79 templates/medicine.html:120
+#: templates/medicine.html:197
+msgid "no description available"
+msgstr ""
+
+#: templates/medicine.html:96 templates/medicine.html:108
+#: templates/medicine.html:213 templates/medicine.html:225
+msgid "Unknown"
+msgstr ""
+
+#: templates/medicine.html:136
+msgid "We don't currently have any registration information for this medicine."
+msgstr ""
+
+#: templates/medicine.html:145
+msgid "Find potential savings by entering your own price."
+msgstr ""
+
+#: templates/medicine.html:149 templates/medicine.html:150
+msgid "Number of packs"
+msgstr ""
+
+#: templates/medicine.html:154
+msgid "Pack size in %(unit_of_measure)"
+msgstr ""
+
+#: templates/medicine.html:159
+msgid "Units per pack"
+msgstr ""
+
+#: templates/medicine.html:162
+msgid "Pack price"
+msgstr ""
+
+#: templates/medicine.html:163
+msgid "Pack price (USD)"
+msgstr ""
+
+#: templates/medicine.html:165
+msgid "Calculate"
+msgstr ""
+
+#: templates/medicine.html:168
+msgid "No recent purchases recorded"
+msgstr ""
+
+#: templates/medicine.html:179
+msgid "Price per %(unit_of_measure)"
+msgstr ""
+
+#: templates/medicine.html:184
+msgid "Cost difference"
+msgstr ""
+
+#: templates/medicine_list.html:6
+msgid "Medicines currently tracked"
+msgstr ""
+
+#: templates/medicine_list.html:15
+msgid "The following medicines are available in the database:"
+msgstr ""
+
+#: templates/medicine_list.html:35
+msgid "There are no medicines to display."
+msgstr ""
+
+#: templates/register.html:7
+msgid "User registration"
+msgstr ""
+
+#: templates/register.html:16
+msgid "Please register below to access the SADC Medicine Prices Database."
 msgstr ""
 
