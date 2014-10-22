@@ -38,7 +38,7 @@ class MyModelView(ModelView):
     column_exclude_list = []
 
     def is_accessible(self):
-        if g.user is not None:
+        if g.user is not None and g.user.activated:
             return True
         return False
 
@@ -60,7 +60,7 @@ class MyModelView(ModelView):
 class MyRestrictedModelView(MyModelView):
 
     def is_accessible(self):
-        if g.user is not None and g.user.is_admin:
+        if g.user is not None and g.user.activated and g.user.is_admin:
             return True
         return False
 
