@@ -1,5 +1,5 @@
-from flask import render_template, flash, redirect, request, url_for, session
-from frontend import app, logger
+from flask import g, render_template, flash, redirect, request, url_for, session
+from frontend import app, logger, babel
 import requests
 from requests import ConnectionError
 import operator
@@ -19,6 +19,19 @@ app.add_url_rule('/static/<path:filename>',
                  endpoint='static',
                  view_func=app.send_static_file,
                  subdomain='med-db')
+
+
+@babel.localeselector
+def get_locale():
+    # # if a user is logged in, use the locale from the user settings
+    # user = getattr(g, 'user', None)
+    # if user is not None:
+    #     return user.locale
+    # # otherwise try to guess the language from the user accept
+    # # header the browser transmits.  We support de/fr/en in this
+    # # example.  The best match wins.
+    # return request.accept_languages.best_match(['de', 'fr', 'en'])
+    return 'fr'
 
 
 @app.template_filter('format_date')

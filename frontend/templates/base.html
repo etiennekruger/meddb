@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-  <title>{% block title %}Medicines Database{% endblock %}</title>
+  <title>{% block title %}{{ _('Medicines Database') }}{% endblock %}</title>
   <meta name=viewport content="width=device-width, initial-scale=1">
 
   <link href="/static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
@@ -26,15 +26,15 @@
 <nav class="navbar navbar-default navbar-static-top" role="navigation">
   <div class="container-fluid">
     <a class="navbar-brand" href="/">
-      <img id="brand-logo" src="/static/images/sadc-logo-small.png"> Medicines Database
+      <img id="brand-logo" src="/static/images/sadc-logo-small.png"> {{ _('Medicines Database') }}
     </a>
 
     <ul class="nav navbar-nav">
-      <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">Home</a></li>
-      <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">Medicines</a></li>
-      <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">Country Reports</a></li>
+      <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">{{ _('Home') }}</a></li>
+      <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">{{ _('Medicines') }}</a></li>
+      <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">{{ _('Country Reports') }}</a></li>
       {%- if session.email %}
-        <li><a href="/admin/">Admin</a></li>
+        <li><a href="/admin/">{{ _('Admin') }}</a></li>
       {% endif -%}
     </ul>
 
@@ -46,17 +46,17 @@
           {%- if session.email %}
             {{ session.email }}
           {%- else %}
-            Guest user
+            {{ _('Guest user') }}
           {% endif -%}
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
           {%- if session.email %}
-            <li><a href="/logout/">Log out</a></li>
-            <li><a href="/change-login/">Change password</a></li>
+            <li><a href="/logout/">{{ _('Log out') }}</a></li>
+            <li><a href="/change-login/">{{ _('Change password') }}</a></li>
           {%- else %}
-            <li><a href="/register/">Register</a></li>
-            <li><a href="/login/">Login</a></li>
+            <li><a href="/register/">{{ _('Register') }}</a></li>
+            <li><a href="/login/">{{ _('Login') }}</a></li>
           {% endif -%}
         </ul>
       </div>
@@ -89,7 +89,7 @@
                 {% if category in ["success", "info"] %}
                   {{ category | title }}
                 {% else %}
-                  Error
+                  {{ _('Error') }}
                 {% endif %}: </strong> {{ message }}
             </div>
           </div>
@@ -112,7 +112,7 @@
 {% block page_footer %}
   <div id="footer">
     <div class="col-lg-12 text-center">
-      <p id="attribution"><small>This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics - <strong>SARPAM</strong></small></p>
+      <p id="attribution"><small>{{ _('This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics - <strong>SARPAM</strong>') }}</small></p>
     </div>
   </div>
 {% endblock %}
@@ -122,14 +122,14 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ _('Close') }}</span></button>
           <h4 class="modal-title" id="page-modal-title">Modal title</h4>
         </div>
         <div class="modal-body" id="page-modal-body">
           ...
         </div>
         <div class="modal-footer" id="page-modal-footer">
-          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal">{{ _('Close') }}</button>
         </div>
       </div>
     </div>

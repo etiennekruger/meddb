@@ -2,10 +2,12 @@ import logging
 from logging.handlers import RotatingFileHandler
 import sys, os
 from flask import Flask
+from flask.ext.babel import Babel
 
 app = Flask('frontend', instance_relative_config=True, static_folder=None)
 app.config.from_pyfile('config.py', silent=True)
 app.config.from_pyfile('config_private.py', silent=True)
+babel = Babel(app)
 
 # load log level from config
 LOG_LEVEL = app.config['LOG_LEVEL']
