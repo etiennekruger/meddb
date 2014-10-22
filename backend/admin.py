@@ -336,7 +336,7 @@ class HomeView(AdminIndexView):
         return self.render('admin/home.html')
 
 
-admin = Admin(app, name='Medicine Prices Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api', template_mode='bootstrap3')
+admin = Admin(app, name='Medicines Database', base_template='admin/my_master.html', index_view=HomeView(name='Home'), subdomain='med-db-api', template_mode='bootstrap3')
 
 admin.add_view(UserView(models.User, db.session, name="Users", endpoint='user'))
 
