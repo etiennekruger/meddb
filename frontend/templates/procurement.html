@@ -4,7 +4,10 @@
   <div class="container">
     <h1>
       <a href="/medicine/{{ procurement.product.medicine.medicine_id }}">{{ procurement.product.medicine.name }}</a> >
-      Procurement #{{ procurement.procurement_id }}
+      {{ _(
+      'Procurement #%(id)d',
+      id=procurement.procurement_id
+      ) }}
     </h1>
   </div>
 {% endblock %}
@@ -14,7 +17,7 @@
     <div class="col-lg-12">
       <div class="row">
         <div class="col-lg-8">
-          <h2>Transaction details</h2>
+          <h2>{{ _('Transaction details') }}</h2>
         </div>
         <div class="col-lg-4">
           <a
@@ -29,106 +32,106 @@
       <table class="table table-bordered table-striped">
         <tbody>
         <tr>
-          <th>Procurement country</th>
+          <th>{{ _('Procurement country') }}</th>
           <td>
-            {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+            {{ macros.render_flag(procurement.country) }} {{ _(procurement.country.name) }}
           </td>
         </tr>
         <tr>
-          <th>Generic Name & Strength</th>
+          <th>{{ _('Generic Name & Strength') }}</th>
           <td>
             {{ procurement.product.medicine.name }}
           </td>
         </tr>
         <tr>
-          <th>Dosage form</th>
+          <th>{{ _('Dosage form') }}</th>
           <td>
-            {{ procurement.product.medicine.dosage_form.name }}
+            {{ _(procurement.product.medicine.dosage_form.name) }}
           </td>
         </tr>
         <tr>
-          <th>Description/Brand</th>
+          <th>{{ _('Description/Brand') }}</th>
           <td>
             {% if procurement.product.description %}
               {{ procurement.product.description }}
             {% else %}
-              <span class="text-muted">Unknown</span>
+              <span class="text-muted">{{ _('Unknown') }}</span>
             {% endif %}
           </td>
         </tr>
         <tr>
-          <th>Date</th>
+          <th>{{ _('Date') }}</th>
           <td>
             {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
           </td>
         </tr>
         <tr>
-          <th>Terms</th>
+          <th>{{ _('Terms') }}</th>
           <td>
             {% if procurement.incoterm %}
               {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
             {% else %}
-              <span class="text-muted">Unknown</span>
+              <span class="text-muted">{{ _('Unknown') }}</span>
             {% endif %}
           </td>
         </tr>
         <tr>
-          <th>Procurement Method</th>
+          <th>{{ _('Procurement Method') }}</th>
           <td>
             {% if procurement.method %}
               {{ procurement.method }}
             {% else %}
-              <span class="text-muted">Unknown</span>
+              <span class="text-muted">{{ _('Unknown') }}</span>
             {% endif %}
           </td>
         </tr>
         <tr>
-          <th>Procurement quantity (packs)</th>
+          <th>{{ _('Procurement quantity (packs)') }}</th>
           <td>
             {{ procurement.quantity | add_commas }}
           </td>
         </tr>
         <tr>
-          <th>Pack size</th>
+          <th>{{ _('Pack size') }}</th>
           <td>
             {{ procurement.pack_size }}
           </td>
         </tr>
         <tr>
-          <th>Unit of Measure</th>
+          <th>{{ _('Unit of Measure') }}</th>
           <td>
             {{ procurement.product.medicine.unit_of_measure }}
           </td>
         </tr>
         <tr>
-          <th>Container</th>
+          <th>{{ _('Container') }}</th>
           <td>
             {{ procurement.container }}
           </td>
         </tr>
         <tr>
-          <th>Pack price</th>
+          <th>{{ _('Pack price') }}</th>
           <td>
             ${{ procurement.pack_price_usd }}
           </td>
         </tr>
         <tr>
-          <th>Unit price (per {{ procurement.product.medicine.unit_of_measure }})</th>
+          <th>{{ _('Price per') }} {{ procurement.product.medicine.unit_of_measure }}</th>
           <td>
             ${{ procurement.unit_price_usd }}
           </td>
         </tr>
         <tr>
-          <th>Transaction currency</th>
+          <th>{{ _('Transaction currency') }}</th>
           <td>
             {{ procurement.currency.name }}
             {% if procurement.currency.code != "USD" %}
-              , at {{ procurement.currency.code }} {{ procurement.currency.rate }} per USD
+              , {{ _('at') }} {{ procurement.currency.code }} {{ procurement.currency.rate }} {{ _('per USD') }}
             {% endif %}
           </td>
         </tr>
         <tr>
-          <th>Source</th>
+          <th>{{ _('Source') }}</th>
           <td>
             {{ procurement.source.name }}
             {% if procurement.source.url %} {{ procurement.source.url }}{% endif %}
@@ -144,7 +147,7 @@
     <div class="col-lg-12">
       <div class="row">
         <div class="col-lg-8">
-          <h2>Supplier</h2>
+          <h2>{{ _('Supplier') }}</h2>
         </div>
         <div class="col-lg-4">
           {% if procurement.supplier %}
@@ -153,7 +156,7 @@
                 href="{{ API_HOST }}admin/supplier/edit/?id={{ procurement.supplier.supplier_id }}"
                 class="btn btn-info pull-right"
                 style="margin-top: 20px;">
-              Edit
+              {{ _('Edit') }}
             </a>
           {% endif %}
         </div>
@@ -163,33 +166,33 @@
         <table class="table table-bordered table-striped">
           <tbody>
           <tr>
-            <th>Name</th>
+            <th>{{ _('Name') }}</th>
             <td>
               {{ supplier.name }}
             </td>
           </tr>
           <tr>
-            <th>Street Address</th>
+            <th>{{ _('Street Address') }}</th>
             <td>
               {% if supplier.street_address %}
                 {{ supplier.street_address }}
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           <tr>
-            <th>Contact Person</th>
+            <th>{{ _('Contact Person') }}</th>
             <td>
               {% if supplier.contact %}
                 {{ supplier.contact }}
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           <tr>
-            <th>Email</th>
+            <th>{{ _('Email') }}</th>
             <td>
               {% if supplier.email %}
                 <a href="mailto:{{ supplier.email }}?subject=Medicine pricing enquiry - {{ procurement.product.medicine.name }}" target="_blank">{{ supplier.email }}</a>
@@ -197,12 +200,12 @@
                   , <a href="mailto:{{ supplier.alt_email }}?subject=Medicine pricing enquiry - {{ procurement.product.medicine.name }}" target="_blank">{{ supplier.alt_email }}</a>
                 {% endif %}
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           <tr>
-            <th>Telephone</th>
+            <th>{{ _('Telephone') }}</th>
             <td>
               {% if supplier.phone %}
                 {{ supplier.phone }}
@@ -210,34 +213,34 @@
                   , {{ supplier.alt_phone }}
                 {% endif %}
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           <tr>
-            <th>Fax</th>
+            <th>{{ _('Fax') }}</th>
             <td>
               {% if supplier.fax %}
                 {{ supplier.fax }}
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           <tr>
-            <th>Website</th>
+            <th>{{ _('Website') }}</th>
             <td>
               {% if supplier.website %}
                 <a href="{{ supplier.website }}" target="_blank">{{ supplier.website }}</a>
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           </tbody>
         </table>
       {% else %}
-        <p class="lead text-muted">There is no Supplier information for this procurement.</p>
+        <p class="lead text-muted">{{ _('There is no Supplier information for this procurement.') }}</p>
       {% endif %}
     </div>
   </div>
@@ -246,7 +249,7 @@
     <div class="col-lg-12">
       <div class="row">
         <div class="col-lg-8">
-          <h2>Manufacturer</h2>
+          <h2>{{ _('Manufacturer') }}</h2>
         </div>
         <div class="col-lg-4">
           {% if procurement.product.manufacturer %}
@@ -255,7 +258,7 @@
                 href="{{ API_HOST }}admin/manufacturer/edit/?id={{ procurement.product.manufacturer.manufacturer_id }}"
                 class="btn btn-info pull-right"
                 style="margin-top: 20px;">
-              Edit
+              {{ _('Edit') }}
             </a>
           {% endif %}
         </div>
@@ -265,35 +268,35 @@
         <table class="table table-bordered table-striped">
           <tbody>
           <tr>
-            <th>Country</th>
+            <th>{{ _('Country') }}</th>
             <td>
-              {{ macros.render_flag(manufacturer.country) }} {{ manufacturer.country.name }}
+              {{ macros.render_flag(manufacturer.country) }} {{ _(manufacturer.country.name) }}
             </td>
           </tr>
           <tr>
-            <th>Name</th>
+            <th>{{ _('Name') }}</th>
             <td>
               {% if manufacturer.name %}
                 {{ manufacturer.name }}
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           <tr>
-            <th>Site</th>
+            <th>{{ _('Site') }}</th>
             <td>
               {% if procurement.product.site %}
                 {{ procurement.product.site }}
               {% else %}
-                <span class="text-muted">Unknown</span>
+                <span class="text-muted">{{ _('Unknown') }}</span>
               {% endif %}
             </td>
           </tr>
           </tbody>
         </table>
       {% else %}
-        <p class="lead text-muted">There is no Manufacturer information for this procurement.</p>
+        <p class="lead text-muted">{{ _('There is no Manufacturer information for this procurement.') }}</p>
       {% endif %}
 
     </div>

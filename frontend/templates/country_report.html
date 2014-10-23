@@ -3,7 +3,7 @@
 {% block page_header %}
   <div class="container">
     <h1>
-      Country report: {{ report.country.name }}
+      {{ _('Country report') }}: {{ _(report.country.name) }}
     </h1>
   </div>
 {% endblock %}
@@ -13,8 +13,8 @@
 
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
-      <li class="active"><a href="#overview" role="tab" data-toggle="tab">Overview</a></li>
-      <li><a href="#procurements" role="tab" data-toggle="tab">Procurements</a></li>
+      <li class="active"><a href="#overview" role="tab" data-toggle="tab">{{ _('Overview') }}</a></li>
+      <li><a href="#procurements" role="tab" data-toggle="tab">{{ _('Procurements') }}</a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -22,16 +22,16 @@
       <div class="tab-pane active" id="overview">
         {% if report.medicines %}
           <div class="col-md-12">
-            <p class="lead text-center">These numbers are based on recent procurements (past twelve months).</p>
+            <p class="lead text-center">{{ _('These numbers are based on recent procurements (past twelve months).') }}</p>
           </div>
           <div class="col-md-10 col-md-offset-1">
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <th>{{ macros.render_flag(report.country) }}</th>
-              <th>Medicine</th>
-              <th>Overall spend from recent procurements</th>
-              <th>Savings potential (total) <i class="fa fa-chevron-down"></i></th>
-              <th>Savings potential %</th>
+              <th>{{ _('Medicine') }}</th>
+              <th>{{ _('Overall spend from recent procurements') }}</th>
+              <th>{{ _('Savings potential (total)') }} <i class="fa fa-chevron-down"></i></th>
+              <th>{{ _('Savings potential %') }}</th>
               </thead>
               <tbody>
               {% for medicine in report.medicines %}
@@ -48,7 +48,7 @@
           </div>
         {% else %}
           <div class="col-md-12">
-            <p class="lead text-center">There are no recent procurements for this country.</p>
+            <p class="lead text-center">{{ _('There are no recent procurements for this country.') }}</p>
           </div>
         {% endif %}
       </div>
@@ -57,41 +57,48 @@
         <div class="row">
           <div class="col-lg-12">
             {% if report.procurements | length == 0 %}
-              <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+              <p style="padding: 10px;" class="lead text-muted">{{ _('No recent procurements recorded') }}</p>
             {% else %}
               <a
                   class="btn btn-primary pull-right"
                   style="margin: 10px 10px 0px 10px;"
                   href="{{ API_HOST }}xlsx/{{ report.country.code }}/">
-                <i class="fa fa-download"></i> Download .xlsx
+                <i class="fa fa-download"></i> {{ _('Download .xlsx') }}
               </a>
               <p style="padding: 10px 10px 0px 10px;" class="lead">
-                All {{ report.procurements | length }} known procurements:
+                {{ _(
+                'All %(num_records)d known procurements:',
+                num_records=report.procurements | length
+                ) }}
               </p>
 
 
               <table class="table table-bordered table-striped table-hover">
                 <thead>
-                <th>Procurement country</th>
-                <th>Generic Name & Strength</th>
-                <th>Date</th>
-                <th>Terms</th>
-                <th>Volume</th>
-                <th>Pack Price</th>
-                <th>Price per unit</th>
+                <th>{{ _('Procurement country') }}</th>
+                <th>{{ _('Generic Name & Strength') }}</th>
+                <th>{{ _('Date') }}</th>
+                <th>{{ _('Terms') }}</th>
+                <th>{{ _('Volume') }}</th>
+                <th>{{ _('Pack Price') }}</th>
+                <th>{{ _('Price per unit') }}</th>
                 </thead>
                 <tbody>
                 {% for procurement in report.procurements %}
                   <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
                     <td>
-                      {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                      {{ macros.render_flag(procurement.country) }} {{ _(procurement.country.name) }}
                     </td>
                     <td>
                       <span
                           class="tooltip-enabled"
                           data-toggle="tooltip"
                           data-placement="top"
-                          title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                          title="{% if procurement.product.description -%}
+                          {{ procurement.product.description }}
+                          {%- else -%}
+                          {{ _('no description available') }}
+                          {%- endif %}">
                           {{ procurement.product.medicine.name }}
                       </span>
                     </td>
@@ -104,11 +111,11 @@
                             class="tooltip-enabled"
                             data-toggle="tooltip"
                             data-placement="top"
-                            title="{{ procurement.incoterm.description }}">
+                            title="{{ _(procurement.incoterm.description) }}">
                               {{ procurement.incoterm.code }}
                         </span>
                       {% else %}
-                        <span class="text-muted">Unknown</span>
+                        <span class="text-muted">{{ _('Unknown') }}</span>
                       {% endif %}
                     </td>
                     <td>
@@ -116,11 +123,11 @@
                           class="tooltip-enabled"
                           data-toggle="tooltip"
                           data-placement="top"
-                          title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                          title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ _(procurement.container) }}">
                           {% if procurement.quantity > 1 %}
                             {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
                           {% else %}
-                            <span class="text-muted">Unknown quantity</span>
+                            <span class="text-muted">{{ _('Unknown quantity') }}</span>
                           {% endif %}
                       </span>
                     </td>
