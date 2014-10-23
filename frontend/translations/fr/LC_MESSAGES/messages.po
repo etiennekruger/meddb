@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-23 10:55+0200\n"
+"POT-Creation-Date: 2014-10-23 11:01+0200\n"
 "PO-Revision-Date: 2014-10-22 13:47+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -205,7 +205,8 @@ msgid "Savings potential (total)"
 msgstr ""
 
 #: templates/country_ranking.html:23 templates/country_report.html:34
-msgid "Savings potential %"
+#, python-format
+msgid "Savings potential %%"
 msgstr ""
 
 #: templates/country_ranking.html:35
@@ -536,4 +537,7 @@ msgstr ""
 #: templates/register.html:16
 msgid "Please register below to access the SADC Medicine Prices Database."
 msgstr ""
+
+#~ msgid "Savings potential %"
+#~ msgstr ""
 
