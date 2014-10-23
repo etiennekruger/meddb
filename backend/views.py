@@ -492,7 +492,7 @@ def recent_updates():
     Return a list of purchases that have recently been added
     """
 
-    procurements = Procurement.query.filter_by(approved=True).order_by(Procurement.added_on.desc()).limit(20).all()
+    procurements = Procurement.query.filter_by(approved=True).order_by(Procurement.added_on.desc(), Procurement.procurement_id.desc()).limit(20).all()
     return serializers.queryset_to_json(procurements)
 
 
