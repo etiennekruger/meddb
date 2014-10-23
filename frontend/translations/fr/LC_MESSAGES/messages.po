@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-23 11:01+0200\n"
+"POT-Creation-Date: 2014-10-23 11:50+0200\n"
 "PO-Revision-Date: 2014-10-22 13:47+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -17,6 +17,290 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
+#: extra_translations.py:4
+msgid "India"
+msgstr ""
+
+#: extra_translations.py:5
+msgid "China"
+msgstr ""
+
+#: extra_translations.py:6 forms.py:23
+msgid "Mauritius"
+msgstr ""
+
+#: extra_translations.py:7 forms.py:27
+msgid "South Africa"
+msgstr ""
+
+#: extra_translations.py:8
+msgid "Cyprus"
+msgstr ""
+
+#: extra_translations.py:9
+msgid "United States"
+msgstr ""
+
+#: extra_translations.py:10
+msgid "Canada"
+msgstr ""
+
+#: extra_translations.py:11
+msgid "Italy"
+msgstr ""
+
+#: extra_translations.py:12
+msgid "Portugal"
+msgstr ""
+
+#: extra_translations.py:13
+msgid "Cuba"
+msgstr ""
+
+#: extra_translations.py:14 forms.py:19
+msgid "DRC"
+msgstr ""
+
+#: extra_translations.py:15 forms.py:28
+msgid "Swaziland"
+msgstr ""
+
+#: extra_translations.py:16 forms.py:31
+msgid "Zimbabwe"
+msgstr ""
+
+#: extra_translations.py:17 forms.py:22
+msgid "Malawi"
+msgstr ""
+
+#: extra_translations.py:18
+msgid "Netherlands"
+msgstr ""
+
+#: extra_translations.py:19
+msgid "Spain"
+msgstr ""
+
+#: extra_translations.py:20
+msgid "Mexico"
+msgstr ""
+
+#: extra_translations.py:21
+msgid "Switzerland"
+msgstr ""
+
+#: extra_translations.py:22
+msgid "France"
+msgstr ""
+
+#: extra_translations.py:23
+msgid "United Kingdom"
+msgstr ""
+
+#: extra_translations.py:24
+msgid "Saudi Arabia"
+msgstr ""
+
+#: extra_translations.py:25
+msgid "Kenya"
+msgstr ""
+
+#: extra_translations.py:26
+msgid "Greece"
+msgstr ""
+
+#: extra_translations.py:27
+msgid "Germany"
+msgstr ""
+
+#: extra_translations.py:28 forms.py:29
+msgid "Tanzania"
+msgstr ""
+
+#: extra_translations.py:29
+msgid "Malaysia"
+msgstr ""
+
+#: extra_translations.py:34
+msgid "powder"
+msgstr ""
+
+#: extra_translations.py:35 extra_translations.py:60
+msgid "inhaler"
+msgstr ""
+
+#: extra_translations.py:36
+msgid "eye ointment"
+msgstr ""
+
+#: extra_translations.py:37
+msgid "injection"
+msgstr ""
+
+#: extra_translations.py:38
+msgid "pessary"
+msgstr ""
+
+#: extra_translations.py:39
+msgid "suspension/syrup"
+msgstr ""
+
+#: extra_translations.py:40
+msgid "ointment"
+msgstr ""
+
+#: extra_translations.py:41
+msgid "eye drops"
+msgstr ""
+
+#: extra_translations.py:42
+msgid "capsule/tablet"
+msgstr ""
+
+#: extra_translations.py:43
+msgid "cream"
+msgstr ""
+
+#: extra_translations.py:44
+msgid "ear drops"
+msgstr ""
+
+#: extra_translations.py:45
+msgid "suppository"
+msgstr ""
+
+#: extra_translations.py:46
+msgid "liquid"
+msgstr ""
+
+#: extra_translations.py:47
+msgid "gel"
+msgstr ""
+
+#: extra_translations.py:48
+msgid "lotion"
+msgstr ""
+
+#: extra_translations.py:49
+msgid "nasal spray"
+msgstr ""
+
+#: extra_translations.py:50
+msgid "disc"
+msgstr ""
+
+#: extra_translations.py:51
+msgid "topical spray"
+msgstr ""
+
+#: extra_translations.py:52
+msgid "ophthalmic strips"
+msgstr ""
+
+#: extra_translations.py:57
+msgid "container"
+msgstr ""
+
+#: extra_translations.py:58
+msgid "vial"
+msgstr ""
+
+#: extra_translations.py:59
+msgid "bottle"
+msgstr ""
+
+#: extra_translations.py:61
+msgid "tube"
+msgstr ""
+
+#: extra_translations.py:62
+msgid "blister/strip"
+msgstr ""
+
+#: extra_translations.py:63
+msgid "ampoule"
+msgstr ""
+
+#: extra_translations.py:64
+msgid "syringe"
+msgstr ""
+
+#: extra_translations.py:65
+msgid "bag"
+msgstr ""
+
+#: extra_translations.py:66
+msgid "cartridge"
+msgstr ""
+
+#: extra_translations.py:67
+msgid "sachet"
+msgstr ""
+
+#: extra_translations.py:68
+msgid "pack"
+msgstr ""
+
+#: extra_translations.py:73
+msgid "Delivered at Frontier"
+msgstr ""
+
+#: extra_translations.py:74
+msgid "Delivered Ex Ship"
+msgstr ""
+
+#: extra_translations.py:75
+msgid "Cost, Insurance and Freight"
+msgstr ""
+
+#: extra_translations.py:76
+msgid "Free Carrier"
+msgstr ""
+
+#: extra_translations.py:77
+msgid "Free Alongside Ship"
+msgstr ""
+
+#: extra_translations.py:78
+msgid "Delivered Duty Paid"
+msgstr ""
+
+#: extra_translations.py:79
+msgid "Delivered Duty Unpaid"
+msgstr ""
+
+#: extra_translations.py:80
+msgid "Delivered at Terminal"
+msgstr ""
+
+#: extra_translations.py:81
+msgid "Ex Works"
+msgstr ""
+
+#: extra_translations.py:82
+msgid "Carriage and Insurance Paid to"
+msgstr ""
+
+#: extra_translations.py:83
+msgid "Delivered at Place"
+msgstr ""
+
+#: extra_translations.py:84
+msgid "Free on Board"
+msgstr ""
+
+#: extra_translations.py:85
+msgid "Delivered Ex Quay"
+msgstr ""
+
+#: extra_translations.py:86
+msgid "Carriage Paid To"
+msgstr ""
+
+#: extra_translations.py:87
+msgid "Cost and Freight"
+msgstr ""
+
 #: forms.py:17
 msgid "Angola"
 msgstr ""
@@ -25,24 +309,12 @@ msgstr ""
 msgid "Botswana"
 msgstr ""
 
-#: forms.py:19
-msgid "DRC"
-msgstr ""
-
 #: forms.py:20
 msgid "Lesotho"
 msgstr ""
 
 #: forms.py:21
 msgid "Madagascar"
-msgstr ""
-
-#: forms.py:22
-msgid "Malawi"
-msgstr ""
-
-#: forms.py:23
-msgid "Mauritius"
 msgstr ""
 
 #: forms.py:24
@@ -57,24 +329,8 @@ msgstr ""
 msgid "Seychelles"
 msgstr ""
 
-#: forms.py:27
-msgid "South Africa"
-msgstr ""
-
-#: forms.py:28
-msgid "Swaziland"
-msgstr ""
-
-#: forms.py:29
-msgid "Tanzania"
-msgstr ""
-
 #: forms.py:30
 msgid "Zambia"
-msgstr ""
-
-#: forms.py:31
-msgid "Zimbabwe"
 msgstr ""
 
 #: forms.py:37
@@ -537,7 +793,4 @@ msgstr ""
 #: templates/register.html:16
 msgid "Please register below to access the SADC Medicine Prices Database."
 msgstr ""
-
-#~ msgid "Savings potential %"
-#~ msgstr ""
 

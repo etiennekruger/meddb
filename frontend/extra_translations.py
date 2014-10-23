@@ -1,0 +1,88 @@
+from flask.ext.babel import gettext
+
+manufacturer_countries = [
+    gettext(u"India"),
+    gettext(u"China"),
+    gettext(u"Mauritius"),
+    gettext(u"South Africa"),
+    gettext(u"Cyprus"),
+    gettext(u"United States"),
+    gettext(u"Canada"),
+    gettext(u"Italy"),
+    gettext(u"Portugal"),
+    gettext(u"Cuba"),
+    gettext(u"DRC"),
+    gettext(u"Swaziland"),
+    gettext(u"Zimbabwe"),
+    gettext(u"Malawi"),
+    gettext(u"Netherlands"),
+    gettext(u"Spain"),
+    gettext(u"Mexico"),
+    gettext(u"Switzerland"),
+    gettext(u"France"),
+    gettext(u"United Kingdom"),
+    gettext(u"Saudi Arabia"),
+    gettext(u"Kenya"),
+    gettext(u"Greece"),
+    gettext(u"Germany"),
+    gettext(u"Tanzania"),
+    gettext(u"Malaysia"),
+    ]
+
+
+dosage_forms = [
+    gettext(u"powder"),
+    gettext(u"inhaler"),
+    gettext(u"eye ointment"),
+    gettext(u"injection"),
+    gettext(u"pessary"),
+    gettext(u"suspension/syrup"),
+    gettext(u"ointment"),
+    gettext(u"eye drops"),
+    gettext(u"capsule/tablet"),
+    gettext(u"cream"),
+    gettext(u"ear drops"),
+    gettext(u"suppository"),
+    gettext(u"liquid"),
+    gettext(u"gel"),
+    gettext(u"lotion"),
+    gettext(u"nasal spray"),
+    gettext(u"disc"),
+    gettext(u"topical spray"),
+    gettext(u"ophthalmic strips"),
+    ]
+
+
+containers = [
+    gettext(u"container"),
+    gettext(u"vial"),
+    gettext(u"bottle"),
+    gettext(u"inhaler"),
+    gettext(u"tube"),
+    gettext(u"blister/strip"),
+    gettext(u"ampoule"),
+    gettext(u"syringe"),
+    gettext(u"bag"),
+    gettext(u"cartridge"),
+    gettext(u"sachet"),
+    gettext(u"pack"),
+    ]
+
+
+incoterms = [
+    gettext(u"Delivered at Frontier"),
+    gettext(u"Delivered Ex Ship"),
+    gettext(u"Cost, Insurance and Freight"),
+    gettext(u"Free Carrier"),
+    gettext(u"Free Alongside Ship"),
+    gettext(u"Delivered Duty Paid"),
+    gettext(u"Delivered Duty Unpaid"),
+    gettext(u"Delivered at Terminal"),
+    gettext(u"Ex Works"),
+    gettext(u"Carriage and Insurance Paid to"),
+    gettext(u"Delivered at Place"),
+    gettext(u"Free on Board"),
+    gettext(u"Delivered Ex Quay"),
+    gettext(u"Carriage Paid To"),
+    gettext(u"Cost and Freight"),
+    ]
