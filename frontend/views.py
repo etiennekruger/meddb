@@ -1,4 +1,5 @@
 from flask import g, render_template, flash, redirect, request, url_for, session
+from flask.ext.babel import gettext, ngettext
 from frontend import app, logger, babel
 import requests
 from requests import ConnectionError
@@ -120,21 +121,21 @@ def load_from_api(resource_name, resource_id=None):
         response = requests.get(API_HOST + query_str, headers=headers)
         out = response.json()
         if response.status_code != 200:
-            raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+            raise ApiException(response.status_code, response.json().get('message', gettext(u"An unspecified error has occurred.")))
         i = 0
         while i < 10:
             i += 1
             if response.json().get('next'):
                 response = requests.get(response.json()['next'], headers=headers)
                 if response.status_code != 200:
-                    raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+                    raise ApiException(response.status_code, response.json().get('message', gettext(u"An unspecified error has occurred.")))
                 out['results'] += response.json()['results']
             else:
                 break
         return out
 
     except ConnectionError:
-        flash('Error connecting to backend service.', 'danger')
+        flash(gettext(u'Error connecting to backend service.'), 'danger')
         pass
     return
 
@@ -210,7 +211,7 @@ def medicine(medicine_id):
                 unit_price = float(procurement['unit_price_usd'])
                 procurement['cost_difference'] = (unit_price - compare_unit_price) * compare_quantity * compare_pack_size
         except Exception as e:
-            flash("There was a problem with your input.", "warning")
+            flash(gettext(u"There was a problem with your input."), "warning")
             logger.debug(e)
             pass
 
@@ -281,12 +282,12 @@ def login():
                     return redirect(next)
                 return redirect(url_for('landing'))
             elif response.status_code != 400:
-                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+                raise ApiException(response.status_code, response.json().get('message', gettext(u"An unspecified error has occurred.")))
             else:
                 # incorrect login / password
                 flash(response.json()["message"], "danger")
         except ConnectionError:
-            flash('Error connecting to backend service.', 'danger')
+            flash(gettext(u'Error connecting to backend service.'), 'danger')
             pass
     return render_template(
         'login.html',
@@ -298,7 +299,7 @@ def login():
 def logout():
 
     session.clear()
-    flash("You have been logged out successfully.", "success")
+    flash(gettext(u"You have been logged out successfully."), "success")
     return redirect(url_for('landing'))
 
 @app.route('/register/', subdomain='med-db', methods=['GET', 'POST'])
@@ -311,16 +312,16 @@ def register():
         try:
             response = requests.post(API_HOST + 'register/', data=data, headers=headers)
             if response.status_code != 200:
-                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+                raise ApiException(response.status_code, response.json().get('message', gettext(u"An unspecified error has occurred.")))
             user_dict = response.json()
             api_key = user_dict.get('api_key')
             email = user_dict.get('email')
             session['api_key'] = api_key
             session['email'] = email
-            flash("Thank you. You have been registered successfully.", "success")
+            flash(gettext(u"Thank you. You have been registered successfully."), "success")
             return redirect(url_for('landing'))
         except ConnectionError:
-            flash('Error connecting to backend service.', 'danger')
+            flash(gettext(u'Error connecting to backend service.'), 'danger')
             pass
 
     return render_template(
@@ -344,16 +345,16 @@ def change_login():
         try:
             response = requests.post(API_HOST + 'change-login/', data=data, headers=headers)
             if response.status_code != 200:
-                raise ApiException(response.status_code, response.json().get('message', "An unspecified error has occurred."))
+                raise ApiException(response.status_code, response.json().get('message', gettext(u"An unspecified error has occurred.")))
             user_dict = response.json()
             api_key = user_dict.get('api_key')
             email = user_dict.get('email')
             session['api_key'] = api_key
             session['email'] = email
-            flash("Your details have been updated successfully.", "success")
+            flash(gettext(u"Your details have been updated successfully."), "success")
             return redirect(url_for('landing'))
         except ConnectionError:
-            flash('Error connecting to backend service.', 'danger')
+            flash(gettext(u'Error connecting to backend service.'), 'danger')
             pass
 
     return render_template(

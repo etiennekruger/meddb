@@ -2,6 +2,7 @@ import wtforms
 from wtforms import Form
 from wtforms import StringField, PasswordField, SelectField
 from wtforms import validators
+from flask.ext.babel import gettext
 
 
 class LoginForm(Form):
@@ -13,31 +14,31 @@ class ChangeLoginForm(Form):
     password = PasswordField('New password', [validators.InputRequired()])
 
 available_countries = {
-    "AGO":  "Angola",
-    "BWA":  "Botswana",
-    "COD":  "DRC",
-    "LSO":  "Lesotho",
-    "MDG":  "Madagascar",
-    "MWI":  "Malawi",
-    "MUS":  "Mauritius",
-    "MOZ":  "Mozambique",
-    "NAM":  "Namibia",
-    "SYC":  "Seychelles",
-    "ZAF":  "South Africa",
-    "SWZ":  "Swaziland",
-    "TZA":  "Tanzania",
-    "ZMB":  "Zambia",
-    "ZWE":  "Zimbabwe",
+    "AGO":  gettext(u"Angola"),
+    "BWA":  gettext(u"Botswana"),
+    "COD":  gettext(u"DRC"),
+    "LSO":  gettext(u"Lesotho"),
+    "MDG":  gettext(u"Madagascar"),
+    "MWI":  gettext(u"Malawi"),
+    "MUS":  gettext(u"Mauritius"),
+    "MOZ":  gettext(u"Mozambique"),
+    "NAM":  gettext(u"Namibia"),
+    "SYC":  gettext(u"Seychelles"),
+    "ZAF":  gettext(u"South Africa"),
+    "SWZ":  gettext(u"Swaziland"),
+    "TZA":  gettext(u"Tanzania"),
+    "ZMB":  gettext(u"Zambia"),
+    "ZWE":  gettext(u"Zimbabwe"),
     }
 
 country_choices = [(key, value) for key, value in available_countries.iteritems()]
 
 class RegistrationForm(Form):
-    email = StringField('Email Address', [
+    email = StringField(gettext(u'Email Address'), [
         validators.Length(min=6, max=50),
-        validators.Email(message="Please enter a valid email address.")
+        validators.Email(message=gettext(u"Please enter a valid email address."))
     ])
-    password = PasswordField('Password', [
-        validators.Length(min=6, message="Your password needs to be at least 6 characters long."),
+    password = PasswordField(gettext(u'Password'), [
+        validators.Length(min=6, message=gettext(u"Your password needs to be at least 6 characters long.")),
         ])
-    country = SelectField('Country', [validators.InputRequired()], choices=country_choices)
+    country = SelectField(gettext(u'Country'), [validators.InputRequired()], choices=country_choices)
