@@ -1,39 +1,39 @@
 {% extends 'admin/model/list.html' %}
 
-{% macro render_country(model, column) %}
+{% macro render_country(model, column) -%}
   <img src="blank.gif" class="flag flag-{{ model.country.code_short | lower }}" alt="{{ model.country.name }}" /> <nobr>{{ model.country.name }}</nobr>
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_date(model, column) %}
+{% macro render_date(model, column) -%}
   <nobr>{{ model[column] }}</nobr>
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_price(model, column) %}
+{% macro render_price(model, column) -%}
   <nobr>{{ model[column] | round(2) }}</nobr>
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_quantity(model, column) %}
+{% macro render_quantity(model, column) -%}
   <nobr>{{ model[column] | add_commas }}</nobr>
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_procurement_medicine(model, column) %}
+{% macro render_procurement_medicine(model, column) -%}
   {{ model.product.medicine }}
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_procurement_manufacturer(model, column) %}
+{% macro render_procurement_manufacturer(model, column) -%}
   {{ model.product.manufacturer }}
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_procurement_date(model, column) %}
+{% macro render_procurement_date(model, column) -%}
   {% if model.start_date %}
     <nobr>{{ model.start_date }}</nobr>
   {% endif %}
   {% if model.end_date and model.end_date != model.start_date %}
     to <nobr>{{ model.end_date }}</nobr>
   {% endif %}
-{% endmacro %}
+{%- endmacro %}
 
-{% macro render_approve(model, column) %}
+{% macro render_approve(model, column) -%}
   <div class="status-container">
     <form class="icon" method="POST" action="/update-approval-status/?next={{ return_url }}">
       {% if csrf_token %}
@@ -44,4 +44,4 @@
              class="approval-checkbox{% if model.approved %} tooltip-enabled" data-toggle="tooltip" title="Approved by {{ model.approved_by }}" checked="True"{% endif %}">
     </form>
   </div>
-{% endmacro %}
+{%- endmacro %}
