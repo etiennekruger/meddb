@@ -24,3 +24,14 @@
     {% endblock %}
   </td>
 {% endblock %}
+
+{% block tail %}
+    {{ super() }}
+    <script language="javascript">
+        (function($) {
+            $('.approval-checkbox').on('click', function(){
+              $(this).parent('form').submit();
+            });
+        })(jQuery);
+    </script>
+{% endblock %}

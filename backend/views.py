@@ -2,7 +2,7 @@ from backend import logger, app, db
 import models
 from models import *
 import flask
-from flask import g, request, abort, redirect, url_for, session, make_response
+from flask import g, request, abort, redirect, url_for, session, make_response, flash
 from functools import wraps
 import json
 import serializers
@@ -595,3 +595,37 @@ def download_procurements(country_code):
     filename = "procurements-" + country.name.lower().replace(" ", "_") + ".xlsx"
     resp.headers['Content-Disposition'] = "attachment;filename=" + filename
     return resp
+
+
+@login_required
+@app.route('/update-approval-status/', subdomain='med-db-api', methods=['GET', 'POST'])
+def update_approval_status():
+    """
+    """
+
+    if not g.user.is_admin:
+        if request.args.get('next'):
+            flash('You are not currently authorised to approve/reject procurements.', 'danger')
+            return redirect(request.args['next'])
+        else:
+            raise ApiException(401, "You are not authorised.")
+
+    if request.form.get('procurement-id'):
+        procurement = Procurement.query.get(request.form['procurement-id'])
+    else:
+        raise ApiException(400, "Please specify a procurement.")
+
+    procurement.approved = not procurement.approved
+    if procurement.approved:
+        procurement.approved_by_id = g.user.user_id
+    else:
+        procurement.approved_by_id = None
+
+    db.session.add(procurement)
+    db.session.commit()
+
+    flash('You have successfully updated the procurement\'s approval status.', 'success')
+
+    if request.args.get('next'):
+        return redirect(request.args['next'])
+    return 200

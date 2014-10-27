@@ -35,14 +35,13 @@
 
 {% macro render_approve(model, column) %}
   <div class="status-container">
-    <form class="icon" method="POST" action="/update_status/">
+    <form class="icon" method="POST" action="/update-approval-status/?next={{ return_url }}">
       {% if csrf_token %}
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
       {% endif %}
-
-      <input type="checkbox" {% if model.approved %}
-             class="tooltip-enabled" data-toggle="tooltip" title="Approved by {{ model.approved_by }}" checked="True"
-      {% endif %}>
+      <input type="hidden" name="procurement-id" value="{{ model.procurement_id }}"/>
+      <input type="checkbox"
+             class="approval-checkbox{% if model.approved %} tooltip-enabled" data-toggle="tooltip" title="Approved by {{ model.approved_by }}" checked="True"{% endif %}">
     </form>
   </div>
 {% endmacro %}
