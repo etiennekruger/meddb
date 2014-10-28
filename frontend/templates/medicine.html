@@ -8,7 +8,7 @@
       {% endif %}
       <nobr>
         <small class="text-muted">
-          {{ medicine.dosage_form.name }}
+          {{ _(medicine.dosage_form.name) }}
         </small>
       </nobr>
     </h1>
@@ -19,9 +19,9 @@
 
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
-    <li class="active"><a href="#procurements" role="tab" data-toggle="tab">Procurements</a></li>
-    <li><a href="#registrations" role="tab" data-toggle="tab">Registrations</a></li>
-    <li><a href="#cost-calculator" role="tab" data-toggle="tab">Cost Calculator</a></li>
+    <li class="active"><a href="#procurements" role="tab" data-toggle="tab">{{ _('Procurements') }}</a></li>
+    <li><a href="#registrations" role="tab" data-toggle="tab">{{ _('Registrations') }}</a></li>
+    <li><a href="#cost-calculator" role="tab" data-toggle="tab">{{ _('Cost Calculator') }}</a></li>
   </ul>
 
   <!-- Tab panes -->
@@ -31,17 +31,17 @@
     <div class="row">
       <div class="col-lg-12">
         {% if medicine.procurements | length == 0 %}
-          <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+          <p style="padding: 10px;" class="lead text-muted">{{ _('No recent procurements recorded') }}</p>
         {% else %}
-          <p style="padding: 10px 10px 0px 10px;" class="lead">Recent procurements by Member States.</p>
+          <p style="padding: 10px 10px 0px 10px;" class="lead">{{ _('Recent procurements by Member States.') }}</p>
           <table class="table table-bordered">
             <thead>
-            <th>Procurement country</th>
-            <th>Generic Name & Strength</th>
-            <th>Date</th>
-            <th>Terms</th>
-            <th>Volume</th>
-            <th>Price per {{ medicine.unit_of_measure }}</th>
+            <th>{{ _('Procurement country') }}</th>
+            <th>{{ _('Generic Name & Strength') }}</th>
+            <th>{{ _('Date') }}</th>
+            <th>{{ _('Terms') }}</th>
+            <th>{{ _('Volume') }}</th>
+            <th>{{ _('Price per') }} {{ medicine.unit_of_measure }}</th>
             </thead>
             <tbody>
 
@@ -51,7 +51,7 @@
                 {% set benchmark = item %}
                 <tr class="benchmark-entry success">
                   <td colspan="5">
-                    <strong>{{ benchmark.name }} benchmark - {{ benchmark.year }}</strong>
+                    <strong>{{ benchmark.name }} {{ _('benchmark') }} - {{ benchmark.year }}</strong>
                   </td>
                   <td class="price-bar-container">
                       <span class="pull-right">
@@ -69,14 +69,14 @@
 
                 <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
                   <td>
-                    {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                    {{ macros.render_flag(procurement.country) }} {{ _(procurement.country.name) }}
                   </td>
                   <td>
                     <span
                         class="tooltip-enabled"
                         data-toggle="tooltip"
                         data-placement="top"
-                        title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                        title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}{{ _('no description available') }}{% endif %}">
                         {{ procurement.product.medicine.name }}
                     </span>
                   </td>
@@ -89,11 +89,11 @@
                           class="tooltip-enabled"
                           data-toggle="tooltip"
                           data-placement="top"
-                          title="{{ procurement.incoterm.description }}">
+                          title="{{ _(procurement.incoterm.description) }}">
                         {{ procurement.incoterm.code }}
                         </span>
                     {% else %}
-                      <span class="text-muted">Unknown</span>
+                      <span class="text-muted">{{ _('Unknown') }}</span>
                     {% endif %}
                   </td>
                   <td>
@@ -101,11 +101,11 @@
                         class="tooltip-enabled"
                         data-toggle="tooltip"
                         data-placement="top"
-                        title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                        title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ _(procurement.container) }}s">
                         {% if procurement.quantity > 1 %}
                           {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
                         {% else %}
-                          <span class="text-muted">Unknown</span>
+                          <span class="text-muted">{{ _('Unknown') }}</span>
                         {% endif %}
                     </span>
                   </td>
@@ -117,7 +117,7 @@
                         class="price-bar tooltip-enabled"
                         data-toggle="tooltip"
                         data-placement="top"
-                        title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}"
+                        title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}{{ _('no description available') }}{% endif %}"
                         style="width: {{ width }}%;"></div>
                   </td>
                 </tr>
@@ -133,7 +133,7 @@
   <div class="tab-pane" id="registrations">
     <div class="row">
       <div class="col-sm-8 col-sm-offset-2">
-        <p style="padding: 30px 10px 0px 10px;" class="lead">We don't currently have any registration information for this medicine.</p>
+        <p style="padding: 30px 10px 0px 10px;" class="lead">{{ _("We don't currently have any registration information for this medicine.") }}</p>
       </div>
     </div>
   </div>
@@ -142,49 +142,59 @@
     <div class="row">
       <div class="col-lg-12">
 
-        <p style="padding: 10px 10px 0px 10px;" class="lead"class="lead">Find potential savings by entering your own price.</p>
+        <p style="padding: 10px 10px 0px 10px;" class="lead"class="lead">{{ _('Find potential savings by entering your own price.') }}</p>
 
         <form id="form-comparison" class="form form-inline" method="get" action="">
           <div class="form-group">
-            <label for="compare-quantity">Number of packs</label>
-            <input name="compare-quantity" class="form-control" type="text" placeholder="Number of packs" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
+            <label for="compare-quantity">{{ _('Number of packs') }}</label>
+            <input name="compare-quantity" class="form-control" type="text" placeholder="{{ _('Number of packs') }}" {% if form_args['compare-quantity'] %}value="{{ form_args['compare-quantity'] }}"{% endif %}/>
           </div>
           <div class="form-group">
-            <label for="compare-pack-size">Pack size (in {{ medicine.unit_of_measure }}s)</label>
-            <input name="compare-pack-size" class="form-control" type="text" placeholder="Units per pack" {% if form_args['compare-pack-size'] %}value="{{ form_args['compare-pack-size'] }}"{% endif %}/>
+            <label for="compare-pack-size">
+              {{ _(
+              'Pack size in %(unit_of_measure)s',
+              unit_of_measure=medicine.unit_of_measure
+              ) }}
+            </label>
+            <input name="compare-pack-size" class="form-control" type="text" placeholder="{{ _('Units per pack') }}" {% if form_args['compare-pack-size'] %}value="{{ form_args['compare-pack-size'] }}"{% endif %}/>
           </div>
           <div class="form-group">
-            <label for="compare-price">Pack price</label>
-            <input name="compare-price" class="form-control" type="text" placeholder="Pack price (USD)" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
+            <label for="compare-price">{{ _('Pack price') }}</label>
+            <input name="compare-price" class="form-control" type="text" placeholder="{{ _('Pack price (USD)') }}" {% if form_args['compare-price'] %}value="{{ form_args['compare-price'] }}"{% endif %}/>
           </div>
-          <button class="btn btn-default" type="submit">Calculate</button>
+          <button class="btn btn-default" type="submit">{{ _('Calculate') }}</button>
         </form>
         {% if medicine.procurements | length == 0 %}
-          <p style="padding: 10px;" class="lead text-muted">No recent purchases recorded</p>
+          <p style="padding: 10px;" class="lead text-muted">{{ _('No recent purchases recorded') }}</p>
         {% else %}
           <p></p>
           <table class="table table-bordered table-striped">
             <thead>
-            <th>Procurement country</th>
-            <th>Generic Name & Strength</th>
-            <th>Date</th>
-            <th>Terms</th>
-            <th>Volume</th>
-            <th>Price per {{ medicine.unit_of_measure }}</th>
-            <th>Cost difference</th>
+            <th>{{ _('Procurement country') }}</th>
+            <th>{{ _('Generic Name & Strength') }}</th>
+            <th>{{ _('Date') }}</th>
+            <th>{{ _('Terms') }}</th>
+            <th>{{ _('Volume') }}</th>
+            <th>
+              {{ _(
+              'Price per %(unit_of_measure)s',
+              unit_of_measure=medicine.unit_of_measure
+              ) }}
+            </th>
+            <th>{{ _('Cost difference') }}</th>
             </thead>
             <tbody>
             {% for procurement in best_procurements %}
               <tr class="procurement-entry clickable" data-procurement-id="{{ procurement.procurement_id }}">
                 <td>
-                  {{ macros.render_flag(procurement.country) }} {{ procurement.country.name }}
+                  {{ macros.render_flag(procurement.country) }} {{ _(procurement.country.name) }}
                 </td>
                 <td>
                                         <span
                                             class="tooltip-enabled"
                                             data-toggle="tooltip"
                                             data-placement="top"
-                                            title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}no description available{% endif %}">
+                                            title="{% if procurement.product.description %}{{ procurement.product.description }}{% else %}{{ _('no description available') }}{% endif %}">
                                             {{ procurement.product.medicine.name }}</span>
                 </td>
                 <td>
@@ -200,7 +210,7 @@
                                                 {{ procurement.incoterm.code }}
                                             </span>
                   {% else %}
-                    <span class="text-muted">Unknown</span>
+                    <span class="text-muted">{{ _('Unknown') }}</span>
                   {% endif %}
                 </td>
                 <td>
@@ -208,11 +218,11 @@
                       class="tooltip-enabled"
                       data-toggle="tooltip"
                       data-placement="top"
-                      title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ procurement.container }}s">
+                      title="{{ procurement.pack_size }} {{ procurement.product.medicine.unit_of_measure }} {{ _(procurement.container) }}s">
                     {% if procurement.quantity > 1 %}
                       {{ procurement.quantity | add_commas }} x {{ procurement.pack_size }}
                     {% else %}
-                      <span class="text-muted">Unknown</span>
+                      <span class="text-muted">{{ _('Unknown') }}</span>
                     {% endif %}
                   </span>
                 </td>

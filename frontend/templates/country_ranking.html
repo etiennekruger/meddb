@@ -3,7 +3,7 @@
 {% block page_header %}
   <div class="container">
     <h1>
-      Country savings potential
+      {{ _('Country savings potential') }}
     </h1>
   </div>
 {% endblock %}
@@ -11,28 +11,28 @@
 {% block page %}
   <div class="row">
     <div class="col-md-12">
-      <p class="lead text-center">These calculations are based on recent procurements (past twelve months).</p>
+      <p class="lead text-center">{{ _('These calculations are based on recent procurements (past twelve months).') }}</p>
     </div>
     <div class="col-md-10 col-md-offset-1">
       <table class="table table-bordered table-striped table-hover">
         <thead>
         <th></th>
-        <th>Country</th>
-        <th>Overall spend from recent procurements</th>
-        <th>Savings potential (total)</th>
-        <th>Savings potential % <i class="fa fa-chevron-down"></i></th>
+        <th>{{ _('Country') }}</th>
+        <th>{{ _('Overall spend from recent procurements') }}</th>
+        <th>{{ _('Savings potential (total)') }}</th>
+        <th>{{ _('Savings potential %%') }} <i class="fa fa-chevron-down"></i></th>
         </thead>
         <tbody>
         {% for entry in country_ranking.countries %}
           <tr class="country-entry clickable" data-country-code="{{ entry.country.code }}">
             <td>{{ loop.index }}</td>
-            <td>{{ macros.render_flag(entry.country) }} {{ entry.country.name }}</td>
+            <td>{{ macros.render_flag(entry.country) }} {{ _(entry.country.name) }}</td>
             {% if entry.overall_spend > 1000 %}
             <td>${{ entry.overall_spend | int | add_commas }}</td>
             <td>${{ entry.potential_savings | int | add_commas }}</td>
             <td><strong>{{ (100 * (1 - entry.score)) | round | int }}%</strong></td>
             {% else %}
-            <td class="text-muted">No data available</td><td class="text-center">-</td><td class="text-center">-</td>
+            <td class="text-muted">{{ _('No data available') }}</td><td class="text-center">-</td><td class="text-center">-</td>
             {% endif %}
           </tr>
         {% endfor %}

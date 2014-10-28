@@ -125,18 +125,11 @@ def calculate_db_overview():
     THIS IS COMPUTATIONALLY EXPENSIVE
     """
 
-    cutoff = datetime.datetime.today() - datetime.timedelta(days=MAX_AGE)
-
     logger.debug("Calculating DB overview")
     overview = {}
 
     # number of recent products & medicines
     count_procurements, count_products, count_medicines = Procurement.query.join(Product).filter(
-        or_(
-            Procurement.start_date > cutoff,
-            Procurement.end_date > cutoff
-        )
-    ).filter(
         Procurement.approved != False
     ).with_entities(
         func.count(Procurement.procurement_id),
@@ -152,11 +145,6 @@ def calculate_db_overview():
     sources = db.session.query(Procurement.country_id,
                                func.count(Procurement.procurement_id)) \
         .filter(
-        or_(
-            Procurement.start_date > cutoff,
-            Procurement.end_date > cutoff
-        )
-    ).filter(
         Procurement.approved != False
     ).group_by(Procurement.country_id) \
         .order_by(func.count(Procurement.procurement_id).desc()).all()
@@ -504,7 +492,7 @@ def recent_updates():
     Return a list of purchases that have recently been added
     """
 
-    procurements = Procurement.query.filter_by(approved=True).order_by(Procurement.added_on.desc()).limit(20).all()
+    procurements = Procurement.query.filter_by(approved=True).order_by(Procurement.added_on.desc(), Procurement.procurement_id.desc()).limit(20).all()
     return serializers.queryset_to_json(procurements)
 
 
