@@ -92,6 +92,7 @@ class Country(db.Model):
     name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(3), unique=True)
     code_short = db.Column(db.String(2), unique=True)
+    default_fob_adjustment = db.Column(db.Float)
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
@@ -396,6 +397,7 @@ class Procurement(db.Model):
     pack_price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
     pack_price_usd = db.Column(db.Float, nullable=False) # per container
     unit_price_usd = db.Column(db.Float) # this is always in USD
+    unit_price_usd_fob = db.Column(db.Float) # the price used for making comparisons
     quantity = db.Column(db.Integer, nullable=False) # The number of packages contracted at the specified unit price.
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.
     start_date = db.Column(db.Date, nullable=False) # This is the first day that the procurement price is valid for (may be left blank).
