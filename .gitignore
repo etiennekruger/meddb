@@ -39,3 +39,5 @@ env/
 *med-db.db
 
 *.log
+*.sql
+*.sqlite

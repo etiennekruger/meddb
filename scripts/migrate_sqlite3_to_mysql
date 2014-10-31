@@ -1,0 +1,3 @@
+sqlite3 instance/med-db.db .dump | grep '^INSERT' > dump.sqlite
+cat dump.sqlite | python scripts/sqlite3-to-mysql.py > dump.sql
+
