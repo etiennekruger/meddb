@@ -68,18 +68,18 @@ If you want to contribute to the code, please fork the repository, make your cha
 
 * Run backend server
 
-    python runserver_backend.py
+        python runserver_backend.py
 
 This gives you an api for accessing the data at med-db-api.medicines.localhost, and an admin interface
 at med-db-api.medicines.localhost/admin
 
 * Now, open a new terminal, and run the frontend server:
 
-    cd med-db
-    source env/bin/activate
-    python runserver_frontend.py
+        cd med-db
+        source env/bin/activate
+        python runserver_frontend.py
 
-This gives you a frontend, at med-db.medicines.localhost
+    This gives you a frontend, at med-db.medicines.localhost
 
 * To speed up certain view endpoints, you can run a redis instance that will cache the results from computationally
 expensive functions. See http://redis.io/topics/quickstart.
