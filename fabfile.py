@@ -115,6 +115,10 @@ def configure():
     sudo('mv /tmp/config.py ' + env.project_dir + '/instance/config.py')
     sudo('mv /tmp/config_private.py ' + env.project_dir + '/instance/config_private.py')
 
+    # configure newrelic
+    put(env.config_dir + '/newrelic.ini', '/tmp/newrelic.ini')
+    sudo('mv /tmp/newrelic.ini /var/www/med-db/newrelic.ini')
+
     restart()
     return
 
