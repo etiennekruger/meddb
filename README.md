@@ -30,59 +30,59 @@ If you want to contribute to the code, please fork the repository, make your cha
 
 ### Local setup
 
-    * Clone the repository:
+* Clone the repository:
 
-        git clone git@github.com:Code4SA/med-db.git
+    git clone git@github.com:Code4SA/med-db.git
 
-    * Create and activate a virtualenv:
+* Create and activate a virtualenv:
 
-        cd med-db
-        virtualenv env
-        source env/bin/activate
+    cd med-db
+    virtualenv env
+    source env/bin/activate
 
-    * Install requirements:
+* Install requirements:
 
-        pip install -r 'requirements.txt'
+    pip install -r 'requirements.txt'
 
-    * Update you `hosts` file by adding the following entries:
+* Update you `hosts` file by adding the following entries:
 
-        127.0.0.1 med-db.medicines.localhost
-        127.0.0.1 med-db-api.medicines.localhost
+    127.0.0.1 med-db.medicines.localhost
+    127.0.0.1 med-db-api.medicines.localhost
 
-    * Initialise an empty database
+* Initialise an empty database
 
-        * first comment the following lines in `backend/init.py`
+    * first comment the following lines in `backend/init.py`
 
-            import admin
-            import views
+        import admin
+        import views
 
-        * now create an empty database
+    * now create an empty database
 
-            python
-            >>> from backend import models
-            >>> from backend import db
-            >>> db.create_all()
-            >>> db.session.commit()
+        python
+        >>> from backend import models
+        >>> from backend import db
+        >>> db.create_all()
+        >>> db.session.commit()
 
-        * and then remember to uncomment those lines from the previous step.
+    * and then remember to uncomment those lines from the previous step.
 
-    * Run backend server
+* Run backend server
 
-        python runserver_backend.py
+    python runserver_backend.py
 
-    This gives you an api for accessing the data at med-db-api.medicines.localhost, and an admin interface
-    at med-db-api.medicines.localhost/admin
+This gives you an api for accessing the data at med-db-api.medicines.localhost, and an admin interface
+at med-db-api.medicines.localhost/admin
 
-    * Now, open a new terminal, and run the frontend server:
+* Now, open a new terminal, and run the frontend server:
 
-        cd med-db
-        source env/bin/activate
-        python runserver_frontend.py
+    cd med-db
+    source env/bin/activate
+    python runserver_frontend.py
 
-    This gives you a frontend, at med-db.medicines.localhost
+This gives you a frontend, at med-db.medicines.localhost
 
-    * To speed up certain view endpoints, you can run a redis instance that will cache the results from computationally
-    expensive functions. See http://redis.io/topics/quickstart.
+* To speed up certain view endpoints, you can run a redis instance that will cache the results from computationally
+expensive functions. See http://redis.io/topics/quickstart.
 
 
 ### Deploy instructions
