@@ -33,6 +33,7 @@
       <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">{{ _('Home') }}</a></li>
       <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">{{ _('Medicines') }}</a></li>
       <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">{{ _('Country Reports') }}</a></li>
+      <li class="{% if active_nav_button == "links" %}active{% endif %}"><a href="/links/">{{ _('Important links') }}</a></li>
       {%- if session.email %}
         <li><a href="/admin/">{{ _('Admin') }}</a></li>
       {% endif -%}
