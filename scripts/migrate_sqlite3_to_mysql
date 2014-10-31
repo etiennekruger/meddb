@@ -1,3 +1,19 @@
+# clean up broken foreign key refs
+delete from benchmark_price where medicine_id not in (select medicine_id from medicine);
+
 sqlite3 instance/med-db.db .dump | grep '^INSERT' > dump.sqlite
 cat dump.sqlite | python scripts/sqlite3-to-mysql.py > dump.sql
 
+# Create empty MySQL db
+mysql
+CREATE DATABASE smd;
+CREATE USER 'smd'@'localhost' IDENTIFIED BY 'smd';
+GRANT ALL PRIVILEGES ON smd . * TO 'smd'@'localhost';
+
+# Initialise db tables
+python
+from backend import models, db
+db.create_all()
+
+# import dump
+mysql -u smd -p smd < dump.sql
