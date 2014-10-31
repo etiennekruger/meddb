@@ -32,39 +32,39 @@ If you want to contribute to the code, please fork the repository, make your cha
 
 * Clone the repository:
 
-    git clone git@github.com:Code4SA/med-db.git
+        git clone git@github.com:Code4SA/med-db.git
 
 * Create and activate a virtualenv:
 
-    cd med-db
-    virtualenv env
-    source env/bin/activate
+        cd med-db
+        virtualenv env
+        source env/bin/activate
 
 * Install requirements:
 
-    pip install -r 'requirements.txt'
+        pip install -r 'requirements.txt'
 
 * Update you `hosts` file by adding the following entries:
 
-    127.0.0.1 med-db.medicines.localhost
-    127.0.0.1 med-db-api.medicines.localhost
+        127.0.0.1 med-db.medicines.localhost
+        127.0.0.1 med-db-api.medicines.localhost
 
 * Initialise an empty database
 
     * first comment the following lines in `backend/init.py`
 
-        import admin
-        import views
+            import admin
+            import views
 
     * now create an empty database
 
-        python
-        >>> from backend import models
-        >>> from backend import db
-        >>> db.create_all()
-        >>> db.session.commit()
+            python
+            >>> from backend import models
+            >>> from backend import db
+            >>> db.create_all()
+            >>> db.session.commit()
 
-    * and then remember to uncomment those lines from the previous step.
+        and then remember to uncomment those lines from the previous step.
 
 * Run backend server
 
