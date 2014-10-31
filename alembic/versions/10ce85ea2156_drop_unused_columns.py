@@ -12,7 +12,7 @@ down_revision = '484ee9cd0c59'
 
 from alembic import op
 import sqlalchemy as sa
-from sqlite_drop_add import drop_column_sqlite, add_column_sqlite
+from .utils import add_column_sqlite, drop_column_sqlite
 
 
 def upgrade():
