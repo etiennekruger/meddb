@@ -1,0 +1,28 @@
+# in models.py
+# change Boolean fields to Integer
+# add 'deferred=True' to all ForeignKeyConstraints
+
+# clean up broken foreign key ref and delete alembic table
+sqlite3 instance/med-db.db
+delete from benchmark_price where medicine_id not in (select medicine_id from medicine);
+drop table alembic_version;
+
+# generate sqlite dump
+sqlite3 instance/med-db.db .dump > dump.sqlite.tmp
+
+# remove CREATE TABLE stuff
+grep -v '^CREATE TABLE\|^);\|^\t' dump.sqlite.tmp > dump.sqlite
+
+http://stackoverflow.com/questions/4581727/convert-sqlite-sql-dump-file-to-postgresql
+cat dump.sqlite | sed -e 's/INTEGER PRIMARY KEY AUTOINCREMENT/SERIAL PRIMARY KEY/' | sed -e 's/PRAGMA foreign_keys=OFF;//' | sed -e 's/unsigned big int/BIGINT/g' | sed -e 's/UNSIGNED BIG INT/BIGINT/g' | sed -e 's/BIG INT/BIGINT/g' | sed -e 's/UNSIGNED INT(10)/BIGINT/' | sed -e 's/BOOLEAN/SMALLINT/g' | sed -e 's/boolean/SMALLINT/g' | sed -e 's/UNSIGNED BIG INT/INTEGER/g' | sed -e 's/INT(3)/INT2/g' > dump.postgres
+
+# set constraint flag after beginning transaction
+SET CONSTRAINTS ALL DEFERRED;
+
+psql postgres
+drop database med_db
+create database med_db
+
+psql med_db < dump.postgres
+
+# now, initialise alembic and switch integer fields back to boolean

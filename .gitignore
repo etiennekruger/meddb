@@ -41,3 +41,5 @@ env/
 *.log
 *.sql
 *.sqlite
+*.sqlite.tmp
+*.postgres
