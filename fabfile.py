@@ -116,8 +116,12 @@ def configure():
     sudo('mv /tmp/config_private.py ' + env.project_dir + '/instance/config_private.py')
 
     # configure newrelic
-    put(env.config_dir + '/newrelic.ini', '/tmp/newrelic.ini')
-    sudo('mv /tmp/newrelic.ini /var/www/med-db/newrelic.ini')
+    try:
+        put(env.config_dir + '/newrelic.ini', '/tmp/newrelic.ini')
+        sudo('mv /tmp/newrelic.ini /var/www/med-db/newrelic.ini')
+    except ValueError:
+        # not all environment configs will have a newrelic.ini file present
+        pass
 
     restart()
     return

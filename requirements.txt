@@ -15,4 +15,3 @@ xlsxwriter==0.5.6
 alembic==0.6.7
 Flask-Babel==0.9
 newrelic
-MySQL-python
