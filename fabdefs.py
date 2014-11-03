@@ -20,8 +20,8 @@ def staging():
     Env parameters for the staging environment.
     """
 
-    env.host_string = 'ubuntu@54.191.89.39'
-    env.key_filename = '~/.ssh/code4sa-petrus.pem'
+    env.host_string = 'ubuntu@54.171.176.101'
+    env.key_filename = '~/.ssh/amazon_eu.pem'
     env.project_dir = '/var/www/med-db'
     env.config_dir = 'config/staging'
     env.activate = 'source %s/env/bin/activate' % env.project_dir
