@@ -110,7 +110,7 @@ If you need the server to install new dependencies, add the to `requirements.txt
 To setup Postgres on a new Ubuntu server:
 
     # install postgres
-    sudo apt-get install postgresql
+    sudo apt-get install postgresql postgresql-contrib
     # add a 'postgres' superuser
     sudo passwd postgres
     # as the superuser, create a new user and database for this project
