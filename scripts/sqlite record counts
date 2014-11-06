@@ -1,3 +1,0 @@
-select country.name, count(*) from procurement join country using(country_id) where start_date < '2013-01-01' and (end_date is Null or end_date < '2013-01-01') group by procurement.country_id order by country.name;
-select country.name, count(*) from procurement join country using(country_id) where start_date < '2014-01-01' and (end_date is Null or end_date < '2014-01-01') group by procurement.country_id order by country.name;
-select country.name, count(*) from procurement join country using(country_id) group by procurement.country_id order by country.name;
