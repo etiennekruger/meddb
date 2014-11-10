@@ -14,4 +14,4 @@ RESULTS_PER_PAGE = 50
 
 ADMIN_USER = "admin@code4sa.org"
 
-MAX_AGE = 1365
+MAX_AGE = 365
