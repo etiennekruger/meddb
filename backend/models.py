@@ -253,7 +253,7 @@ class Site(db.Model):
     manufacturer = db.relationship('Manufacturer', backref='sites')
 
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.name) + u" " + unicode(self.street_address)
 
     def to_dict(self, include_related=False):
         return serializers.site_to_dict(self, include_related)
