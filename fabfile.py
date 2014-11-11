@@ -36,6 +36,32 @@ def download_db():
     return
 
 
+def upgrade_db():
+    with virtualenv():
+        with cd(env.project_dir):
+            sudo('alembic upgrade head')
+    return
+
+
+def downgrade_db():
+    with virtualenv():
+        with cd(env.project_dir):
+            sudo('alembic downgrade -1')
+    return
+
+
+def upload_db_backup():
+    put('/tmp/med_db.sql', '/tmp/med_db.sql')
+    return
+
+
+def download_db_backup():
+    tmp = get('/tmp/med_db.sql', '/tmp/med_db.sql')
+    if tmp.succeeded:
+        print "Success"
+    return
+
+
 def restart():
     sudo("supervisorctl restart frontend")
     sudo("supervisorctl restart backend")
@@ -59,6 +85,7 @@ def setup():
     # install packages
     sudo('apt-get install build-essential python-dev sqlite3 libsqlite3-dev')
     sudo('apt-get install python-pip supervisor git')
+    sudo('apt-get install postgresql postgresql-contrib libpq-dev')
     sudo('pip install virtualenv')
 
     # create application directory if it doesn't exist yet
