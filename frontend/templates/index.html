@@ -30,7 +30,7 @@
         <tbody>
         {% for procurement in recent_updates %}
           <tr>
-            <td><nobr>{{ procurement.added_on }}</nobr></td>
+            <td><nobr>{{ procurement.added_on | format_date }}</nobr></td>
             <td>{% if procurement.country %}<nobr>{{ macros.render_flag(procurement.country) }} {{ _(procurement.country.name) }}</nobr>{% endif %}</td>
             <td>
               {% if procurement.product %}

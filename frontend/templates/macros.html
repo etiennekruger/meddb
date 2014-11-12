@@ -18,7 +18,7 @@
   {% if start_date | format_date == end_date | format_date %}
     <nobr>{{ start_date | format_date }}</nobr>
   {% else %}
-    <nobr>{{ start_date | format_date }}</nobr> {{ _('to') }} <nobr>{{ end_date | format_date }}</nobr>
+    <nobr>{{ start_date | format_date(format="MMM y") }}</nobr> {{ _('to') }} <nobr>{{ end_date | format_date(format="MMM y") }}</nobr>
   {% endif %}
 {%- endmacro %}
 
