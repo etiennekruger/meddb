@@ -1,8 +1,16 @@
+import newrelic.agent
+from newrelic.api.exceptions import ConfigurationError
 import logging
 from logging.handlers import RotatingFileHandler
 import sys, os
 from flask import Flask
 from flask.ext.babel import Babel
+
+NEWRELIC_CONFIG = '/var/www/med-db/newrelic.ini'
+
+# only launch newrelic if the config exists
+if os.path.exists(NEWRELIC_CONFIG):
+    newrelic.agent.initialize(NEWRELIC_CONFIG)
 
 app = Flask('frontend', instance_relative_config=True, static_folder=None)
 app.config.from_pyfile('config.py', silent=True)

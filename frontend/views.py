@@ -372,3 +372,21 @@ def admin_redirect():
 @app.route('/meddb/', subdomain='med-db')
 def legacy_redirect():
     return redirect("/", 301)
+
+
+@app.route('/links/', subdomain='med-db')
+def links():
+
+    link_list = [
+        ("http://apps.who.int/prequal/", "WHO | Prequalification of Medicines Programme", "WHO webpage for the UN Prequalification Programme for prequalification of product-manufacturing site combinations"),
+        ("http://www.who.int/medicines/areas/access/ecofin/en/", "WHO | Medicines Price Information", ""),
+        ("http://erc.msh.org/mainpage.cfm?file=1.0.htm&module=DMP&language=English", "MSH | International Drug Price Indicator Guide (IDPIG)", ""),
+        ("http://www.haiweb.org/medicineprices/international-medicine-prices-sources.php", "haiweb.org | medicine prices", "HAI Multi Country Price Sources"),
+        ("http://www.clintonhealthaccess.org/files/ARV%20Price%20Reduction%20Overview%20%2808.06.09%29.pdf", "CHAI ARV Price List", "The Clinton Foundation HIV/AIDS Initiative (CHAI) - ANTIRETROVIRAL (ARV) PRICE LIST"),
+    ]
+    return render_template(
+        'links.html',
+        API_HOST=API_HOST,
+        link_list=link_list,
+        active_nav_button="links"
+    )
