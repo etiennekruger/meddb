@@ -1,5 +1,11 @@
 import logging
 
+LANGUAGES = {
+    'en': u'English',
+    'fr': u'Français',
+    'pt': u'Português',
+}
+
 HOST = 'http://med-db.khutjo.demo4sa.org/'
 API_HOST = 'http://med-db-api.khutjo.demo4sa.org/'
 SERVER_NAME = 'khutjo.demo4sa.org'

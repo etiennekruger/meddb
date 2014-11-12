@@ -52,6 +52,10 @@
           <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
+          <li class="tap-target{% if not session.locale or session.locale == 'en' %} active{% endif %}"><a href="?locale=en">English</a></li>
+          <li class="tap-target{% if session.locale and session.locale == 'pt' %} active{% endif %}"><a href="?locale=pt">Português</a></li>
+          <li class="tap-target{% if session.locale and session.locale == 'fr' %} active{% endif %}"><a href="?locale=fr">Français</a></li>
+          <li class="divider"></li>
           {%- if session.email %}
             <li><a href="/logout/">{{ _('Log out') }}</a></li>
             <li><a href="/change-login/">{{ _('Change password') }}</a></li>

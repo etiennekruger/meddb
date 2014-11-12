@@ -24,15 +24,22 @@ app.add_url_rule('/static/<path:filename>',
 
 @babel.localeselector
 def get_locale():
+    # set locale to session if present in get variables
+    if request.args.get('locale'):
+        if app.config['LANGUAGES'].get(request.args['locale']):
+            session['locale'] = request.args['locale']
+
+    # get locale from session cookie
+    if session.get('locale'):
+        return session['locale']
+
     # # if a user is logged in, use the locale from the user settings
     # user = getattr(g, 'user', None)
     # if user is not None:
     #     return user.locale
-    # # otherwise try to guess the language from the user accept
-    # # header the browser transmits.  We support de/fr/en in this
-    # # example.  The best match wins.
-    # return request.accept_languages.best_match(['de', 'fr', 'en'])
-    return 'fr'
+    # otherwise try to guess the language from the user accept
+    # header the browser transmits. The best match wins.
+    return request.accept_languages.best_match(app.config['LANGUAGES'].keys())
 
 
 @app.template_filter('format_date')

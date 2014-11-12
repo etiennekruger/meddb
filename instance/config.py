@@ -1,6 +1,12 @@
 import logging
 import json
 
+LANGUAGES = {
+    'en': u'English',
+    'fr': u'Français',
+    'pt': u'Português',
+}
+
 HOST = 'http://med-db.medicines.localhost:5000/'
 API_HOST = 'http://med-db-api.medicines.localhost:5001/'
 SERVER_NAME = 'medicines.localhost:5000'
