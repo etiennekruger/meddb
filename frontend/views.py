@@ -1,5 +1,5 @@
 from flask import g, render_template, flash, redirect, request, url_for, session
-from flask.ext.babel import gettext, ngettext
+from flask.ext.babel import gettext, ngettext, format_date
 from frontend import app, logger, babel
 import requests
 from requests import ConnectionError
@@ -43,14 +43,13 @@ def get_locale():
 
 
 @app.template_filter('format_date')
-def jinja2_filter_format_date(date_str):
+def jinja2_filter_format_date(date_str, format='long'):
     if date_str:
         date = dateutil.parser.parse(date_str)
         native = date.replace(tzinfo=None)
-        format='%b %Y'
     else:
         return ""
-    return native.strftime(format)
+    return format_date(native, format=format)
 
 
 @app.template_filter('add_commas')
