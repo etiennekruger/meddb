@@ -17,11 +17,11 @@
       <form class="form-horizontal" method="POST" role="form" action="/register/">
         {{ form.csrf_token }}
 
-        {{ macros.render_field(form.email, class="form-control", placeholder="{{ _('Enter your email address') }}") }}
+        {{ macros.render_field(form.email, class="form-control", placeholder=_('Enter your email address')) }}
 
-        {{ macros.render_field(form.password, class="form-control", placeholder="{{ _('Enter your password') }}") }}
+        {{ macros.render_field(form.password, class="form-control", placeholder=_('Enter your password')) }}
 
-        {{ macros.render_field(form.country, class="form-control", placeholder="{{ _('Select your country') }}") }}
+        {{ macros.render_field(form.country, class="form-control", placeholder=_('Select your country')) }}
 
         <div class="form-group">
           <div class="col-md-offset-4 col-md-7">

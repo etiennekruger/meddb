@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-10-23 11:50+0200\n"
+"POT-Creation-Date: 2014-11-12 11:55+0200\n"
 "PO-Revision-Date: 2014-10-22 13:47+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -353,27 +353,27 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: views.py:124 views.py:131 views.py:285 views.py:315 views.py:348
+#: views.py:130 views.py:137 views.py:291 views.py:321 views.py:354
 msgid "An unspecified error has occurred."
 msgstr ""
 
-#: views.py:138 views.py:290 views.py:324 views.py:357
+#: views.py:144 views.py:296 views.py:330 views.py:363
 msgid "Error connecting to backend service."
 msgstr ""
 
-#: views.py:214
+#: views.py:220
 msgid "There was a problem with your input."
 msgstr ""
 
-#: views.py:302
+#: views.py:308
 msgid "You have been logged out successfully."
 msgstr ""
 
-#: views.py:321
+#: views.py:327
 msgid "Thank you. You have been registered successfully."
 msgstr ""
 
-#: views.py:354
+#: views.py:360
 msgid "Your details have been updated successfully."
 msgstr ""
 
@@ -393,42 +393,46 @@ msgstr ""
 msgid "Country Reports"
 msgstr ""
 
-#: templates/base.html:37
+#: templates/base.html:36 templates/links.html:7
+msgid "Important links"
+msgstr ""
+
+#: templates/base.html:38
 msgid "Admin"
 msgstr ""
 
-#: templates/base.html:49
+#: templates/base.html:50
 msgid "Guest user"
 msgstr ""
 
-#: templates/base.html:55
+#: templates/base.html:60
 msgid "Log out"
 msgstr ""
 
-#: templates/base.html:56
+#: templates/base.html:61
 msgid "Change password"
 msgstr ""
 
-#: templates/base.html:58 templates/register.html:28
+#: templates/base.html:63 templates/register.html:28
 msgid "Register"
 msgstr ""
 
-#: templates/base.html:59
+#: templates/base.html:64
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:92
+#: templates/base.html:97
 msgid "Error"
 msgstr ""
 
-#: templates/base.html:115
+#: templates/base.html:120
 msgid ""
 "This website, including all of its features and content is made available"
 " through Southern African Regional Programme on Access to Medicines and "
 "Diagnostics - <strong>SARPAM</strong>"
 msgstr ""
 
-#: templates/base.html:125 templates/base.html:132
+#: templates/base.html:130 templates/base.html:137
 msgid "Close"
 msgstr ""
 
@@ -593,6 +597,14 @@ msgstr ""
 
 #: templates/login.html:7
 msgid "User login"
+msgstr ""
+
+#: templates/login.html:20 templates/register.html:20
+msgid "Enter your email address"
+msgstr ""
+
+#: templates/login.html:22 templates/register.html:22
+msgid "Enter your password"
 msgstr ""
 
 #: templates/login.html:26
@@ -792,5 +804,9 @@ msgstr ""
 
 #: templates/register.html:16
 msgid "Please register below to access the SADC Medicine Prices Database."
+msgstr ""
+
+#: templates/register.html:24
+msgid "Select your country"
 msgstr ""
 

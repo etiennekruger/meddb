@@ -1,5 +1,11 @@
 import logging
 
+LANGUAGES = {
+    'en': u'English',
+    'fr': u'Français',
+    'pt': u'Português',
+}
+
 HOST = 'http://med-db.medicines.sadc.int/'
 API_HOST = 'http://med-db-api.medicines.sadc.int/'
 SERVER_NAME = 'medicines.sadc.int'
