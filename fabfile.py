@@ -57,6 +57,9 @@ def upload_db_backup():
     put('/tmp/med_db.sql.tar.gz', '/tmp/med_db.sql.tar.gz')
     # and unzip new files
     with cd("/tmp"):
+        # remove existing dump, if neccessary
+        with settings(warn_only=True):
+            sudo('rm /tmp/med_db.sql')
         run('tar xzf /tmp/med_db.sql.tar.gz')
         # now, move it out of the dir that it was zipped with
         run('mv /tmp/tmp/med_db.sql /tmp/med_db.sql')

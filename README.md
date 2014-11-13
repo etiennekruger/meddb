@@ -121,4 +121,15 @@ To setup Postgres on a new Ubuntu server:
 
 ### Maintenance
 
-...
+
+Add cronjob for daily db backup::
+
+    su - postgres
+    crontab -e
+    0 0 * * * pg_dump med_db --no-privileges > /tmp/med_db.sql
+
+
+To restore the database from a backup
+
+    su - postgres
+    psql med_db < /tmp/med_db.sql
