@@ -171,6 +171,9 @@ def deploy():
         # and unzip new files
         sudo('tar xzf /tmp/backend.tar.gz')
         sudo('tar xzf /tmp/frontend.tar.gz')
+        # delete existing debug log, if present
+        with settings(warn_only=True):
+            sudo('rm debug.log')
 
     # now that all is set up, delete the tarballs again
     sudo('rm /tmp/backend.tar.gz')
