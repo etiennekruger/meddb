@@ -17,7 +17,7 @@ class ApiKey(db.Model):
     api_key_id = db.Column(db.Integer, primary_key=True)
     key = db.Column(db.String(128), unique=True, nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', deferrable=True), unique=True, nullable=False)
     user = db.relationship('User')
 
     def generate_key(self):
@@ -43,7 +43,7 @@ class User(db.Model):
     activated = db.Column(db.Boolean, default=False)
     is_admin = db.Column(db.Boolean, default=False)
 
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
+    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id', deferrable=True), nullable=True)
     country = db.relationship('Country')
 
     def hash_password(self, password):
@@ -92,6 +92,7 @@ class Country(db.Model):
     name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(3), unique=True)
     code_short = db.Column(db.String(2), unique=True)
+    # default_fob_adjustment = db.Column(db.Float)
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.code.upper())
@@ -161,9 +162,9 @@ class Medicine(db.Model):
     medicine_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
 
-    unit_of_measure_id = db.Column(db.Integer, db.ForeignKey('unit_of_measure.unit_of_measure_id'), nullable=False)
+    unit_of_measure_id = db.Column(db.Integer, db.ForeignKey('unit_of_measure.unit_of_measure_id', deferrable=True), nullable=False)
     unit_of_measure = db.relationship('UnitOfMeasure', lazy='joined')
-    dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id'), nullable=False)
+    dosage_form_id = db.Column(db.Integer, db.ForeignKey('dosage_form.dosage_form_id', deferrable=True), nullable=False)
     dosage_form = db.relationship('DosageForm', lazy='joined', backref=backref("medicines", lazy='joined'))
 
     @property
@@ -200,7 +201,7 @@ class BenchmarkPrice(db.Model):
     unit_of_measure = db.Column(db.String(50))
     year = db.Column(db.Integer, nullable=False)
 
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
+    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id', deferrable=True), nullable=True)
     medicine = db.relationship('Medicine', backref="benchmarks")
 
     def __unicode__(self):
@@ -218,9 +219,9 @@ class Manufacturer(db.Model):
     manufacturer_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable=False)
 
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
+    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id', deferrable=True), nullable=True)
     country = db.relationship('Country', lazy='joined')
-    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id', deferrable=True), nullable=True)
     added_by = db.relationship('User', foreign_keys=added_by_id, backref='manufacturers_added')
 
     def get_name(self):
@@ -247,9 +248,9 @@ class Site(db.Model):
     name = db.Column(db.String(100), nullable=False)
     street_address = db.Column(db.String(250), nullable=True)
 
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
+    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id', deferrable=True), nullable=True)
     country = db.relationship('Country', lazy='joined')
-    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=False)
+    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id', deferrable=True), nullable=False)
     manufacturer = db.relationship('Manufacturer', backref='sites')
 
     def __unicode__(self):
@@ -274,7 +275,7 @@ class Supplier(db.Model):
     email = db.Column(db.String(100))
     alt_email = db.Column(db.String(100))
     authorized = db.Column(db.Boolean, default=False)
-    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id', deferrable=True), nullable=True)
     added_by = db.relationship('User', foreign_keys=added_by_id, backref='suppliers_added')
 
     @property
@@ -305,15 +306,15 @@ class Product(db.Model):
     average_price = db.Column(db.Float, nullable=True)
     description = db.Column(db.String(64), nullable=True)
     is_generic = db.Column(db.Boolean, default=True)
-    shelf_life = db.Column(db.String, nullable=True)
+    shelf_life = db.Column(db.String(64), nullable=True)
 
-    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id'), nullable=True)
+    medicine_id = db.Column(db.Integer, db.ForeignKey('medicine.medicine_id', deferrable=True), nullable=True)
     medicine = db.relationship('Medicine', backref='products', lazy='joined')
-    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id'), nullable=True)
+    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.manufacturer_id', deferrable=True), nullable=True)
     manufacturer = db.relationship('Manufacturer', lazy='joined')
-    site_id = db.Column(db.Integer, db.ForeignKey('site.site_id'), nullable=True)
+    site_id = db.Column(db.Integer, db.ForeignKey('site.site_id', deferrable=True), nullable=True)
     site = db.relationship('Site')
-    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id', deferrable=True), nullable=True)
     added_by = db.relationship('User', foreign_keys=added_by_id, backref='products_added')
 
     def calculate_average_price(self):
@@ -372,11 +373,11 @@ class Registration(db.Model):
     registration_date = db.Column(db.Date, nullable=True)
     expired = db.Column(db.Boolean, default=False)
 
-    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id', deferrable=True), nullable=True)
     product = db.relationship('Product', backref='registrations')
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
+    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id', deferrable=True), nullable=True)
     country = db.relationship('Country', lazy='joined')
-    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
+    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id', deferrable=True), nullable=True)
     source = db.relationship('Source')
 
     def __unicode__(self):
@@ -396,6 +397,7 @@ class Procurement(db.Model):
     pack_price = db.Column(db.Float) # Price per container. The procurement price should be entered in the currency that the procurement was made in and the currency must be indicated below. Note that a unit will be one unit of the container indicated above (eg. the price of one blister pack with 24 capsules in EUR).
     pack_price_usd = db.Column(db.Float, nullable=False) # per container
     unit_price_usd = db.Column(db.Float) # this is always in USD
+    # unit_price_usd_fob = db.Column(db.Float) # the price used for making comparisons
     quantity = db.Column(db.Integer, nullable=False) # The number of packages contracted at the specified unit price.
     method = db.Column(db.String(100)) # Procurement Method. Open or restricted ICB, domestic tender, shopping, sole source.
     start_date = db.Column(db.Date, nullable=False) # This is the first day that the procurement price is valid for (may be left blank).
@@ -404,21 +406,21 @@ class Procurement(db.Model):
     added_on = db.Column(db.Date, default=datetime.datetime.today)
     approved = db.Column(db.Boolean, default=False)
 
-    currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id'), nullable=False)
+    currency_id = db.Column(db.Integer, db.ForeignKey('currency.currency_id', deferrable=True), nullable=False)
     currency = db.relationship('Currency', backref='procurements')
-    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'), nullable=False)
+    product_id = db.Column(db.Integer, db.ForeignKey('product.product_id', deferrable=True), nullable=False)
     product = db.relationship('Product', backref='procurements', lazy='joined')
-    incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id'), nullable=True)
+    incoterm_id = db.Column(db.Integer, db.ForeignKey('incoterm.incoterm_id', deferrable=True), nullable=True)
     incoterm = db.relationship('Incoterm')
-    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id'), nullable=True)
+    country_id = db.Column(db.Integer, db.ForeignKey('country.country_id', deferrable=True), nullable=True)
     country = db.relationship('Country', lazy='joined')
-    supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=True)
+    supplier_id = db.Column(db.Integer, db.ForeignKey('supplier.supplier_id', deferrable=True), nullable=True)
     supplier = db.relationship('Supplier', backref='procurements')
-    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id'), nullable=True)
+    source_id = db.Column(db.Integer, db.ForeignKey('source.source_id', deferrable=True), nullable=True)
     source = db.relationship('Source')
-    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id', deferrable=True), nullable=True)
     added_by = db.relationship('User', foreign_keys=added_by_id, backref='procurements_added')
-    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
+    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.user_id', deferrable=True), nullable=True)
     approved_by = db.relationship('User', foreign_keys=approved_by_id, backref='procurements_approved')
 
     def __unicode__(self):

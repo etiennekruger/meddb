@@ -51,18 +51,26 @@ If you want to contribute to the code, please fork the repository, make your cha
 
 * Initialise an empty database
 
-    * first comment the following lines in `backend/init.py`
+    * Install PostgreSQL, and run server application. On a Mac:
+
+            brew install postgres
+            postgres -D /usr/local/var/postgres
+
+    * Create a new user named `med_db`, with password `med_db` and a database named `med_db`
+
+            createuser med_db --pwprompt
+            createdb -O med_db med_db
+
+    * now comment the following lines in `backend/init.py`
 
             import admin
             import views
 
-    * now create an empty database
+    * and create an empty database
 
             python
-            >>> from backend import models
-            >>> from backend import db
+            >>> from backend import models, db
             >>> db.create_all()
-            >>> db.session.commit()
 
         and then remember to uncomment those lines from the previous step.
 
@@ -99,8 +107,29 @@ If you need the server to install new dependencies, add the to `requirements.txt
 
     fab production setup
 
+To setup Postgres on a new Ubuntu server:
+
+    # install postgres
+    sudo apt-get install postgresql postgresql-contrib
+    # add a 'postgres' superuser
+    sudo passwd postgres
+    # as the superuser, create a new user and database for this project
+    su - postgres
+    createuser med_db --pwprompt
+    createdb -O med_db med_db
+
 
 ### Maintenance
 
-...
 
+Add cronjob for daily db backup::
+
+    su - postgres
+    crontab -e
+    0 0 * * * pg_dump med_db --no-privileges > /tmp/med_db.sql
+
+
+To restore the database from a backup
+
+    su - postgres
+    psql med_db < /tmp/med_db.sql

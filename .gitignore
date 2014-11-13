@@ -39,3 +39,7 @@ env/
 *med-db.db
 
 *.log
+*.sql
+*.sqlite
+*.sqlite.tmp
+*.postgres
