@@ -80,3 +80,6 @@ alembic upgrade head
 
 
 
+
+pg_dump med_db --no-privileges > /tmp/med_db.sql
+

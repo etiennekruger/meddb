@@ -51,14 +51,30 @@ def downgrade_db():
 
 
 def upload_db_backup():
-    put('/tmp/med_db.sql', '/tmp/med_db.sql')
+    # compress the sql dump
+    local('tar -czf /tmp/med_db.sql.tar.gz /tmp/med_db.sql', capture=False)
+    # upload to the server
+    put('/tmp/med_db.sql.tar.gz', '/tmp/med_db.sql.tar.gz')
+    # and unzip new files
+    with cd("/tmp"):
+        run('tar xzf /tmp/med_db.sql.tar.gz')
+        # now, move it out of the dir that it was zipped with
+        run('mv /tmp/tmp/med_db.sql /tmp/med_db.sql')
+        sudo('rm -R /tmp/tmp')
+    # and delete the zip files
+    sudo('rm /tmp/med_db.sql.tar.gz')
+    local('rm /tmp/med_db.sql.tar.gz')
     return
 
 
 def download_db_backup():
-    tmp = get('/tmp/med_db.sql', '/tmp/med_db.sql')
+    # compress the database dump
+    run('tar -czf /tmp/med_db.sql.tar.gz /tmp/med_db.sql', capture=False)
+    # download the zip
+    tmp = get('/tmp/med_db.sql.tar.gz', '/tmp/med_db.sql.tar.gz')
     if tmp.succeeded:
         print "Success"
+    # now unzip and cleanup manually
     return
 
 
