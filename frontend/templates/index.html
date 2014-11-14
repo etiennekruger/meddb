@@ -25,7 +25,7 @@
 {% block page %}
   <div class="row">
     <div class="col-md-8">
-      <h3>{{ _('Recently added procurement entries') }}</h3>
+      <h3>{{ _('Recently added purchases') }}</h3>
       <table class="table table-striped">
         <tbody>
         {% for procurement in recent_updates %}
@@ -54,7 +54,7 @@
 
         <p>
           {{ _(
-          'Currently tracking <strong>%(procurement_count)d Procurements</strong>, representing <strong>%(medicine_count)d distinct Medicines</strong>.',
+          'Currently tracking <strong>%(procurement_count)d Purchases</strong>, representing <strong>%(medicine_count)d distinct Medicines</strong>.',
           procurement_count=overview.count_procurements,
           medicine_count=overview.count_medicines
           ) }}
