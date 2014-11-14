@@ -129,7 +129,22 @@ Add cronjob for daily db backup::
     0 0 * * * pg_dump med_db --no-privileges > /tmp/med_db.sql
 
 
-To restore the database from a backup
+To restore the database from a backup::
 
     su - postgres
     psql med_db < /tmp/med_db.sql
+
+
+Updating the Babel translation files::
+
+    # compile translations, after updating the translation files
+    pybabel compile -d frontend/translations
+
+    # recompile the master translation template, e.g. after changes to the english copy
+    cd frontend
+    pybabel extract -F ../babel.cfg -o messages.pot .
+
+    # update translation templates from the master file (keeping existing compiled translations in mind)
+    pybabel update -i frontend/messages.pot -d frontend/translations
+
+
