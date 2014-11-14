@@ -142,9 +142,10 @@ Updating the Babel translation files::
 
     # recompile the master translation template, e.g. after changes to the english copy
     cd frontend
-    pybabel extract -F ../babel.cfg -o messages.pot .
+    pybabel extract -F babel.cfg -o messages.pot .
 
     # update translation templates from the master file (keeping existing compiled translations in mind)
+    cd ..
     pybabel update -i frontend/messages.pot -d frontend/translations
 
 
