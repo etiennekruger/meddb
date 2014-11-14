@@ -27,7 +27,7 @@ msgstr "China"
 
 #: extra_translations.py:6 forms.py:23
 msgid "Mauritius"
-msgstr "Mauritius"
+msgstr "Maurício"
 
 #: extra_translations.py:7 forms.py:27
 msgid "South Africa"
@@ -183,15 +183,15 @@ msgstr "loção"
 
 #: extra_translations.py:49
 msgid "nasal spray"
-msgstr "spray nasal"
+msgstr "aerossol nasal"
 
 #: extra_translations.py:50
 msgid "disc"
-msgstr "XXX"
+msgstr "disco"
 
 #: extra_translations.py:51
 msgid "topical spray"
-msgstr "spray tópico"
+msgstr "aerossol"
 
 #: extra_translations.py:52
 msgid "ophthalmic strips"
@@ -207,11 +207,11 @@ msgstr "ampola"
 
 #: extra_translations.py:59
 msgid "bottle"
-msgstr "frasco"
+msgstr "garrafa"
 
 #: extra_translations.py:61
 msgid "tube"
-msgstr "XXX"
+msgstr "tubo"
 
 #: extra_translations.py:62
 msgid "blister/strip"
@@ -363,7 +363,7 @@ msgstr "Erro ao conectar ao serviço de back-end."
 
 #: views.py:220
 msgid "There was a problem with your input."
-msgstr "Ocorreu um problema com a sua entrada."
+msgstr "Ocorreu um problema com a sua entrada de dados."
 
 #: views.py:308
 msgid "You have been logged out successfully."
@@ -371,7 +371,7 @@ msgstr "Terminou a sessão com sucesso."
 
 #: views.py:327
 msgid "Thank you. You have been registered successfully."
-msgstr "Obrigada. O registro foi concluído com successo."
+msgstr "Obrigado. O registro foi concluído com successo."
 
 #: views.py:360
 msgid "Your details have been updated successfully."
@@ -395,7 +395,7 @@ msgstr "Relatórios de país"
 
 #: templates/base.html:36 templates/links.html:7
 msgid "Important links"
-msgstr ""
+msgstr "Links importantes"
 
 #: templates/base.html:38
 msgid "Admin"
@@ -432,7 +432,7 @@ msgid ""
 "Diagnostics - <strong>SARPAM</strong>"
 msgstr ""
 "Este site, incluindo todos os seus recursos e conteúdo, é "
-"disponibilizadopelo Programa Regional da África Austral de Acesso a "
+"disponibilizado pelo Programa Regional da África Austral de Acesso a "
 "Medicamentos e Diagnósticos - <strong>SARPAM</strong>"
 
 #: templates/base.html:130 templates/base.html:137
@@ -445,9 +445,7 @@ msgstr "Atualizar os seus dados de login"
 
 #: templates/change_login.html:16 templates/login.html:16
 msgid "Please sign in below to access the SADC Medicine Prices Database."
-msgstr ""
-"Por favor, faça o login abaixo para acessar a base de dados sobre "
-"medicamentos da SADC."
+msgstr "Por favor, faça o login abaixo para acessar a base de dados sobre medicamentos de SADC."
 
 #: templates/change_login.html:26
 msgid "Save"
@@ -459,11 +457,11 @@ msgstr "Potencial de economia para o país"
 
 #: templates/country_ranking.html:14
 msgid "These calculations are based on recent procurements (past twelve months)."
-msgstr "Estes cálculos são baseados em aquisições recentes (últimos doze meses)."
+msgstr "Estes cálculos são baseados em compras recentes (últimos doze meses)."
 
 #: templates/country_ranking.html:21 templates/country_report.html:32
 msgid "Overall spend from recent procurements"
-msgstr "Valor total de aquisições recentes"
+msgstr "Valor total de compras recentes"
 
 #: templates/country_ranking.html:22 templates/country_report.html:33
 msgid "Savings potential (total)"
@@ -488,11 +486,11 @@ msgstr "Resumo"
 
 #: templates/country_report.html:17 templates/medicine.html:22
 msgid "Procurements"
-msgstr "Aquisições"
+msgstr "Compras"
 
 #: templates/country_report.html:25
 msgid "These numbers are based on recent procurements (past twelve months)."
-msgstr "Estes números são baseados em aquisições recentes (últimos doze meses)."
+msgstr "Estes números são baseados em compras recentes (últimos doze meses)."
 
 #: templates/country_report.html:31
 msgid "Medicine"
@@ -500,20 +498,20 @@ msgstr "Medicamento"
 
 #: templates/country_report.html:51
 msgid "There are no recent procurements for this country."
-msgstr "Não há aquisições recentes para este país."
+msgstr "Não há compras recentes para este país."
 
 #: templates/country_report.html:60 templates/medicine.html:34
 msgid "No recent procurements recorded"
-msgstr "Aquisições recentes não foram registradas"
+msgstr "Compras recentes não foram registradas"
 
 #: templates/country_report.html:66
 msgid "Download .xlsx"
-msgstr "Download .xlsx"
+msgstr "Download.xlsx"
 
 #: templates/country_report.html:69
 #, python-format
 msgid "All %(num_records)d known procurements:"
-msgstr "Todas as %(num_records)d aquisições conhecidas:"
+msgstr "Todas as %(num_records)d compras conhecidas:"
 
 #: templates/country_report.html:78 templates/medicine.html:39
 #: templates/medicine.html:173 templates/procurement.html:35
@@ -579,7 +577,7 @@ msgstr "Procurar"
 
 #: templates/index.html:28
 msgid "Recently added procurement entries"
-msgstr "Registros de adquisições recentemente adicionadas"
+msgstr "Registros de compras recentemente adicionadas"
 
 #: templates/index.html:43
 msgid "Unknown product"
@@ -595,8 +593,8 @@ msgid ""
 "Currently tracking <strong>%(procurement_count)d Procurements</strong>, "
 "representing <strong>%(medicine_count)d distinct Medicines</strong>."
 msgstr ""
-"Atualmente seguindo <strong>%(procurement_count)d "
-"aquisiçoes</strong>,representando <strong>%(medicine_count)d medicamentos"
+"Atualmente seguimos <strong>%(procurement_count)d "
+"compras</strong>, representando <strong>%(medicine_count)d medicamentos"
 " distintos</strong>."
 
 #: templates/index.html:63
@@ -609,11 +607,11 @@ msgstr "Login de usuário"
 
 #: templates/login.html:20 templates/register.html:20
 msgid "Enter your email address"
-msgstr ""
+msgstr "Digite o seu endereço email"
 
 #: templates/login.html:22 templates/register.html:22
 msgid "Enter your password"
-msgstr "Alterar senha"
+msgstr "Alterar a sua senha"
 
 #: templates/login.html:26
 msgid "Sign in"
@@ -621,7 +619,7 @@ msgstr "Iniciar sessão"
 
 #: templates/macros.html:21
 msgid "to"
-msgstr "XXX"
+msgstr "a"
 
 #: templates/medicine.html:23
 msgid "Registrations"
@@ -629,11 +627,11 @@ msgstr "Registros"
 
 #: templates/medicine.html:24
 msgid "Cost Calculator"
-msgstr "Calculadora de custos"
+msgstr "Calculador de custos"
 
 #: templates/medicine.html:36
 msgid "Recent procurements by Member States."
-msgstr "Aquisições recentes por Estados Membros"
+msgstr "Compras recentes por Estados Membros"
 
 #: templates/medicine.html:44 templates/procurement.html:119
 msgid "Price per"
@@ -645,13 +643,11 @@ msgstr "referência"
 
 #: templates/medicine.html:136
 msgid "We don't currently have any registration information for this medicine."
-msgstr ""
-"Atualmente não temos qualquer informação de registro para este "
-"medicamento."
+msgstr """Atualmente não temos nenhuma informação de registro para este medicamento."
 
 #: templates/medicine.html:145
 msgid "Find potential savings by entering your own price."
-msgstr "Encontre o potencial de economia, digitando o preço pago por seu país."
+msgstr "Encontrar o potencial de economia para o seu país, digitando o preço pago."
 
 #: templates/medicine.html:149 templates/medicine.html:150
 msgid "Number of packs"
@@ -680,7 +676,7 @@ msgstr "Calcular"
 
 #: templates/medicine.html:168
 msgid "No recent purchases recorded"
-msgstr "Nenhuma aquisição recente registrada"
+msgstr "Nenhuma compra recente registrada"
 
 #: templates/medicine.html:179
 #, python-format

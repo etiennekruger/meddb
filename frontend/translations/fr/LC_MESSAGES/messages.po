@@ -19,411 +19,411 @@ msgstr ""
 
 #: extra_translations.py:4
 msgid "India"
-msgstr ""
+msgstr "Inde"
 
 #: extra_translations.py:5
 msgid "China"
-msgstr ""
+msgstr "Chine"
 
 #: extra_translations.py:6 forms.py:23
 msgid "Mauritius"
-msgstr ""
+msgstr "Maurice"
 
 #: extra_translations.py:7 forms.py:27
 msgid "South Africa"
-msgstr ""
+msgstr "Afrique du Sud"
 
 #: extra_translations.py:8
 msgid "Cyprus"
-msgstr ""
+msgstr "Chypre"
 
 #: extra_translations.py:9
 msgid "United States"
-msgstr ""
+msgstr "États-Unis"
 
 #: extra_translations.py:10
 msgid "Canada"
-msgstr ""
+msgstr "Canada"
 
 #: extra_translations.py:11
 msgid "Italy"
-msgstr ""
+msgstr "Italie"
 
 #: extra_translations.py:12
 msgid "Portugal"
-msgstr ""
+msgstr "Portugal"
 
 #: extra_translations.py:13
 msgid "Cuba"
-msgstr ""
+msgstr "Cuba"
 
 #: extra_translations.py:14 forms.py:19
 msgid "DRC"
-msgstr ""
+msgstr "RDC"
 
 #: extra_translations.py:15 forms.py:28
 msgid "Swaziland"
-msgstr ""
+msgstr "Swaziland"
 
 #: extra_translations.py:16 forms.py:31
 msgid "Zimbabwe"
-msgstr ""
+msgstr "Zimbabwe"
 
 #: extra_translations.py:17 forms.py:22
 msgid "Malawi"
-msgstr ""
+msgstr "Malawi"
 
 #: extra_translations.py:18
 msgid "Netherlands"
-msgstr ""
+msgstr "Pays-Bas"
 
 #: extra_translations.py:19
 msgid "Spain"
-msgstr ""
+msgstr "Espagne"
 
 #: extra_translations.py:20
 msgid "Mexico"
-msgstr ""
+msgstr "Mexique"
 
 #: extra_translations.py:21
 msgid "Switzerland"
-msgstr ""
+msgstr "Suisse"
 
 #: extra_translations.py:22
 msgid "France"
-msgstr ""
+msgstr "France"
 
 #: extra_translations.py:23
 msgid "United Kingdom"
-msgstr ""
+msgstr "Royaume-Uni"
 
 #: extra_translations.py:24
 msgid "Saudi Arabia"
-msgstr ""
+msgstr "Arabie Saoudite"
 
 #: extra_translations.py:25
 msgid "Kenya"
-msgstr ""
+msgstr "Kenya"
 
 #: extra_translations.py:26
 msgid "Greece"
-msgstr ""
+msgstr "Grèce"
 
 #: extra_translations.py:27
 msgid "Germany"
-msgstr ""
+msgstr "Allemagne"
 
 #: extra_translations.py:28 forms.py:29
 msgid "Tanzania"
-msgstr ""
+msgstr "Tanzanie"
 
 #: extra_translations.py:29
 msgid "Malaysia"
-msgstr ""
+msgstr "Malaisie"
 
 #: extra_translations.py:34
 msgid "powder"
-msgstr ""
+msgstr "poudre"
 
 #: extra_translations.py:35 extra_translations.py:60
 msgid "inhaler"
-msgstr ""
+msgstr "inhalateur"
 
 #: extra_translations.py:36
 msgid "eye ointment"
-msgstr ""
+msgstr "pommade oculaire"
 
 #: extra_translations.py:37
 msgid "injection"
-msgstr ""
+msgstr "injection"
 
 #: extra_translations.py:38
 msgid "pessary"
-msgstr ""
+msgstr "pesssaire"
 
 #: extra_translations.py:39
 msgid "suspension/syrup"
-msgstr ""
+msgstr "suspension/sirop"
 
 #: extra_translations.py:40
 msgid "ointment"
-msgstr ""
+msgstr "pommade"
 
 #: extra_translations.py:41
 msgid "eye drops"
-msgstr ""
+msgstr "collyre"
 
 #: extra_translations.py:42
 msgid "capsule/tablet"
-msgstr ""
+msgstr "capsule/comprimé"
 
 #: extra_translations.py:43
 msgid "cream"
-msgstr ""
+msgstr "crème"
 
 #: extra_translations.py:44
 msgid "ear drops"
-msgstr ""
+msgstr "gouttes pour les oreilles"
 
 #: extra_translations.py:45
 msgid "suppository"
-msgstr ""
+msgstr "suppositoire"
 
 #: extra_translations.py:46
 msgid "liquid"
-msgstr ""
+msgstr "liquide"
 
 #: extra_translations.py:47
 msgid "gel"
-msgstr ""
+msgstr "gel"
 
 #: extra_translations.py:48
 msgid "lotion"
-msgstr ""
+msgstr "lotion"
 
 #: extra_translations.py:49
 msgid "nasal spray"
-msgstr ""
+msgstr "pulvérisation nasale"
 
 #: extra_translations.py:50
 msgid "disc"
-msgstr ""
+msgstr "plaque"
 
 #: extra_translations.py:51
 msgid "topical spray"
-msgstr ""
+msgstr "pulvérisation topique"
 
 #: extra_translations.py:52
 msgid "ophthalmic strips"
-msgstr ""
+msgstr "bâtonnet ophtalmique"
 
 #: extra_translations.py:57
 msgid "container"
-msgstr ""
+msgstr "récipient"
 
 #: extra_translations.py:58
 msgid "vial"
-msgstr ""
+msgstr "flacon"
 
 #: extra_translations.py:59
 msgid "bottle"
-msgstr ""
+msgstr "flacon"
 
 #: extra_translations.py:61
 msgid "tube"
-msgstr ""
+msgstr "tube"
 
 #: extra_translations.py:62
 msgid "blister/strip"
-msgstr ""
+msgstr "blister"
 
 #: extra_translations.py:63
 msgid "ampoule"
-msgstr ""
+msgstr "ampoule"
 
 #: extra_translations.py:64
 msgid "syringe"
-msgstr ""
+msgstr "seringue"
 
 #: extra_translations.py:65
 msgid "bag"
-msgstr ""
+msgstr "poche"
 
 #: extra_translations.py:66
 msgid "cartridge"
-msgstr ""
+msgstr "cartouche"
 
 #: extra_translations.py:67
 msgid "sachet"
-msgstr ""
+msgstr "sachet"
 
 #: extra_translations.py:68
 msgid "pack"
-msgstr ""
+msgstr "conditionnement"
 
 #: extra_translations.py:73
 msgid "Delivered at Frontier"
-msgstr ""
+msgstr "Rendu a la Frontière"
 
 #: extra_translations.py:74
 msgid "Delivered Ex Ship"
-msgstr ""
+msgstr "Rendu sur le Navire"
 
 #: extra_translations.py:75
 msgid "Cost, Insurance and Freight"
-msgstr ""
+msgstr "Coût, Assurance et Fret"
 
 #: extra_translations.py:76
 msgid "Free Carrier"
-msgstr ""
+msgstr "Franco Transporteur"
 
 #: extra_translations.py:77
 msgid "Free Alongside Ship"
-msgstr ""
+msgstr "Franco le long du Navire"
 
 #: extra_translations.py:78
 msgid "Delivered Duty Paid"
-msgstr ""
+msgstr "Rendu Droits Acquittés"
 
 #: extra_translations.py:79
 msgid "Delivered Duty Unpaid"
-msgstr ""
+msgstr "Rendu Droits Dus"
 
 #: extra_translations.py:80
 msgid "Delivered at Terminal"
-msgstr ""
+msgstr "Rendu au Terminal"
 
 #: extra_translations.py:81
 msgid "Ex Works"
-msgstr ""
+msgstr "A l'Usine"
 
 #: extra_translations.py:82
 msgid "Carriage and Insurance Paid to"
-msgstr ""
+msgstr "Port payé, Assurance comprise"
 
 #: extra_translations.py:83
 msgid "Delivered at Place"
-msgstr ""
+msgstr "Rendu au Lieu"
 
 #: extra_translations.py:84
 msgid "Free on Board"
-msgstr ""
+msgstr "Franco à Bord"
 
 #: extra_translations.py:85
 msgid "Delivered Ex Quay"
-msgstr ""
+msgstr "Rendu A Quai"
 
 #: extra_translations.py:86
 msgid "Carriage Paid To"
-msgstr ""
+msgstr "Port payé jusqu'à"
 
 #: extra_translations.py:87
 msgid "Cost and Freight"
-msgstr ""
+msgstr "Coût et Fret"
 
 #: forms.py:17
 msgid "Angola"
-msgstr ""
+msgstr "Angola"
 
 #: forms.py:18
 msgid "Botswana"
-msgstr ""
+msgstr "Botswana"
 
 #: forms.py:20
 msgid "Lesotho"
-msgstr ""
+msgstr "Lesotho"
 
 #: forms.py:21
 msgid "Madagascar"
-msgstr ""
+msgstr "Madagascar"
 
 #: forms.py:24
 msgid "Mozambique"
-msgstr ""
+msgstr "Mozambique"
 
 #: forms.py:25
 msgid "Namibia"
-msgstr ""
+msgstr "Namibie"
 
 #: forms.py:26
 msgid "Seychelles"
-msgstr ""
+msgstr "Seychelles"
 
 #: forms.py:30
 msgid "Zambia"
-msgstr ""
+msgstr "Zambie"
 
 #: forms.py:37
 msgid "Email Address"
-msgstr ""
+msgstr "adresse e-mail"
 
 #: forms.py:39
 msgid "Please enter a valid email address."
-msgstr ""
+msgstr "Veuillez saisir une adresse e-mail valide."
 
 #: forms.py:41
 msgid "Password"
-msgstr ""
+msgstr "mot de passe"
 
 #: forms.py:42
 msgid "Your password needs to be at least 6 characters long."
-msgstr ""
+msgstr "Votre mot de passe doit comporter au moins 6 caractères."
 
 #: forms.py:44 templates/country_ranking.html:20 templates/procurement.html:271
 msgid "Country"
-msgstr ""
+msgstr "Pays"
 
 #: views.py:130 views.py:137 views.py:291 views.py:321 views.py:354
 msgid "An unspecified error has occurred."
-msgstr ""
+msgstr "Une erreur non spécifiée s'est produite."
 
 #: views.py:144 views.py:296 views.py:330 views.py:363
 msgid "Error connecting to backend service."
-msgstr ""
+msgstr "Erreur de connexion au service de backend."
 
 #: views.py:220
 msgid "There was a problem with your input."
-msgstr ""
+msgstr "Il y avait un problème avec votre entrée de données. / Un problème avec votre entrée de données est survenu."
 
 #: views.py:308
 msgid "You have been logged out successfully."
-msgstr ""
+msgstr "Vous avez été déconnecté avec succès. / Deconnexion réussie."
 
 #: views.py:327
 msgid "Thank you. You have been registered successfully."
-msgstr ""
+msgstr "Merci. Vous avez été enregistré avec succès. / Enregistrement réussi. Inscription réussie."
 
 #: views.py:360
 msgid "Your details have been updated successfully."
-msgstr ""
+msgstr "Vos coordonnées ont été mis à jour."
 
 #: templates/base.html:6 templates/base.html:29
 msgid "Medicines Database"
-msgstr ""
+msgstr "Base de données de médicaments"
 
 #: templates/base.html:33
 msgid "Home"
-msgstr ""
+msgstr "Accueil"
 
 #: templates/base.html:34
 msgid "Medicines"
-msgstr ""
+msgstr "Médicaments"
 
 #: templates/base.html:35
 msgid "Country Reports"
-msgstr ""
+msgstr "Rapports de pays"
 
 #: templates/base.html:36 templates/links.html:7
 msgid "Important links"
-msgstr ""
+msgstr "Liens importants"
 
 #: templates/base.html:38
 msgid "Admin"
-msgstr ""
+msgstr "Admin"
 
 #: templates/base.html:50
 msgid "Guest user"
-msgstr ""
+msgstr "Utilisateur invité"
 
 #: templates/base.html:60
 msgid "Log out"
-msgstr ""
+msgstr "Déconnexion"
 
 #: templates/base.html:61
 msgid "Change password"
-msgstr ""
+msgstr "Modifier mot de passe"
 
 #: templates/base.html:63 templates/register.html:28
 msgid "Register"
-msgstr ""
+msgstr "Enregistrement / Enregistrer / inscription / Inscrire ??"
 
 #: templates/base.html:64
 msgid "Login"
-msgstr ""
+msgstr "Connexion"
 
 #: templates/base.html:97
 msgid "Error"
-msgstr ""
+msgstr "Erreur"
 
 #: templates/base.html:120
 msgid ""
@@ -431,123 +431,125 @@ msgid ""
 " through Southern African Regional Programme on Access to Medicines and "
 "Diagnostics - <strong>SARPAM</strong>"
 msgstr ""
+"Ce site web, y compris toutes ses fonctions et le contenu, est rendu disponible"
+"à travers le Programme régional pour l'Afrique du Sud sur l'accès aux médicaments et produits diagnostiques - <strong>SARPAM</strong>"
 
 #: templates/base.html:130 templates/base.html:137
 msgid "Close"
-msgstr ""
+msgstr "Sortir du programme / fermer"
 
 #: templates/change_login.html:7
 msgid "Update your login details"
-msgstr ""
+msgstr "Mettre à jour vos détails de connexion"
 
 #: templates/change_login.html:16 templates/login.html:16
 msgid "Please sign in below to access the SADC Medicine Prices Database."
-msgstr ""
+msgstr "Veuillez s’identifier pour accéder à la Base de données de médicaments de SADC."
 
 #: templates/change_login.html:26
 msgid "Save"
-msgstr ""
+msgstr "Sauvegarder"
 
 #: templates/country_ranking.html:6
 msgid "Country savings potential"
-msgstr ""
+msgstr "Potentiel d'économies de pays"
 
 #: templates/country_ranking.html:14
 msgid "These calculations are based on recent procurements (past twelve months)."
-msgstr ""
+msgstr "Ces calculs sont basés sur des achats récents (douze derniers mois)."
 
 #: templates/country_ranking.html:21 templates/country_report.html:32
 msgid "Overall spend from recent procurements"
-msgstr ""
+msgstr "Dépenses globales des achats récents"
 
 #: templates/country_ranking.html:22 templates/country_report.html:33
 msgid "Savings potential (total)"
-msgstr ""
+msgstr "Potentiel d’économies (total)"
 
 #: templates/country_ranking.html:23 templates/country_report.html:34
 #, python-format
 msgid "Savings potential %%"
-msgstr ""
+msgstr "Potentiel d’économies %%"
 
 #: templates/country_ranking.html:35
 msgid "No data available"
-msgstr ""
+msgstr "Aucune donnée disponible / Pas de données disponibles"
 
 #: templates/country_report.html:6
 msgid "Country report"
-msgstr ""
+msgstr "Rapport de pays"
 
 #: templates/country_report.html:16
 msgid "Overview"
-msgstr ""
+msgstr "Vue d’ensemble"
 
 #: templates/country_report.html:17 templates/medicine.html:22
 msgid "Procurements"
-msgstr ""
+msgstr "Achats"
 
 #: templates/country_report.html:25
 msgid "These numbers are based on recent procurements (past twelve months)."
-msgstr ""
+msgstr "Ces chiffres sont basés sur des achats récents (douze derniers mois)."
 
 #: templates/country_report.html:31
 msgid "Medicine"
-msgstr ""
+msgstr "Médicament"
 
 #: templates/country_report.html:51
 msgid "There are no recent procurements for this country."
-msgstr ""
+msgstr "Il n'y a pas des achats récents pour ce pays / Aucun achat récent pour ce pays."
 
 #: templates/country_report.html:60 templates/medicine.html:34
 msgid "No recent procurements recorded"
-msgstr ""
+msgstr "Aucun achat récent enregistré"
 
 #: templates/country_report.html:66
 msgid "Download .xlsx"
-msgstr ""
+msgstr "Télécharger.xlsx"
 
 #: templates/country_report.html:69
 #, python-format
 msgid "All %(num_records)d known procurements:"
-msgstr ""
+msgstr "Tous les %(num_records)d achats connus:"
 
 #: templates/country_report.html:78 templates/medicine.html:39
 #: templates/medicine.html:173 templates/procurement.html:35
 msgid "Procurement country"
-msgstr ""
+msgstr "Pays d’approvisionnement / Pays qui a réalise l’approvisionnement"
 
 #: templates/country_report.html:79 templates/medicine.html:40
 #: templates/medicine.html:174 templates/medicine_list.html:21
 #: templates/procurement.html:41
 msgid "Generic Name & Strength"
-msgstr ""
+msgstr "Nom générique & dosage"
 
 #: templates/country_report.html:80 templates/medicine.html:41
 #: templates/medicine.html:175 templates/procurement.html:63
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: templates/country_report.html:81 templates/medicine.html:42
 #: templates/medicine.html:176 templates/procurement.html:69
 msgid "Terms"
-msgstr ""
+msgstr "Conditions"
 
 #: templates/country_report.html:82 templates/medicine.html:43
 #: templates/medicine.html:177
 msgid "Volume"
-msgstr ""
+msgstr "Volume"
 
 #: templates/country_report.html:83
 msgid "Pack Price"
-msgstr ""
+msgstr "Prix de conditionnement"
 
 #: templates/country_report.html:84
 msgid "Price per unit"
-msgstr ""
+msgstr "Prix unitaire"
 
 #: templates/country_report.html:100 templates/medicine.html:79
 #: templates/medicine.html:120 templates/medicine.html:197
 msgid "no description available"
-msgstr ""
+msgstr "Aucune description disponible / Pas de description disponible"
 
 #: templates/country_report.html:118 templates/medicine.html:96
 #: templates/medicine.html:108 templates/medicine.html:213
@@ -558,31 +560,31 @@ msgstr ""
 #: templates/procurement.html:226 templates/procurement.html:236
 #: templates/procurement.html:282 templates/procurement.html:292
 msgid "Unknown"
-msgstr ""
+msgstr "Inconnu"
 
 #: templates/country_report.html:130
 msgid "Unknown quantity"
-msgstr ""
+msgstr "Quantité inconnue"
 
 #: templates/index.html:9
 msgid "Search for a medicine"
-msgstr ""
+msgstr "Rechercher un médicament"
 
 #: templates/index.html:14
 msgid "Search"
-msgstr ""
+msgstr "Rechercher"
 
 #: templates/index.html:28
 msgid "Recently added procurement entries"
-msgstr ""
+msgstr "Entrées de données des achats récemment ajoutés"
 
 #: templates/index.html:43
 msgid "Unknown product"
-msgstr ""
+msgstr "Produit inconnu"
 
 #: templates/index.html:52
 msgid "Database overview"
-msgstr ""
+msgstr "Vue d’ensemble de la base de données"
 
 #: templates/index.html:56
 #, python-format
@@ -590,223 +592,224 @@ msgid ""
 "Currently tracking <strong>%(procurement_count)d Procurements</strong>, "
 "representing <strong>%(medicine_count)d distinct Medicines</strong>."
 msgstr ""
+"Actuellement nous suivons <strong>%(procurement_count)d achats </strong>, "
+"représentant <strong>%(medicine_count)d médicaments distincts</strong>."
 
 #: templates/index.html:63
 msgid "Top information contributors"
-msgstr ""
+msgstr "Principaux contributeurs de l'information"
 
 #: templates/login.html:7
 msgid "User login"
-msgstr ""
+msgstr "Connexion utilisateur"
 
 #: templates/login.html:20 templates/register.html:20
 msgid "Enter your email address"
-msgstr ""
+msgstr "Veuillez entrer  - or saissir?? votre adresse email / Entrez / Saissez"
 
 #: templates/login.html:22 templates/register.html:22
 msgid "Enter your password"
-msgstr ""
+msgstr "Veuillez entrer  - or saissir?? votre mot de pass / Entrez / Saissez"
 
 #: templates/login.html:26
 msgid "Sign in"
-msgstr ""
+msgstr "Connexion / Connecter"
 
 #: templates/macros.html:21
 msgid "to"
-msgstr ""
+msgstr "à"
 
 #: templates/medicine.html:23
 msgid "Registrations"
-msgstr ""
+msgstr "Enregistrement / Inscriptions"
 
 #: templates/medicine.html:24
 msgid "Cost Calculator"
-msgstr ""
+msgstr "Calcul de frais"
 
 #: templates/medicine.html:36
 msgid "Recent procurements by Member States."
-msgstr ""
+msgstr "Achats récents par Etats Membres"
 
 #: templates/medicine.html:44 templates/procurement.html:119
 msgid "Price per"
-msgstr ""
+msgstr "Prix par"
 
 #: templates/medicine.html:54
 msgid "benchmark"
-msgstr ""
+msgstr "référence"
 
 #: templates/medicine.html:136
 msgid "We don't currently have any registration information for this medicine."
-msgstr ""
+msgstr "Actuellement, aucune information d’enregistrement disponible pour ce médicament. / nous n’avons pas d’information sur l’enregistrement de ce médicament disponible "
 
 #: templates/medicine.html:145
 msgid "Find potential savings by entering your own price."
-msgstr ""
+msgstr "Trouver économies potentielles pour votre pays en entrant le prix payé."
 
 #: templates/medicine.html:149 templates/medicine.html:150
 msgid "Number of packs"
-msgstr ""
+msgstr "Nombre de conditionnements"
 
 #: templates/medicine.html:154
 #, python-format
 msgid "Pack size in %(unit_of_measure)s"
-msgstr ""
+msgstr "Taille de conditionnement en %(unit_of_measure)s"
 
 #: templates/medicine.html:159
 msgid "Units per pack"
-msgstr ""
+msgstr "Unités par emballage"
 
 #: templates/medicine.html:162 templates/procurement.html:113
 msgid "Pack price"
-msgstr ""
+msgstr "Prix par conditionnement"
 
 #: templates/medicine.html:163
 msgid "Pack price (USD)"
-msgstr ""
+msgstr "Prix par emballage (USD)"
 
 #: templates/medicine.html:165
 msgid "Calculate"
-msgstr ""
+msgstr "Calculer"
 
 #: templates/medicine.html:168
 msgid "No recent purchases recorded"
-msgstr ""
+msgstr "Pas d’achat récent enregistré / Aucun achat récent enregistré"
 
 #: templates/medicine.html:179
 #, python-format
 msgid "Price per %(unit_of_measure)s"
-msgstr ""
+msgstr "Prix par %(unit_of_measure)s"
 
 #: templates/medicine.html:184
 msgid "Cost difference"
-msgstr ""
+msgstr "Différence de coût"
 
 #: templates/medicine_list.html:6
 msgid "Medicines currently tracked"
-msgstr ""
+msgstr "Médicaments actuellement suivis"
 
 #: templates/medicine_list.html:15
 msgid "The following medicines are available in the database:"
-msgstr ""
+msgstr "Les médicaments suivants sont disponibles dans la base de données:"
 
 #: templates/medicine_list.html:35
 msgid "There are no medicines to display."
-msgstr ""
+msgstr "Pas de médicaments à afficher. / Aucun médicament à afficher / Il n'y a pas de médicaments à afficher."
 
 #: templates/procurement.html:7
 #, python-format
 msgid "Procurement #%(id)d"
-msgstr ""
+msgstr "Approvisionnement / Achat #%(id)d - REQUESTED CONTEXT"
 
 #: templates/procurement.html:20
 msgid "Transaction details"
-msgstr ""
+msgstr "Détails de la transaction"
 
 #: templates/procurement.html:47
 msgid "Dosage form"
-msgstr ""
+msgstr "Formes galéniques"
 
 #: templates/procurement.html:53
 msgid "Description/Brand"
-msgstr ""
+msgstr "Description/Marque"
 
 #: templates/procurement.html:79
 msgid "Procurement Method"
-msgstr ""
+msgstr "Méthode d'approvisionnement"
 
 #: templates/procurement.html:89
 msgid "Procurement quantity (packs)"
-msgstr ""
+msgstr "Quantité d’achat / approvisionnement? (emballages / conditionnements?)"
 
 #: templates/procurement.html:95
 msgid "Pack size"
-msgstr ""
+msgstr "Taille d’emballage"
 
 #: templates/procurement.html:101
 msgid "Unit of Measure"
-msgstr ""
+msgstr "Unité de mesure"
 
 #: templates/procurement.html:107
 msgid "Container"
-msgstr ""
+msgstr "Récipient"
 
 #: templates/procurement.html:125
 msgid "Transaction currency"
-msgstr ""
+msgstr "Devise de la transaction / Monnaie de transaction"
 
 #: templates/procurement.html:129
 msgid "at"
-msgstr ""
+msgstr "à"
 
 #: templates/procurement.html:129
 msgid "per USD"
-msgstr ""
+msgstr "par USD"
 
 #: templates/procurement.html:134
 msgid "Source"
-msgstr ""
+msgstr "Source"
 
 #: templates/procurement.html:150
 msgid "Supplier"
-msgstr ""
+msgstr "Fournisseur"
 
 #: templates/procurement.html:159 templates/procurement.html:261
 msgid "Edit"
-msgstr ""
+msgstr "Éditer"
 
 #: templates/procurement.html:169 templates/procurement.html:277
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: templates/procurement.html:175
 msgid "Street Address"
-msgstr ""
+msgstr "Adresse"
 
 #: templates/procurement.html:185
 msgid "Contact Person"
-msgstr ""
+msgstr "Personne de contact"
 
 #: templates/procurement.html:195
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: templates/procurement.html:208
 msgid "Telephone"
-msgstr ""
+msgstr "Téléphone"
 
 #: templates/procurement.html:221
 msgid "Fax"
-msgstr ""
+msgstr "Fax"
 
 #: templates/procurement.html:231
 msgid "Website"
-msgstr ""
+msgstr "Site web"
 
 #: templates/procurement.html:243
 msgid "There is no Supplier information for this procurement."
-msgstr ""
+msgstr "Il n'y a pas d'information sur le fournisseur pour cet achat. / Pas d’information disponible sur le fournisseur pour cet achat."
 
 #: templates/procurement.html:252
 msgid "Manufacturer"
-msgstr ""
+msgstr "Fabricant"
 
 #: templates/procurement.html:287
 msgid "Site"
-msgstr ""
+msgstr "Site"
 
 #: templates/procurement.html:299
 msgid "There is no Manufacturer information for this procurement."
-msgstr ""
+msgstr "Il n'y a pas d'information sur le fabricant pour cet achat. / Pas d’information disponible sur le fabricant pour cet achat."
 
 #: templates/register.html:7
 msgid "User registration"
-msgstr ""
+msgstr "Enregistrement de l’utilisateur"
 
 #: templates/register.html:16
 msgid "Please register below to access the SADC Medicine Prices Database."
-msgstr ""
+msgstr "Veuillez s’inscrire ci-dessous pour accéder à la base de données de médicaments de SADC / S’il vous plaît inscrivez-vous ci-dessous pour accéder à a base de données de médicaments de SADC."
 
 #: templates/register.html:24
 msgid "Select your country"
-msgstr ""
-
+msgstr "Veuillez sélectionner votre pays / Sélectionnez votre pays"
