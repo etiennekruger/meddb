@@ -20,22 +20,6 @@ def virtualenv():
             yield
 
 
-def upload_db():
-    put('instance/med-db.db', '/tmp/med-db.db')
-    sudo('mv /tmp/med-db.db %s/instance/med-db.db' % env.project_dir)
-    set_permissions()
-    restart()
-    return
-
-
-def download_db():
-    tmp = get('%s/instance/med-db.db' % env.project_dir, '/tmp/med-db.db')
-    if tmp.succeeded:
-        print "Success"
-        local('mv /tmp/med-db.db instance/med-db.db')
-    return
-
-
 def upgrade_db():
     with virtualenv():
         with cd(env.project_dir):
@@ -72,7 +56,7 @@ def upload_db_backup():
 
 def download_db_backup():
     # compress the database dump
-    run('tar -czf /tmp/med_db.sql.tar.gz /tmp/med_db.sql', capture=False)
+    run('tar -czf /tmp/med_db.sql.tar.gz /tmp/med_db.sql')
     # download the zip
     tmp = get('/tmp/med_db.sql.tar.gz', '/tmp/med_db.sql.tar.gz')
     if tmp.succeeded:
