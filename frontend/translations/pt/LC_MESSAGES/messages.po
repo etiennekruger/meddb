@@ -163,7 +163,7 @@ msgstr "creme"
 
 #: extra_translations.py:44
 msgid "ear drops"
-msgstr "gotas auriculares"
+msgstr "gotas de ouvidos"
 
 #: extra_translations.py:45
 msgid "suppository"
@@ -183,7 +183,7 @@ msgstr "loção"
 
 #: extra_translations.py:49
 msgid "nasal spray"
-msgstr "aerossol nasal"
+msgstr "spray nasal"
 
 #: extra_translations.py:50
 msgid "disc"
@@ -191,7 +191,7 @@ msgstr "disco"
 
 #: extra_translations.py:51
 msgid "topical spray"
-msgstr "aerossol"
+msgstr "spray tópico"
 
 #: extra_translations.py:52
 msgid "ophthalmic strips"
@@ -203,7 +203,7 @@ msgstr "recipiente"
 
 #: extra_translations.py:58
 msgid "vial"
-msgstr "ampola"
+msgstr "frasco pequeno (vial)"
 
 #: extra_translations.py:59
 msgid "bottle"
@@ -426,12 +426,10 @@ msgid "Error"
 msgstr "Erro"
 
 #: templates/base.html:120
-msgid ""
-"This website, including all of its features and content is made available"
+msgid "This website, including all of its features and content is made available"
 " through Southern African Regional Programme on Access to Medicines and "
 "Diagnostics - <strong>SARPAM</strong>"
-msgstr ""
-"Este site, incluindo todos os seus recursos e conteúdo, é disponibilizado"
+msgstr "Este site, incluindo todos os seus recursos e conteúdo, é disponibilizado"
 " pelo Programa Regional da África Austral de Acesso a Medicamentos e "
 "Diagnósticos - <strong>SARPAM</strong>"
 
@@ -445,9 +443,7 @@ msgstr "Atualizar os seus dados de login"
 
 #: templates/change_login.html:16 templates/login.html:16
 msgid "Please sign in below to access the SADC Medicine Prices Database."
-msgstr ""
-"Por favor, faça o login abaixo para acessar a base de dados sobre "
-"medicamentos de SADC."
+msgstr "Por favor, faça o login abaixo para acessar a Base de dados sobre medicamentos de SADC."
 
 #: templates/change_login.html:26
 msgid "Save"
@@ -458,23 +454,21 @@ msgid "Country savings potential"
 msgstr "Potencial de economia para o país"
 
 #: templates/country_ranking.html:14
-#, fuzzy
 msgid "These calculations are based on recent purchases (past twelve months)."
 msgstr "Estes cálculos são baseados em compras recentes (últimos doze meses)."
 
 #: templates/country_ranking.html:21 templates/country_report.html:32
-#, fuzzy
 msgid "Overall spend from recent purchases"
 msgstr "Valor total de compras recentes"
 
 #: templates/country_ranking.html:22 templates/country_report.html:33
 msgid "Savings potential (total)"
-msgstr "Potencial de economia (total)"
+msgstr "Economia potenciais (total)"
 
 #: templates/country_ranking.html:23 templates/country_report.html:34
 #, python-format
 msgid "Savings potential %%"
-msgstr "Potencial de economia %"
+msgstr "Economias potenciais %"
 
 #: templates/country_ranking.html:35
 msgid "No data available"
@@ -490,10 +484,9 @@ msgstr "Resumo"
 
 #: templates/country_report.html:17 templates/medicine.html:22
 msgid "Purchases"
-msgstr ""
+msgstr "Compras"
 
 #: templates/country_report.html:25
-#, fuzzy
 msgid "These numbers are based on recent purchases (past twelve months)."
 msgstr "Estes números são baseados em compras recentes (últimos doze meses)."
 
@@ -502,7 +495,6 @@ msgid "Medicine"
 msgstr "Medicamento"
 
 #: templates/country_report.html:51
-#, fuzzy
 msgid "There are no recent purchases for this country."
 msgstr "Não há compras recentes para este país."
 
@@ -522,7 +514,6 @@ msgstr "Todas as %(num_records)d compras conhecidas:"
 
 #: templates/country_report.html:78 templates/medicine.html:39
 #: templates/medicine.html:173 templates/procurement.html:35
-#, fuzzy
 msgid "Procuring country"
 msgstr "País que realizou a adquisição"
 
@@ -584,7 +575,6 @@ msgid "Search"
 msgstr "Procurar"
 
 #: templates/index.html:28
-#, fuzzy
 msgid "Recently added purchases"
 msgstr "Registros de compras recentemente adicionadas"
 
@@ -597,13 +587,9 @@ msgid "Database overview"
 msgstr "Resumo da base de dados"
 
 #: templates/index.html:56
-#, fuzzy, python-format
-msgid ""
-"Currently tracking <strong>%(procurement_count)d Purchases</strong>, "
+msgid "Currently tracking <strong>%(procurement_count)d Purchases</strong>, "
 "representing <strong>%(medicine_count)d distinct Medicines</strong>."
-msgstr ""
-"Atualmente seguimos <strong>%(procurement_count)d compras</strong>, "
-"representando <strong>%(medicine_count)d medicamentos distintos</strong>."
+msgstr "Atualmente seguimos <strong>%(procurement_count)d compras</strong>, representando <strong>%(medicine_count)d medicamentos distintos</strong>."
 
 #: templates/index.html:63
 msgid "Top information contributors"
@@ -615,11 +601,11 @@ msgstr "Login de usuário"
 
 #: templates/login.html:20 templates/register.html:20
 msgid "Enter your email address"
-msgstr "Digite o seu endereço email"
+msgstr "Digitar o seu endereço email"
 
 #: templates/login.html:22 templates/register.html:22
 msgid "Enter your password"
-msgstr "Alterar a sua senha"
+msgstr "Digitar a sua senha"
 
 #: templates/login.html:26
 msgid "Sign in"
@@ -638,7 +624,6 @@ msgid "Cost Calculator"
 msgstr "Calculador de custos"
 
 #: templates/medicine.html:36
-#, fuzzy
 msgid "Recent purchases by Member States."
 msgstr "Compras recentes por Estados Membros"
 
@@ -652,13 +637,11 @@ msgstr "referência"
 
 #: templates/medicine.html:136
 msgid "We don't currently have any registration information for this medicine."
-msgstr ""
-"\"\"Atualmente não temos nenhuma informação de registro para este "
-"medicamento."
+msgstr "Atualmente não temos nenhuma informação de registro para este medicamento."
 
 #: templates/medicine.html:145
 msgid "Find potential savings by entering your own price."
-msgstr "Encontrar o potencial de economia para o seu país, digitando o preço pago."
+msgstr "Encontrar economias potenciais, digitando o seu preço pago."
 
 #: templates/medicine.html:149 templates/medicine.html:150
 msgid "Number of packs"
@@ -707,9 +690,8 @@ msgid "There are no medicines to display."
 msgstr "Não há medicamentos para mostrar."
 
 #: templates/procurement.html:7
-#, fuzzy, python-format
 msgid "Purchase #%(id)d"
-msgstr "Aquisição #%(id)d"
+msgstr "Compra #%(id)d"
 
 #: templates/procurement.html:20
 msgid "Transaction details"
@@ -728,9 +710,8 @@ msgid "Procurement Method"
 msgstr "Método de aquisição"
 
 #: templates/procurement.html:89
-#, fuzzy
 msgid "Purchase quantity (packs)"
-msgstr "Quantidade de aquisição (embalagens)"
+msgstr "Quantidade comprada (embalagens)"
 
 #: templates/procurement.html:95
 msgid "Pack size"
@@ -750,7 +731,7 @@ msgstr "Moeda de transação"
 
 #: templates/procurement.html:129
 msgid "at"
-msgstr "XXX"
+msgstr "em"
 
 #: templates/procurement.html:129
 msgid "per USD"
@@ -797,9 +778,8 @@ msgid "Website"
 msgstr "Site"
 
 #: templates/procurement.html:243
-#, fuzzy
 msgid "There is no Supplier information for this purchase."
-msgstr "Não há informações em relação ao fornecedor para esta aquisição."
+msgstr "Não há informações em relação ao fornecedor para esta compra."
 
 #: templates/procurement.html:252
 msgid "Manufacturer"
@@ -810,9 +790,8 @@ msgid "Site"
 msgstr "Local"
 
 #: templates/procurement.html:299
-#, fuzzy
 msgid "There is no Manufacturer information for this purchase."
-msgstr "Não há informações em relação ao fabricante para esta aquisição."
+msgstr "Não há informações em relação ao fabricante para esta compra."
 
 #: templates/register.html:7
 msgid "User registration"
@@ -820,12 +799,9 @@ msgstr "Registro do usuário"
 
 #: templates/register.html:16
 msgid "Please register below to access the SADC Medicine Prices Database."
-msgstr ""
-"Por favor, registre abaixo para acessar a preços da base de dados sobre "
-"medicamentos da SADC"
+msgstr "Por favor, registre abaixo para acessar a preços da Base de dados sobre "
+"medicamentos de SADC"
 
 #: templates/register.html:24
 msgid "Select your country"
-msgstr ""
-
-
+msgstr "Escolher o seu país"
