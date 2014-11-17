@@ -285,6 +285,16 @@ mixpanel.init("77599fceb32c5e557715f56adc08babd");</script><!-- end Mixpanel -->
 {% block javascript %}
 {% endblock %}
 
+{%- if session.email %}
+  <script>
+    mixpanel.identify("{{ session.email }}");
+    mixpanel.people.set({
+      "name": "{{ session.email }}",
+      "$last_seen": new Date()
+    });
+  </script>
+{% endif -%}
+
 {% block mixpanel %}
   <script>
     mixpanel.track("other");
