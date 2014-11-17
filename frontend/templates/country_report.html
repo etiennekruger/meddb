@@ -14,7 +14,7 @@
     <!-- Nav tabs -->
     <ul class="nav nav-tabs" role="tablist">
       <li class="active"><a href="#overview" role="tab" data-toggle="tab">{{ _('Overview') }}</a></li>
-      <li><a href="#procurements" role="tab" data-toggle="tab">{{ _('Procurements') }}</a></li>
+      <li><a href="#procurements" role="tab" data-toggle="tab">{{ _('Purchases') }}</a></li>
     </ul>
 
     <!-- Tab panes -->
@@ -22,14 +22,14 @@
       <div class="tab-pane active" id="overview">
         {% if report.medicines %}
           <div class="col-md-12">
-            <p class="lead text-center">{{ _('These numbers are based on recent procurements (past twelve months).') }}</p>
+            <p class="lead text-center">{{ _('These numbers are based on recent purchases (past twelve months).') }}</p>
           </div>
           <div class="col-md-10 col-md-offset-1">
             <table class="table table-bordered table-striped table-hover">
               <thead>
               <th>{{ macros.render_flag(report.country) }}</th>
               <th>{{ _('Medicine') }}</th>
-              <th>{{ _('Overall spend from recent procurements') }}</th>
+              <th>{{ _('Overall spend from recent purchases') }}</th>
               <th>{{ _('Savings potential (total)') }} <i class="fa fa-chevron-down"></i></th>
               <th>{{ _('Savings potential %%') }}</th>
               </thead>
@@ -48,7 +48,7 @@
           </div>
         {% else %}
           <div class="col-md-12">
-            <p class="lead text-center">{{ _('There are no recent procurements for this country.') }}</p>
+            <p class="lead text-center">{{ _('There are no recent purchases for this country.') }}</p>
           </div>
         {% endif %}
       </div>
@@ -57,7 +57,7 @@
         <div class="row">
           <div class="col-lg-12">
             {% if report.procurements | length == 0 %}
-              <p style="padding: 10px;" class="lead text-muted">{{ _('No recent procurements recorded') }}</p>
+              <p style="padding: 10px;" class="lead text-muted">{{ _('No recent purchases recorded') }}</p>
             {% else %}
               <a
                   class="btn btn-primary pull-right"
@@ -67,7 +67,7 @@
               </a>
               <p style="padding: 10px 10px 0px 10px;" class="lead">
                 {{ _(
-                'All %(num_records)d known procurements:',
+                'All %(num_records)d known purchases:',
                 num_records=report.procurements | length
                 ) }}
               </p>
@@ -75,7 +75,7 @@
 
               <table class="table table-bordered table-striped table-hover">
                 <thead>
-                <th>{{ _('Procurement country') }}</th>
+                <th>{{ _('Procuring country') }}</th>
                 <th>{{ _('Generic Name & Strength') }}</th>
                 <th>{{ _('Date') }}</th>
                 <th>{{ _('Terms') }}</th>

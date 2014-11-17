@@ -2,8 +2,8 @@ from __future__ import with_statement
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 from logging.config import fileConfig
-
 import os, sys
+
 sys.path.append(os.getcwd())
 
 # this is the Alembic Config object, which provides
@@ -16,9 +16,8 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-import backend
-target_metadata = backend.db.metadata
-# target_metadata = None
+from backend import models, db
+target_metadata = db.metadata
 
 
 # other values from the config, defined by the needs of env.py,
@@ -52,15 +51,15 @@ def run_migrations_online():
 
     """
     engine = engine_from_config(
-                config.get_section(config.config_ini_section),
-                prefix='sqlalchemy.',
-                poolclass=pool.NullPool)
+        config.get_section(config.config_ini_section),
+        prefix='sqlalchemy.',
+        poolclass=pool.NullPool)
 
     connection = engine.connect()
     context.configure(
-                connection=connection,
-                target_metadata=target_metadata
-                )
+        connection=connection,
+        target_metadata=target_metadata
+    )
 
     try:
         with context.begin_transaction():

@@ -20,19 +20,48 @@ def virtualenv():
             yield
 
 
-def upload_db():
-    put('instance/med-db.db', '/tmp/med-db.db')
-    sudo('mv /tmp/med-db.db %s/instance/med-db.db' % env.project_dir)
-    set_permissions()
-    restart()
+def upgrade_db():
+    with virtualenv():
+        with cd(env.project_dir):
+            sudo('alembic upgrade head')
     return
 
 
-def download_db():
-    tmp = get('%s/instance/med-db.db' % env.project_dir, '/tmp/med-db.db')
+def downgrade_db():
+    with virtualenv():
+        with cd(env.project_dir):
+            sudo('alembic downgrade -1')
+    return
+
+
+def upload_db_backup():
+    # compress the sql dump
+    local('tar -czf /tmp/med_db.sql.tar.gz /tmp/med_db.sql', capture=False)
+    # upload to the server
+    put('/tmp/med_db.sql.tar.gz', '/tmp/med_db.sql.tar.gz')
+    # and unzip new files
+    with cd("/tmp"):
+        # remove existing dump, if neccessary
+        with settings(warn_only=True):
+            sudo('rm /tmp/med_db.sql')
+        run('tar xzf /tmp/med_db.sql.tar.gz')
+        # now, move it out of the dir that it was zipped with
+        run('mv /tmp/tmp/med_db.sql /tmp/med_db.sql')
+        sudo('rm -R /tmp/tmp')
+    # and delete the zip files
+    sudo('rm /tmp/med_db.sql.tar.gz')
+    local('rm /tmp/med_db.sql.tar.gz')
+    return
+
+
+def download_db_backup():
+    # compress the database dump
+    run('tar -czf /tmp/med_db.sql.tar.gz /tmp/med_db.sql')
+    # download the zip
+    tmp = get('/tmp/med_db.sql.tar.gz', '/tmp/med_db.sql.tar.gz')
     if tmp.succeeded:
         print "Success"
-        local('mv /tmp/med-db.db instance/med-db.db')
+    # now unzip and cleanup manually
     return
 
 
@@ -59,6 +88,7 @@ def setup():
     # install packages
     sudo('apt-get install build-essential python-dev sqlite3 libsqlite3-dev')
     sudo('apt-get install python-pip supervisor git')
+    sudo('apt-get install postgresql postgresql-contrib libpq-dev')
     sudo('pip install virtualenv')
 
     # create application directory if it doesn't exist yet
@@ -116,8 +146,12 @@ def configure():
     sudo('mv /tmp/config_private.py ' + env.project_dir + '/instance/config_private.py')
 
     # configure newrelic
-    put(env.config_dir + '/newrelic.ini', '/tmp/newrelic.ini')
-    sudo('mv /tmp/newrelic.ini /var/www/med-db/newrelic.ini')
+    try:
+        put(env.config_dir + '/newrelic.ini', '/tmp/newrelic.ini')
+        sudo('mv /tmp/newrelic.ini /var/www/med-db/newrelic.ini')
+    except ValueError:
+        # not all environment configs will have a newrelic.ini file present
+        pass
 
     restart()
     return
@@ -140,6 +174,9 @@ def deploy():
         # and unzip new files
         sudo('tar xzf /tmp/backend.tar.gz')
         sudo('tar xzf /tmp/frontend.tar.gz')
+        # delete existing debug log, if present
+        with settings(warn_only=True):
+            sudo('rm debug.log')
 
     # now that all is set up, delete the tarballs again
     sudo('rm /tmp/backend.tar.gz')

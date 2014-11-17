@@ -1,6 +1,6 @@
 from flask import g, render_template, flash, redirect, request, url_for, session
 from flask.ext.babel import gettext, ngettext, format_date
-from frontend import app, logger, babel
+from frontend import app, logger, babel, ApiException
 import requests
 from requests import ConnectionError
 import operator
@@ -78,39 +78,6 @@ def sort_list(unsorted_list, key):
     """
 
     return sorted(unsorted_list, key=operator.itemgetter(key))
-
-
-class ApiException(Exception):
-    """
-    Class for handling all of our expected API errors.
-    """
-
-    def __init__(self, status_code, message):
-        Exception.__init__(self)
-        self.message = message
-        self.status_code = status_code
-
-    def to_dict(self):
-        rv = {
-            "code": self.status_code,
-            "message": self.message
-        }
-        return rv
-
-@app.errorhandler(ApiException)
-def handle_api_exception(error):
-    """
-    Error handler, used by flask to pass the error on to the user, rather than catching it and throwing a HTTP 500.
-    """
-
-    logger.debug(error)
-    logger.debug(request.path)
-    logger.debug(urllib.quote_plus(request.path))
-    flash(error.message + " (" + str(error.status_code) + ")", "danger")
-    if error.status_code == 401:
-        session.clear()
-        return redirect(url_for('login') + "?next=" + urllib.quote_plus(request.path))
-    return redirect(url_for('landing'))
 
 
 def load_from_api(resource_name, resource_id=None):

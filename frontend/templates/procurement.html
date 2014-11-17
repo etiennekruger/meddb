@@ -5,7 +5,7 @@
     <h1>
       <a href="/medicine/{{ procurement.product.medicine.medicine_id }}">{{ procurement.product.medicine.name }}</a> >
       {{ _(
-      'Procurement #%(id)d',
+      'Purchase #%(id)d',
       id=procurement.procurement_id
       ) }}
     </h1>
@@ -32,7 +32,7 @@
       <table class="table table-bordered table-striped">
         <tbody>
         <tr>
-          <th>{{ _('Procurement country') }}</th>
+          <th>{{ _('Procuring country') }}</th>
           <td>
             {{ macros.render_flag(procurement.country) }} {{ _(procurement.country.name) }}
           </td>
@@ -86,7 +86,7 @@
           </td>
         </tr>
         <tr>
-          <th>{{ _('Procurement quantity (packs)') }}</th>
+          <th>{{ _('Purchase quantity (packs)') }}</th>
           <td>
             {{ procurement.quantity | add_commas }}
           </td>
@@ -240,7 +240,7 @@
           </tbody>
         </table>
       {% else %}
-        <p class="lead text-muted">{{ _('There is no Supplier information for this procurement.') }}</p>
+        <p class="lead text-muted">{{ _('There is no Supplier information for this purchase.') }}</p>
       {% endif %}
     </div>
   </div>
@@ -296,7 +296,7 @@
           </tbody>
         </table>
       {% else %}
-        <p class="lead text-muted">{{ _('There is no Manufacturer information for this procurement.') }}</p>
+        <p class="lead text-muted">{{ _('There is no Manufacturer information for this purchase.') }}</p>
       {% endif %}
 
     </div>

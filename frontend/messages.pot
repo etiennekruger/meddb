@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-11-12 11:55+0200\n"
+"POT-Creation-Date: 2014-11-14 11:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -353,27 +353,27 @@ msgstr ""
 msgid "Country"
 msgstr ""
 
-#: views.py:130 views.py:137 views.py:291 views.py:321 views.py:354
+#: views.py:97 views.py:104 views.py:258 views.py:288 views.py:321
 msgid "An unspecified error has occurred."
 msgstr ""
 
-#: views.py:144 views.py:296 views.py:330 views.py:363
+#: views.py:111 views.py:263 views.py:297 views.py:330
 msgid "Error connecting to backend service."
 msgstr ""
 
-#: views.py:220
+#: views.py:187
 msgid "There was a problem with your input."
 msgstr ""
 
-#: views.py:308
+#: views.py:275
 msgid "You have been logged out successfully."
 msgstr ""
 
-#: views.py:327
+#: views.py:294
 msgid "Thank you. You have been registered successfully."
 msgstr ""
 
-#: views.py:360
+#: views.py:327
 msgid "Your details have been updated successfully."
 msgstr ""
 
@@ -453,11 +453,11 @@ msgid "Country savings potential"
 msgstr ""
 
 #: templates/country_ranking.html:14
-msgid "These calculations are based on recent procurements (past twelve months)."
+msgid "These calculations are based on recent purchases (past twelve months)."
 msgstr ""
 
 #: templates/country_ranking.html:21 templates/country_report.html:32
-msgid "Overall spend from recent procurements"
+msgid "Overall spend from recent purchases"
 msgstr ""
 
 #: templates/country_ranking.html:22 templates/country_report.html:33
@@ -482,11 +482,11 @@ msgid "Overview"
 msgstr ""
 
 #: templates/country_report.html:17 templates/medicine.html:22
-msgid "Procurements"
+msgid "Purchases"
 msgstr ""
 
 #: templates/country_report.html:25
-msgid "These numbers are based on recent procurements (past twelve months)."
+msgid "These numbers are based on recent purchases (past twelve months)."
 msgstr ""
 
 #: templates/country_report.html:31
@@ -494,11 +494,12 @@ msgid "Medicine"
 msgstr ""
 
 #: templates/country_report.html:51
-msgid "There are no recent procurements for this country."
+msgid "There are no recent purchases for this country."
 msgstr ""
 
 #: templates/country_report.html:60 templates/medicine.html:34
-msgid "No recent procurements recorded"
+#: templates/medicine.html:168
+msgid "No recent purchases recorded"
 msgstr ""
 
 #: templates/country_report.html:66
@@ -507,12 +508,12 @@ msgstr ""
 
 #: templates/country_report.html:69
 #, python-format
-msgid "All %(num_records)d known procurements:"
+msgid "All %(num_records)d known purchases:"
 msgstr ""
 
 #: templates/country_report.html:78 templates/medicine.html:39
 #: templates/medicine.html:173 templates/procurement.html:35
-msgid "Procurement country"
+msgid "Procuring country"
 msgstr ""
 
 #: templates/country_report.html:79 templates/medicine.html:40
@@ -573,7 +574,7 @@ msgid "Search"
 msgstr ""
 
 #: templates/index.html:28
-msgid "Recently added procurement entries"
+msgid "Recently added purchases"
 msgstr ""
 
 #: templates/index.html:43
@@ -587,7 +588,7 @@ msgstr ""
 #: templates/index.html:56
 #, python-format
 msgid ""
-"Currently tracking <strong>%(procurement_count)d Procurements</strong>, "
+"Currently tracking <strong>%(procurement_count)d Purchases</strong>, "
 "representing <strong>%(medicine_count)d distinct Medicines</strong>."
 msgstr ""
 
@@ -624,7 +625,7 @@ msgid "Cost Calculator"
 msgstr ""
 
 #: templates/medicine.html:36
-msgid "Recent procurements by Member States."
+msgid "Recent purchases by Member States."
 msgstr ""
 
 #: templates/medicine.html:44 templates/procurement.html:119
@@ -668,10 +669,6 @@ msgstr ""
 msgid "Calculate"
 msgstr ""
 
-#: templates/medicine.html:168
-msgid "No recent purchases recorded"
-msgstr ""
-
 #: templates/medicine.html:179
 #, python-format
 msgid "Price per %(unit_of_measure)s"
@@ -695,7 +692,7 @@ msgstr ""
 
 #: templates/procurement.html:7
 #, python-format
-msgid "Procurement #%(id)d"
+msgid "Purchase #%(id)d"
 msgstr ""
 
 #: templates/procurement.html:20
@@ -715,7 +712,7 @@ msgid "Procurement Method"
 msgstr ""
 
 #: templates/procurement.html:89
-msgid "Procurement quantity (packs)"
+msgid "Purchase quantity (packs)"
 msgstr ""
 
 #: templates/procurement.html:95
@@ -783,7 +780,7 @@ msgid "Website"
 msgstr ""
 
 #: templates/procurement.html:243
-msgid "There is no Supplier information for this procurement."
+msgid "There is no Supplier information for this purchase."
 msgstr ""
 
 #: templates/procurement.html:252
@@ -795,7 +792,7 @@ msgid "Site"
 msgstr ""
 
 #: templates/procurement.html:299
-msgid "There is no Manufacturer information for this procurement."
+msgid "There is no Manufacturer information for this purchase."
 msgstr ""
 
 #: templates/register.html:7

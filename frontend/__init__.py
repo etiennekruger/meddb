@@ -3,8 +3,9 @@ from newrelic.api.exceptions import ConfigurationError
 import logging
 from logging.handlers import RotatingFileHandler
 import sys, os
-from flask import Flask
+from flask import Flask, session, request, flash, redirect, url_for
 from flask.ext.babel import Babel
+import urllib
 
 NEWRELIC_CONFIG = '/var/www/med-db/newrelic.ini'
 
@@ -43,5 +44,46 @@ stream_handler = logging.StreamHandler(sys.stdout)
 stream_handler.setLevel(LOG_LEVEL)
 stream_handler.setFormatter(file_formatter)
 logger.addHandler(stream_handler)
+
+
+class ApiException(Exception):
+    """
+    Class for handling all of our expected API errors.
+    """
+
+    def __init__(self, status_code, message):
+        Exception.__init__(self)
+        self.message = message
+        self.status_code = status_code
+
+    def to_dict(self):
+        rv = {
+            "code": self.status_code,
+            "message": self.message
+        }
+        return rv
+
+@app.errorhandler(ApiException)
+def handle_api_exception(error):
+    """
+    Error handler, used by flask to pass the error on to the user, rather than catching it and throwing a HTTP 500.
+    """
+
+    logger.debug(error)
+    logger.debug(request.path)
+    logger.debug(urllib.quote_plus(request.path))
+    flash(error.message + " (" + str(error.status_code) + ")", "danger")
+    if error.status_code == 401:
+        session.clear()
+        return redirect(url_for('login') + "?next=" + urllib.quote_plus(request.path))
+    return redirect(url_for('landing'))
+
+@app.errorhandler(Exception)
+def log_exception(e):
+    """
+    Log all uncaught exceptions.
+    """
+    logger.exception(e)
+    raise
 
 import views
