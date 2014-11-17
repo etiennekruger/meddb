@@ -348,14 +348,6 @@ def change_login():
     return send_api_response(json.dumps(out))
 
 
-@app.route('/user/<int:user_id>/', subdomain='med-db-api')
-def get_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        raise ApiException(404, "The specified User record doesn't exist.")
-    return send_api_response(json.dumps(user.to_dict()))
-
-
 @app.route('/overview/', subdomain='med-db-api')
 def overview():
     """
