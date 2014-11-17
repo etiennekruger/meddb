@@ -54,3 +54,9 @@
     });
   </script>
 {% endblock %}
+
+{% block mixpanel %}
+  <script>
+    mixpanel.track("country ranking");
+  </script>
+{% endblock %}

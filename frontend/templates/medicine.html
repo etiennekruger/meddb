@@ -268,3 +268,9 @@
 
 
 {% endblock %}
+
+{% block mixpanel %}
+  <script>
+    mixpanel.track("medicine comparison");
+  </script>
+{% endblock %}
