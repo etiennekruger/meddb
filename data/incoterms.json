@@ -13,5 +13,6 @@
     "DAF": "Delivered at Frontier",
     "DES": "Delivered Ex Ship",
     "DEQ": "Delivered Ex Quay",
-    "DDU": "Delivered Duty Unpaid"
+    "DDU": "Delivered Duty Unpaid",
+    "UKN": "Unknown"
 }
