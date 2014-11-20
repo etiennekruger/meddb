@@ -458,6 +458,7 @@ def recent_updates():
     return serializers.queryset_to_json(procurements)
 
 
+@login_required
 @app.route('/country_report/<string:country_code>/', subdomain='med-db-api')
 def country_report(country_code):
     """
