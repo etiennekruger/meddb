@@ -458,7 +458,6 @@ def recent_updates():
     return serializers.queryset_to_json(procurements)
 
 
-@login_required
 @app.route('/country_report/<string:country_code>/', subdomain='med-db-api')
 def country_report(country_code):
     """
@@ -467,6 +466,8 @@ def country_report(country_code):
     country_code = country_code.upper()
     if not available_countries.get(country_code):
         raise ApiException(400, "Reports are not available for the country that you specified.")
+    if g.user is None or not g.user.is_active():
+        raise ApiException(401, "You need to be logged-in in order to access this resource.")
 
     country = Country.query.filter_by(code=country_code).one()
 
