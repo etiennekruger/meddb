@@ -213,9 +213,9 @@ class MedicineView(MyRestrictedModelView):
         'unit_of_measure',
         ]
     column_sortable_list = [
-        ('name', models.Medicine.name),
-        ('dosage_form', models.DosageForm.name),
-        ('unit_of_measure', models.UnitOfMeasure.value),
+        'name',
+        ('dosage_form', 'dosage_form.name'),
+        ('unit_of_measure', 'unit_of_measure.value'),
         ]
     form_excluded_columns = [
         'benchmarks',
@@ -231,10 +231,13 @@ class BenchmarkView(MyRestrictedModelView):
         'price',
         ]
     column_sortable_list = [
-        ('medicine', models.Medicine.name),
-        ('name', models.BenchmarkPrice.name),
-        ('price', models.BenchmarkPrice.price),
-        ('year', models.BenchmarkPrice.year),
+        ('medicine', 'medicine.name'),
+        'name',
+        'price',
+        'year',
+        ]
+    column_searchable_list = [
+        'name',
         ]
     form_excluded_columns = [
         'unit_of_measure',
@@ -252,10 +255,12 @@ class ManufacturerView(MyModelView):
         'added_by',
         ]
     column_sortable_list = [
-        ('country', models.Country.name),
+        ('country', 'country.name'),
+        'name',
         ]
     column_searchable_list = [
         'name',
+        'country.name',
         ]
     column_formatters = dict(
         country=macro('render_country'),
@@ -277,10 +282,10 @@ class SupplierView(MyModelView):
         'contact',
         ]
     column_sortable_list = [
-        ('name', models.Supplier.name),
-        ('contact', models.Supplier.contact),
-        ('street_address', models.Supplier.street_address),
-        ('website', models.Supplier.website),
+        'name',
+        'contact',
+        'street_address',
+        'website',
         ]
     form_excluded_columns = [
         'added_by',
@@ -308,17 +313,18 @@ class ProductView(MyModelView):
         'site',
         'is_generic',
         ]
-
     column_exclude_list = [
         'added_by',
         'average_price',
         ]
-
     column_sortable_list = [
-        ('medicine', models.Medicine.name),
-        ('manufacturer', models.Manufacturer.name),
+        ('medicine', 'medicine.name'),
+        ('manufacturer', 'manufacturer.name'),
         ]
-
+    column_searchable_list = [
+        'medicine.name',
+        'manufacturer.name',
+        ]
     form_excluded_columns = [
         'added_by',
         'procurements',
