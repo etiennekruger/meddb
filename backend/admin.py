@@ -109,16 +109,16 @@ class ProcurementView(MyModelView):
         approved=macro('render_approve'),
         )
     column_sortable_list = [
-        ('procurement_id', models.Procurement.procurement_id),
-        ('country', models.Country.name),
-        ('medicine', models.Medicine.name),
-        ('pack_size', models.Procurement.pack_size),
-        ('container', models.Procurement.container),
-        ('pack_price_usd', models.Procurement.pack_price_usd),
-        ('quantity', models.Procurement.quantity),
-        ('source', models.Source.name),
-        ('approved', models.Procurement.approved),
-        ('supplier', models.Supplier.name),
+        'procurement_id',
+        ('country', 'country.name'),
+        ('medicine', 'product.medicine.name'),
+        'pack_size',
+        'container',
+        'pack_price_usd',
+        'quantity',
+        ('source', 'source.name'),
+        'approved',
+        ('supplier', 'supplier.name'),
         ]
     column_default_sort = ('procurement_id', True)
     column_labels = dict(procurement_id='id')
