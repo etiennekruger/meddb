@@ -121,6 +121,10 @@ class ProcurementView(MyModelView):
         ('supplier', 'supplier.name'),
         ]
     column_default_sort = ('procurement_id', True)
+    column_searchable_list = (
+        'country.name',
+        'product.medicine.name',
+    )
     column_labels = dict(procurement_id='id')
 
     def populate_procurement_from_form(self, procurement, form):
