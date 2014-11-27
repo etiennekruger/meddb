@@ -65,6 +65,15 @@ def download_db_backup():
     # now unzip and cleanup manually
     return
 
+def s3_setup_backup():
+    print "Ensure that you have edited config/production/s3cfg to your environment"
+    sudo('apt-get -y -qq install s3cmd')
+    put('config/production/s3cfg', '.s3cfg')
+    put('scripts/db-s3-backup.sh', '')
+    run('chmod u+x db-s3-backup.sh', 'db-s3-backup.sh')
+
+def s3_db_backup():
+    sudo('./db-s3-backup.sh')
 
 def restart():
     sudo("supervisorctl restart frontend")
