@@ -82,6 +82,10 @@ def set_permissions():
     return
 
 
+def setup_auto_security_updates():
+    sudo('apt-get -y -qq install unattended-upgrades')
+    sudo('sudo dpkg-reconfigure -plow unattended-upgrades')
+
 def setup():
 
     sudo('apt-get -qq update')
@@ -93,6 +97,8 @@ def setup():
     sudo('pip install -q virtualenv')
     sudo('/etc/init.d/supervisor restart')
     sudo('/etc/init.d/postgresql restart')
+
+    setup_auto_security_updates()
 
     # create application directory if it doesn't exist yet
     with settings(warn_only=True):
