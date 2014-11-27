@@ -65,6 +65,15 @@ def download_db_backup():
     # now unzip and cleanup manually
     return
 
+def s3_setup_backup():
+    print "Ensure that you have edited config/production/s3cfg to your environment"
+    sudo('apt-get -y -qq install s3cmd')
+    put('config/production/s3cfg', '.s3cfg')
+    put('scripts/db-s3-backup.sh', '')
+    run('chmod u+x db-s3-backup.sh', 'db-s3-backup.sh')
+
+def s3_db_backup():
+    sudo('./db-s3-backup.sh')
 
 def restart():
     sudo("supervisorctl restart frontend")
@@ -82,6 +91,10 @@ def set_permissions():
     return
 
 
+def setup_auto_security_updates():
+    sudo('apt-get -y -qq install unattended-upgrades')
+    sudo('sudo dpkg-reconfigure -plow unattended-upgrades')
+
 def setup():
 
     sudo('apt-get -qq update')
@@ -93,6 +106,8 @@ def setup():
     sudo('pip install -q virtualenv')
     sudo('/etc/init.d/supervisor restart')
     sudo('/etc/init.d/postgresql restart')
+
+    setup_auto_security_updates()
 
     # create application directory if it doesn't exist yet
     with settings(warn_only=True):
