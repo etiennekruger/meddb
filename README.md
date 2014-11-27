@@ -61,7 +61,7 @@ If you want to contribute to the code, please fork the repository, make your cha
             createuser med_db --pwprompt
             createdb -O med_db med_db
 
-    * now comment the following lines in `backend/init.py`
+    * now comment the following lines in `backend/__init__.py`
 
             import admin
             import views

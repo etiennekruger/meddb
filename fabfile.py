@@ -3,6 +3,7 @@ import sys
 from fabric.api import *
 from contextlib import contextmanager
 from fabric.contrib.console import confirm
+import os
 # import backend
 import requests
 
@@ -43,14 +44,14 @@ def upload_db_backup():
     with cd("/tmp"):
         # remove existing dump, if neccessary
         with settings(warn_only=True):
-            sudo('rm /tmp/med_db.sql')
+            sudo('rm -f /tmp/med_db.sql')
         run('tar xzf /tmp/med_db.sql.tar.gz')
         # now, move it out of the dir that it was zipped with
         run('mv /tmp/tmp/med_db.sql /tmp/med_db.sql')
         sudo('rm -R /tmp/tmp')
     # and delete the zip files
-    sudo('rm /tmp/med_db.sql.tar.gz')
-    local('rm /tmp/med_db.sql.tar.gz')
+    sudo('rm -f /tmp/med_db.sql.tar.gz')
+    local('rm -f /tmp/med_db.sql.tar.gz')
     return
 
 
@@ -83,19 +84,21 @@ def set_permissions():
 
 def setup():
 
-    sudo('apt-get update')
+    sudo('apt-get -qq update')
 
     # install packages
-    sudo('apt-get install build-essential python-dev sqlite3 libsqlite3-dev')
-    sudo('apt-get install python-pip supervisor git')
-    sudo('apt-get install postgresql postgresql-contrib libpq-dev')
-    sudo('pip install virtualenv')
+    sudo('apt-get -y -qq install build-essential python-dev sqlite3 libsqlite3-dev')
+    sudo('apt-get -y -qq install python-pip supervisor git')
+    sudo('apt-get -y -qq install postgresql postgresql-contrib libpq-dev')
+    sudo('pip install -q virtualenv')
+    sudo('/etc/init.d/supervisor restart')
+    sudo('/etc/init.d/postgresql restart')
 
     # create application directory if it doesn't exist yet
     with settings(warn_only=True):
         if run("test -d %s" % env.project_dir).failed:
             # create project folder
-            sudo("mkdir %s" % env.project_dir)
+            sudo("mkdir -p %s" % env.project_dir)
         if run("test -d %s/env" % env.project_dir).failed:
             # create virtualenv
             sudo('virtualenv --no-site-packages %s/env' % env.project_dir)
@@ -103,16 +106,27 @@ def setup():
     # install the necessary Python packages
     with virtualenv():
         put('requirements.txt', '/tmp/requirements.txt')
-        sudo('pip install -r /tmp/requirements.txt')
+        sudo('pip install -q -r /tmp/requirements.txt')
 
     # install nginx
-    sudo('apt-get install nginx')
+    sudo('apt-get -y -qq install nginx')
     # restart nginx after reboot
     sudo('update-rc.d nginx defaults')
     with settings(warn_only=True):
         sudo('service nginx start')
-    return
 
+    setup_database()
+
+def setup_database():
+    db_exists = sudo('psql -lqt | cut -d \| -f 1 | grep -w med_db | wc -l', user='postgres') == '1'
+    if not db_exists:
+        put('scripts/postgres_encoding_correction.sql', '/tmp/postgres_encoding_correction.sql')
+        sudo('psql < /tmp/postgres_encoding_correction.sql', user='postgres')
+        sudo('createuser med_db --pwprompt', user='postgres')
+        sudo('createdb -O med_db med_db', user='postgres')
+        if os.path.exists('/tmp/med_db.sql'):
+            put('db.dump', '/tmp/med_db.sql')
+            sudo('psql med_db < /tmp/med_db.sql', user='postgres')
 
 def configure():
     """
@@ -121,7 +135,7 @@ def configure():
 
     with settings(warn_only=True):
         # disable default site
-        sudo('rm /etc/nginx/sites-enabled/default')
+        sudo('rm -f /etc/nginx/sites-enabled/default')
 
     # upload nginx server blocks
     put(env.config_dir + '/nginx.conf', '/tmp/nginx.conf')
@@ -129,6 +143,7 @@ def configure():
 
     # link server blocks to Nginx config
     with settings(warn_only=True):
+        sudo('rm -f /etc/nginx/sites-enabled/med-db.medicines.sadc.int')
         sudo('ln -s /etc/nginx/sites-available/med-db.medicines.sadc.int /etc/nginx/sites-enabled/')
 
     # upload supervisor config
@@ -137,9 +152,9 @@ def configure():
     sudo('supervisorctl reread')
     sudo('supervisorctl update')
 
-    # configure Flask
+    # configure Flask and virtualenv
     with settings(warn_only=True):
-        sudo('mkdir %s/instance' % env.project_dir)
+        sudo('mkdir -p %s/instance' % env.project_dir)
     put(env.config_dir + '/config.py', '/tmp/config.py')
     put(env.config_dir + '/config_private.py', '/tmp/config_private.py')
     sudo('mv /tmp/config.py ' + env.project_dir + '/instance/config.py')
@@ -176,7 +191,7 @@ def deploy():
         sudo('tar xzf /tmp/frontend.tar.gz')
         # delete existing debug log, if present
         with settings(warn_only=True):
-            sudo('rm debug.log')
+            sudo('rm -f debug.log')
 
     # now that all is set up, delete the tarballs again
     sudo('rm /tmp/backend.tar.gz')
@@ -203,8 +218,8 @@ def install_redis():
     Install the redis key-value store on port 6379
     http://redis.io/topics/quickstart
     """
-    sudo('apt-get install tcl8.5')
-    sudo('apt-get install wget')
+    sudo('apt-get -y -qq install tcl8.5')
+    sudo('apt-get -y -qq install wget')
     with cd(env.project_dir):
         sudo('wget http://download.redis.io/redis-stable.tar.gz')
         sudo('tar xvzf redis-stable.tar.gz')
@@ -217,8 +232,8 @@ def install_redis():
                 sudo('cp src/redis-cli /usr/local/bin/')
             with settings(warn_only=True):
                 # create dir for config files, data and log
-                sudo('mkdir /etc/redis')
-                sudo('mkdir /var/redis')
+                sudo('mkdir -p /etc/redis')
+                sudo('mkdir -p /var/redis')
                 sudo('touch /var/log/redis_6379.log')
             # init file for handling server restart
             sudo('cp utils/redis_init_script /etc/init.d/redis_6379')
@@ -226,7 +241,7 @@ def install_redis():
             sudo('cp redis.conf /etc/redis/6379.conf')
             with settings(warn_only=True):
                 # create working directory
-                sudo('mkdir /var/redis/6379')
+                sudo('mkdir -p /var/redis/6379')
 
             # ensure redis restarts if the server reboots
             sudo('update-rc.d redis_6379 defaults')
