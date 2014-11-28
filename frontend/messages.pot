@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-11-14 11:13+0200\n"
+"POT-Creation-Date: 2014-11-28 15:35+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -377,62 +377,66 @@ msgstr ""
 msgid "Your details have been updated successfully."
 msgstr ""
 
-#: templates/base.html:6 templates/base.html:29
+#: templates/base.html:6 templates/base.html:32
 msgid "Medicines Database"
 msgstr ""
 
-#: templates/base.html:33
+#: templates/base.html:36
 msgid "Home"
 msgstr ""
 
-#: templates/base.html:34
+#: templates/base.html:37
 msgid "Medicines"
 msgstr ""
 
-#: templates/base.html:35
+#: templates/base.html:38
 msgid "Country Reports"
 msgstr ""
 
-#: templates/base.html:36 templates/links.html:7
+#: templates/base.html:39 templates/links.html:7
 msgid "Important links"
 msgstr ""
 
-#: templates/base.html:38
+#: templates/base.html:40
+msgid "Tenders"
+msgstr ""
+
+#: templates/base.html:42
 msgid "Admin"
 msgstr ""
 
-#: templates/base.html:50
+#: templates/base.html:54
 msgid "Guest user"
 msgstr ""
 
-#: templates/base.html:60
+#: templates/base.html:64
 msgid "Log out"
 msgstr ""
 
-#: templates/base.html:61
+#: templates/base.html:65
 msgid "Change password"
 msgstr ""
 
-#: templates/base.html:63 templates/register.html:28
+#: templates/base.html:67 templates/register.html:28
 msgid "Register"
 msgstr ""
 
-#: templates/base.html:64
+#: templates/base.html:68
 msgid "Login"
 msgstr ""
 
-#: templates/base.html:97
+#: templates/base.html:101
 msgid "Error"
 msgstr ""
 
-#: templates/base.html:120
+#: templates/base.html:124
 msgid ""
 "This website, including all of its features and content is made available"
 " through Southern African Regional Programme on Access to Medicines and "
 "Diagnostics - <strong>SARPAM</strong>"
 msgstr ""
 
-#: templates/base.html:130 templates/base.html:137
+#: templates/base.html:134 templates/base.html:141
 msgid "Close"
 msgstr ""
 

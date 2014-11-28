@@ -363,3 +363,58 @@ def links():
         link_list=link_list,
         active_nav_button="links"
     )
+
+@app.route('/tenders/', subdomain='med-db')
+def tenders():
+    tenders = [
+        {
+            "country" : "Namibia",
+            "organisation" : "Central Medical Stores",
+            "type" : "International Tender for Essential Medicines",
+            "start_date" : "August 2014",
+            "duration" : "2 Year framework",
+        },
+        {
+            "country" : "Madagascar",
+            "organisation" : "SALAMA",
+            "type" : "International Tender for Essential Medicines and Medical Supplies",
+            "start_date" : "November 2014",
+            "duration" : "1 Year",
+        },
+        {
+            "country" : "Tanzania",
+            "organisation" : "Medical Stores Department (MSD)",
+            "type" : "International Tender for Essential Medicines and Medical Supplies",
+            "start_date" : "March 2015",
+            "duration" : "2 Year framework",
+        },
+        {
+            "country" : "Democratic Republic of Congo (DRC)",
+            "organisation" : "FEDECAME",
+            "type" : "Limited International Tender for Essential Medicines and Medical Supplies",
+            "start_date" : "March 2015",
+            "duration" : "1 Year",
+        },
+        {
+            "country" : "Namibia",
+            "organisation" : "Central Medical Stores",
+            "type" : "International Tender for Anti-Retroviral Medicines",
+            "start_date" : "June 2015",
+            "duration" : "1 Year (renewable)",
+        },
+        {
+            "country" : "Namibia",
+            "organisation" : "Central Medical Stores",
+            "type" : "International Tender for Anti-Retroviral Medicines",
+            "start_date" : "June 2016",
+            "duration" : "2 Year framework",
+        },
+    ]
+        
+
+    return render_template(
+        'tenders.html',
+        API_HOST=API_HOST,
+        tender_schedule=tenders,
+        active_nav_button="tenders"
+    )

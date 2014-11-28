@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{ _('Tender Schedule') }}</h1>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page %}
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <table class="tenders">
+            <tr>
+                <th>Country</th>
+                <th>Organisation</th>
+                <th>Tender Type</th>
+                <th>Start Date</th>
+                <th>Contract Duration</th>
+            </tr>
+            {% for tender in tender_schedule %}
+            <tr>
+                <td>{{ tender.country }}</td>
+                <td>{{ tender.organisation }}</td>
+                <td>{{ tender.type }}</td>
+                <td>{{ tender.start_date }}</td>
+                <td>{{ tender.duration }}</td>
+            </tr>
+            {%- endfor %}
+        </table>
+    </div>
+
+  </div>
+{% endblock %}

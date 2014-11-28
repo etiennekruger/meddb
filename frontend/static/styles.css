@@ -206,3 +206,7 @@ tbody tr.procurement-entry:hover td{
 .form-inline label{
     padding-left: 10px;
 }
+
+table.tenders td {
+    padding: 5px;
+}
