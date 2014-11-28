@@ -418,3 +418,30 @@ def tenders():
         tender_schedule=tenders,
         active_nav_button="tenders"
     )
+
+@app.route('/registers/', subdomain='med-db')
+def registers():
+    registers = [
+        ("Angola", "N/A", "#"),
+        ("Botswana", "Register", "#"),
+        ("DRC", "N/A", ""),
+        ("Lesotho", "N/A", "#"),
+        ("Madagascar", "N/A", "#"),
+        ("Malawi", "N/A", "#"),
+        ("Mauritius", "N/A", "#"),
+        ("Mozambique", "N/A", "#"),
+        ("Namibia", "Register", "http://www.nmrc.com.na/LinkClick424c.pdf?fileticket=ir5cbbaayg8%3d&tabid=677&language=en-US"),
+        ("Seychelles", "N/A", "#"),
+        ("South Africa", "Regulatory Authority", "http://www.mccza.com/dynamism/default_dynamic.asp?grpID=30&doc=dynamic_generated_page.asp&categID=165&groupID=30"),
+        ("Swaziland", "N/A", "#"),
+        ("Tanzania", "Register", "http://tfda.or.tz/index.php?option=com_phocadownload&view=category&id=65&Itemid=351"),
+        ("Zambia", "Registration Information", "http://www.zamra.co.zm/info"),
+        ("Zimbabwe", "Register", "http://www.mcaz.co.zw/index.php/downloads/category/17-registers"),
+    ]
+        
+    return render_template(
+        'registers.html',
+        API_HOST=API_HOST,
+        registers=registers,
+        active_nav_button="registers"
+    )

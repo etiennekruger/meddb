@@ -38,6 +38,7 @@ mixpanel.init("c691739732041e75dc57d6de169011b3");</script><!-- end Mixpanel -->
       <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">{{ _('Country Reports') }}</a></li>
       <li class="{% if active_nav_button == "links" %}active{% endif %}"><a href="/links/">{{ _('Important links') }}</a></li>
       <li class="{% if active_nav_button == "tenders" %}active{% endif %}"><a href="/tenders/">{{ _('Tenders') }}</a></li>
+      <li class="{% if active_nav_button == "registers" %}active{% endif %}"><a href="/registers/">{{ _('SADC Registers of Medicine') }}</a></li>
       {%- if session.email %}
         <li><a href="/admin/">{{ _('Admin') }}</a></li>
       {% endif -%}

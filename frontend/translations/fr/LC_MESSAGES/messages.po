@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2014-11-14 11:13+0200\n"
+"POT-Creation-Date: 2014-11-28 16:35+0200\n"
 "PO-Revision-Date: 2014-10-22 13:47+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -377,64 +377,74 @@ msgstr "Merci. Vous avez été enregistré avec succès."
 msgid "Your details have been updated successfully."
 msgstr "Vos coordonnées ont été mis à jour."
 
-#: templates/base.html:6 templates/base.html:29
+#: templates/base.html:6 templates/base.html:32
 msgid "Medicines Database"
 msgstr "Base de données de médicaments"
 
-#: templates/base.html:33
+#: templates/base.html:36
 msgid "Home"
 msgstr "Accueil"
 
-#: templates/base.html:34
+#: templates/base.html:37
 msgid "Medicines"
 msgstr "Médicaments"
 
-#: templates/base.html:35
+#: templates/base.html:38
 msgid "Country Reports"
 msgstr "Rapports de pays"
 
-#: templates/base.html:36 templates/links.html:7
+#: templates/base.html:39 templates/links.html:7
 msgid "Important links"
 msgstr "Liens importants"
 
-#: templates/base.html:38
+#: templates/base.html:40
+msgid "Tenders"
+msgstr ""
+
+#: templates/base.html:41
+msgid "SADC Registers of Medicine"
+msgstr ""
+
+#: templates/base.html:43
 msgid "Admin"
 msgstr "Admin"
 
-#: templates/base.html:50
+#: templates/base.html:55
 msgid "Guest user"
 msgstr "Utilisateur invité"
 
-#: templates/base.html:60
+#: templates/base.html:65
 msgid "Log out"
 msgstr "Déconnexion"
 
-#: templates/base.html:61
+#: templates/base.html:66
 msgid "Change password"
 msgstr "Modifier mot de passe"
 
-#: templates/base.html:63 templates/register.html:28
+#: templates/base.html:68 templates/register.html:28
 msgid "Register"
 msgstr "Enregistrement"
 
-#: templates/base.html:64
+#: templates/base.html:69
 msgid "Login"
 msgstr "Connexion"
 
-#: templates/base.html:97
+#: templates/base.html:102
 msgid "Error"
 msgstr "Erreur"
 
-#: templates/base.html:120
+#: templates/base.html:125
 msgid ""
 "This website, including all of its features and content is made available"
 " through Southern African Regional Programme on Access to Medicines and "
 "Diagnostics - <strong>SARPAM</strong>"
-msgstr "Ce site web, y compris toutes ses fonctions et le contenu, est rendu "
-"disponible à travers le Programme régional pour l'Afrique du Sud sur l'accès aux médicaments et"
-"produits diagnostiques - <strong>SARPAM</strong>"
+msgstr ""
+"Ce site web, y compris toutes ses fonctions et le contenu, est rendu "
+"disponible à travers le Programme régional pour l'Afrique du Sud sur "
+"l'accès aux médicaments etproduits diagnostiques - "
+"<strong>SARPAM</strong>"
 
-#: templates/base.html:130 templates/base.html:137
+#: templates/base.html:135 templates/base.html:142
 msgid "Close"
 msgstr "Sortir"
 
@@ -444,7 +454,9 @@ msgstr "Mettre à jour vos détails de connexion"
 
 #: templates/change_login.html:16 templates/login.html:16
 msgid "Please sign in below to access the SADC Medicine Prices Database."
-msgstr "Veuillez se connecter pour accéder à la Base de données de médicaments de SADC."
+msgstr ""
+"Veuillez se connecter pour accéder à la Base de données de médicaments de"
+" SADC."
 
 #: templates/change_login.html:26
 msgid "Save"
@@ -509,6 +521,7 @@ msgid "Download .xlsx"
 msgstr "Télécharger.xlsx"
 
 #: templates/country_report.html:69
+#, python-format
 msgid "All %(num_records)d known purchases:"
 msgstr "Tous les %(num_records)d achats connus:"
 
@@ -587,9 +600,12 @@ msgid "Database overview"
 msgstr "Synthèse de la base de données"
 
 #: templates/index.html:56
-msgid "Currently tracking <strong>%(procurement_count)d Purchases</strong>, "
+#, python-format
+msgid ""
+"Currently tracking <strong>%(procurement_count)d Purchases</strong>, "
 "representing <strong>%(medicine_count)d distinct Medicines</strong>."
-msgstr "Actuellement nous suivons <strong>%(procurement_count)d achats </strong>,"
+msgstr ""
+"Actuellement nous suivons <strong>%(procurement_count)d achats </strong>,"
 " représentant <strong>%(medicine_count)d médicaments distincts</strong>."
 
 #: templates/index.html:63
@@ -638,7 +654,9 @@ msgstr "référence"
 
 #: templates/medicine.html:136
 msgid "We don't currently have any registration information for this medicine."
-msgstr "Actuellement, nous n’avons pas d’information sur l’enregistrement de ce médicament."
+msgstr ""
+"Actuellement, nous n’avons pas d’information sur l’enregistrement de ce "
+"médicament."
 
 #: templates/medicine.html:145
 msgid "Find potential savings by entering your own price."
@@ -691,6 +709,7 @@ msgid "There are no medicines to display."
 msgstr "Aucun médicament à afficher."
 
 #: templates/procurement.html:7
+#, python-format
 msgid "Purchase #%(id)d"
 msgstr "Achat #%(id)d"
 
@@ -800,9 +819,20 @@ msgstr "Enregistrement de l’utilisateur"
 
 #: templates/register.html:16
 msgid "Please register below to access the SADC Medicine Prices Database."
-msgstr "Veuillez enregistrer ci-dessous pour accéder à la Base de données de médicaments de SADC."
+msgstr ""
+"Veuillez enregistrer ci-dessous pour accéder à la Base de données de "
+"médicaments de SADC."
 
 #: templates/register.html:24
 msgid "Select your country"
 msgstr "Sélectionner votre pays"
+
+#: templates/registers.html:7
+#, fuzzy
+msgid "Registers"
+msgstr "Enregistrement"
+
+#: templates/tenders.html:7
+msgid "Tender Schedule"
+msgstr ""
 
