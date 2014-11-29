@@ -149,6 +149,7 @@ mixpanel.init("c691739732041e75dc57d6de169011b3");</script><!-- end Mixpanel -->
 <script src="/static/jquery-1.11.1.min.js"></script>
 <script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
 <script src="/static/typeahead.jquery.js"></script>
+<script src="/static/bloodhound.js"></script>
 
 <script>
   jQuery.support.cors = true;  // to enable calls to the API on IE
@@ -218,6 +219,18 @@ mixpanel.init("c691739732041e75dc57d6de169011b3");</script><!-- end Mixpanel -->
     };
   }
 
+  var bloodhound = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: {
+      url: API_HOST + 'active_medicines/',
+      filter: function(list) {
+        return list["result"]
+      }
+    }
+  });
+
+
   function error_message(msg, category)
   {
     var tmp = '<div class="flashed_msg">';
@@ -240,6 +253,7 @@ mixpanel.init("c691739732041e75dc57d6de169011b3");</script><!-- end Mixpanel -->
     $(".tooltip-enabled").tooltip({});
 
     // handle search
+    bloodhound.initialize();
     $("#search-box").typeahead({
           hint: true,
           highlight: true,
@@ -248,7 +262,7 @@ mixpanel.init("c691739732041e75dc57d6de169011b3");</script><!-- end Mixpanel -->
         {
           name: 'medicines',
           displayKey: 'name',
-          source: medicine_matcher()
+          source : bloodhound.ttAdapter()
         })
         .on('typeahead:selected', function(e, datum){
           window.location = '/medicine/' + (datum["medicine_id"]) + '/';
