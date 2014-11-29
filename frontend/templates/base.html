@@ -210,15 +210,6 @@ mixpanel.init("c691739732041e75dc57d6de169011b3");</script><!-- end Mixpanel -->
     }
   }
 
-  function medicine_matcher(){
-    return function findMatches(query, callback) {
-      medicines = [];
-      crossDomainAjax(API_HOST + 'autocomplete/' + query + '/', function(data){
-        callback(data);
-      });
-    };
-  }
-
   var bloodhound = new Bloodhound({
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
