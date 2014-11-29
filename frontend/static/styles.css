@@ -207,6 +207,6 @@ tbody tr.procurement-entry:hover td{
     padding-left: 10px;
 }
 
-table.tenders td {
+table.registers td, table.tenders td {
     padding: 5px;
 }
