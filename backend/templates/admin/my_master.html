@@ -1,0 +1,43 @@
+{% extends 'admin/base.html' %}
+{% block head_css %}
+  {{ super() }}
+  <link href="{{ HOST }}static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
+  <link href="{{ HOST }}static/flags.css" rel="stylesheet">
+{% endblock head_css%}
+
+{% block brand %}
+  <a class="navbar-brand" href="{{ HOST }}">{{ admin_view.admin.name }}</a>
+{% endblock %}
+
+{% block access_control -%}
+
+  {% if g.user != None -%}
+    <ul class="nav navbar-nav navbar-right">
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-user"></i> {{ g.user.email }} <span class="caret"></span></a>
+      <ul class="dropdown-menu" role="menu">
+        <li><a href="{{ HOST }}logout/">Log out</a></li>
+      </ul>
+    </li>
+    </ul>
+  {%- endif %}
+{%- endblock %}
+
+{% block tail_js -%}
+  {{ super() }}
+  <script type="application/javascript">
+    $( document ).ready(function(){
+      $('.tooltip-enabled').tooltip({'placement': 'top'})
+    })
+  </script>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-48399585-3', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+{%- endblock %}

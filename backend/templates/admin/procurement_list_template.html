@@ -1,0 +1,37 @@
+{% extends 'admin/custom_list_template.html' %}
+
+
+{% block list_row_actions_column scoped -%}
+  <td>
+    {% block list_row_actions scoped -%}
+      {%- if admin_view.can_edit -%}
+        {% if g.user.is_admin or g.user.country == row.country %}
+          <a class="icon" href="{{ get_url('.edit_view', id=get_pk_value(row), url=return_url) }}" title="{{ _gettext('Edit record') }}">
+            <span class="glyphicon glyphicon-pencil"></span>
+          </a>
+        {% endif %}
+      {%- endif -%}
+      {%- if admin_view.can_delete -%}
+        <form class="icon" method="POST" action="{{ get_url('.delete_view', id=get_pk_value(row), url=return_url) }}">
+          {% if csrf_token %}
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+          {% endif %}
+          <button onclick="return confirm('{{ _gettext('You sure you want to delete this item?') }}');" title="Delete record">
+            <span class="glyphicon glyphicon-trash"></span>
+          </button>
+        </form>
+      {%- endif -%}
+    {%- endblock %}
+  </td>
+{%- endblock %}
+
+{% block tail %}
+    {{ super() }}
+    <script language="javascript">
+        (function($) {
+            $('.approval-checkbox').on('click', function(){
+              $(this).parent('form').submit();
+            });
+        })(jQuery);
+    </script>
+{% endblock %}

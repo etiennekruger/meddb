@@ -1,0 +1,323 @@
+{% import 'macros.html' as macros %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>{% block title %}{{ _('Medicines Database') }}{% endblock %}</title>
+  <meta name=viewport content="width=device-width, initial-scale=1">
+
+  <link href="/static/font-awesome-4.1.0/css/font-awesome.css" rel="stylesheet">
+  <link href="/static/flags.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="/static/bootstrap-3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="/static/styles.css">
+  <link rel="shortcut icon" href="/static/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+
+  <!--[if lt IE 9]>
+        <script src="assets/js/css3-mediaqueries.js"></script>
+        <script type='text/javascript' src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+        <script type='text/javascript' src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.js"></script>
+    <![endif]-->
+
+  {% block head %}
+  {% endblock %}
+  <!-- start Mixpanel --><script type="text/javascript">(function(f,b){if(!b.__SV){var a,e,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config people.set people.set_once people.increment people.append people.track_charge people.clear_charges people.delete_user".split(" ");
+for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=f.createElement("script");a.type="text/javascript";a.async=!0;a.src="//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";e=f.getElementsByTagName("script")[0];e.parentNode.insertBefore(a,e)}})(document,window.mixpanel||[]);
+mixpanel.init("c691739732041e75dc57d6de169011b3");</script><!-- end Mixpanel -->
+</head>
+<body>
+<nav class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img id="brand-logo" src="/static/images/sadc-logo-small.png"> {{ _('Medicines Database') }}
+    </a>
+
+    <ul class="nav navbar-nav">
+      <li{% if active_nav_button == "home" %} class="active"{% endif %}><a href="/">{{ _('Home') }}</a></li>
+      <li class="{% if active_nav_button == "medicines" %}active{% endif %}"><a href="/medicine-list/">{{ _('Medicines') }}</a></li>
+      <li class="{% if active_nav_button == "reports" %}active{% endif %}"><a href="/country-ranking/">{{ _('Country Reports') }}</a></li>
+      <li class="{% if active_nav_button == "links" %}active{% endif %}"><a href="/links/">{{ _('Important links') }}</a></li>
+      <li class="{% if active_nav_button == "tenders" %}active{% endif %}"><a href="/tenders/">{{ _('Tenders') }}</a></li>
+      <li class="{% if active_nav_button == "registers" %}active{% endif %}"><a href="/registers/">{{ _('SADC Registers of Medicine') }}</a></li>
+      {%- if session.email %}
+        <li><a href="/admin/">{{ _('Admin') }}</a></li>
+      {% endif -%}
+    </ul>
+
+    {% block access_control %}
+      <div class="btn-group navbar-btn pull-right" style="padding-left: 20px;">
+
+        <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">
+          <i class="fa fa-user"></i>
+          {%- if session.email %}
+            {{ session.email }}
+          {%- else %}
+            {{ _('Guest user') }}
+          {% endif -%}
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li class="tap-target{% if not session.locale or session.locale == 'en' %} active{% endif %}"><a href="?locale=en">English</a></li>
+          <li class="tap-target{% if session.locale and session.locale == 'pt' %} active{% endif %}"><a href="?locale=pt">Português</a></li>
+          <li class="tap-target{% if session.locale and session.locale == 'fr' %} active{% endif %}"><a href="?locale=fr">Français</a></li>
+          <li class="divider"></li>
+          {%- if session.email %}
+            <li><a href="/logout/">{{ _('Log out') }}</a></li>
+            <li><a href="/change-login/">{{ _('Change password') }}</a></li>
+          {%- else %}
+            <li><a href="/register/">{{ _('Register') }}</a></li>
+            <li><a href="/login/">{{ _('Login') }}</a></li>
+          {% endif -%}
+        </ul>
+      </div>
+    {% endblock %}
+
+    {% block search %}
+      <form class="navbar-form">
+        <div id="search-form-container" class="pull-right">
+          <div class="form-group" style="display:inline;">
+            <div class="input-group">
+              <input id="search-box" class="form-control" name="search" placeholder="Search Here" autocomplete="off" autofocus="autofocus" type="text">
+              <span class="input-group-addon"><i class="fa fa-search"></i></span>
+            </div>
+          </div>
+        </div>
+      </form>
+    {% endblock search %}
+  </div>
+</nav>
+
+<div id="jumbo">
+  <div id="message-container" class="container-fluid">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flashed_msg">
+            <div class="alert alert-{% if category %}{{ category }}{% else %}danger{% endif %} alert-dismissable fade in">
+              <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+              <strong>
+                {% if category in ["success", "info"] %}
+                  {{ category | title }}
+                {% else %}
+                  {{ _('Error') }}
+                {% endif %}: </strong> {{ message }}
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+  {% block page_header %}
+  {% endblock %}
+</div>
+
+<div id="page-container" class="container-fluid">
+  {% block page %}
+    <div class="row">
+      <p class="lead">Content goes here.</p>
+    </div>
+  {% endblock %}
+</div>
+
+{% block page_footer %}
+  <div id="footer">
+    <div class="col-lg-12 text-center">
+      <p id="attribution"><small>{{ _('This website, including all of its features and content is made available through Southern African Regional Programme on Access to Medicines and Diagnostics - <strong>SARPAM</strong>') }}</small></p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block modal %}
+  <div class="modal fade" id="page-modal" tabindex="-1" role="dialog" aria-labelledby="page-modal-title" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">{{ _('Close') }}</span></button>
+          <h4 class="modal-title" id="page-modal-title">Modal title</h4>
+        </div>
+        <div class="modal-body" id="page-modal-body">
+          ...
+        </div>
+        <div class="modal-footer" id="page-modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">{{ _('Close') }}</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+<script src="/static/jquery-1.11.1.min.js"></script>
+<script src="/static/bootstrap-3.1.1/js/bootstrap.min.js"></script>
+<script src="/static/typeahead.jquery.js"></script>
+<script src="/static/bloodhound.js"></script>
+
+<script>
+  jQuery.support.cors = true;  // to enable calls to the API on IE
+  API_HOST = "{{ API_HOST }}";
+
+  function isIE () {
+    var myNav = navigator.userAgent.toLowerCase();
+    return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+  }
+
+  // thanks to http://stackoverflow.com/questions/3362474/jquery-ajax-fails-in-ie-on-cross-domain-calls
+  function crossDomainAjax (url, successCallback) {
+
+    // IE8 & 9 only Cross domain JSON GET request
+    if ('XDomainRequest' in window && window.XDomainRequest !== null) {
+
+      var xdr = new XDomainRequest(); // Use Microsoft XDR
+      xdr.open('get', url);
+      xdr.onload = function () {
+
+        var dom  = new ActiveXObject('Microsoft.XMLDOM');
+        var JSON = $.parseJSON(xdr.responseText);
+
+        dom.async = false;
+
+        if (JSON == null || typeof (JSON) == 'undefined') {
+          JSON = $.parseJSON(data.firstChild.textContent);
+        }
+
+        successCallback(JSON); // internal function
+      };
+
+      xdr.onerror = function() {
+        _result = false;
+      };
+
+      xdr.send();
+    }
+
+    // IE7 and lower can't do cross domain
+    else if (navigator.userAgent.indexOf('MSIE') != -1 &&
+        parseInt(navigator.userAgent.match(/MSIE ([\d.]+)/)[1], 10) < 8) {
+      return false;
+    }
+
+    // Do normal jQuery AJAX for everything else
+    else {
+      $.ajax({
+        url: url,
+        cache: false,
+        dataType: 'json',
+        type: 'GET',
+        async: false, // must be set to false
+        success: function (data, success) {
+          successCallback(data);
+        }
+      });
+    }
+  }
+
+  var bloodhound = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: {
+      url: API_HOST + 'active_medicines/',
+      filter: function(list) {
+        return list["result"]
+      }
+    }
+  });
+
+
+  function error_message(msg, category)
+  {
+    var tmp = '<div class="flashed_msg">';
+    tmp += '<div class="alert alert-' + category + ' alert-dismissable fade in">';
+    tmp += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
+    tmp += '<strong>Error: </strong>' + msg;
+    tmp += '</div>';
+    tmp += '</div>';
+    $("#message-container").append(tmp);
+  }
+
+  $(document).ready(function(){
+
+    // Detecting IE
+    if (isIE() !== false && isIE() < 8) {
+      error_message("Please upgrade your browser to make use of this site. Internet Explorer 7 and below is not supported.", "danger");
+    }
+
+    // enable tooltips
+    $(".tooltip-enabled").tooltip({});
+
+    // handle search
+    bloodhound.initialize();
+    $("#search-box").typeahead({
+          hint: true,
+          highlight: true,
+          minLength: 1
+        },
+        {
+          name: 'medicines',
+          displayKey: 'name',
+          source : bloodhound.ttAdapter()
+        })
+        .on('typeahead:selected', function(e, datum){
+          window.location = '/medicine/' + (datum["medicine_id"]) + '/';
+        }
+    );
+    $('#search-box.input-lg').siblings('input.tt-hint').addClass('hint-large');
+
+    $("#search-box").focus()
+
+    // force the tabs to bookmark, so the user doesn't get redirected all the time
+    bootstrap_tab_bookmark()
+
+    // thanks to https://julien.danjou.info/blog/2012/twitter-bootstrap-tabs-bookmark
+    function bootstrap_tab_bookmark (selector) { if (selector == undefined) {
+      selector = ""; }
+
+      /* Automagically jump on good tab based on anchor */
+      $(document).ready(function() {
+        url = document.location.href.split('#');
+        if(url[1] != undefined) {
+          $(selector + '[href=#'+url[1]+']').tab('show');
+        }
+      });
+
+      var update_location = function (event) {
+        document.location.hash = this.getAttribute("href");
+      }
+
+      /* Update hash based on tab */
+      $(selector + "[data-toggle=pill]").click(update_location);
+      $(selector + "[data-toggle=tab]").click(update_location);
+    }
+  });
+</script>
+
+{% block javascript %}
+{% endblock %}
+
+{%- if session.email %}
+  <script>
+    mixpanel.identify("{{ session.email }}");
+    mixpanel.people.set({
+      "name": "{{ session.email }}",
+      "$last_seen": new Date()
+    });
+  </script>
+{% endif -%}
+
+{% block mixpanel %}
+  <script>
+    mixpanel.track("other");
+  </script>
+{% endblock %}
+
+<!-- Google Analytics tracking code -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-48399585-3', 'auto');
+  ga('send', 'pageview');
+</script>
+
+</body>
+</html>

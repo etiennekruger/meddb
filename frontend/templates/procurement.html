@@ -1,0 +1,319 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="container">
+    <h1>
+      <a href="/medicine/{{ procurement.product.medicine.medicine_id }}">{{ procurement.product.medicine.name }}</a> >
+      {{ _(
+      'Purchase #%(id)d',
+      id=procurement.procurement_id
+      ) }}
+    </h1>
+  </div>
+{% endblock %}
+
+{% block page %}
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-lg-8">
+          <h2>{{ _('Transaction details') }}</h2>
+        </div>
+        <div class="col-lg-4">
+          <a
+              type="button"
+              href="{{ API_HOST }}admin/procurement/edit/?id={{ procurement.procurement_id }}&host_url={{ ("procurement/" + procurement.procurement_id | string + "/") | urlencode }}"
+              class="btn btn-info pull-right"
+              style="margin-top: 20px;">
+            Edit
+          </a>
+        </div>
+      </div>
+      <table class="table table-bordered table-striped">
+        <tbody>
+        <tr>
+          <th>{{ _('Procuring country') }}</th>
+          <td>
+            {{ macros.render_flag(procurement.country) }} {{ _(procurement.country.name) }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Generic Name & Strength') }}</th>
+          <td>
+            {{ procurement.product.medicine.name }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Dosage form') }}</th>
+          <td>
+            {{ _(procurement.product.medicine.dosage_form.name) }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Description/Brand') }}</th>
+          <td>
+            {% if procurement.product.description %}
+              {{ procurement.product.description }}
+            {% else %}
+              <span class="text-muted">{{ _('Unknown') }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Date') }}</th>
+          <td>
+            {{ macros.render_date_range(procurement.start_date, procurement.end_date) }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Terms') }}</th>
+          <td>
+            {% if procurement.incoterm %}
+              {{ procurement.incoterm.code }} ({{ procurement.incoterm.description }})
+            {% else %}
+              <span class="text-muted">{{ _('Unknown') }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Procurement Method') }}</th>
+          <td>
+            {% if procurement.method %}
+              {{ procurement.method }}
+            {% else %}
+              <span class="text-muted">{{ _('Unknown') }}</span>
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Purchase quantity (packs)') }}</th>
+          <td>
+            {{ procurement.quantity | add_commas }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Pack size') }}</th>
+          <td>
+            {{ procurement.pack_size }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Unit of Measure') }}</th>
+          <td>
+            {{ procurement.product.medicine.unit_of_measure }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Container') }}</th>
+          <td>
+            {{ procurement.container }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Pack price') }}</th>
+          <td>
+            ${{ procurement.pack_price_usd }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Price per') }} {{ procurement.product.medicine.unit_of_measure }}</th>
+          <td>
+            ${{ procurement.unit_price_usd }}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Transaction currency') }}</th>
+          <td>
+            {{ procurement.currency.name }}
+            {% if procurement.currency.code != "USD" %}
+              , {{ _('at') }} {{ procurement.currency.code }} {{ procurement.currency.rate }} {{ _('per USD') }}
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>{{ _('Source') }}</th>
+          <td>
+            {{ procurement.source.name }}
+            {% if procurement.source.url %} {{ procurement.source.url }}{% endif %}
+            {% if procurement.source.date %} [{{ procurement.source.date }}]{% endif %}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-lg-8">
+          <h2>{{ _('Supplier') }}</h2>
+        </div>
+        <div class="col-lg-4">
+          {% if procurement.supplier %}
+            <a
+                type="button"
+                href="{{ API_HOST }}admin/supplier/edit/?id={{ procurement.supplier.supplier_id }}"
+                class="btn btn-info pull-right"
+                style="margin-top: 20px;">
+              {{ _('Edit') }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      {% if procurement.supplier %}
+        {% set supplier = procurement.supplier %}
+        <table class="table table-bordered table-striped">
+          <tbody>
+          <tr>
+            <th>{{ _('Name') }}</th>
+            <td>
+              {{ supplier.name }}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Street Address') }}</th>
+            <td>
+              {% if supplier.street_address %}
+                {{ supplier.street_address }}
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Contact Person') }}</th>
+            <td>
+              {% if supplier.contact %}
+                {{ supplier.contact }}
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Email') }}</th>
+            <td>
+              {% if supplier.email %}
+                <a href="mailto:{{ supplier.email }}?subject=Medicine pricing enquiry - {{ procurement.product.medicine.name }}" target="_blank">{{ supplier.email }}</a>
+                {% if supplier.alt_email %}
+                  , <a href="mailto:{{ supplier.alt_email }}?subject=Medicine pricing enquiry - {{ procurement.product.medicine.name }}" target="_blank">{{ supplier.alt_email }}</a>
+                {% endif %}
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Telephone') }}</th>
+            <td>
+              {% if supplier.phone %}
+                {{ supplier.phone }}
+                {% if supplier.alt_phone %}
+                  , {{ supplier.alt_phone }}
+                {% endif %}
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Fax') }}</th>
+            <td>
+              {% if supplier.fax %}
+                {{ supplier.fax }}
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Website') }}</th>
+            <td>
+              {% if supplier.website %}
+                <a href="{{ supplier.website }}" target="_blank">{{ supplier.website }}</a>
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      {% else %}
+        <p class="lead text-muted">{{ _('There is no Supplier information for this purchase.') }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-lg-8">
+          <h2>{{ _('Manufacturer') }}</h2>
+        </div>
+        <div class="col-lg-4">
+          {% if procurement.product.manufacturer %}
+            <a
+                type="button"
+                href="{{ API_HOST }}admin/manufacturer/edit/?id={{ procurement.product.manufacturer.manufacturer_id }}"
+                class="btn btn-info pull-right"
+                style="margin-top: 20px;">
+              {{ _('Edit') }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+      {% if procurement.product.manufacturer %}
+        {% set manufacturer = procurement.product.manufacturer %}
+        <table class="table table-bordered table-striped">
+          <tbody>
+          <tr>
+            <th>{{ _('Country') }}</th>
+            <td>
+              {{ macros.render_flag(manufacturer.country) }} {{ _(manufacturer.country.name) }}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Name') }}</th>
+            <td>
+              {% if manufacturer.name %}
+                {{ manufacturer.name }}
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          <tr>
+            <th>{{ _('Site') }}</th>
+            <td>
+              {% if procurement.product.site %}
+                {{ procurement.product.site }}
+              {% else %}
+                <span class="text-muted">{{ _('Unknown') }}</span>
+              {% endif %}
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      {% else %}
+        <p class="lead text-muted">{{ _('There is no Manufacturer information for this purchase.') }}</p>
+      {% endif %}
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascript %}
+  {{ super() }}
+  <script>
+    $(document).ready(function(){
+
+    });
+  </script>
+{% endblock %}
+
+{% block mixpanel %}
+  <script>
+    mixpanel.track("procurement details");
+  </script>
+{% endblock %}

@@ -1,5 +1,0 @@
-{
-    "static_base_url": "http://medicines.sadc.int/meddb",
-    "data_base_url": "http://sadc.meddb.medicinesinfohub.net",
-    "loader": "jsonp"
-}

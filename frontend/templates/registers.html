@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{ _('Registers') }}</h1>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page %}
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+        <table class="registers">
+            <tr>
+                <th>Country</th>
+                <th>Register</th>
+            </tr>
+            {% for country, register, link in registers %}
+            <tr>
+                <td>{{ country }}</td>
+                <td><a href="{{ link }}">{{ register }}</a></td>
+            </tr>
+            {%- endfor %}
+        </table>
+    </div>
+  </div>
+{% endblock %}
+

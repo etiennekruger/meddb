@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{ _('Important links') }}</h1>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page %}
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <ul>
+        {% for val, title, desc in link_list -%}
+          <li>
+            <a href="{{ val }}" target="_blank">{{ title }}</a>
+          <br><p><em>{{ desc }}</em></p>
+          </li>
+        {%- endfor %}
+      </ul>
+    </div>
+
+  </div>
+{% endblock %}

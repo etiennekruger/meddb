@@ -1,0 +1,132 @@
+# in models.py
+# change Boolean fields to Integer
+# add 'deferred=True' to all ForeignKeyConstraints
+
+# clean up broken foreign key ref and delete alembic table
+sqlite3 instance/med-db.db
+delete from benchmark_price where medicine_id not in (select medicine_id from medicine);
+drop table alembic_version;
+.quit
+
+# generate sqlite dump
+sqlite3 instance/med-db.db .dump > dump.sqlite.tmp
+
+# remove CREATE TABLE stuff
+grep -v '^CREATE TABLE\|^);\|^\t' dump.sqlite.tmp > dump.sqlite
+
+http://stackoverflow.com/questions/4581727/convert-sqlite-sql-dump-file-to-postgresql
+cat dump.sqlite | sed -e 's/INTEGER PRIMARY KEY AUTOINCREMENT/SERIAL PRIMARY KEY/' | sed -e 's/PRAGMA foreign_keys=OFF;//' | sed -e 's/unsigned big int/BIGINT/g' | sed -e 's/UNSIGNED BIG INT/BIGINT/g' | sed -e 's/BIG INT/BIGINT/g' | sed -e 's/UNSIGNED INT(10)/BIGINT/' | sed -e 's/BOOLEAN/SMALLINT/g' | sed -e 's/boolean/SMALLINT/g' | sed -e 's/UNSIGNED BIG INT/INTEGER/g' | sed -e 's/INT(3)/INT2/g' > dump.postgres
+
+# set constraint in dump.postgres flag after beginning transaction
+SET CONSTRAINTS ALL DEFERRED;
+
+psql postgres
+drop database med_db;
+create database med_db;
+\q
+
+initialise empty db according to README
+
+psql med_db < dump.postgres
+
+change db connection to postgres in alembic.ini
+
+# now, add extra temporary boolean fields
+    USER
+        activated
+        is_admin
+    SUPPLIER
+        authorized
+    PRODUCT
+        is_generic
+    REGISTRATION
+        expired
+    PROCUREMENT
+        approved
+alembic revision --autogenerate -m "add tmp fields"
+alembic upgrade head
+
+# populate tmp fields from existing values
+psql med_db
+update "user" set tmp_activated = true where activated = 1;
+update "user" set tmp_is_admin = true where is_admin = 1;
+update supplier set tmp_authorized = true where authorized = 1;
+update product set tmp_is_generic = true where is_generic = 1;
+update registration set tmp_expired = true where expired = 1;
+update procurement set tmp_approved = true where approved = 1;
+\q
+
+# delete old integer fields from model, and do another revision
+alembic revision --autogenerate -m "drop old intbool fields"
+alembic upgrade head
+
+# add boolean fields to model, with the same names as before, then
+alembic revision --autogenerate -m "add bool fields"
+alembic upgrade head
+
+# transfer values from tmp fields
+psql med_db
+update "user" set activated = tmp_activated;
+update "user" set is_admin = tmp_is_admin;
+update supplier set authorized = tmp_authorized;
+update product set is_generic = is_generic;
+update registration set expired = tmp_expired;
+update procurement set approved = tmp_approved;
+\q
+
+# delete tmp fields from models.py, then
+alembic revision --autogenerate -m "delete tmp fields"
+alembic upgrade head
+
+
+pg_dump med_db --no-privileges > /tmp/med_db.sql
+
+
+# update id sequences:
+SELECT setval('procurement_procurement_id_seq', (SELECT MAX(procurement_id) FROM procurement));
+
+tables = [
+"api_key",
+"available_containers",
+"available_procurement_methods",
+"benchmark_price",
+"country",
+"currency",
+"dosage_form",
+"incoterm",
+"manufacturer",
+"medicine",
+"procurement",
+"product",
+"registration",
+"site",
+"source",
+"supplier",
+"unit_of_measure",
+"user",
+]
+
+"SELECT setval('" + table + "_" + table + "_id_seq', (SELECT MAX(" + table + "_id) FROM " + table + "));"
+
+
+SELECT setval('api_key_api_key_id_seq', (SELECT MAX(api_key_id) FROM api_key));
+
+SELECT setval('available_containers_available_container_id_seq', (SELECT MAX(available_container_id) FROM available_containers));
+SELECT setval('available_procurement_methods_available_procurement_id_seq', (SELECT MAX(available_procurement_id) FROM available_procurement_methods));
+
+SELECT setval('benchmark_price_benchmark_price_id_seq', (SELECT MAX(benchmark_price_id) FROM benchmark_price));
+SELECT setval('country_country_id_seq', (SELECT MAX(country_id) FROM country));
+SELECT setval('currency_currency_id_seq', (SELECT MAX(currency_id) FROM currency));
+SELECT setval('dosage_form_dosage_form_id_seq', (SELECT MAX(dosage_form_id) FROM dosage_form));
+SELECT setval('incoterm_incoterm_id_seq', (SELECT MAX(incoterm_id) FROM incoterm));
+SELECT setval('manufacturer_manufacturer_id_seq', (SELECT MAX(manufacturer_id) FROM manufacturer));
+SELECT setval('medicine_medicine_id_seq', (SELECT MAX(medicine_id) FROM medicine));
+SELECT setval('procurement_procurement_id_seq', (SELECT MAX(procurement_id) FROM procurement));
+SELECT setval('product_product_id_seq', (SELECT MAX(product_id) FROM product));
+SELECT setval('registration_registration_id_seq', (SELECT MAX(registration_id) FROM registration));
+SELECT setval('site_site_id_seq', (SELECT MAX(site_id) FROM site));
+SELECT setval('source_source_id_seq', (SELECT MAX(source_id) FROM source));
+SELECT setval('supplier_supplier_id_seq', (SELECT MAX(supplier_id) FROM supplier));
+SELECT setval('unit_of_measure_unit_of_measure_id_seq', (SELECT MAX(unit_of_measure_id) FROM unit_of_measure));
+
+SELECT setval('user_user_id_seq', (SELECT MAX(user_id) FROM "user"));

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block page_header %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{ _('Update your login details') }}</h1>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block page %}
+  <div class="row">
+    <div class="col-md-12">
+      <p class="lead text-center">{{ _('Please sign in below to access the SADC Medicine Prices Database.') }}</p>
+      <form class="form-horizontal" method="POST" role="form" action="">
+        {{ form.csrf_token }}
+
+        {{ macros.render_field(form.email, class="form-control", placeholder="{{ _('Enter your email address') }}") }}
+
+        {{ macros.render_field(form.password, class="form-control", placeholder="{{ _('Enter a password that you will remember') }}") }}
+
+        <div class="form-group">
+          <div class="col-md-offset-4 col-md-7">
+            <button type="submit" class="btn btn-primary">{{ _('Save') }}</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+{% endblock %}
